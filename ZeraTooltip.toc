@@ -1,0 +1,18 @@
+## Interface: 20502
+## Version: 1.0
+## Author: Anonomit
+
+## Title: ZeraTooltip
+## Notes: Shortens and simplifies item tooltips.
+
+## OptionalDeps: Ace3
+## X-Embeds: Ace3
+
+
+embeds.xml
+
+Locale/enUS.lua
+
+ZeraTooltip.lua
+
+
