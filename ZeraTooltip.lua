@@ -6,17 +6,21 @@ ZeraTooltip = LibStub("AceAddon-3.0"):NewAddon(ADDON_NAME)
 local L     = LibStub("AceLocale-3.0"):GetLocale("ZeraTooltip")
 
 
-local DEBUG             = false
-local SHOW_LABELS       = false
-local SHIFT_SUPPRESSION = false
+ZeraTooltip.ENABLED           = true
+
+ZeraTooltip.DEBUG             = false
+ZeraTooltip.SHOW_LABELS       = false
+ZeraTooltip.SHIFT_SUPPRESSION = false
 
 
 -- Curseforge automatic packaging will comment this out
 -- https://support.curseforge.com/en/support/solutions/articles/9000197281-automatic-packaging
 --@debug@
-DEBUG             = true
-SHOW_LABELS       = false
-SHIFT_SUPPRESSION = true
+ZeraTooltip.ENABLED           = true
+
+ZeraTooltip.DEBUG             = true
+ZeraTooltip.SHOW_LABELS       = false
+ZeraTooltip.SHIFT_SUPPRESSION = true
 --@end-debug@
 
 
@@ -48,14 +52,14 @@ function ZeraTooltip:SimplifyLine(text)
     local matches = {text:match(input)}
     if #matches > 0 then
       local pattern = type(output) == "function" and output(unpack(matches)) or output:format(unpack(matches))
-      return self:TrimLine(text:gsub(input, pattern)) .. (SHOW_LABELS and ("  [%s]"):format(label) or "")
+      return self:TrimLine(text:gsub(input, pattern)) .. (ZeraTooltip.SHOW_LABELS and ("  [%s]"):format(label) or "")
     end
   end
 end
 
 
 function ZeraTooltip:SimplifyLines(tooltip)
-  if SHIFT_SUPPRESSION and IsShiftKeyDown() then return end
+  if not ZeraTooltip.ENABLED or ZeraTooltip.SHIFT_SUPPRESSION and IsShiftKeyDown() then return end
   local leftText = tooltip:GetName().."TextLeft"
   for i = 2, tooltip:NumLines() do
     local fontString = _G[leftText..i]
@@ -73,7 +77,7 @@ end
 
 
 function ZeraTooltip:ReorderLines(tooltip)
-  if SHIFT_SUPPRESSION and IsShiftKeyDown() then return end
+  if not ZeraTooltip.ENABLED or ZeraTooltip.SHIFT_SUPPRESSION and IsShiftKeyDown() then return end
   local leftText = tooltip:GetName() .. "TextLeft"
   
   local groups = { }
