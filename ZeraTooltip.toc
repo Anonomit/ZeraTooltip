@@ -1,9 +1,9 @@
 ## Interface: 20502
-## Version: 2021-10-02
+## Version: 2021-10-03
 ## Author: Anonomit
 
 ## Title: ZeraTooltip
-## Notes: Shortens and simplifies item tooltips.
+## Notes: Reorders stats on item tooltips and makes them easier to read.
 
 ## OptionalDeps: Ace3
 ## X-Embeds: Ace3
