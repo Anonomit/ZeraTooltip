@@ -84,52 +84,45 @@ table.insert(L.OUTPUT, function(damage, healing) return ("+%d Healing and +%d Sp
 
 
 
-table.insert(L.LABEL,  "ManaRegen")
-table.insert(L.INPUT,  "Allows? (%d+)%% of your Mana regeneration to continue while casting")
-table.insert(L.OUTPUT, "+%d%%%% of Mana Regen continues while casting")
-table.insert(L.ORDER,  "^[%+%-]%d+ of Mana Regen continues while casting.*")
+table.insert(L.LABEL,  "Defense")
+table.insert(L.INPUT,  "Increases defense rating by (%d+)%.?")
+table.insert(L.OUTPUT, "+%d Defense Rating")
+table.insert(L.ORDER,  "^[%+%-]%d+ Defense Rating.*")
 
-table.insert(L.LABEL,  "ManaRestore")
-table.insert(L.INPUT,  "Restores (%d+) mana per (%d+) sec%.?")
-table.insert(L.OUTPUT, function(amount, period) return ("+%d Mp%d%s"):format(amount, period, tonumber(period) > 1 and ("  (+%s MpS)"):format(Shared.Round(tonumber(amount)/tonumber(period), 1)) or "") end)
-table.insert(L.ORDER,  "^[%+%-]%d+ Mp%d.*")
+table.insert(L.LABEL,  "Resilience")
+table.insert(L.INPUT,  "Improves your resilience rating by (%d+)%.?")
+table.insert(L.OUTPUT, "+%d Resilience Rating")
+table.insert(L.ORDER,  "^[%+%-]%d+ Resilience Rating.*")
 
-table.insert(L.LABEL,  "HealthRestore")
-table.insert(L.INPUT,  "Restores (%d+) health per (%d+) sec%.?")
-table.insert(L.OUTPUT, function(amount, period) return ("+%d Hp%d%s"):format(amount, period, tonumber(period) > 1 and ("  (+%s HpS)"):format(Shared.Round(tonumber(amount)/tonumber(period), 1)) or "") end)
-table.insert(L.ORDER,  "^[%+%-]%d+ Hp%d.*")
+table.insert(L.LABEL,  "Dodge")
+table.insert(L.INPUT,  "Increases your dodge rating by (%d+)%.?")
+table.insert(L.OUTPUT, "+%d Dodge Rating")
+table.insert(L.ORDER,  "^[%+%-]%d+ Dodge Rating.*")
 
+table.insert(L.LABEL,  "Parry")
+table.insert(L.INPUT,  "Increases your parry rating by (%d+)%.?")
+table.insert(L.OUTPUT, "+%d Parry Rating")
+table.insert(L.ORDER,  "^[%+%-]%d+ Parry Rating.*")
 
+table.insert(L.LABEL,  "BlockRating")
+table.insert(L.INPUT,  "Increases your ?s?h?i?e?l?d? block rating by (%d+)%.?")
+table.insert(L.OUTPUT, "+%d Block Rating")
+table.insert(L.ORDER,  "^[%+%-]%d+ Block Rating.*")
 
-table.insert(L.LABEL,  "SpellHit")
-table.insert(L.INPUT,  "I[mn][pc]r[oe][va]s?es ?y?o?u?r? spell hit rating by (%d+)%.?")
-table.insert(L.OUTPUT, "+%d Spell Hit Rating")
-table.insert(L.ORDER,  "^[%+%-]%d+ Spell Hit Rating.*")
+table.insert(L.LABEL,  "BlockValue")
+table.insert(L.INPUT,  "Increases the block value of your shield by (%d+)%.?")
+table.insert(L.OUTPUT, "+%d Block Value")
+table.insert(L.ORDER,  "^[%+%-]%d+ Block Value.*")
 
-table.insert(L.LABEL,  "SpellHitWithSpell")
-table.insert(L.INPUT,  "Reduces the chance your (%D-) [as]?[bp]?[ie]?l?[il]?t?[yi]?e?s? will be resisted by ?(%d+%%)%.?")
-table.insert(L.OUTPUT, function(spell, amount) return ("+%s Spell Hit Rating with %s"):format(amount:gsub("%%", "%%%%"), spell) end)
-table.insert(L.ORDER,  "^[%+%-]%d+ Spell Hit Rating with .*")
+table.insert(L.LABEL,  "ReflectDamage")
+table.insert(L.INPUT,  "When struck in combat inflicts (%d+) (.+) damage to the attacker%.?")
+table.insert(L.OUTPUT, "Reflect %d %s damage to melee attackers")
+table.insert(L.ORDER,  "^Reflect [%+%-]%d+ .+ damage to melee attackers.*")
 
-table.insert(L.LABEL,  "SpellCrit")
-table.insert(L.INPUT,  "I[mn][pc]r[oe][va]s?es ?y?o?u?r? spell critical strike rating by (%d+)%.?")
-table.insert(L.OUTPUT, "+%d Spell Crit Rating")
-table.insert(L.ORDER,  "^[%+%-]%d+ Spell Crit Rating.*")
-
-table.insert(L.LABEL,  "SpellCritWithSpell")
-table.insert(L.INPUT,  "Increases the critical [hs][it][tr]i?k?e? chance of ?y?o?u?r? (%D-) [as]?[bp]?[ie]?l?[il]?t?[yi]?e?s? ?b?y? ?(%d+%%)%.?")
-table.insert(L.OUTPUT, function(spell, amount) return ("+%s Spell Crit Rating with %s"):format(amount:gsub("%%", "%%%%"), spell) end)
-table.insert(L.ORDER,  "^[%+%-]%d+ Spell Crit Rating with .*")
-
-table.insert(L.LABEL,  "SpellHaste")
-table.insert(L.INPUT,  "I[mn][pc]r[oe][va]s?es ?y?o?u?r? spell haste rating by (%d+)%.?")
-table.insert(L.OUTPUT, "+%d Spell Haste Rating")
-table.insert(L.ORDER,  "^[%+%-]%d+ Spell Haste Rating.*")
-
-table.insert(L.LABEL,  "SpellPenetration")
-table.insert(L.INPUT,  "I[mn][pc]r[oe][va]s?es ?y?o?u?r? spell penetration by (%d+)%.?")
-table.insert(L.OUTPUT, "+%d Spell Pen")
-table.insert(L.ORDER,  "^[%+%-]%d+ Spell Pen.*")
+table.insert(L.LABEL,  "ResistAll")
+table.insert(L.INPUT,  "Increases resistances to all schools of magic by (%d+)")
+table.insert(L.OUTPUT, "+%d All Resistances")
+table.insert(L.ORDER,  "^[%+%-]%d+ All Resistances.*")
 
 
 
@@ -182,50 +175,55 @@ table.insert(L.LABEL,  "ExtraMeleeSchoolDamage")
 table.insert(L.INPUT,  "Adds (%d+) (.+) damage to your melee attacks%.?")
 table.insert(L.OUTPUT, "+%d melee %s damage")
 table.insert(L.ORDER,  "^[%+%-]%d+ melee .+ damage.*")
+table.insert(L.ORDER,  "^[%+%-]%d+ Hp%d.*")
 
 
 
-table.insert(L.LABEL,  "Defense")
-table.insert(L.INPUT,  "Increases defense rating by (%d+)%.?")
-table.insert(L.OUTPUT, "+%d Defense Rating")
-table.insert(L.ORDER,  "^[%+%-]%d+ Defense Rating.*")
+table.insert(L.LABEL,  "SpellHit")
+table.insert(L.INPUT,  "I[mn][pc]r[oe][va]s?es ?y?o?u?r? spell hit rating by (%d+)%.?")
+table.insert(L.OUTPUT, "+%d Spell Hit Rating")
+table.insert(L.ORDER,  "^[%+%-]%d+ Spell Hit Rating.*")
 
-table.insert(L.LABEL,  "Resilience")
-table.insert(L.INPUT,  "Improves your resilience rating by (%d+)%.?")
-table.insert(L.OUTPUT, "+%d Resilience Rating")
-table.insert(L.ORDER,  "^[%+%-]%d+ Resilience Rating.*")
+table.insert(L.LABEL,  "SpellHitWithSpell")
+table.insert(L.INPUT,  "Reduces the chance your (%D-) [as]?[bp]?[ie]?l?[il]?t?[yi]?e?s? will be resisted by ?(%d+%%)%.?")
+table.insert(L.OUTPUT, function(spell, amount) return ("+%s Spell Hit Rating with %s"):format(amount:gsub("%%", "%%%%"), spell) end)
+table.insert(L.ORDER,  "^[%+%-]%d+ Spell Hit Rating with .*")
 
-table.insert(L.LABEL,  "Dodge")
-table.insert(L.INPUT,  "Increases your dodge rating by (%d+)%.?")
-table.insert(L.OUTPUT, "+%d Dodge Rating")
-table.insert(L.ORDER,  "^[%+%-]%d+ Dodge Rating.*")
+table.insert(L.LABEL,  "SpellCrit")
+table.insert(L.INPUT,  "I[mn][pc]r[oe][va]s?es ?y?o?u?r? spell critical strike rating by (%d+)%.?")
+table.insert(L.OUTPUT, "+%d Spell Crit Rating")
+table.insert(L.ORDER,  "^[%+%-]%d+ Spell Crit Rating.*")
 
-table.insert(L.LABEL,  "Parry")
-table.insert(L.INPUT,  "Increases your parry rating by (%d+)%.?")
-table.insert(L.OUTPUT, "+%d Parry Rating")
-table.insert(L.ORDER,  "^[%+%-]%d+ Parry Rating.*")
+table.insert(L.LABEL,  "SpellCritWithSpell")
+table.insert(L.INPUT,  "Increases the critical [hs][it][tr]i?k?e? chance of ?y?o?u?r? (%D-) [as]?[bp]?[ie]?l?[il]?t?[yi]?e?s? ?b?y? ?(%d+%%)%.?")
+table.insert(L.OUTPUT, function(spell, amount) return ("+%s Spell Crit Rating with %s"):format(amount:gsub("%%", "%%%%"), spell) end)
+table.insert(L.ORDER,  "^[%+%-]%d+ Spell Crit Rating with .*")
 
-table.insert(L.LABEL,  "BlockRating")
-table.insert(L.INPUT,  "Increases your ?s?h?i?e?l?d? block rating by (%d+)%.?")
-table.insert(L.OUTPUT, "+%d Block Rating")
-table.insert(L.ORDER,  "^[%+%-]%d+ Block Rating.*")
+table.insert(L.LABEL,  "SpellHaste")
+table.insert(L.INPUT,  "I[mn][pc]r[oe][va]s?es ?y?o?u?r? spell haste rating by (%d+)%.?")
+table.insert(L.OUTPUT, "+%d Spell Haste Rating")
+table.insert(L.ORDER,  "^[%+%-]%d+ Spell Haste Rating.*")
 
-table.insert(L.LABEL,  "BlockValue")
-table.insert(L.INPUT,  "Increases the block value of your shield by (%d+)%.?")
-table.insert(L.OUTPUT, "+%d Block Value")
-table.insert(L.ORDER,  "^[%+%-]%d+ Block Value.*")
-
-table.insert(L.LABEL,  "ReflectDamage")
-table.insert(L.INPUT,  "When struck in combat inflicts (%d+) (.+) damage to the attacker%.?")
-table.insert(L.OUTPUT, "Reflect %d %s damage to melee attackers")
-table.insert(L.ORDER,  "^Reflect [%+%-]%d+ .+ damage to melee attackers.*")
-
-table.insert(L.LABEL,  "ResistAll")
-table.insert(L.INPUT,  "Increases resistances to all schools of magic by (%d+)")
-table.insert(L.OUTPUT, "+%d All Resistances")
-table.insert(L.ORDER,  "^[%+%-]%d+ All Resistances.*")
+table.insert(L.LABEL,  "SpellPenetration")
+table.insert(L.INPUT,  "I[mn][pc]r[oe][va]s?es ?y?o?u?r? spell penetration by (%d+)%.?")
+table.insert(L.OUTPUT, "+%d Spell Pen")
+table.insert(L.ORDER,  "^[%+%-]%d+ Spell Pen.*")
 
 
+
+table.insert(L.LABEL,  "ManaRegen")
+table.insert(L.INPUT,  "Allows? (%d+)%% of your Mana regeneration to continue while casting")
+table.insert(L.OUTPUT, "+%d%%%% of Mana Regen continues while casting")
+table.insert(L.ORDER,  "^[%+%-]%d+ of Mana Regen continues while casting.*")
+
+table.insert(L.LABEL,  "ManaRestore")
+table.insert(L.INPUT,  "Restores (%d+) mana per (%d+) sec%.?")
+table.insert(L.OUTPUT, function(amount, period) return ("+%d Mp%d%s"):format(amount, period, tonumber(period) > 1 and ("  (+%s MpS)"):format(Shared.Round(tonumber(amount)/tonumber(period), 1)) or "") end)
+table.insert(L.ORDER,  "^[%+%-]%d+ Mp%d.*")
+
+table.insert(L.LABEL,  "HealthRestore")
+table.insert(L.INPUT,  "Restores (%d+) health per (%d+) sec%.?")
+table.insert(L.OUTPUT, function(amount, period) return ("+%d Hp%d%s"):format(amount, period, tonumber(period) > 1 and ("  (+%s HpS)"):format(Shared.Round(tonumber(amount)/tonumber(period), 1)) or "") end)
 
 
 
@@ -272,6 +270,8 @@ table.insert(L.LABEL,  "IncreaseHealing")
 table.insert(L.INPUT,  "Increases ?t?h?e? [ha][em][ao][lu][in][nt]g? [dch]?[oae]?[nua]?[esl]?e?d? ?[bof][yfr]o?m? ?y?o?u?r? (%D-) [as]?[bp]?[ie]?l?[il]?t?[yi]?e?s? ?by ?u?p? ?t?o? ([%d%.]*%d+%%?)")
 table.insert(L.OUTPUT, function(spell, amount) return ("+%s %s healing"):format(amount:gsub("%%", "%%%%"), TrimSpell(spell)) end)
 table.insert(L.ORDER,  "^[%+%-]%S* .* healing.*")
+
+
 
 table.insert(L.LABEL,  "IncreaseThreat")
 table.insert(L.INPUT,  "Increases ?t?h?e? threat generated by (.*) by ([%d%.]*%d+%%?)")
