@@ -55,7 +55,7 @@ table.insert(L.OUTPUT, function(targets, amount) return ("+%d Spell Damage%s"):f
 table.insert(L.ORDER,  "^[%+%-]%d+ Spell Damage.*")
 
 table.insert(L.LABEL,  "SpellSchoolPower1")
-table.insert(L.INPUT,  "Increases damage done by (.+) spells and effects by up to (%d+)%.?")
+table.insert(L.INPUT,  "Increases ?t?h?e? damage done by (.+) spells and effects by up to (%d+)%.?")
 table.insert(L.OUTPUT, function(school, amount) return ("+%d %s Spell Damage"):format(amount, school) end)
 table.insert(L.ORDER,  "^[%+%-]%d+ Arcane Spell Damage.*")
 table.insert(L.ORDER,  "^[%+%-]%d+ Fire Spell Damage.*")
@@ -66,7 +66,7 @@ table.insert(L.ORDER,  "^[%+%-]%d+ Holy Spell Damage.*")
 table.insert(L.ORDER,  "^[%+%-]%d+ %S+ Spell Damage.*")
 
 table.insert(L.LABEL,  "SpellSchoolPower2")
-table.insert(L.INPUT,  "Increases (.+) spell damage by (%d+%%?)%.?")
+table.insert(L.INPUT,  "Increases ([^%D]+) spell damage by (%d+%%?)%.?")
 table.insert(L.OUTPUT, function(school, amount) return ("+%d %s Spell Damage"):format(amount:gsub("%%", "%%%%"), school) end)
 
 table.insert(L.LABEL,  "Healing1")
