@@ -5,6 +5,9 @@ local ADDON_NAME, Shared = ...
 ZeraTooltip = LibStub("AceAddon-3.0"):NewAddon(ADDON_NAME)
 local L     = LibStub("AceLocale-3.0"):GetLocale("ZeraTooltip")
 
+local AceConfig       = LibStub"AceConfig-3.0"
+local AceConfigDialog = LibStub"AceConfigDialog-3.0"
+
 
 ZeraTooltip.ENABLED           = true
 
@@ -24,6 +27,8 @@ ZeraTooltip.DEBUG             = true
 ZeraTooltip.SHOW_LABELS       = true
 ZeraTooltip.SHIFT_SUPPRESSION = true
 --@end-debug@
+
+
 
 
 
@@ -156,8 +161,12 @@ local function OnTooltipSetHyperlink(tooltip)
   if not link then return end
   
   ZeraTooltip:SimplifyLines(tooltip)
-  ZeraTooltip:ReorderLines(tooltip)
-  ZeraTooltip:RecolorLines(tooltip)
+  if ZeraTooltipData.OPTIONS.REORDER then
+    ZeraTooltip:ReorderLines(tooltip)
+  end
+  if ZeraTooltipData.OPTIONS.RECOLOR then
+    ZeraTooltip:RecolorLines(tooltip)
+  end
 end
 
 
@@ -174,11 +183,55 @@ end
 
 
 
-function ZeraTooltip:OnInitialize()
+
+
+
+function ZeraTooltip:CreateOptions()
+  local addonOptions = {
+    type = "group",
+    args = {
+      reorder = {
+        name = "Reorder stats",
+        desc = "",
+        type = "toggle",
+        set = function(info, val)        ZeraTooltipData.OPTIONS.REORDER = val end,
+        get = function(info)      return ZeraTooltipData.OPTIONS.REORDER       end,
+      },
+      recolor = {
+        name = "Recolor stats",
+        desc = "",
+        type = "toggle",
+        set = function(info, val)        ZeraTooltipData.OPTIONS.RECOLOR = val end,
+        get = function(info)      return ZeraTooltipData.OPTIONS.RECOLOR       end,
+      },
+    }
+  }
   
+  AceConfig:RegisterOptionsTable("ZeraTooltip", addonOptions)
+  AceConfigDialog:AddToBlizOptions("ZeraTooltip")
+end
+
+
+
+
+
+
+
+
+function ZeraTooltip:OnInitialize()
+  if not ZeraTooltipData then
+    ZeraTooltipData = {}
+    if not ZeraTooltipData.OPTIONS then
+      ZeraTooltipData.OPTIONS = {}
+      
+      ZeraTooltipData.OPTIONS.REORDER = true
+      ZeraTooltipData.OPTIONS.RECOLOR = true
+    end
+  end
 end
 
 function ZeraTooltip:OnEnable()
+  self:CreateOptions()
   self:CreateHooks()
 end
 

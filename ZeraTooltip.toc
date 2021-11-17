@@ -5,6 +5,8 @@
 ## Title: ZeraTooltip
 ## Notes: Reorders stats on item tooltips and makes them easier to read.
 
+## SavedVariables: ZeraTooltipData
+
 ## OptionalDeps: Ace3
 ## X-Embeds: Ace3
 
