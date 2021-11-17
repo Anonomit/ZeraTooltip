@@ -12,6 +12,8 @@ ZeraTooltip.DEBUG             = false
 ZeraTooltip.SHOW_LABELS       = false
 ZeraTooltip.SHIFT_SUPPRESSION = false
 
+ZeraTooltip.GRAY = {0.5, 0.5, 0.5, 1}
+
 
 -- Curseforge automatic packaging will comment this out
 -- https://support.curseforge.com/en/support/solutions/articles/9000197281-automatic-packaging
@@ -19,7 +21,7 @@ ZeraTooltip.SHIFT_SUPPRESSION = false
 ZeraTooltip.ENABLED           = true
 
 ZeraTooltip.DEBUG             = true
-ZeraTooltip.SHOW_LABELS       = false
+ZeraTooltip.SHOW_LABELS       = true
 ZeraTooltip.SHIFT_SUPPRESSION = true
 --@end-debug@
 
@@ -40,10 +42,20 @@ function ZeraTooltip:IsSameColor(color1, color2)
   return true
 end
 
+function ZeraTooltip:IsSameColorFuzzy(color1, color2, fuzziness)
+  fuzziness = fuzziness or 0.05
+  for k, v in pairs(color1) do
+    if math.abs(color2[k] - v) > fuzziness then
+      return false
+    end
+  end
+  return true
+end
+
 
 
 function ZeraTooltip:TrimLine(text)
-  return text:gsub(L["TrimEquip"], "")
+  return text:gsub(L["Equip"], "")
 end
 
 function ZeraTooltip:SimplifyLine(text)
@@ -89,8 +101,8 @@ function ZeraTooltip:ReorderLines(tooltip)
       local color = {r=r, g=g, b=b, a=a}
       
       for j, pattern in ipairs(L.ORDER) do
-        if text:match(pattern) then
-          if #groups == 0 or not ZeraTooltip:IsSameColor(groups[#groups].color, color) or groups[#groups].line + #groups[#groups] ~= i then
+        if text:match("^" .. pattern) then
+          if #groups == 0 or not self:IsSameColor(groups[#groups].color, color) or groups[#groups].line + #groups[#groups] ~= i then
             table.insert(groups, {color = color, line = i})
           end
           table.insert(groups[#groups], {order = j, text = text})
@@ -112,6 +124,32 @@ function ZeraTooltip:ReorderLines(tooltip)
 end
 
 
+function ZeraTooltip:RecolorLines(tooltip)
+  if not ZeraTooltip.ENABLED or ZeraTooltip.SHIFT_SUPPRESSION and IsShiftKeyDown() then return end
+  local leftText = tooltip:GetName() .. "TextLeft"
+  
+  for i = 2, tooltip:NumLines() do
+    local fontString = _G[leftText .. i]
+    local text = fontString:GetText()
+    if text then
+      local r, g, b, a = fontString:GetTextColor()
+      local color = {r, g, b}
+      
+      for j, pattern in ipairs(L.ORDER) do
+        if text:match(pattern) and (not text:find(L["ConjunctiveWord"]) or pattern:find(L["ConjunctiveWord"])) then
+          if #L.COLOR[j] >= 3 then
+            if not self:IsSameColorFuzzy(color, ZeraTooltip.GRAY) and not text:match(L["SocketBonus"]) then
+              fontString:SetTextColor(L.COLOR[j][1]/255, L.COLOR[j][2]/255, L.COLOR[j][3]/255, 1)
+            end
+          end
+          break
+        end
+      end
+    end
+  end
+end
+
+
 
 local function OnTooltipSetHyperlink(tooltip)
   local name, link = tooltip:GetItem()
@@ -119,6 +157,7 @@ local function OnTooltipSetHyperlink(tooltip)
   
   ZeraTooltip:SimplifyLines(tooltip)
   ZeraTooltip:ReorderLines(tooltip)
+  ZeraTooltip:RecolorLines(tooltip)
 end
 
 
