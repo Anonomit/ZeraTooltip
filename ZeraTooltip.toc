@@ -1,5 +1,5 @@
 ## Interface: 20502
-## Version: 2021-11-17-beta1
+## Version: 2021-11-17-beta2
 ## Author: Anonomit
 
 ## Title: ZeraTooltip
