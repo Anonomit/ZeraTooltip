@@ -219,11 +219,11 @@ L[#L+1] = {LABEL = "Resilience",
   MAP = {
     {
       INPUT = "Improves your resilience rating by (%d+)%.?",
-      OUTPUT = "+%d Resilience Rating",
+      OUTPUT = "+%d Resilience",
     },
   },
   CAPTURES = {
-    "[%+%-]%d+ Resilience Rating.*",
+    "[%+%-]%d+ Resilience.*",
   },
   COLOR = L.COLORS.DEFENSIVE,
 }
@@ -750,15 +750,6 @@ L[#L+1] = {LABEL = "Increase Attack Power Granted",
   },
   COLOR = nil
 }
-
-
-
-
-
-
-
--- table.insert(L.ORDER,  "[%+%-]%d+ ___________$")
-
 
 
 
