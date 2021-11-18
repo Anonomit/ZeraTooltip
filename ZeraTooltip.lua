@@ -15,6 +15,7 @@ ZeraTooltip.DEBUG             = false
 ZeraTooltip.SHOW_LABELS       = false
 ZeraTooltip.SHIFT_SUPPRESSION = false
 
+ZeraTooltip.COLOR_CODE = "|c%x%x%x%x%x%x%x%x"
 ZeraTooltip.GRAY = {0.5, 0.5, 0.5, 1}
 
 
@@ -168,6 +169,10 @@ function ZeraTooltip:RecolorLines(tooltip, simplified)
             if data.COLOR then
               if not self:IsSameColorFuzzy(color, ZeraTooltip.GRAY) and not text:match(L["SocketBonus"]) then
                 fontString:SetTextColor(data.COLOR[1]/255, data.COLOR[2]/255, data.COLOR[3]/255, 1)
+                if text:find(ZeraTooltip.COLOR_CODE) then
+                  local newText = text:gsub(ZeraTooltip.COLOR_CODE, "")
+                  fontString:SetText(newText)
+                end
               end
             end
             break

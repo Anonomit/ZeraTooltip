@@ -44,7 +44,7 @@ L.COLORS.MANA        = {127, 255, 228}
 
 
 L.COLORS.ELEMENTS = {}
-L.COLORS.ELEMENTS["Arcane"] = {247, 235, 255}
+L.COLORS.ELEMENTS["Arcane"] = {235, 204, 255}
 L.COLORS.ELEMENTS["Fire"]   = {255, 135, 79}
 L.COLORS.ELEMENTS["Nature"] = {0, 212, 0}
 L.COLORS.ELEMENTS["Frost"]  = {115, 243, 255}
@@ -162,6 +162,12 @@ L[#L+1] = {LABEL = "School Spell Power",
 }
 for element, color in pairs(L.COLORS.ELEMENTS) do
   L[#L+1] = {LABEL = element .. " Spell Damage",
+    MAP = {
+      {
+        INPUT = "([%+%-])(%d+) " .. element .. " Damage",
+        OUTPUT = "%s%d " .. element .. " Spell Damage",
+      },
+    },
     CAPTURES = {
       "[%+%-]%d+ " .. element .. " Spell Damage.*",
     },
