@@ -24,8 +24,8 @@ ZeraTooltip.GRAY = {0.5, 0.5, 0.5, 1}
 ZeraTooltip.ENABLED           = true
 
 ZeraTooltip.DEBUG             = true
-ZeraTooltip.SHOW_LABELS       = true
-ZeraTooltip.SHIFT_SUPPRESSION = true
+ZeraTooltip.SHOW_LABELS       = false
+ZeraTooltip.SHIFT_SUPPRESSION = false
 --@end-debug@
 
 
@@ -64,12 +64,14 @@ function ZeraTooltip:TrimLine(text)
 end
 
 function ZeraTooltip:SimplifyLine(text)
-  for i, label in ipairs(L.LABEL) do
-    local input, output = L.INPUT[i], L.OUTPUT[i]
-    local matches = {text:match(input)}
-    if #matches > 0 then
-      local pattern = type(output) == "function" and output(unpack(matches)) or output:format(unpack(matches))
-      return self:TrimLine(text:gsub(input, pattern)) .. (ZeraTooltip.SHOW_LABELS and ("  [%s]"):format(label) or "")
+  for i, data in ipairs(L) do
+    for j, map in ipairs(data.MAP or {}) do
+      local input, output = map.INPUT, map.OUTPUT
+      local matches = {text:match(input)}
+      if #matches > 0 then
+        local pattern = type(output) == "function" and output(unpack(matches)) or output:format(unpack(matches))
+        return self:TrimLine(text:gsub(input, pattern)) .. (ZeraTooltip.SHOW_LABELS and ("  [%s]"):format(data.LABEL) or "")
+      end
     end
   end
 end
@@ -93,7 +95,7 @@ function ZeraTooltip:SimplifyLines(tooltip)
 end
 
 
-function ZeraTooltip:ReorderLines(tooltip)
+function ZeraTooltip:ReorderLines(tooltip, simplified)
   if not ZeraTooltip.ENABLED or ZeraTooltip.SHIFT_SUPPRESSION and IsShiftKeyDown() then return end
   local leftText = tooltip:GetName() .. "TextLeft"
   
@@ -105,13 +107,24 @@ function ZeraTooltip:ReorderLines(tooltip)
       local r, g, b, a = fontString:GetTextColor()
       local color = {r=r, g=g, b=b, a=a}
       
-      for j, pattern in ipairs(L.ORDER) do
-        if text:match("^" .. pattern) then
-          if #groups == 0 or not self:IsSameColor(groups[#groups].color, color) or groups[#groups].line + #groups[#groups] ~= i then
-            table.insert(groups, {color = color, line = i})
+      for j, data in ipairs(L) do
+        local captures = {}
+        for i, capture in ipairs(data.CAPTURES or {}) do
+          table.insert(captures, "^" .. capture)
+        end
+        if not simplified then
+          for i, map in ipairs(data.MAP or {}) do
+            table.insert(captures, map.INPUT)
           end
-          table.insert(groups[#groups], {order = j, text = text})
-          break
+        end
+        for k, pattern in ipairs(captures) do
+          if text:match(pattern) then
+            if #groups == 0 or not self:IsSameColor(groups[#groups].color, color) or groups[#groups].line + #groups[#groups] ~= i then
+              table.insert(groups, {color = color, line = i})
+            end
+            table.insert(groups[#groups], {order = j, text = text})
+            break
+          end
         end
       end
     end
@@ -129,7 +142,7 @@ function ZeraTooltip:ReorderLines(tooltip)
 end
 
 
-function ZeraTooltip:RecolorLines(tooltip)
+function ZeraTooltip:RecolorLines(tooltip, simplified)
   if not ZeraTooltip.ENABLED or ZeraTooltip.SHIFT_SUPPRESSION and IsShiftKeyDown() then return end
   local leftText = tooltip:GetName() .. "TextLeft"
   
@@ -140,14 +153,25 @@ function ZeraTooltip:RecolorLines(tooltip)
       local r, g, b, a = fontString:GetTextColor()
       local color = {r, g, b}
       
-      for j, pattern in ipairs(L.ORDER) do
-        if text:match(pattern) and (not text:find(L["ConjunctiveWord"]) or pattern:find(L["ConjunctiveWord"])) then
-          if #L.COLOR[j] >= 3 then
-            if not self:IsSameColorFuzzy(color, ZeraTooltip.GRAY) and not text:match(L["SocketBonus"]) then
-              fontString:SetTextColor(L.COLOR[j][1]/255, L.COLOR[j][2]/255, L.COLOR[j][3]/255, 1)
-            end
+      for j, data in ipairs(L) do
+        local captures = {}
+        for i, capture in ipairs(data.CAPTURES or {}) do
+          table.insert(captures, capture)
+        end
+        if not simplified then
+          for i, map in ipairs(data.MAP or {}) do
+            table.insert(captures, map.INPUT)
           end
-          break
+        end
+        for k, pattern in ipairs(captures) do
+          if text:match(pattern) and (not text:find(L["ConjunctiveWord"]) or pattern:find(L["ConjunctiveWord"])) then
+            if data.COLOR then
+              if not self:IsSameColorFuzzy(color, ZeraTooltip.GRAY) and not text:match(L["SocketBonus"]) then
+                fontString:SetTextColor(data.COLOR[1]/255, data.COLOR[2]/255, data.COLOR[3]/255, 1)
+              end
+            end
+            break
+          end
         end
       end
     end
@@ -160,12 +184,14 @@ local function OnTooltipSetHyperlink(tooltip)
   local name, link = tooltip:GetItem()
   if not link then return end
   
-  ZeraTooltip:SimplifyLines(tooltip)
+  if ZeraTooltipData.OPTIONS.SIMPLIFY then
+    ZeraTooltip:SimplifyLines(tooltip)
+  end
   if ZeraTooltipData.OPTIONS.REORDER then
-    ZeraTooltip:ReorderLines(tooltip)
+    ZeraTooltip:ReorderLines(tooltip, ZeraTooltipData.OPTIONS.SIMPLIFY)
   end
   if ZeraTooltipData.OPTIONS.RECOLOR then
-    ZeraTooltip:RecolorLines(tooltip)
+    ZeraTooltip:RecolorLines(tooltip, ZeraTooltipData.OPTIONS.SIMPLIFY)
   end
 end
 
@@ -190,6 +216,13 @@ function ZeraTooltip:CreateOptions()
   local addonOptions = {
     type = "group",
     args = {
+      simplify = {
+        name = "Simplify stats",
+        desc = "",
+        type = "toggle",
+        set = function(info, val)        ZeraTooltipData.OPTIONS.SIMPLIFY = val end,
+        get = function(info)      return ZeraTooltipData.OPTIONS.SIMPLIFY       end,
+      },
       reorder = {
         name = "Reorder stats",
         desc = "",
@@ -224,8 +257,9 @@ function ZeraTooltip:OnInitialize()
     if not ZeraTooltipData.OPTIONS then
       ZeraTooltipData.OPTIONS = {}
       
-      ZeraTooltipData.OPTIONS.REORDER = true
-      ZeraTooltipData.OPTIONS.RECOLOR = true
+      ZeraTooltipData.OPTIONS.SIMPLIFY = true
+      ZeraTooltipData.OPTIONS.REORDER  = true
+      ZeraTooltipData.OPTIONS.RECOLOR  = true
     end
   end
 end
