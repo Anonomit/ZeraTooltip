@@ -1,9 +1,9 @@
 ## Interface: 20502
-## Version: 2021-11-18-beta1
+## Version: 2021-12-09
 ## Author: Anonomit
 
 ## Title: ZeraTooltip
-## Notes: Reorders stats on item tooltips and makes them easier to read.
+## Notes: Formats item tooltips: rewording, reordering, and recoloring.
 
 ## SavedVariables: ZeraTooltipDB
 
