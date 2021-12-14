@@ -383,26 +383,29 @@ function ZeraTooltip:OnTooltipSetHyperlink(tooltip)
   local enchanted = not not link:find"item:%d+:%d+"
   
   if self.db.profile.SIMPLIFY then
-    ZeraTooltip:SimplifyLines(tooltip)
+    self:SimplifyLines(tooltip)
   end
   if self.db.profile.REORDER then
-    ZeraTooltip:ReorderLines(tooltip, self.db.profile.SIMPLIFY, enchanted)
+    self:ReorderLines(tooltip, self.db.profile.SIMPLIFY, enchanted)
   end
   if self.db.profile.RECOLOR then
-    ZeraTooltip:RecolorLines(tooltip, self.db.profile.SIMPLIFY, enchanted)
+    self:RecolorLines(tooltip, self.db.profile.SIMPLIFY, enchanted)
   end
 end
 
 
+function ZeraTooltip:HookTooltip(tooltip)
+  tooltip:HookScript("OnTooltipSetItem", function(...) return self:OnTooltipSetHyperlink(...) end)
+end
+
 
 function ZeraTooltip:CreateHooks()
-  
-  GameTooltip             : HookScript("OnTooltipSetItem", function(...) return self:OnTooltipSetHyperlink(...) end)
-  ItemRefTooltip          : HookScript("OnTooltipSetItem", function(...) return self:OnTooltipSetHyperlink(...) end)
-  ItemRefShoppingTooltip1 : HookScript("OnTooltipSetItem", function(...) return self:OnTooltipSetHyperlink(...) end)
-  ItemRefShoppingTooltip2 : HookScript("OnTooltipSetItem", function(...) return self:OnTooltipSetHyperlink(...) end)
-  ShoppingTooltip1        : HookScript("OnTooltipSetItem", function(...) return self:OnTooltipSetHyperlink(...) end)
-  ShoppingTooltip2        : HookScript("OnTooltipSetItem", function(...) return self:OnTooltipSetHyperlink(...) end)
+  self:HookTooltip(GameTooltip)
+  self:HookTooltip(ItemRefTooltip)
+  self:HookTooltip(ItemRefShoppingTooltip1)
+  self:HookTooltip(ItemRefShoppingTooltip2)
+  self:HookTooltip(ShoppingTooltip1)
+  self:HookTooltip(ShoppingTooltip2)
 end
 
 
