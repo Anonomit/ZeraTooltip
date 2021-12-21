@@ -29,6 +29,15 @@ ZeraTooltip.SHIFT_SUPPRESSION = true
 
 
 
+-- Fastest weapon speed
+ZeraTooltip.WEAPON_SPEED_MIN = 1.2
+
+-- Slowest weapon speed
+ZeraTooltip.WEAPON_SPEED_MAX = 4.0
+
+
+
+ZeraTooltip.WEAPON_SPEED_DIF = ZeraTooltip.WEAPON_SPEED_MAX - ZeraTooltip.WEAPON_SPEED_MIN
 ZeraTooltip.COLOR_CODE = "|c%x%x%x%x%x%x%x%x"
 ZeraTooltip.GRAY  = {0.5, 0.5, 0.5, 1}
 ZeraTooltip.GREEN = {0, 1, 0, 1}
@@ -103,6 +112,14 @@ local OPTION_DEFAULTS = {
     SIMPLIFY = true,
     REORDER  = true,
     RECOLOR  = true,
+    
+    SHOW_SPEEDBAR = true,
+    
+    -- Bar width. Longer is more accurate but can cause a wider tooltip
+    SPEEDBAR_SIZE  = 10,
+    
+    -- Number of significant decimal places on weapon speeds
+    SPEED_ACCURACY = 1,
     
     COLORS = {
       ENCHANT       = ZeraTooltip.COLORS.GREEN,
@@ -256,6 +273,7 @@ end
 
 function ZeraTooltip:SimplifyLines(tooltip)
   if not ZeraTooltip.ENABLED or ZeraTooltip.SHIFT_SUPPRESSION and IsShiftKeyDown() then return end
+  
   local leftText = tooltip:GetName().."TextLeft"
   for i = 2, tooltip:NumLines() do
     local fontString = _G[leftText..i]
@@ -276,10 +294,9 @@ function ZeraTooltip:ReorderLines(tooltip, simplified, enchanted)
   if not ZeraTooltip.ENABLED or ZeraTooltip.SHIFT_SUPPRESSION and IsShiftKeyDown() then return end
   
   local enchantLineFound = not enchanted
+  local groups = { }
   
   local leftText = tooltip:GetName() .. "TextLeft"
-  
-  local groups = { }
   for i = 2, tooltip:NumLines() do
     local fontString = _G[leftText .. i]
     local text = fontString:GetText()
@@ -332,7 +349,6 @@ function ZeraTooltip:RecolorLines(tooltip, simplified, enchanted)
   local enchantLineFound = not enchanted
   
   local leftText = tooltip:GetName() .. "TextLeft"
-  
   for i = 2, tooltip:NumLines() do
     local fontString = _G[leftText .. i]
     local text = fontString:GetText()
@@ -374,6 +390,42 @@ function ZeraTooltip:RecolorLines(tooltip, simplified, enchanted)
   end
 end
 
+function ZeraTooltip:SimplifyLine(text)
+  for i, data in ipairs(L) do
+    for j, map in ipairs(data.MAP or {}) do
+      local input, output = map.INPUT, map.OUTPUT
+      local matches = {text:match(input)}
+      if #matches > 0 then
+        local pattern = type(output) == "function" and output(unpack(matches)) or output:format(unpack(matches))
+        return self:TrimLine(text:gsub(input, pattern)) .. (ZeraTooltip.SHOW_LABELS and ("  [%s]"):format(data.LABEL) or "")
+      end
+    end
+  end
+end
+
+
+function ZeraTooltip:RewriteSpeed(tooltip)
+  if not ZeraTooltip.ENABLED or ZeraTooltip.SHIFT_SUPPRESSION and IsShiftKeyDown() then return end
+  
+  local rightText = tooltip:GetName().."TextRight"
+  for i = 2, tooltip:NumLines() do
+    local fontString = _G[rightText..i]
+    local text = fontString:GetText()
+    if text then
+      if text:find(L["Speed"]) then
+        local word, s, cs = text:match(L["Speed"])
+        local speed = Shared.Round(s + cs/100, self.db.profile.SPEED_ACCURACY)
+        local I = math.max(0, math.min(Shared.Round((speed - ZeraTooltip.WEAPON_SPEED_MIN) / ZeraTooltip.WEAPON_SPEED_DIF * self.db.profile.SPEEDBAR_SIZE, 0), self.db.profile.SPEEDBAR_SIZE))
+        local bar = ""
+        if self.db.profile.SHOW_SPEEDBAR then
+          bar = ("  [%s%s]"):format(("I"):rep(I), (" "):rep(self.db.profile.SPEEDBAR_SIZE - I))
+        end
+        fontString:SetText(("%%s %%.%df%%s"):format(self.db.profile.SPEED_ACCURACY):format(word, speed, bar))
+      end
+    end
+  end
+end
+
 
 
 function ZeraTooltip:OnTooltipSetHyperlink(tooltip)
@@ -383,14 +435,15 @@ function ZeraTooltip:OnTooltipSetHyperlink(tooltip)
   local enchanted = not not link:find"item:%d+:%d+"
   
   if self.db.profile.SIMPLIFY then
-    self:SimplifyLines(tooltip)
+    ZeraTooltip:SimplifyLines(tooltip)
   end
   if self.db.profile.REORDER then
-    self:ReorderLines(tooltip, self.db.profile.SIMPLIFY, enchanted)
+    ZeraTooltip:ReorderLines(tooltip, self.db.profile.SIMPLIFY, enchanted)
   end
   if self.db.profile.RECOLOR then
-    self:RecolorLines(tooltip, self.db.profile.SIMPLIFY, enchanted)
+    ZeraTooltip:RecolorLines(tooltip, self.db.profile.SIMPLIFY, enchanted)
   end
+  self:RewriteSpeed(tooltip)
 end
 
 
@@ -482,6 +535,59 @@ function ZeraTooltip:CreateOptions()
     type = "toggle",
     set = function(info, val)        self.db.profile.RECOLOR = val end,
     get = function(info)      return self.db.profile.RECOLOR       end,
+  }
+  
+  addonOptions.args["divider" .. Order()] = {name  = "", order = Order(-1), type  = "description"}
+  
+  addonOptions.args["show_speedbar"] = {
+    name = L["Show Speedbar"],
+    desc = L["SHOW SPEEDBAR DESCRIPTION"],
+    order = Order(),
+    type = "toggle",
+    set = function(info, val)        self.db.profile.SHOW_SPEEDBAR = val end,
+    get = function(info)      return self.db.profile.SHOW_SPEEDBAR       end,
+  }
+  
+  addonOptions.args["divider" .. Order()] = {name  = "", order = Order(-1), type  = "description"}
+  
+  addonOptions.args["speedbar_size"] = {
+    name = L["Speedbar width"],
+    desc = L["SPEEDBAR SIZE DESCRIPTION"],
+    order = Order(),
+    type = "range",
+    min = 5,
+    max = 25,
+    step = 1,
+    set = function(info, val)        self.db.profile.SPEEDBAR_SIZE = val end,
+    get = function(info)      return self.db.profile.SPEEDBAR_SIZE       end,
+  }
+  
+  addonOptions.args["speedbar_size Reset"] = {
+    name = "Reset",
+    order = Order(),
+    type = "execute",
+    func = function() self.db.profile.SPEEDBAR_SIZE = OPTION_DEFAULTS.profile.SPEEDBAR_SIZE end,
+  }
+  
+  addonOptions.args["divider" .. Order()] = {name  = "", order = Order(-1), type  = "description"}
+  
+  addonOptions.args["speed_accuracy"] = {
+    name = L["Speed accuracy"],
+    desc = L["SPEED ACCURACY DESCRIPTION"],
+    order = Order(),
+    type = "range",
+    min = 1,
+    max = 5,
+    step = 1,
+    set = function(info, val)        self.db.profile.SPEED_ACCURACY = val end,
+    get = function(info)      return self.db.profile.SPEED_ACCURACY       end,
+  }
+  
+  addonOptions.args["speed_accuracy Reset"] = {
+    name = "Reset",
+    order = Order(),
+    type = "execute",
+    func = function() self.db.profile.SPEED_ACCURACY = OPTION_DEFAULTS.profile.SPEED_ACCURACY end,
   }
   
   

@@ -20,11 +20,21 @@ end
 L["Reword tooltips"]             = "Reword tooltips"
 L["REWORD TOOLTIPS DESCRIPTION"] = "Shortens some long lines of text on item tooltips. Does not remove any information."
 
-L["Reorder stats"]             = "Reorder stats"
-L["REORDER STATS DESCRIPTION"] = "Makes tooltips display stats in a consistent order. Always Stamina before Intellect, for example."
+L["Reorder stats"]               = "Reorder stats"
+L["REORDER STATS DESCRIPTION"]   = "Makes tooltips display stats in a consistent order. Always Stamina before Intellect, for example."
 
-L["Recolor lines"]             = "Recolor lines"
-L["RECOLOR LINES DESCRIPTION"] = "Adds coloring to some lines in tooltips."
+L["Recolor lines"]               = "Recolor lines"
+L["RECOLOR LINES DESCRIPTION"]   = "Adds coloring to some lines in tooltips."
+
+L["Show Speedbar"]               = "Show Speedbar"
+L["SHOW SPEEDBAR DESCRIPTION"]   =  "Displays a bar which visualizes weapon speed. The bar will be more filled for slower weapons."
+
+L["Speedbar width"]              = "Speedbar width"
+L["SPEEDBAR SIZE DESCRIPTION"]   =  "The maximum length of the speedbar (for a slow weapon). Higher values make the bar more accurate, but also make the tooltip wider."
+
+L["Speed accuracy"]              = "Speed accuracy"
+L["SPEED ACCURACY DESCRIPTION"]  = "The number of decimal places to appear in a weapon's speed. Default tooltips show two, but only one is ever needed."
+
 
 L["Reset"]           = "Reset"
 L["Color"]           = "Color"
@@ -99,6 +109,7 @@ L["SocketBonus"]     = "^%s*Socket Bonus:%s*"
 L["ConjunctiveWord"] = "%s+and%s+"
 
 
+L["Speed"] = "(Speed) (%d)%.(%d%d)"
 
 
 
