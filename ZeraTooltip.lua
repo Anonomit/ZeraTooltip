@@ -127,7 +127,7 @@ local OPTION_DEFAULTS = {
       
       ENCHANT       = ZeraTooltip.COLORS.GREEN,
       
-      ARMOR         = ZeraTooltip.COLORS.PALE_LIGHT_GREEN,
+      ARMOR         = ZeraTooltip.COLORS.YELLOW,
       
       STAMINA       = ZeraTooltip.COLORS.PALE_LIGHT_GREEN,
       STRENGTH      = ZeraTooltip.COLORS.TUMBLEWEED,
