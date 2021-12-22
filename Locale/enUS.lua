@@ -41,6 +41,8 @@ L["Color"]           = "Color"
 L["Colors"]          = "Colors"
 
 
+L["Speed"] = "Speed"
+
 L["Enchantment"] = "Enchantment"
 
 L["Armor"] = "Armor"
@@ -104,12 +106,12 @@ L["Mana"]    = "Mana"
 
 
 
-L["Equip"]           = "^%s*Equip:%s*"
-L["SocketBonus"]     = "^%s*Socket Bonus:%s*"
-L["ConjunctiveWord"] = "%s+and%s+"
+L["Equip Pattern"]           = "^%s*Equip:%s*"
+L["SocketBonus Pattern"]     = "^%s*Socket Bonus:%s*"
+L["ConjunctiveWord Pattern"] = "%s+and%s+"
 
 
-L["Speed"] = "(Speed) (%d)%.(%d%d)"
+L["Speed Pattern"] = "(Speed) (%d)%.(%d*)"
 
 
 

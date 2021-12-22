@@ -36,23 +36,24 @@ ZeraTooltip.WEAPON_SPEED_MIN = 1.2
 ZeraTooltip.WEAPON_SPEED_MAX = 4.0
 
 
-
-ZeraTooltip.WEAPON_SPEED_DIF = ZeraTooltip.WEAPON_SPEED_MAX - ZeraTooltip.WEAPON_SPEED_MIN
-ZeraTooltip.COLOR_CODE = "|c%x%x%x%x%x%x%x%x"
-ZeraTooltip.GRAY  = {0.5, 0.5, 0.5, 1}
-ZeraTooltip.GREEN = {0, 1, 0, 1}
-
-
-
 local function rgb(r, g, b)
   return {r, g, b}
 end
+
+ZeraTooltip.WEAPON_SPEED_DIF = ZeraTooltip.WEAPON_SPEED_MAX - ZeraTooltip.WEAPON_SPEED_MIN
+ZeraTooltip.COLOR_CODE = "|c%x%x%x%x%x%x%x%x"
+ZeraTooltip.GRAY  = rgb(127, 127, 127)
+ZeraTooltip.GREEN = rgb(  0, 255,   0)
+
+
+
 
 
 
 
 ZeraTooltip.COLORS = {}
 
+ZeraTooltip.COLORS.WHITE = rgb(255, 255, 255)
 ZeraTooltip.COLORS.GREEN = rgb(  0, 255,   0)
 ZeraTooltip.COLORS.BLUE  = rgb(  0,   0, 255)
 
@@ -122,6 +123,8 @@ local OPTION_DEFAULTS = {
     SPEED_ACCURACY = 1,
     
     COLORS = {
+      SPEED         = ZeraTooltip.COLORS.WHITE,
+      
       ENCHANT       = ZeraTooltip.COLORS.GREEN,
       
       ARMOR         = ZeraTooltip.COLORS.PALE_LIGHT_GREEN,
@@ -174,6 +177,8 @@ local OPTION_DEFAULTS = {
     },
     
     RECOLOR_STAT = {
+      SPEED         = false,
+      
       ENCHANT       = false,
       
       ARMOR         = true,
@@ -242,7 +247,7 @@ function ZeraTooltip:IsSameColor(color1, color2)
 end
 
 function ZeraTooltip:IsSameColorFuzzy(color1, color2, fuzziness)
-  fuzziness = fuzziness or 0.05
+  fuzziness = fuzziness or 0.02 * 255
   for k, v in pairs(color1) do
     if math.abs(color2[k] - v) > fuzziness then
       return false
@@ -254,7 +259,7 @@ end
 
 
 function ZeraTooltip:TrimLine(text)
-  return text:gsub(L["Equip"], "")
+  return text:gsub(L["Equip Pattern"], "")
 end
 
 function ZeraTooltip:SimplifyLine(text)
@@ -302,7 +307,7 @@ function ZeraTooltip:ReorderLines(tooltip, simplified, enchanted)
     local text = fontString:GetText()
     if text then
       local r, g, b, a = fontString:GetTextColor()
-      local color = {r=r, g=g, b=b, a=a}
+      local color = {r*255, g*255, b*255}
       
       if self:IsSameColorFuzzy({r, g, b}, ZeraTooltip.GREEN) and not enchantLineFound then
         enchantLineFound = true
@@ -354,7 +359,7 @@ function ZeraTooltip:RecolorLines(tooltip, simplified, enchanted)
     local text = fontString:GetText()
     if text then
       local r, g, b, a = fontString:GetTextColor()
-      local color = {r, g, b}
+      local color = {r*255, g*255, b*255}
       
       if self:IsSameColorFuzzy(color, ZeraTooltip.GREEN) and not enchantLineFound then
         fontString:SetTextColor(self.db.profile.COLORS.ENCHANT[1]/255, self.db.profile.COLORS.ENCHANT[2]/255, self.db.profile.COLORS.ENCHANT[3]/255, 1)
@@ -371,9 +376,9 @@ function ZeraTooltip:RecolorLines(tooltip, simplified, enchanted)
             end
           end
           for k, pattern in ipairs(captures) do
-            if text:match(pattern) and (not text:find(L["ConjunctiveWord"]) or pattern:find(L["ConjunctiveWord"])) then
+            if text:match(pattern) and (not text:find(L["ConjunctiveWord Pattern"]) or pattern:find(L["ConjunctiveWord Pattern"])) then
               if data.COLOR then
-                if not self:IsSameColorFuzzy(color, ZeraTooltip.GRAY) and not text:match(L["SocketBonus"]) then
+                if not self:IsSameColorFuzzy(color, ZeraTooltip.GRAY) and not text:match(L["SocketBonus Pattern"]) then
                     fontString:SetTextColor(data.COLOR()[1]/255, data.COLOR()[2]/255, data.COLOR()[3]/255, 1)
                     if text:find(ZeraTooltip.COLOR_CODE) then
                       local newText = text:gsub(ZeraTooltip.COLOR_CODE, "")
@@ -412,15 +417,28 @@ function ZeraTooltip:RewriteSpeed(tooltip)
     local fontString = _G[rightText..i]
     local text = fontString:GetText()
     if text then
-      if text:find(L["Speed"]) then
-        local word, s, cs = text:match(L["Speed"])
-        local speed = Shared.Round(s + cs/100, self.db.profile.SPEED_ACCURACY)
-        local I = math.max(0, math.min(Shared.Round((speed - ZeraTooltip.WEAPON_SPEED_MIN) / ZeraTooltip.WEAPON_SPEED_DIF * self.db.profile.SPEEDBAR_SIZE, 0), self.db.profile.SPEEDBAR_SIZE))
+      if text:find(L["Speed Pattern"]) then
+        
+        -- This should match weapon speed values with any number of decimal places, though by default I think it's always two.
+        local word, s, decimals = text:match(L["Speed Pattern"])
+        local speed = s
+        local i = 0
+        for digit in tostring(decimals):gmatch"(%d)" do
+          i = i + 1
+          speed = speed + digit/(10^i)
+        end
+        
+        local fill = math.max(0, math.min(Shared.Round((speed - ZeraTooltip.WEAPON_SPEED_MIN) / ZeraTooltip.WEAPON_SPEED_DIF * self.db.profile.SPEEDBAR_SIZE, 0), self.db.profile.SPEEDBAR_SIZE))
         local bar = ""
         if self.db.profile.SHOW_SPEEDBAR then
-          bar = ("  [%s%s]"):format(("I"):rep(I), (" "):rep(self.db.profile.SPEEDBAR_SIZE - I))
+          bar = ("  [%s%s]"):format(("I"):rep(fill), (" "):rep(self.db.profile.SPEEDBAR_SIZE - fill))
         end
         fontString:SetText(("%%s %%.%df%%s"):format(self.db.profile.SPEED_ACCURACY):format(word, speed, bar))
+        
+        local color = Shared.GetColor"SPEED"
+        if self.db.profile.RECOLOR and color then
+          fontString:SetTextColor(color[1]/255, color[2]/255, color[3]/255)
+        end
       end
     end
   end
@@ -603,6 +621,12 @@ function ZeraTooltip:CreateOptions()
               end
             end,
   }
+  
+  addonOptions.args["divider" .. Order()] = {name  = "", order = Order(-1), type  = "description"}
+  addonOptions.args["divider" .. Order()] = {name  = "", order = Order(-1), type  = "description"}
+  addonOptions.args["divider" .. Order()] = {name  = "", order = Order(-1), type  = "description"}
+  
+  self:CreateColorOption(addonOptions.args, L["Speed"], "SPEED")
   
   addonOptions.args["divider" .. Order()] = {name  = "", order = Order(-1), type  = "description"}
   addonOptions.args["divider" .. Order()] = {name  = "", order = Order(-1), type  = "description"}
