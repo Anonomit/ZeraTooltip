@@ -16,6 +16,9 @@ local function TrimSpell(spell)
 end
 
 
+local ELEMENTS = {"Arcane", "Fire", "Nature", "Frost", "Shadow", "Holy"}
+
+
 
 L["Reword tooltips"]             = "Reword tooltips"
 L["REWORD TOOLTIPS DESCRIPTION"] = "Shortens some long lines of text on item tooltips. Does not remove any information."
@@ -119,51 +122,57 @@ L[#L+1] = {LABEL = "Armor",
   CAPTURES = {
     "%d+ Armor$",
   },
-  COLOR = function() return Shared.GetColor"ARMOR" end
+  COLOR = "ARMOR"
 }
 L[#L+1] = {LABEL = "Stamina",
   CAPTURES = {
     "[%+%-]%d+ Stamina$",
   },
-  COLOR = function() return Shared.GetColor"STAMINA" end
+  COLOR = "STAMINA"
 }
 L[#L+1] = {LABEL = "Strength",
   CAPTURES = {
     "[%+%-]%d+ Strength$",
   },
-  COLOR = function() return Shared.GetColor"STRENGTH" end
+  COLOR = "STRENGTH"
 }
 L[#L+1] = {LABEL = "Agility",
   CAPTURES = {
     "[%+%-]%d+ Agility$",
   },
-  COLOR = function() return Shared.GetColor"AGILITY" end
+  COLOR = "AGILITY"
 }
 L[#L+1] = {LABEL = "Intellect",
   CAPTURES = {
     "[%+%-]%d+ Intellect$",
   },
-  COLOR = function() return Shared.GetColor"INTELLECT" end
+  COLOR = "INTELLECT"
 }
 L[#L+1] = {LABEL = "Spirit",
   CAPTURES = {
     "[%+%-]%d+ Spirit$",
   },
-  COLOR = function() return Shared.GetColor"SPIRIT" end
+  COLOR = "SPIRIT"
 }
 
 L[#L+1] = {LABEL = "All Resist",
   CAPTURES = {
     "[%+%-]%d+ All Resistances$",
   },
-  COLOR = function() return Shared.GetColor"RESIST_ALL" end
+  COLOR = "RESIST_ALL"
 }
-for _, element in pairs(Shared.ELEMENTS) do
+for _, element in pairs(ELEMENTS) do
   L[#L+1] = {LABEL = element .. " Resist",
+  MAP = {
+    {
+      INPUT  = "^%+(%d+) " .. element .. " Resist$",
+      OUTPUT = "+%d " .. element .. " Resistance",
+    },
+   },
     CAPTURES = {
       "[%+%-]%d+ " .. element .. " Resist.*",
     },
-    COLOR = function() return Shared.GetColor(element:upper() .. "_RESIST") end
+    COLOR = element:upper() .. "_RESIST"
   }
 end
 
@@ -183,7 +192,7 @@ L[#L+1] = {LABEL = "Spell Power",
   CAPTURES = {
     "[%+%-]%d+ Spell Power.*",
   },
-  COLOR = function() return Shared.GetColor"MAGICAL" end
+  COLOR = "MAGICAL"
 }
 
 L[#L+1] = {LABEL = "Spell Damage",
@@ -197,7 +206,7 @@ L[#L+1] = {LABEL = "Spell Damage",
     "[%+%-]%d+ Spell Damage.*",
     "[%+%-]%d+ Spell Damage and Healing.*",
   },
-  COLOR = function() return Shared.GetColor"MAGICAL" end
+  COLOR = "MAGICAL"
 }
 
 L[#L+1] = {LABEL = "School Spell Power",
@@ -215,9 +224,9 @@ L[#L+1] = {LABEL = "School Spell Power",
     "[%+%-]%d+ Spell Damage.*",
     "[%+%-]%d+ Spell Damage and Healing.*",
   },
-  COLOR = function() return Shared.GetColor"MAGICAL" end
+  COLOR = "MAGICAL"
 }
-for _, element in pairs(Shared.ELEMENTS) do
+for _, element in pairs(ELEMENTS) do
   L[#L+1] = {LABEL = element .. " Spell Damage",
     MAP = {
       {
@@ -228,7 +237,7 @@ for _, element in pairs(Shared.ELEMENTS) do
     CAPTURES = {
       "[%+%-]%d+ " .. element .. " Spell Damage.*",
     },
-    COLOR = function() return Shared.GetColor(element:upper() .. "_DAMAGE") end
+    COLOR = element:upper() .. "_DAMAGE"
   }
 end
 
@@ -251,7 +260,7 @@ L[#L+1] = {LABEL = "Healing",
     "[%+%-]%d+ Healing and [%+%-]%d+ Spell Damage.*",
     "[%+%-]%d+ Healing [%+%-]%d+ Spell Damage.*",
   },
-  COLOR = function() return Shared.GetColor"HEALING" end
+  COLOR = "HEALING"
 }
 
 
@@ -269,7 +278,7 @@ L[#L+1] = {LABEL = "Defense",
   CAPTURES = {
     "[%+%-]%d+ Defense Rating.*",
   },
-  COLOR = function() return Shared.GetColor"ARMOR" end
+  COLOR = "ARMOR"
 }
 
 L[#L+1] = {LABEL = "Resilience",
@@ -278,11 +287,15 @@ L[#L+1] = {LABEL = "Resilience",
       INPUT = "Improves your resilience rating by (%d+)%.?",
       OUTPUT = "+%d Resilience",
     },
+    {
+      INPUT = "%+(%d+) Resilience Rating",
+      OUTPUT = "+%d Resilience",
+    },
   },
   CAPTURES = {
     "[%+%-]%d+ Resilience.*",
   },
-  COLOR = function() return Shared.GetColor"RESILIENCE" end,
+  COLOR = "RESILIENCE",
 }
 
 L[#L+1] = {LABEL = "Dodge",
@@ -295,7 +308,7 @@ L[#L+1] = {LABEL = "Dodge",
   CAPTURES = {
     "[%+%-]%d+ Dodge Rating.*",
   },
-  COLOR = function() return Shared.GetColor"DODGE" end
+  COLOR = "DODGE"
 }
 L[#L+1] = {LABEL = "Parry",
   MAP = {
@@ -307,7 +320,7 @@ L[#L+1] = {LABEL = "Parry",
   CAPTURES = {
     "[%+%-]%d+ Parry Rating.*",
   },
-  COLOR = function() return Shared.GetColor"PARRY" end
+  COLOR = "PARRY"
 }
 L[#L+1] = {LABEL = "Block Rating",
   MAP = {
@@ -319,7 +332,7 @@ L[#L+1] = {LABEL = "Block Rating",
   CAPTURES = {
     "[%+%-]%d+ Block Rating.*",
   },
-  COLOR = function() return Shared.GetColor"BLOCK_RATING" end
+  COLOR = "BLOCK_RATING"
 }
 L[#L+1] = {LABEL = "Block Value",
   MAP = {
@@ -331,9 +344,9 @@ L[#L+1] = {LABEL = "Block Value",
   CAPTURES = {
     "[%+%-]%d+ Block Value.*",
   },
-  COLOR = function() return Shared.GetColor"BLOCK_VALUE" end
+  COLOR = "BLOCK_VALUE"
 }
-for _, element in pairs(Shared.ELEMENTS) do
+for _, element in pairs(ELEMENTS) do
   L[#L+1] = {LABEL = element .. " Reflect Damage",
     MAP = {
       {
@@ -344,7 +357,7 @@ for _, element in pairs(Shared.ELEMENTS) do
     CAPTURES = {
       "[%+%-]%d+ " .. element .. " damage reflected to melee attackers.*",
     },
-    COLOR = function() return Shared.GetColor(element:upper() .. "_DAMAGE") end
+    COLOR = element:upper() .. "_DAMAGE"
   }
 end
 L[#L+1] = {LABEL = "Resist All",
@@ -357,7 +370,7 @@ L[#L+1] = {LABEL = "Resist All",
   CAPTURES = {
     "[%+%-]%d+ All Resistances.*",
   },
-  COLOR = function() return Shared.GetColor"RESIST_ALL" end
+  COLOR = "RESIST_ALL"
 }
 
 
@@ -376,7 +389,7 @@ L[#L+1] = {LABEL = "Attack Power In Form",
   CAPTURES = {
     "[%+%-]%d+ Attack Power while shapeshifted.*",
   },
-  COLOR = function() return Shared.GetColor"ATTACK_POW" end
+  COLOR = "ATTACK_POW"
 }
 L[#L+1] = {LABEL = "Attack Power",
   MAP = {
@@ -388,7 +401,7 @@ L[#L+1] = {LABEL = "Attack Power",
   CAPTURES = {
     "[%+%-]%d+ Attack Power.*",
   },
-  COLOR = function() return Shared.GetColor"ATTACK_POW" end
+  COLOR = "ATTACK_POW"
 }
 L[#L+1] = {LABEL = "Ranged Attack Power",
   MAP = {
@@ -400,7 +413,7 @@ L[#L+1] = {LABEL = "Ranged Attack Power",
   CAPTURES = {
     "[%+%-]%d+ Ranged Attack Power.*",
   },
-  COLOR = function() return Shared.GetColor"R_ATTACK_POW" end
+  COLOR = "R_ATTACK_POW"
 }
 L[#L+1] = {LABEL = "Physical Hit",
   MAP = {
@@ -412,7 +425,7 @@ L[#L+1] = {LABEL = "Physical Hit",
   CAPTURES = {
     "[%+%-]%d+ Physical Hit Rating.*",
   },
-  COLOR = function() return Shared.GetColor"PHYS_HIT" end
+  COLOR = "PHYS_HIT"
 }
 L[#L+1] = {LABEL = "Physical Hit With Spell",
   MAP = {
@@ -424,7 +437,7 @@ L[#L+1] = {LABEL = "Physical Hit With Spell",
   CAPTURES = {
     "[%+%-]%d+ Physical Hit Chance with .*",
   },
-  COLOR = function() return Shared.GetColor"PHYS_HIT" end
+  COLOR = "PHYS_HIT"
 }
 L[#L+1] = {LABEL = "Physical Crit",
   MAP = {
@@ -436,7 +449,7 @@ L[#L+1] = {LABEL = "Physical Crit",
   CAPTURES = {
     "[%+%-]%d+ Physical Crit Rating.*",
   },
-  COLOR = function() return Shared.GetColor"PHYS_CRIT" end
+  COLOR = "PHYS_CRIT"
 }
 L[#L+1] = {LABEL = "Physical Haste",
   MAP = {
@@ -448,7 +461,7 @@ L[#L+1] = {LABEL = "Physical Haste",
   CAPTURES = {
     "[%+%-]%d+ Physical Haste Rating.*",
   },
-  COLOR = function() return Shared.GetColor"PHYS_HASTE" end
+  COLOR = "PHYS_HASTE"
 }
 L[#L+1] = {LABEL = "Armor Penetration",
   MAP = {
@@ -460,7 +473,7 @@ L[#L+1] = {LABEL = "Armor Penetration",
   CAPTURES = {
     "[%+%-]%d+ Armor Pen.*",
   },
-  COLOR = function() return Shared.GetColor"PHYS_PEN" end
+  COLOR = "PHYS_PEN"
 }
 L[#L+1] = {LABEL = "Expertise",
   MAP = {
@@ -472,10 +485,10 @@ L[#L+1] = {LABEL = "Expertise",
   CAPTURES = {
     "[%+%-]%d+ Expertise Rating.*",
   },
-  COLOR = function() return Shared.GetColor"EXPERTISE" end
+  COLOR = "EXPERTISE"
 }
 
-for _, element in pairs(Shared.ELEMENTS) do
+for _, element in pairs(ELEMENTS) do
   L[#L+1] = {LABEL = element .. " Melee Damage",
     MAP = {
       {
@@ -486,7 +499,7 @@ for _, element in pairs(Shared.ELEMENTS) do
     CAPTURES = {
       "[%+%-]%d+ melee " .. element .. " damage.*",
     },
-    COLOR = function() return Shared.GetColor(element:upper() .. "_DAMAGE") end
+    COLOR = element:upper() .. "_DAMAGE"
   }
 end
 
@@ -509,7 +522,7 @@ L[#L+1] = {LABEL = "Spell Hit",
   CAPTURES = {
     "[%+%-]%d+ Spell Hit Rating.*",
   },
-  COLOR = function() return Shared.GetColor"MAGIC_HIT" end
+  COLOR = "MAGIC_HIT"
 }
 
 L[#L+1] = {LABEL = "Spell Hit With Spell",
@@ -522,7 +535,7 @@ L[#L+1] = {LABEL = "Spell Hit With Spell",
   CAPTURES = {
     "[%+%-]%d+ Spell Hit Rating with .*",
   },
-  COLOR = function() return Shared.GetColor"MAGIC_HIT" end
+  COLOR = "MAGIC_HIT"
 }
 
 L[#L+1] = {LABEL = "Spell Crit",
@@ -535,7 +548,7 @@ L[#L+1] = {LABEL = "Spell Crit",
   CAPTURES = {
     "[%+%-]%d+ Spell Crit Rating.*",
   },
-  COLOR = function() return Shared.GetColor"MAGIC_CRIT" end
+  COLOR = "MAGIC_CRIT"
 }
 
 L[#L+1] = {LABEL = "Spell Crit With Spell",
@@ -548,7 +561,7 @@ L[#L+1] = {LABEL = "Spell Crit With Spell",
   CAPTURES = {
     "[%+%-]%d+ Spell Crit Rating with .*",
   },
-  COLOR = function() return Shared.GetColor"MAGIC_CRIT" end
+  COLOR = "MAGIC_CRIT"
 }
 
 L[#L+1] = {LABEL = "Spell Haste",
@@ -561,7 +574,7 @@ L[#L+1] = {LABEL = "Spell Haste",
   CAPTURES = {
     "[%+%-]%d+ Spell Haste Rating.*",
   },
-  COLOR = function() return Shared.GetColor"MAGIC_HASTE" end
+  COLOR = "MAGIC_HASTE"
 }
 
 L[#L+1] = {LABEL = "Spell Penetration",
@@ -574,7 +587,7 @@ L[#L+1] = {LABEL = "Spell Penetration",
   CAPTURES = {
     "[%+%-]%d+ Spell Pen.*",
   },
-  COLOR = function() return Shared.GetColor"MAGIC_PEN" end
+  COLOR = "MAGIC_PEN"
 }
 
 
@@ -590,7 +603,7 @@ L[#L+1] = {LABEL = "Health Restore",
   CAPTURES = {
     "[%+%-]%d+ Hp%d.*",
   },
-  COLOR = function() return Shared.GetColor"HEALTH" end
+  COLOR = "HEALTH"
 }
 L[#L+1] = {LABEL = "Mana Regen",
   MAP = {
@@ -602,7 +615,7 @@ L[#L+1] = {LABEL = "Mana Regen",
   CAPTURES = {
     "[%+%-]%d+ of Mana Regen continues while casting.*",
   },
-  COLOR = function() return Shared.GetColor"MANA" end
+  COLOR = "MANA"
 }
 
 L[#L+1] = {LABEL = "Mana Restore",
@@ -615,7 +628,7 @@ L[#L+1] = {LABEL = "Mana Restore",
   CAPTURES = {
     "[%+%-]%d+ Mp%d.*",
   },
-  COLOR = function() return Shared.GetColor"MANA" end
+  COLOR = "MANA"
 }
 
 

@@ -237,6 +237,13 @@ local OPTION_DEFAULTS = {
 
 
 
+function ZeraTooltip:FontifyColor(color)
+  return color[1]/255, color[2]/255, color[3]/255, 1
+end
+function ZeraTooltip:DefontifyColor(r, g, b)
+  return {r*255, g*255, b*255}
+end
+
 function ZeraTooltip:IsSameColor(color1, color2)
   for k, v in pairs(color1) do
     if color2[k] ~= v then
@@ -254,6 +261,12 @@ function ZeraTooltip:IsSameColorFuzzy(color1, color2, fuzziness)
     end
   end
   return true
+end
+
+function ZeraTooltip:GetColor(key)
+  if not self.db then return end
+  assert(self.db.profile.COLORS[key], ("Missing Color entry: %s"):format(key))
+  return self.db.profile.RECOLOR_STAT[key] and self.db.profile.COLORS[key] or nil
 end
 
 
@@ -306,10 +319,9 @@ function ZeraTooltip:ReorderLines(tooltip, simplified, enchanted)
     local fontString = _G[leftText .. i]
     local text = fontString:GetText()
     if text then
-      local r, g, b, a = fontString:GetTextColor()
-      local color = {r*255, g*255, b*255}
+      local color = self:DefontifyColor(fontString:GetTextColor())
       
-      if self:IsSameColorFuzzy({r, g, b}, ZeraTooltip.GREEN) and not enchantLineFound then
+      if self:IsSameColorFuzzy(color, ZeraTooltip.GREEN) and not enchantLineFound then
         enchantLineFound = true
       else
         for j, data in ipairs(L) do
@@ -358,11 +370,10 @@ function ZeraTooltip:RecolorLines(tooltip, simplified, enchanted)
     local fontString = _G[leftText .. i]
     local text = fontString:GetText()
     if text then
-      local r, g, b, a = fontString:GetTextColor()
-      local color = {r*255, g*255, b*255}
+      local color = self:DefontifyColor(fontString:GetTextColor())
       
       if self:IsSameColorFuzzy(color, ZeraTooltip.GREEN) and not enchantLineFound then
-        fontString:SetTextColor(self.db.profile.COLORS.ENCHANT[1]/255, self.db.profile.COLORS.ENCHANT[2]/255, self.db.profile.COLORS.ENCHANT[3]/255, 1)
+        fontString:SetTextColor(self:FontifyColor(self.db.profile.COLORS.ENCHANT))
         enchantLineFound = true
       else
         for j, data in ipairs(L) do
@@ -378,12 +389,15 @@ function ZeraTooltip:RecolorLines(tooltip, simplified, enchanted)
           for k, pattern in ipairs(captures) do
             if text:match(pattern) and (not text:find(L["ConjunctiveWord Pattern"]) or pattern:find(L["ConjunctiveWord Pattern"])) then
               if data.COLOR then
-                if not self:IsSameColorFuzzy(color, ZeraTooltip.GRAY) and not text:match(L["SocketBonus Pattern"]) then
-                    fontString:SetTextColor(data.COLOR()[1]/255, data.COLOR()[2]/255, data.COLOR()[3]/255, 1)
+                local newColor = self:GetColor(data.COLOR)
+                if newColor then
+                  if not self:IsSameColorFuzzy(color, ZeraTooltip.GRAY) and not text:match(L["SocketBonus Pattern"]) then
+                    fontString:SetTextColor(self:FontifyColor(newColor))
                     if text:find(ZeraTooltip.COLOR_CODE) then
                       local newText = text:gsub(ZeraTooltip.COLOR_CODE, "")
                       fontString:SetText(newText)
                     end
+                  end
                 end
               end
               break
@@ -435,9 +449,9 @@ function ZeraTooltip:RewriteSpeed(tooltip)
         end
         fontString:SetText(("%%s %%.%df%%s"):format(self.db.profile.SPEED_ACCURACY):format(word, speed, bar))
         
-        local color = Shared.GetColor"SPEED"
+        local color = self:GetColor"SPEED"
         if self.db.profile.RECOLOR and color then
-          fontString:SetTextColor(color[1]/255, color[2]/255, color[3]/255)
+          fontString:SetTextColor(self:FontifyColor(color))
         end
       end
     end
@@ -500,17 +514,18 @@ function ZeraTooltip:CreateColorOption(args, name, key)
     name = "Color",
     order = Order(),
     type = "color",
-    set = function(_, r, g, b) self.db.profile.COLORS[key] = {r*255, g*255, b*255} end,
-    get = function(info)          return self.db.profile.COLORS[key][1]/255,
-                                         self.db.profile.COLORS[key][2]/255, 
-                                         self.db.profile.COLORS[key][3]/255 end,
+    set = function(_, r, g, b)        self.db.profile.COLORS[key] = self:DefontifyColor(r, g, b) end,
+    get = function(info)       return self:FontifyColor(self.db.profile.COLORS[key])             end,
   }
   
   args[key .. " Reset"] = {
     name = "Reset",
     order = Order(),
     type = "execute",
-    func = function() self.db.profile.COLORS[key] = OPTION_DEFAULTS.profile.COLORS[key] end,
+    func = function()
+      self.db.profile.RECOLOR_STAT[key] = OPTION_DEFAULTS.profile.RECOLOR_STAT[key]
+      self.db.profile.COLORS[key] = OPTION_DEFAULTS.profile.COLORS[key]
+    end,
   }
   
   args["divider" .. Order()] = {name  = "", order = Order(-1), type  = "description"}
@@ -616,10 +631,12 @@ function ZeraTooltip:CreateOptions()
     order = Order(),
     type = "execute",
     func =  function()
-              for key, color in pairs(OPTION_DEFAULTS.profile.COLORS) do
-                self.db.profile.COLORS[key] = color
-              end
-            end,
+      for _, tbl in ipairs{"RECOLOR_STAT", "COLORS"} do
+        for key, default in pairs(OPTION_DEFAULTS.profile[tbl]) do
+          self.db.profile[tbl][key] = default
+        end
+      end
+    end,
   }
   
   addonOptions.args["divider" .. Order()] = {name  = "", order = Order(-1), type  = "description"}
@@ -740,7 +757,6 @@ function ZeraTooltip:OnInitialize()
   
   self.db = AceDB:New("ZeraTooltipDB", OPTION_DEFAULTS, true)
   
-  Shared.db = self.db
   L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
   
 end
