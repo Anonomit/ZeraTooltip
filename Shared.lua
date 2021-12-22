@@ -13,5 +13,5 @@ end
 function Shared.GetColor(key)
   if not Shared.db then return end
   assert(Shared.db.profile.COLORS[key], ("Missing Color entry: %s"):format(key))
-  return Shared.db.profile.COLORS[key]
+  return Shared.db.profile.RECOLOR_STAT[key] and Shared.db.profile.COLORS[key] or nil
 end
