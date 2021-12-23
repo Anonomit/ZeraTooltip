@@ -42,6 +42,7 @@ L["SPEED ACCURACY DESCRIPTION"]  = "The number of decimal places to appear in a 
 L["Reset"]           = "Reset"
 L["Color"]           = "Color"
 L["Colors"]          = "Colors"
+L["Speedbar"]        = "Speedbar"
 
 
 L["Speed"] = "Speed"

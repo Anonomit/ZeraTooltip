@@ -523,7 +523,7 @@ function ZeraTooltip:CreateOptions()
     get = function(info)      return self.db.profile.RECOLOR       end,
   }
   
-  addonOptions.args["divider" .. Order()] = {name  = "", order = Order(-1), type  = "description"}
+  addonOptions.args["divider" .. Order()] = {name  = L["Speedbar"], order = Order(-1), type  = "header"}
   
   addonOptions.args["show_speedbar"] = {
     name = L["Show Speedbar"],
