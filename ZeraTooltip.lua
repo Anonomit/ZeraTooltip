@@ -177,57 +177,10 @@ local OPTION_DEFAULTS = {
     },
     
     RECOLOR_STAT = {
-      SPEED         = false,
+      ["**"]  = true,
       
-      ENCHANT       = false,
-      
-      ARMOR         = true,
-      
-      STAMINA       = true,
-      STRENGTH      = true,
-      AGILITY       = true,
-      INTELLECT     = true,
-      SPIRIT        = true,
-      
-      ARCANE_RESIST = true,
-      FIRE_RESIST   = true,
-      NATURE_RESIST = true,
-      FROST_RESIST  = true,
-      SHADOW_RESIST = true,
-      HOLY_RESIST   = true,
-      
-      ARCANE_DAMAGE = true,
-      FIRE_DAMAGE   = true,
-      NATURE_DAMAGE = true,
-      FROST_DAMAGE  = true,
-      SHADOW_DAMAGE = true,
-      HOLY_DAMAGE   = true,
-      
-      DEFENSE       = true,
-      RESILIENCE    = true,
-      DODGE         = true,
-      PARRY         = true,
-      BLOCK_RATING  = true,
-      BLOCK_VALUE   = true,
-      RESIST_ALL    = true,
-      
-      ATTACK_POW    = true,
-      R_ATTACK_POW  = true,
-      PHYS_HIT      = true,
-      PHYS_CRIT     = true,
-      PHYS_HASTE    = true,
-      PHYS_PEN      = true,
-      EXPERTISE     = true,
-
-      MAGICAL       = true,
-      MAGIC_HIT     = true,
-      MAGIC_CRIT    = true,
-      MAGIC_HASTE   = true,
-      MAGIC_PEN     = true,
-
-      HEALING       = true,
-      HEALTH        = true,
-      MANA          = true,
+      SPEED   = false,
+      ENCHANT = false,
     },
   },
 }
@@ -632,8 +585,8 @@ function ZeraTooltip:CreateOptions()
     type = "execute",
     func =  function()
       for _, tbl in ipairs{"RECOLOR_STAT", "COLORS"} do
-        for key, default in pairs(OPTION_DEFAULTS.profile[tbl]) do
-          self.db.profile[tbl][key] = default
+        for key in pairs(self.db.profile[tbl]) do
+          self.db.profile[tbl][key] = OPTION_DEFAULTS.profile[tbl][key]
         end
       end
     end,
