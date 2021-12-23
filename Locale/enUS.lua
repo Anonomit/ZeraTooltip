@@ -45,7 +45,7 @@ L["Colors"]          = "Colors"
 L["Speedbar"]        = "Speedbar"
 
 
-L["Speed"] = "Speed"
+L["Weapon Speed"] = "Weapon Speed"
 
 L["Enchantment"] = "Enchantment"
 

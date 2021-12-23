@@ -579,8 +579,8 @@ function ZeraTooltip:CreateOptions()
   
   addonOptions.args["divider" .. Order()] = {name  = L["Colors"], order = Order(-1), type  = "header"}
   
-  addonOptions.args["ResetAll"] = {
-    name = "Reset All",
+  addonOptions.args["ResetColors"] = {
+    name = "Reset Colors",
     order = Order(),
     type = "execute",
     func =  function()
@@ -596,7 +596,7 @@ function ZeraTooltip:CreateOptions()
   addonOptions.args["divider" .. Order()] = {name  = "", order = Order(-1), type  = "description"}
   addonOptions.args["divider" .. Order()] = {name  = "", order = Order(-1), type  = "description"}
   
-  self:CreateColorOption(addonOptions.args, L["Speed"], "SPEED")
+  self:CreateColorOption(addonOptions.args, L["Weapon Speed"], "SPEED")
   
   addonOptions.args["divider" .. Order()] = {name  = "", order = Order(-1), type  = "description"}
   addonOptions.args["divider" .. Order()] = {name  = "", order = Order(-1), type  = "description"}
