@@ -690,7 +690,7 @@ L[#L+1] = {LABEL = "Mana Restore",
 
 
 
-L[#L+1] = {LABEL = "Minor Speed",
+L[#L+1] = {LABEL = "Move Speed",
   MAP = {
     {
       INPUT  = "Minor Speed Increase",
@@ -699,6 +699,19 @@ L[#L+1] = {LABEL = "Minor Speed",
     {
       INPUT  = "Minor Speed and %+(%d+) (.*)",
       OUTPUT = "+8%%%% Run Speed and +%d %s",
+    },
+  },
+  CAPTURES = {
+    "[%+%-]%S* Swim Speed.*",
+  },
+  COLOR = nil
+}
+
+L[#L+1] = {LABEL = "Swim Speed",
+  MAP = {
+    {
+      INPUT  = "Increases swim speed by ([%d%.]*%d+%%?)",
+      OUTPUT = function(amount) return ("+%s Swim Speed"):format(amount:gsub("%%", "%%%%")) end,
     },
   },
   CAPTURES = {
