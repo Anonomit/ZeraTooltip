@@ -888,6 +888,20 @@ L[#L+1] = {LABEL = "Increase Resource Gained",
   COLOR = nil
 }
 
+L[#L+1] = {LABEL = "Increase Attack Speed",
+  MAP = {
+    {
+      INPUT  = "Increases?( ?r?a?n?g?e?d?) attack speed by ([%d%.]*%d+%%)",
+      OUTPUT = function(ranged, amount) return ("+%s%s Attack Speed"):format(amount:gsub("%%", "%%%%"), ranged == " ranged" and " Ranged" or "") end,
+    },
+  },
+  CAPTURES = {
+    "[%+%-]%S* Ranged Attack Speed.*",
+    "[%+%-]%S* Attack Speed.*",
+  },
+  COLOR = nil
+}
+
 L[#L+1] = {LABEL = "Increase Range",
   MAP = {
     {
