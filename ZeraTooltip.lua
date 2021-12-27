@@ -84,6 +84,7 @@ function ZeraTooltip:ReorderStats(tooltip, simplified, enchanted)
     if text then
       local color = Data:DefontifyColor(fontString:GetTextColor())
       
+      if Data:IsSameColorFuzzy(color, Data.GREEN) and not enchantLineFound and not text:match(("^%%d+%%s+%s$"):format(L["Armor"])) then
         enchantLineFound = true
       else
         for j, data in ipairs(L) do
@@ -133,6 +134,7 @@ function ZeraTooltip:RecolorStats(tooltip, simplified, enchanted)
     if text then
       local color = Data:DefontifyColor(fontString:GetTextColor())
       
+      if Data:IsSameColorFuzzy(color, Data.GREEN) and not enchantLineFound and not text:match(("^%%d+%%s+%s$"):format(L["Armor"])) then
         fontString:SetTextColor(Data:FontifyColor(self.db.profile.COLORS.ENCHANT))
         enchantLineFound = true
       else
