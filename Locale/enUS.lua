@@ -1,5 +1,5 @@
 
-local ADDON_NAME, Shared = ...
+local ADDON_NAME, Data = ...
 
 local locale = LibStub("AceLocale-3.0"):NewLocale(ADDON_NAME, "enUS", true)
 local L = {}
@@ -16,38 +16,49 @@ local function TrimSpell(spell)
 end
 
 
-local ELEMENTS = {"Arcane", "Fire", "Nature", "Frost", "Shadow", "Holy"}
+
+L["Reword tooltips"]               = "Reword tooltips"
+L["REWORD TOOLTIPS DESCRIPTION"]   = "Shortens some long lines of text on item tooltips. Does not remove any information."
+
+L["Reorder stats"]                 = "Reorder stats"
+L["REORDER STATS DESCRIPTION"]     = "Makes tooltips display stats in a consistent order. Always Stamina before Intellect, for example."
+
+L["Recolor stats"]                 = "Recolor stats"
+L["RECOLOR STATS DESCRIPTION"]     = "Adds customizable coloring to stats in tooltips."
+
+L["Show Speedbar"]                 = "Show Speedbar"
+L["SHOW SPEEDBAR DESCRIPTION"]     =  "Displays a bar which visualizes weapon speed. The bar will be more filled for slower weapons."
+
+L["Speedbar width"]                = "Speedbar width"
+L["SPEEDBAR SIZE DESCRIPTION"]     =  "The maximum length of the speedbar (for a slow weapon). Higher values make the bar more accurate, but also make the tooltip wider."
+
+L["Speed accuracy"]                = "Speed accuracy"
+L["SPEED ACCURACY DESCRIPTION"]    = "The number of decimal places to appear in a weapon's speed. Default tooltips show two, but only one is ever needed."
 
 
+L["Reset"]        = "Reset"
+L["Color"]        = "Color"
+L["Colors"]       = "Colors"
+L["Reset Colors"] = "Reset Colors"
+L["Speedbar"]     = "Speedbar"
 
-L["Reword tooltips"]             = "Reword tooltips"
-L["REWORD TOOLTIPS DESCRIPTION"] = "Shortens some long lines of text on item tooltips. Does not remove any information."
+L["Miscellaneous"]         = MISCELLANEOUS
+L["Base Stats"]            = "Base Stats"
+L["Elemental Resistances"] = "Elemental Resistances"
+L["Elemental Damage"]      = "Elemental Damage"
+L["Defensive"]             = "Defensive"
+L["Physical"]              = "Physical"
+L["Magical"]               = "Magical"
+L["Healing"]               = "Healing"
 
-L["Reorder stats"]               = "Reorder stats"
-L["REORDER STATS DESCRIPTION"]   = "Makes tooltips display stats in a consistent order. Always Stamina before Intellect, for example."
+L["Trainable Equipment"]             = "Trainable Equipment"
+L["TRAINABLE EQUIPMENT DESCRIPTION"] = "Items which are equippable after more training will appear as a customizable color instead of the default red."
 
-L["Recolor lines"]               = "Recolor lines"
-L["RECOLOR LINES DESCRIPTION"]   = "Adds coloring to some lines in tooltips."
+L["Weapon Speed"]             = "Weapon Speed"
+L["WEAPON SPEED DESCRIPTION"] = "This will also recolor the weapon speedbar, if enabled."
 
-L["Show Speedbar"]               = "Show Speedbar"
-L["SHOW SPEEDBAR DESCRIPTION"]   =  "Displays a bar which visualizes weapon speed. The bar will be more filled for slower weapons."
-
-L["Speedbar width"]              = "Speedbar width"
-L["SPEEDBAR SIZE DESCRIPTION"]   =  "The maximum length of the speedbar (for a slow weapon). Higher values make the bar more accurate, but also make the tooltip wider."
-
-L["Speed accuracy"]              = "Speed accuracy"
-L["SPEED ACCURACY DESCRIPTION"]  = "The number of decimal places to appear in a weapon's speed. Default tooltips show two, but only one is ever needed."
-
-
-L["Reset"]           = "Reset"
-L["Color"]           = "Color"
-L["Colors"]          = "Colors"
-L["Speedbar"]        = "Speedbar"
-
-
-L["Weapon Speed"] = "Weapon Speed"
-
-L["Enchantment"] = "Enchantment"
+L["Enchantment"]             = "Enchantment"
+L["ENCHANTMENT DESCRIPTION"] = "Enchantments will appear in a customizable color."
 
 L["Armor"] = "Armor"
 
@@ -57,19 +68,10 @@ L["Agility"]   = "Agility"
 L["Intellect"] = "Intellect"
 L["Spirit"]    = "Spirit"
 
-L["Arcane Resist"] = "Arcane Resist"
-L["Fire Resist"]   = "Fire Resist"
-L["Nature Resist"] = "Nature Resist"
-L["Frost Resist"]  = "Frost Resist"
-L["Shadow Resist"] = "Shadow Resist"
-L["Holy Resist"]   = "Holy Resist"
-
-L["Arcane Damage"] = "Arcane Damage"
-L["Fire Damage"]   = "Fire Damage"
-L["Nature Damage"] = "Nature Damage"
-L["Frost Damage"]  = "Frost Damage"
-L["Shadow Damage"] = "Shadow Damage"
-L["Holy Damage"]   = "Holy Damage"
+for _, element in ipairs(Data.ELEMENTS) do
+  L[element .. " Resist"] = element .. " Resist"
+  L[element .. " Damage"] = element .. " Damage"
+end
 
 L["Defense"]      = "Defense"
 L["Resilience"]   = "Resilience"
@@ -100,9 +102,60 @@ L["Mana"]    = "Mana"
 
 
 
+-- Get localized item subtype names from https://wow.tools/dbc/?dbc=itemsubclass
+-- Get correct build with GetBuildInfo()
+
+-- L.Singular = {}
+
+-- L.Singular["Two-Handed Axes"]   = "Axe"
+-- L.Singular["One-Handed Axes"]   = "Axe"
+-- L.Singular["Two-Handed Swords"] = "Sword"
+-- L.Singular["One-Handed Swords"] = "Sword"
+-- L.Singular["Two-Handed Maces"]  = "Mace"
+-- L.Singular["One-Handed Maces"]  = "Mace"
+-- L.Singular["Polearms"]          = "Polearm"
+-- L.Singular["Staves"]            = "Staff"
+-- L.Singular["Daggers"]           = "Dagger"
+-- L.Singular["Fist Weapons"]      = "Fist Weapon"
+-- L.Singular["Bows"]              = "Bow"
+-- L.Singular["Crossbows"]         = "Crossbow"
+-- L.Singular["Guns"]              = "Gun"
+-- L.Singular["Thrown"]            = "Thrown"
+-- L.Singular["Wands"]             = "Wand"
+
+-- -- L.Singular["Miscellaneous"] = "Miscellaneous"
+-- -- L.Singular["Cloth"]         = "Cloth"
+-- L.Singular["Leather"]       = "Leather"
+-- L.Singular["Mail"]          = "Mail"
+-- L.Singular["Plate"]         = "Plate"
+-- L.Singular["Shields"]       = "Shield"
+-- L.Singular["Librams"]       = "Libram"
+-- L.Singular["Idols"]         = "Idol"
+-- L.Singular["Totems"]        = "Totam"
 
 
+L["Axe"]         = "Axe"
+L["Sword"]       = "Sword"
+L["Mace"]        = "Mace"
+L["Polearm"]     = "Polearm"
+L["Staff"]       = "Staff"
+L["Dagger"]      = "Dagger"
+L["Fist Weapon"] = "Fist Weapon"
+L["Bow"]         = "Bow"
+L["Crossbow"]    = "Crossbow"
+L["Gun"]         = "Gun"
+L["Thrown"]      = "Thrown"
+L["Wand"]        = "Wand"
 
+-- L["Miscellaneous"] = "Miscellaneous"
+-- L["Cloth"]         = "Cloth"
+L["Leather"]       = "Leather"
+L["Mail"]          = "Mail"
+L["Plate"]         = "Plate"
+L["Shield"]        = "Shield"
+L["Libram"]        = "Libram"
+L["Idol"]          = "Idol"
+L["Totem"]         = "Totam"
 
 
 
@@ -162,7 +215,7 @@ L[#L+1] = {LABEL = "All Resist",
   },
   COLOR = "RESIST_ALL"
 }
-for _, element in pairs(ELEMENTS) do
+for _, element in pairs(Data.ELEMENTS) do
   L[#L+1] = {LABEL = element .. " Resist",
   MAP = {
     {
@@ -227,7 +280,7 @@ L[#L+1] = {LABEL = "School Spell Power",
   },
   COLOR = "MAGICAL"
 }
-for _, element in pairs(ELEMENTS) do
+for _, element in pairs(Data.ELEMENTS) do
   L[#L+1] = {LABEL = element .. " Spell Damage",
     MAP = {
       {
@@ -347,7 +400,7 @@ L[#L+1] = {LABEL = "Block Value",
   },
   COLOR = "BLOCK_VALUE"
 }
-for _, element in pairs(ELEMENTS) do
+for _, element in pairs(Data.ELEMENTS) do
   L[#L+1] = {LABEL = element .. " Reflect Damage",
     MAP = {
       {
@@ -489,7 +542,7 @@ L[#L+1] = {LABEL = "Expertise",
   COLOR = "EXPERTISE"
 }
 
-for _, element in pairs(ELEMENTS) do
+for _, element in pairs(Data.ELEMENTS) do
   L[#L+1] = {LABEL = element .. " Melee Damage",
     MAP = {
       {
@@ -598,7 +651,7 @@ L[#L+1] = {LABEL = "Health Restore",
   MAP = {
     {
       INPUT  = "Restores (%d+) health per (%d+) sec%.?",
-      OUTPUT = function(amount, period) return ("+%d Hp%d%s"):format(amount, period, tonumber(period) > 1 and ("  (+%s HpS)"):format(Shared.Round(tonumber(amount)/tonumber(period), 1)) or "") end,
+      OUTPUT = function(amount, period) return ("+%d Hp%d%s"):format(amount, period, tonumber(period) > 1 and ("  (+%s HpS)"):format(Data:Round(tonumber(amount)/tonumber(period), 1)) or "") end,
     },
   },
   CAPTURES = {
@@ -623,7 +676,7 @@ L[#L+1] = {LABEL = "Mana Restore",
   MAP = {
     {
       INPUT  = "Restores (%d+) mana per (%d+) sec%.?",
-      OUTPUT = function(amount, period) return ("+%d Mp%d%s"):format(amount, period, tonumber(period) > 1 and ("  (+%s MpS)"):format(Shared.Round(tonumber(amount)/tonumber(period), 1)) or "") end,
+      OUTPUT = function(amount, period) return ("+%d Mp%d%s"):format(amount, period, tonumber(period) > 1 and ("  (+%s MpS)"):format(Data:Round(tonumber(amount)/tonumber(period), 1)) or "") end,
     },
   },
   CAPTURES = {
