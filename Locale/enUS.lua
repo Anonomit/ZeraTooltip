@@ -689,6 +689,25 @@ L[#L+1] = {LABEL = "Mana Restore",
 
 
 
+
+L[#L+1] = {LABEL = "Mount Speed",
+  MAP = {
+    {
+      INPUT  = "Increases mount speed by ([%d%.]*%d+%%?)",
+      OUTPUT = function(amount) return ("+%s Mount Speed"):format(amount:gsub("%%", "%%%%")) end,
+    },
+    {
+      INPUT  = "Increases speed in Flight Form and Swift Flight Form by ([%d%.]*%d+%%?)",
+      OUTPUT = function(amount) return ("+%s Speed in Flight Forms"):format(amount:gsub("%%", "%%%%")) end,
+    },
+  },
+  CAPTURES = {
+    "[%+%-]%S* Mount Speed.*",
+    "[%+%-]%S* Speed in Flight Forms.*",
+  },
+  COLOR = nil
+}
+
 L[#L+1] = {LABEL = "Cost Reduction",
   MAP = {
     {
