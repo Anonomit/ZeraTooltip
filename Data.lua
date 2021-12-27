@@ -193,7 +193,8 @@ Data.CLASS = select(2, UnitClass"player")
 
 Data.WEAPON_SPEED_DIF = Data.WEAPON_SPEED_MAX - Data.WEAPON_SPEED_MIN
 
-Data.COLOR_CODE = "|c%x%x%x%x%x%x%x%x"
+Data.COLOR_CODE       = "|c%x%x%x%x%x%x%x%x"
+Data.COLOR_CODE_RESET = "|r"
 
 Data.GRAY  = rgb(127, 127, 127)
 Data.RED   = rgb(255,  32,  32)

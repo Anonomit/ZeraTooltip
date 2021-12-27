@@ -38,6 +38,10 @@ end
 
 
 
+function ZeraTooltip:RemoveColorText(text)
+  return text:gsub(Data.COLOR_CODE, "", 1):gsub(Data.COLOR_CODE_RESET, "")
+end
+
 function ZeraTooltip:TrimLine(text)
   return text:gsub(L["Equip Pattern"], "")
 end
@@ -61,6 +65,7 @@ function ZeraTooltip:RewordStats(tooltip)
     local fontString = _G[textLeft..i]
     local text = fontString:GetText()
     if text then
+      text = self:RemoveColorText(text)
       text = self:RewordLine(text)
       if text then
         fontString:SetText(text)
@@ -80,6 +85,7 @@ function ZeraTooltip:ReorderStats(tooltip, simplified, enchanted)
     local fontString = _G[textLeft .. i]
     local text = fontString:GetText()
     if text then
+      text = self:RemoveColorText(text)
       local color = Data:DefontifyColor(fontString:GetTextColor())
       
       if Data:IsSameColorFuzzy(color, Data.GREEN) and not enchantLineFound and not text:match(("^%%d+%%s+%s$"):format(L["Armor"])) then
@@ -130,6 +136,7 @@ function ZeraTooltip:RecolorStats(tooltip, simplified, enchanted)
     local fontString = _G[textLeft .. i]
     local text = fontString:GetText()
     if text then
+      text = self:RemoveColorText(text)
       local color = Data:DefontifyColor(fontString:GetTextColor())
       
       if Data:IsSameColorFuzzy(color, Data.GREEN) and not enchantLineFound and not text:match(("^%%d+%%s+%s$"):format(L["Armor"])) then
@@ -177,6 +184,7 @@ function ZeraTooltip:RewriteSpeed(tooltip)
     local fontString = _G[textRight..i]
     local text = fontString:GetText()
     if text then
+      text = self:RemoveColorText(text)
       if text:find(L["Speed Pattern"]) then
         
         -- This should match weapon speed values with any number of decimal places, though by default I think it's always two.
