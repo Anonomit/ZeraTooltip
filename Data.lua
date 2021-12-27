@@ -93,6 +93,8 @@ local OPTION_DEFAULTS = {
     COLORS = {
       TRAINABLE     = COLORS.ORANGE,
       
+      WEAP_DAMAGE   = COLORS.TUMBLEWEED,
+      
       SPEED         = COLORS.WHITE,
       
       ENCHANT       = COLORS.GREEN,
@@ -559,9 +561,10 @@ function Data:MakeOptionsTable(profile, L)
   CreateDivider()
   
   CreateDescription("Miscellaneous")
-  CreateColorOption("Trainable Equipment", "TRAINABLE", true)
-  CreateColorOption("Weapon Speed"       , "SPEED"    , true)
-  CreateColorOption("Enchantment"        , "ENCHANT"  , true)
+  CreateColorOption("Trainable Equipment", "TRAINABLE"  , true)
+  CreateColorOption("Weapon Damage"      , "WEAP_DAMAGE", true)
+  CreateColorOption("Weapon Speed"       , "SPEED"      , true)
+  CreateColorOption("Enchantment"        , "ENCHANT"    , true)
   
   CreateDivider()
   

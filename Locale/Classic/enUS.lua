@@ -54,6 +54,9 @@ L["Healing"]               = "Healing"
 L["Trainable Equipment"]             = "Trainable Equipment"
 L["TRAINABLE EQUIPMENT DESCRIPTION"] = "Items which are equippable after more training will appear as a customizable color instead of the default red."
 
+L["Weapon Damage"]             = "Weapon Damage"
+L["WEAPON DAMAGE DESCRIPTION"] = "This will only affect weapons which deal physical damage (not wands)."
+
 L["Weapon Speed"]             = "Weapon Speed"
 L["WEAPON SPEED DESCRIPTION"] = "This will also recolor the weapon speedbar, if enabled."
 
@@ -231,7 +234,7 @@ L[#L+1] = {LABEL = "Physical Damage",
   CAPTURES = {
     "%d+ %- %d+ Damage",
   },
-  COLOR = "ATTACK_POW"
+  COLOR = "WEAP_DAMAGE"
 }
 
 L[#L+1] = {LABEL = "Damage per Second",
