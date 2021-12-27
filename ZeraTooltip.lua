@@ -61,11 +61,9 @@ function ZeraTooltip:RewordStats(tooltip)
     local fontString = _G[textLeft..i]
     local text = fontString:GetText()
     if text then
-      if text:find"%d" then
-        text = self:RewordLine(text)
-        if text then
-          fontString:SetText(text)
-        end
+      text = self:RewordLine(text)
+      if text then
+        fontString:SetText(text)
       end
     end
   end
