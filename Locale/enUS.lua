@@ -690,7 +690,7 @@ L[#L+1] = {LABEL = "Mana Restore",
 
 
 
-L[#L+1] = {LABEL = "Move Speed",
+L[#L+1] = {LABEL = "Run Speed",
   MAP = {
     {
       INPUT  = "Minor Speed Increase",
@@ -702,7 +702,7 @@ L[#L+1] = {LABEL = "Move Speed",
     },
   },
   CAPTURES = {
-    "[%+%-]%S* Swim Speed.*",
+    "[%+%-]%S* Run Speed.*",
   },
   COLOR = nil
 }
@@ -715,7 +715,7 @@ L[#L+1] = {LABEL = "Swim Speed",
     },
   },
   CAPTURES = {
-    "[%+%-]%S* Run Speed.*",
+    "[%+%-]%S* Swim Speed.*",
   },
   COLOR = nil
 }
