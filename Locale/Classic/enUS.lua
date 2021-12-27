@@ -207,6 +207,46 @@ end
 
 
 
+for _, element in pairs(Data.ELEMENTS) do
+  L[#L+1] = {LABEL = element .. " Damage",
+  MAP = {
+    {
+      INPUT  = "(%d+) %- (%d+) " .. element .. " Damage$",
+      OUTPUT = "%d - %d " .. element .. " Damage",
+    },
+   },
+    CAPTURES = {
+      "%d+ %- %d+ " .. element .. " Damage",
+    },
+    COLOR = element:upper() .. "_DAMAGE"
+  }
+end
+L[#L+1] = {LABEL = "Physical Damage",
+  MAP = {
+    {
+      INPUT  = "(%d+) %- (%d+) Damage$",
+      OUTPUT = "%d - %d Damage",
+    },
+   },
+  CAPTURES = {
+    "%d+ %- %d+ Damage",
+  },
+  COLOR = "ATTACK_POW"
+}
+
+L[#L+1] = {LABEL = "Damage per Second",
+  MAP = {
+    {
+      INPUT  = "%(([%d%.]+) damage per second%)",
+      OUTPUT = "(%s DPS)",
+    },
+   },
+  CAPTURES = {
+    "%s+ DPS",
+  },
+  COLOR = nil
+}
+
 L[#L+1] = {LABEL = "Spell Power",
   MAP = {
     {
