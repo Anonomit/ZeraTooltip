@@ -42,7 +42,7 @@ function ZeraTooltip:TrimLine(text)
   return text:gsub(L["Equip Pattern"], "")
 end
 
-function ZeraTooltip:SimplifyLine(text)
+function ZeraTooltip:RewordLine(text)
   for i, data in ipairs(L) do
     for j, map in ipairs(data.MAP or {}) do
       local input, output = map.INPUT, map.OUTPUT
@@ -55,14 +55,14 @@ function ZeraTooltip:SimplifyLine(text)
   end
 end
 
-function ZeraTooltip:SimplifyStats(tooltip)
+function ZeraTooltip:RewordStats(tooltip)
   local textLeft = tooltip:GetName().."TextLeft"
   for i = 2, tooltip:NumLines() do
     local fontString = _G[textLeft..i]
     local text = fontString:GetText()
     if text then
       if text:find"%d" then
-        text = self:SimplifyLine(text)
+        text = self:RewordLine(text)
         if text then
           fontString:SetText(text)
         end
@@ -253,7 +253,7 @@ function ZeraTooltip:OnTooltipSetHyperlink(tooltip)
   local itemType, itemSubType, _, invType = select(6, GetItemInfo(link))
   
   if self.db.profile.SIMPLIFY then
-    ZeraTooltip:SimplifyStats(tooltip)
+    ZeraTooltip:RewordStats(tooltip)
   end
   
   if self.db.profile.REORDER then
