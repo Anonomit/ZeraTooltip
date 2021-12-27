@@ -105,35 +105,6 @@ L["Mana"]    = "Mana"
 -- Get localized item subtype names from https://wow.tools/dbc/?dbc=itemsubclass
 -- Get correct build with GetBuildInfo()
 
--- L.Singular = {}
-
--- L.Singular["Two-Handed Axes"]   = "Axe"
--- L.Singular["One-Handed Axes"]   = "Axe"
--- L.Singular["Two-Handed Swords"] = "Sword"
--- L.Singular["One-Handed Swords"] = "Sword"
--- L.Singular["Two-Handed Maces"]  = "Mace"
--- L.Singular["One-Handed Maces"]  = "Mace"
--- L.Singular["Polearms"]          = "Polearm"
--- L.Singular["Staves"]            = "Staff"
--- L.Singular["Daggers"]           = "Dagger"
--- L.Singular["Fist Weapons"]      = "Fist Weapon"
--- L.Singular["Bows"]              = "Bow"
--- L.Singular["Crossbows"]         = "Crossbow"
--- L.Singular["Guns"]              = "Gun"
--- L.Singular["Thrown"]            = "Thrown"
--- L.Singular["Wands"]             = "Wand"
-
--- -- L.Singular["Miscellaneous"] = "Miscellaneous"
--- -- L.Singular["Cloth"]         = "Cloth"
--- L.Singular["Leather"]       = "Leather"
--- L.Singular["Mail"]          = "Mail"
--- L.Singular["Plate"]         = "Plate"
--- L.Singular["Shields"]       = "Shield"
--- L.Singular["Librams"]       = "Libram"
--- L.Singular["Idols"]         = "Idol"
--- L.Singular["Totems"]        = "Totam"
-
-
 L["Axe"]         = "Axe"
 L["Sword"]       = "Sword"
 L["Mace"]        = "Mace"
