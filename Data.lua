@@ -108,59 +108,59 @@ local OPTION_DEFAULTS = {
     SPEED_ACCURACY = 1,
     
     COLORS = {
-      TRAINABLE         = COLORS.ORANGE,
-      WEAP_DAMAGE       = COLORS.TUMBLEWEED,
-      SPEED             = COLORS.WHITE,
-      ENCHANT           = COLORS.GREEN,
-      SKILL             = COLORS.GREEN,
+      TRAINABLE     = COLORS.ORANGE,
+      WEAP_DAMAGE   = COLORS.TUMBLEWEED,
+      SPEED         = COLORS.WHITE,
+      ENCHANT       = COLORS.GREEN,
+      SKILL         = COLORS.GREEN,
       
-      ARMOR             = COLORS.YELLOW,
+      ARMOR         = COLORS.YELLOW,
       
-      STAMINA           = COLORS.PALE_LIGHT_GREEN,
-      STRENGTH          = COLORS.TUMBLEWEED,
-      AGILITY           = COLORS.SANDY_YELLOW,
-      INTELLECT         = COLORS.JORDY_BLUE,
-      SPIRIT            = COLORS.LIGHT_AQUA,
+      STAMINA       = COLORS.PALE_LIGHT_GREEN,
+      STRENGTH      = COLORS.TUMBLEWEED,
+      AGILITY       = COLORS.SANDY_YELLOW,
+      INTELLECT     = COLORS.JORDY_BLUE,
+      SPIRIT        = COLORS.LIGHT_AQUA,
       
-      ARCANE_RESIST     = COLORS.ARCANE,
-      FIRE_RESIST       = COLORS.FIRE,
-      NATURE_RESIST     = COLORS.NATURE,
-      FROST_RESIST      = COLORS.FROST,
-      SHADOW_RESIST     = COLORS.SHADOW,
-      HOLY_RESIST       = COLORS.HOLY,
+      ARCANE_RESIST = COLORS.ARCANE,
+      FIRE_RESIST   = COLORS.FIRE,
+      NATURE_RESIST = COLORS.NATURE,
+      FROST_RESIST  = COLORS.FROST,
+      SHADOW_RESIST = COLORS.SHADOW,
+      HOLY_RESIST   = COLORS.HOLY,
       
-      ARCANE_DAMAGE     = COLORS.ARCANE,
-      FIRE_DAMAGE       = COLORS.FIRE,
-      NATURE_DAMAGE     = COLORS.NATURE,
-      FROST_DAMAGE      = COLORS.FROST,
-      SHADOW_DAMAGE     = COLORS.SHADOW,
-      HOLY_DAMAGE       = COLORS.HOLY,
+      ARCANE_DAMAGE = COLORS.ARCANE,
+      FIRE_DAMAGE   = COLORS.FIRE,
+      NATURE_DAMAGE = COLORS.NATURE,
+      FROST_DAMAGE  = COLORS.FROST,
+      SHADOW_DAMAGE = COLORS.SHADOW,
+      HOLY_DAMAGE   = COLORS.HOLY,
       
-      DEFENSE           = COLORS.PALE_LIGHT_GREEN,
-      RESILIENCE        = COLORS.HONEYSUCKLE,
-      DODGE             = COLORS.HONEYSUCKLE,
-      PARRY             = COLORS.PARIS_GREEN,
-      BLOCK_RATING      = COLORS.LEMON_LIME,
-      BLOCK_VALUE       = COLORS.LEMON_LIME,
-      RESIST_ALL        = COLORS.PALE_LIGHT_GREEN,
+      DEFENSE       = COLORS.PALE_LIGHT_GREEN,
+      RESILIENCE    = COLORS.HONEYSUCKLE,
+      DODGE         = COLORS.HONEYSUCKLE,
+      PARRY         = COLORS.PARIS_GREEN,
+      BLOCK_RATING  = COLORS.LEMON_LIME,
+      BLOCK_VALUE   = COLORS.LEMON_LIME,
+      RESIST_ALL    = COLORS.PALE_LIGHT_GREEN,
       
-      ATTACK_POW        = COLORS.TUMBLEWEED,
-      R_ATTACK_POW      = COLORS.TUMBLEWEED,
-      PHYS_HIT          = COLORS.SANDY_YELLOW,
-      PHYS_CRIT         = COLORS.ATOMIC_TANGERINE,
-      PHYS_HASTE        = COLORS.CITRON,
-      PHYS_PEN          = COLORS.PUMPKIN_ORANGE,
-      EXPERTISE         = COLORS.TUMBLEWEED,
+      ATTACK_POW    = COLORS.TUMBLEWEED,
+      R_ATTACK_POW  = COLORS.TUMBLEWEED,
+      PHYS_HIT      = COLORS.SANDY_YELLOW,
+      PHYS_CRIT     = COLORS.ATOMIC_TANGERINE,
+      PHYS_HASTE    = COLORS.CITRON,
+      PHYS_PEN      = COLORS.PUMPKIN_ORANGE,
+      EXPERTISE     = COLORS.TUMBLEWEED,
       
-      MAGICAL           = COLORS.LIGHT_FUSCHIA_PINK,
-      MAGIC_HIT         = COLORS.BLUSH_PINK,
-      MAGIC_CRIT        = COLORS.PURPLE_MIMOSA,
-      MAGIC_HASTE       = COLORS.LILAC,
-      MAGIC_PEN         = COLORS.HELIOTROPE_PURPLE,
+      MAGICAL       = COLORS.LIGHT_FUSCHIA_PINK,
+      MAGIC_HIT     = COLORS.BLUSH_PINK,
+      MAGIC_CRIT    = COLORS.PURPLE_MIMOSA,
+      MAGIC_HASTE   = COLORS.LILAC,
+      MAGIC_PEN     = COLORS.HELIOTROPE_PURPLE,
       
-      HEALING           = COLORS.LIGHT_CYAN,
-      HEALTH            = COLORS.PALE_LIGHT_GREEN,
-      MANA              = COLORS.JORDY_BLUE,
+      HEALING       = COLORS.LIGHT_CYAN,
+      HEALTH        = COLORS.PALE_LIGHT_GREEN,
+      MANA          = COLORS.JORDY_BLUE,
     },
     
     RECOLOR_STAT = {
@@ -171,12 +171,26 @@ local OPTION_DEFAULTS = {
       ENCHANT     = false,
       SKILL       = false,
     },
+    DEBUG = {
+      SHOW_LABELS      = false,
+      CTRL_SUPPRESSION = false,
+    },
   },
 }
 
 
 -- End Configuration
 
+
+function Data:GetDefaultOptions()
+  return OPTION_DEFAULTS
+end
+
+
+function Data:Round(num, decimalPlaces)
+  local mult = 10^(tonumber(decimalPlaces) or 0)
+  return math.floor(tonumber(num) * mult + 0.5) / mult
+end
 
 
 function Data:FontifyColor(color)
@@ -307,16 +321,6 @@ function Data:OnInitialize(L)
   } do
     LEFT_TYPES[globalString] = _G[globalString]
   end
-  local LEFT_PACKS = {
-    ONE_HAND  = {"INVTYPE_WEAPON", "INVTYPE_WEAPONOFFHAND", "INVTYPE_WEAPONMAINHAND"},
-    TWO_HAND  = {"INVTYPE_2HWEAPON"},
-    EQUIPMENT = { "INVTYPE_HEAD", "INVTYPE_CHEST", "INVTYPE_LEGS", "INVTYPE_FEET", "INVTYPE_WRIST", "INVTYPE_HAND", "INVTYPE_ROBE", "INVTYPE_SHOULDER", "INVTYPE_WAIST"},
-  }
-  for k, pack in pairs(LEFT_PACKS) do
-    for i, invtype in ipairs(pack) do
-      pack[i] = LEFT_TYPES[invtype]
-    end
-  end
 
 
   local ITEM_TYPES = {
@@ -326,34 +330,34 @@ function Data:OnInitialize(L)
 
   local SUBTYPES_DATA = {
     [WEAPON] = {
-      [1]  = {subType = "Two-Handed Axes"  , redText = L["Axe"]        , leftText = LEFT_PACKS["TWO_HAND"]},
-      [0]  = {subType = "One-Handed Axes"  , redText = L["Axe"]        , leftText = LEFT_PACKS["ONE_HAND"]},
-      [8]  = {subType = "Two-Handed Swords", redText = L["Sword"]      , leftText = LEFT_PACKS["TWO_HAND"]},
-      [7]  = {subType = "One-Handed Swords", redText = L["Sword"]      , leftText = LEFT_PACKS["ONE_HAND"]},
-      [5]  = {subType = "Two-Handed Maces" , redText = L["Mace"]       , leftText = LEFT_PACKS["TWO_HAND"]},
-      [4]  = {subType = "One-Handed Maces" , redText = L["Mace"]       , leftText = LEFT_PACKS["ONE_HAND"]},
-      [6]  = {subType = "Polearms"         , redText = L["Polearm"]    , leftText = LEFT_PACKS["TWO_HAND"]},
-      [10] = {subType = "Staves"           , redText = L["Staff"]      , leftText = LEFT_PACKS["TWO_HAND"]},
-      [15] = {subType = "Daggers"          , redText = L["Dagger"]     , leftText = LEFT_PACKS["ONE_HAND"]},
-      [13] = {subType = "Fist Weapons"     , redText = L["Fist Weapon"], leftText = LEFT_PACKS["ONE_HAND"]},
+      [1]  = {subType = "Two-Handed Axes"  , text = L["Axe"]},
+      [0]  = {subType = "One-Handed Axes"  , text = L["Axe"]},
+      [8]  = {subType = "Two-Handed Swords", text = L["Sword"]},
+      [7]  = {subType = "One-Handed Swords", text = L["Sword"]},
+      [5]  = {subType = "Two-Handed Maces" , text = L["Mace"]},
+      [4]  = {subType = "One-Handed Maces" , text = L["Mace"]},
+      [6]  = {subType = "Polearms"         , text = L["Polearm"]},
+      [10] = {subType = "Staves"           , text = L["Staff"]},
+      [15] = {subType = "Daggers"          , text = L["Dagger"]},
+      [13] = {subType = "Fist Weapons"     , text = L["Fist Weapon"]},
       
-      [2]  = {subType = "Bows"             , rightText = nil          , redText = L["Bow"]},
-      [18] = {subType = "Crossbows"        , rightText = nil          , redText = L["Crossbow"]},
-      [3]  = {subType = "Guns"             , rightText = nil          , redText = L["Gun"]},
-      [16] = {subType = "Thrown"           , rightText = nil          , redText = L["Thrown"]},
-      [19] = {subType = "Wands"            , rightText = nil          , redText = L["Wand"]},
+      [2]  = {subType = "Bows"             , text = L["Bow"]},
+      [18] = {subType = "Crossbows"        , text = L["Crossbow"]},
+      [3]  = {subType = "Guns"             , text = L["Gun"]},
+      [16] = {subType = "Thrown"           , text = L["Thrown"]},
+      [19] = {subType = "Wands"            , text = L["Wand"]},
     },
     
     [ARMOR] = {
-      -- [0] = {subType = "Miscellaneous", rightText = L["Miscellaneous"], leftText = {LEFT_TYPES["INVTYPE_HOLDABLE"]}},
-      -- [1] = {subType = "Cloth"        , rightText = L["Cloth"]        , leftText = LEFT_PACKS["EQUIPMENT"],
-      [2] = {subType = "Leather"      , redText = L["Leather"]      , leftText = LEFT_PACKS["EQUIPMENT"]},
-      [3] = {subType = "Mail"         , redText = L["Mail"]         , leftText = LEFT_PACKS["EQUIPMENT"]},
-      [4] = {subType = "Plate"        , redText = L["Plate"]        , leftText = LEFT_PACKS["EQUIPMENT"]},
-      [6] = {subType = "Shields"      , redText = L["Shield"]       , leftText = {LEFT_TYPES["INVTYPE_SHIELD"]}},
-      [7] = {subType = "Librams"      , redText = L["Libram"]       , leftText = {LEFT_TYPES["INVTYPE_RELIC"]}},
-      [8] = {subType = "Idols"        , redText = L["Idol"]         , leftText = {LEFT_TYPES["INVTYPE_RELIC"]}},
-      [9] = {subType = "Totems"       , redText = L["Totem"]        , leftText = {LEFT_TYPES["INVTYPE_RELIC"]}},
+      -- [0] = {subType = "Miscellaneous", text = L["Miscellaneous"]},
+      -- [1] = {subType = "Cloth"        , text = L["Cloth"]},
+      [2] = {subType = "Leather"      , text = L["Leather"]},
+      [3] = {subType = "Mail"         , text = L["Mail"]},
+      [4] = {subType = "Plate"        , text = L["Plate"]},
+      [6] = {subType = "Shields"      , text = L["Shield"]},
+      [7] = {subType = "Librams"      , text = L["Libram"]},
+      [8] = {subType = "Idols"        , text = L["Idol"]},
+      [9] = {subType = "Totems"       , text = L["Totem"]},
     },
   }
 
@@ -364,7 +368,7 @@ function Data:OnInitialize(L)
     ITEM_SUBTYPES[key]       = {}
     for i, data in pairs(SUBTYPES_DATA[key]) do
       SUBTYPES_LOCALE_MAP[key][data.subType] = GetItemSubClassInfo(ITEM_TYPES[key], i)
-      ITEM_SUBTYPES[key][GetItemSubClassInfo(ITEM_TYPES[key], i)] = data.redText
+      ITEM_SUBTYPES[key][GetItemSubClassInfo(ITEM_TYPES[key], i)] = data.text
     end
   end
 
@@ -425,7 +429,6 @@ function Data:OnInitialize(L)
   end
   
   function Data:GetRedText(itemType, itemSubType, invType)
-    -- AnonTable(ITEM_SUBTYPES[itemType]):print()
     return ITEM_SUBTYPES[itemType] and ITEM_SUBTYPES[itemType][itemSubType] or nil, invType == "INVTYPE_WEAPONOFFHAND" and not UNUSABLE_INVTYPES[invType] and LEFT_TYPES["INVTYPE_WEAPONOFFHAND"] or nil
   end
   
@@ -435,34 +438,14 @@ end
 
 
 
-function Data:Round(num, decimalPlaces)
-  local mult = 10^(tonumber(decimalPlaces) or 0)
-  return math.floor(tonumber(num) * mult + 0.5) / mult
-end
-
-
-
-
-
-
-
-
-function Data:GetDefaultOptions()
-  return OPTION_DEFAULTS
-end
-
-
-
-
-
-local order = 99
-local function Order(inc)
-  order = order + (inc and inc or 0) + 1
-  return order
-end
-
-
-function Data:MakeOptionsTable(profile, L)
+function Data:MakeOptionsTable(db, L)
+  
+  local order = 99
+  local function Order(inc)
+    order = order + (inc and inc or 0) + 1
+    return order
+  end
+  
   local ADDON_OPTIONS = {
     type = "group",
     args = {}
@@ -491,16 +474,16 @@ function Data:MakeOptionsTable(profile, L)
       desc = hasDesc and L[name:upper() .. " DESCRIPTION"] or nil,
       order = Order(),
       type = "toggle",
-      set = function(info, val)        profile.RECOLOR_STAT[key] = val end,
-      get = function(info)      return profile.RECOLOR_STAT[key]       end,
+      set = function(info, val)        db.RECOLOR_STAT[key] = val end,
+      get = function(info)      return db.RECOLOR_STAT[key]       end,
     }
     
     ADDON_OPTIONS.args[key .. " Color"] = {
       name = L["Color"],
       order = Order(),
       type = "color",
-      set = function(_, r, g, b)        profile.COLORS[key] = Data:DefontifyColor(r, g, b) end,
-      get = function(info)       return Data:FontifyColor(profile.COLORS[key])             end,
+      set = function(_, r, g, b)        db.COLORS[key] = Data:DefontifyColor(r, g, b) end,
+      get = function(info)       return Data:FontifyColor(db.COLORS[key])             end,
     }
     
     ADDON_OPTIONS.args[key .. " Reset"] = {
@@ -508,8 +491,8 @@ function Data:MakeOptionsTable(profile, L)
       order = Order(),
       type = "execute",
       func = function()
-        profile.RECOLOR_STAT[key] = OPTION_DEFAULTS.profile.RECOLOR_STAT[key]
-        profile.COLORS[key] = OPTION_DEFAULTS.profile.COLORS[key]
+        db.RECOLOR_STAT[key] = OPTION_DEFAULTS.db.RECOLOR_STAT[key]
+        db.COLORS[key] = OPTION_DEFAULTS.db.COLORS[key]
       end,
     }
     
@@ -521,8 +504,8 @@ function Data:MakeOptionsTable(profile, L)
     desc = L["REWORD TOOLTIPS DESCRIPTION"],
     order = Order(),
     type = "toggle",
-    set = function(info, val)        profile.SIMPLIFY = val end,
-    get = function(info)      return profile.SIMPLIFY       end,
+    set = function(info, val)        db.SIMPLIFY = val end,
+    get = function(info)      return db.SIMPLIFY       end,
   }
   
   CreateNewline()
@@ -532,8 +515,8 @@ function Data:MakeOptionsTable(profile, L)
     desc = L["REORDER STATS DESCRIPTION"],
     order = Order(),
     type = "toggle",
-    set = function(info, val)        profile.REORDER = val end,
-    get = function(info)      return profile.REORDER       end,
+    set = function(info, val)        db.REORDER = val end,
+    get = function(info)      return db.REORDER       end,
   }
   
   CreateNewline()
@@ -543,8 +526,8 @@ function Data:MakeOptionsTable(profile, L)
     desc = L["RECOLOR STATS DESCRIPTION"],
     order = Order(),
     type = "toggle",
-    set = function(info, val)        profile.RECOLOR = val end,
-    get = function(info)      return profile.RECOLOR       end,
+    set = function(info, val)        db.RECOLOR = val end,
+    get = function(info)      return db.RECOLOR       end,
   }
   
   
@@ -555,8 +538,8 @@ function Data:MakeOptionsTable(profile, L)
     desc = L["SHOW SPEEDBAR DESCRIPTION"],
     order = Order(),
     type = "toggle",
-    set = function(info, val)        profile.SHOW_SPEEDBAR = val end,
-    get = function(info)      return profile.SHOW_SPEEDBAR       end,
+    set = function(info, val)        db.SHOW_SPEEDBAR = val end,
+    get = function(info)      return db.SHOW_SPEEDBAR       end,
   }
   
   CreateNewline()
@@ -569,15 +552,15 @@ function Data:MakeOptionsTable(profile, L)
     min = 5,
     max = 25,
     step = 1,
-    set = function(info, val)        profile.SPEEDBAR_SIZE = val end,
-    get = function(info)      return profile.SPEEDBAR_SIZE       end,
+    set = function(info, val)        db.SPEEDBAR_SIZE = val end,
+    get = function(info)      return db.SPEEDBAR_SIZE       end,
   }
   
   ADDON_OPTIONS.args["speedbar_size Reset"] = {
     name = L["Reset"],
     order = Order(),
     type = "execute",
-    func = function() profile.SPEEDBAR_SIZE = OPTION_DEFAULTS.profile.SPEEDBAR_SIZE end,
+    func = function() db.SPEEDBAR_SIZE = OPTION_DEFAULTS.db.SPEEDBAR_SIZE end,
   }
   
   CreateNewline()
@@ -590,15 +573,15 @@ function Data:MakeOptionsTable(profile, L)
     min = 1,
     max = 5,
     step = 1,
-    set = function(info, val)        profile.SPEED_ACCURACY = val end,
-    get = function(info)      return profile.SPEED_ACCURACY       end,
+    set = function(info, val)        db.SPEED_ACCURACY = val end,
+    get = function(info)      return db.SPEED_ACCURACY       end,
   }
   
   ADDON_OPTIONS.args["speed_accuracy Reset"] = {
     name = L["Reset"],
     order = Order(),
     type = "execute",
-    func = function() profile.SPEED_ACCURACY = OPTION_DEFAULTS.profile.SPEED_ACCURACY end,
+    func = function() db.SPEED_ACCURACY = OPTION_DEFAULTS.db.SPEED_ACCURACY end,
   }
   
   
@@ -609,10 +592,10 @@ function Data:MakeOptionsTable(profile, L)
     order = Order(),
     type = "execute",
     func =  function()
-      profile.RECOLOR_USABLE = OPTION_DEFAULTS.profile.RECOLOR_USABLE
+      db.RECOLOR_USABLE = OPTION_DEFAULTS.db.RECOLOR_USABLE
       for _, tbl in ipairs{"RECOLOR_STAT", "COLORS"} do
-        for key in pairs(profile[tbl]) do
-          profile[tbl][key] = OPTION_DEFAULTS.profile[tbl][key]
+        for key in pairs(db[tbl]) do
+          db[tbl][key] = OPTION_DEFAULTS.db[tbl][key]
         end
       end
     end,
@@ -626,8 +609,8 @@ function Data:MakeOptionsTable(profile, L)
     desc = L["RECOLOR USABLE EFFECTS DESCRIPTION"],
     order = Order(),
     type = "toggle",
-    set = function(info, val)        profile.RECOLOR_USABLE = val end,
-    get = function(info)      return profile.RECOLOR_USABLE       end,
+    set = function(info, val)        db.RECOLOR_USABLE = val end,
+    get = function(info)      return db.RECOLOR_USABLE       end,
   }
   CreateNewline()
   CreateColorOption("Trainable Equipment", "TRAINABLE"        , true)

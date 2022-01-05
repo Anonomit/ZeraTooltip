@@ -45,14 +45,6 @@ local function FixPercent(amount)
 end
 
 
-local function debugArgs(...)
-  PlaySound(SOUNDKIT.ALARM_CLOCK_WARNING_3)
-  for k, v in ipairs{...} do
-    print(("'%s'"):format(v))
-  end
-end
-
-
 
 
 

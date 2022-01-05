@@ -11,29 +11,19 @@ local AceDB           = LibStub"AceDB-3.0"
 local AceDBOptions    = LibStub("AceDBOptions-3.0")
 
 
-ZeraTooltip.ENABLED          = true
+local ENABLED = true
 
-ZeraTooltip.DEBUG            = false
-ZeraTooltip.SHOW_LABELS      = false
-ZeraTooltip.CTRL_SUPPRESSION = false
+function ZeraTooltip:Toggle()
+  ENABLED = not ENABLED
+end
 
--- Curseforge automatic packaging will comment this out
--- https://support.curseforge.com/en/support/solutions/articles/9000197281-automatic-packaging
---@debug@
-ZeraTooltip.ENABLED          = true
-
-ZeraTooltip.DEBUG            = true
-ZeraTooltip.SHOW_LABELS      = false
-ZeraTooltip.CTRL_SUPPRESSION = true
---@end-debug@
-
-
-
+function ZeraTooltip:GetDB()
+  return self.db.profile
+end
 
 function ZeraTooltip:GetColor(key)
-  if not self.db then return end
-  assert(self.db.profile.COLORS[key], ("Missing Color entry: %s"):format(key))
-  return self.db.profile.RECOLOR_STAT[key] and self.db.profile.COLORS[key] or nil
+  assert(self:GetDB().COLORS[key], ("Missing Color entry: %s"):format(key))
+  return self:GetDB().RECOLOR_STAT[key] and self:GetDB().COLORS[key] or nil
 end
 
 
@@ -62,7 +52,7 @@ function ZeraTooltip:RewordLine(text)
         local pattern = type(output) == "function" and output(unpack(matches)) or output:format(unpack(matches))
         local newText = text:gsub(input, pattern)
         if (not newText:find(L["ConjunctiveWord PATTERN"]) or pattern:find(L["ConjunctiveWord PATTERN"])) then
-          return text:gsub(input, pattern) .. (ZeraTooltip.SHOW_LABELS and ("  [%s %d]"):format(data.LABEL, j) or "")
+          return text:gsub(input, pattern) .. (self:GetDB().DEBUG.SHOW_LABELS and ("  [%s %d]"):format(data.LABEL, j) or "")
         end
       end
     end
@@ -166,9 +156,9 @@ function ZeraTooltip:RecolorStats(tooltip, simplified, enchanted)
       local color = Data:DefontifyColor(fontString:GetTextColor())
       
       if Data:IsSameColorFuzzy(color, Data.GREEN) and not enchantLineFound and not text:match(("^%%d+%%s+%s$"):format(L["Armor"])) then
-        fontString:SetTextColor(Data:FontifyColor(self.db.profile.COLORS.ENCHANT))
+        fontString:SetTextColor(Data:FontifyColor(self:GetDB().COLORS.ENCHANT))
         enchantLineFound = true
-      elseif not self.db.profile.RECOLOR_USABLE and text:find(L["Use PATTERN"]) then
+      elseif not self:GetDB().RECOLOR_USABLE and text:find(L["Use PATTERN"]) then
         -- continue
       else
         for j, data in ipairs(L) do
@@ -221,15 +211,15 @@ function ZeraTooltip:RewriteSpeed(tooltip)
         local word, speed = text:match(L["Weapon Speed PATTERN"])
         speed = tonumber(speed)
         
-        local fill = math.max(0, math.min(Data:Round((speed - Data.WEAPON_SPEED_MIN) / Data.WEAPON_SPEED_DIF * self.db.profile.SPEEDBAR_SIZE, 0), self.db.profile.SPEEDBAR_SIZE))
+        local fill = math.max(0, math.min(Data:Round((speed - Data.WEAPON_SPEED_MIN) / Data.WEAPON_SPEED_DIF * self:GetDB().SPEEDBAR_SIZE, 0), self:GetDB().SPEEDBAR_SIZE))
         local bar = ""
-        if self.db.profile.SHOW_SPEEDBAR then
-          bar = ("  [%s%s]"):format(("I"):rep(fill), (" "):rep(self.db.profile.SPEEDBAR_SIZE - fill))
+        if self:GetDB().SHOW_SPEEDBAR then
+          bar = ("  [%s%s]"):format(("I"):rep(fill), (" "):rep(self:GetDB().SPEEDBAR_SIZE - fill))
         end
-        fontString:SetText(("%%s %%.%df%%s"):format(self.db.profile.SPEED_ACCURACY):format(word, speed, bar))
+        fontString:SetText(("%%s %%.%df%%s"):format(self:GetDB().SPEED_ACCURACY):format(word, speed, bar))
         
         local color = self:GetColor"SPEED"
-        if self.db.profile.RECOLOR and color then
+        if self:GetDB().RECOLOR and color then
           fontString:SetTextColor(Data:FontifyColor(color))
         end
       end
@@ -276,23 +266,23 @@ end
 
 
 function ZeraTooltip:OnTooltipSetHyperlink(tooltip)
-  if not ZeraTooltip.ENABLED or ZeraTooltip.CTRL_SUPPRESSION and IsControlKeyDown() then return end
+  if not ENABLED or self:GetDB().DEBUG.CTRL_SUPPRESSION and IsControlKeyDown() then return end
   local name, link = tooltip:GetItem()
   if not link then return end
   
   local enchanted = not not link:find"item:%d+:%d+"
   local itemType, itemSubType, _, invType = select(6, GetItemInfo(link))
   
-  if self.db.profile.SIMPLIFY then
+  if self:GetDB().SIMPLIFY then
     ZeraTooltip:RewordStats(tooltip)
   end
   
-  if self.db.profile.REORDER then
-    ZeraTooltip:ReorderStats(tooltip, self.db.profile.SIMPLIFY, enchanted)
+  if self:GetDB().REORDER then
+    ZeraTooltip:ReorderStats(tooltip, self:GetDB().SIMPLIFY, enchanted)
   end
   
-  if self.db.profile.RECOLOR then
-    ZeraTooltip:RecolorStats(tooltip, self.db.profile.SIMPLIFY, enchanted)
+  if self:GetDB().RECOLOR then
+    ZeraTooltip:RecolorStats(tooltip, self:GetDB().SIMPLIFY, enchanted)
     self:RecolorLearnable(tooltip, itemType, itemSubType, invType)
   end
   
@@ -318,7 +308,7 @@ end
 
 
 function ZeraTooltip:CreateOptions()
-  AceConfig:RegisterOptionsTable(ADDON_NAME, Data:MakeOptionsTable(self.db.profile, L))
+  AceConfig:RegisterOptionsTable(ADDON_NAME, Data:MakeOptionsTable(self:GetDB(), L))
   AceConfigDialog:AddToBlizOptions(ADDON_NAME)
   
   local profiles = AceDBOptions:GetOptionsTable(self.db)
