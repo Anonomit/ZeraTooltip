@@ -3,6 +3,13 @@
 local ADDON_NAME, Data = ...
 
 
+local buildMajor = tonumber(GetBuildInfo():match"^(%d+)%.")
+if buildMajor == 2 then
+  Data.WOW_VERSION = "BCC"
+elseif buildMajor == 1 then
+  Data.WOW_VERSION = "Classic"
+end
+
 function Data:IsBCC()
   return Data.WOW_VERSION == "BCC"
 end

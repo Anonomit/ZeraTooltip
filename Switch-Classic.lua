@@ -1,3 +1,0 @@
-local ADDON_NAME, Data = ...
-
-Data.WOW_VERSION = "Classic"
