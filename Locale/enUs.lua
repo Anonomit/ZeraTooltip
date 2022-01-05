@@ -617,31 +617,31 @@ elseif Data:IsClassic() then
   }
 end
 
-L[#L+1] = {LABEL = "Physical Haste"}
-L[#L].COLOR = "PHYS_HASTE"
-L[#L].MAP = {
-  {
-    INPUT = "I[mn][pc]r[oe][va]s?es ?y?o?u?r? haste rating by (%d+)%.?",
-    OUTPUT = "+%d Physical Haste Rating",
-  },
-}
-L[#L].CAPTURES = {
-  "[%+%-]%d+ Physical Haste Rating.*",
-}
-
-L[#L+1] = {LABEL = "Armor Penetration"}
-L[#L].COLOR = "PHYS_PEN"
-L[#L].MAP = {
-  {
-    INPUT = "Your attacks ignore (%d+) of your opponent's armor%.?",
-    OUTPUT = "+%d Armor Pen",
-  },
-}
-L[#L].CAPTURES = {
-  "[%+%-]%d+ Armor Pen.*",
-}
-
 if Data:IsBCC() then
+  L[#L+1] = {LABEL = "Physical Haste"}
+  L[#L].COLOR = "PHYS_HASTE"
+  L[#L].MAP = {
+    {
+      INPUT = "I[mn][pc]r[oe][va]s?es ?y?o?u?r? haste rating by (%d+)%.?",
+      OUTPUT = "+%d Physical Haste Rating",
+    },
+  }
+  L[#L].CAPTURES = {
+    "[%+%-]%d+ Physical Haste Rating.*",
+  }
+  
+  L[#L+1] = {LABEL = "Armor Penetration"}
+  L[#L].COLOR = "PHYS_PEN"
+  L[#L].MAP = {
+    {
+      INPUT = "Your attacks ignore (%d+) of your opponent's armor%.?",
+      OUTPUT = "+%d Armor Pen",
+    },
+  }
+  L[#L].CAPTURES = {
+    "[%+%-]%d+ Armor Pen.*",
+  }
+  
   L[#L+1] = {LABEL = "Expertise"}
   L[#L].COLOR = "EXPERTISE"
   L[#L].MAP = {
@@ -652,17 +652,6 @@ if Data:IsBCC() then
   }
   L[#L].CAPTURES = {
     "[%+%-]%d+ Expertise Rating.*",
-  }
-elseif Data:IsClassic() then
-  L[#L+1] = {LABEL = "Skill"}
-  L[#L].MAP = {
-    {
-      INPUT = "Increased ([%u][%a%-%s]+) %+(%d+)%.?",
-      OUTPUT = function(skill, amount) return ("+%d %s skill"):format(amount, skill) end,
-    },
-  }
-  L[#L].CAPTURES = {
-    "[%+%-]%d+ .+ skill.*",
   }
 end
 
@@ -1177,6 +1166,17 @@ L[#L].CAPTURES = {
 --  ███████║██║     ███████╗╚██████╗██║██║  ██║███████╗    ███████╗██║     ██║     ███████╗╚██████╗   ██║   ███████║
 --  ╚══════╝╚═╝     ╚══════╝ ╚═════╝╚═╝╚═╝  ╚═╝╚══════╝    ╚══════╝╚═╝     ╚═╝     ╚══════╝ ╚═════╝   ╚═╝   ╚══════╝
 
+
+L[#L+1] = {LABEL = "Skill"}
+L[#L].MAP = {
+  {
+    INPUT = "Increased ([%u][%a%-%s]+) %+(%d+)%.?",
+    OUTPUT = function(skill, amount) return ("+%d %s skill"):format(amount, skill) end,
+  },
+}
+L[#L].CAPTURES = {
+  "[%+%-]%d+ .+ skill.*",
+}
 
 L[#L+1] = {LABEL = "Hit With Ability"}
 L[#L].MAP = {

@@ -636,6 +636,7 @@ function Data:MakeOptionsTable(profile, L)
   CreateColorOption("Frost Resist" , "FROST_RESIST")
   CreateColorOption("Shadow Resist", "SHADOW_RESIST")
   CreateColorOption("Holy Resist"  , "HOLY_RESIST")
+  CreateColorOption("Resist All"  , "RESIST_ALL")
   
   CreateDivider()
   
@@ -650,13 +651,14 @@ function Data:MakeOptionsTable(profile, L)
   CreateDivider()
   
   CreateDescription("Defensive")
-  CreateColorOption("Defense"     , "DEFENSE")
-  CreateColorOption("Resilience"  , "RESILIENCE")
+  CreateColorOption("Defense", "DEFENSE")
+  if Data:IsBCC() then
+    CreateColorOption("Resilience", "RESILIENCE")
+  end
   CreateColorOption("Dodge"       , "DODGE")
   CreateColorOption("Parry"       , "PARRY")
   CreateColorOption("Block Rating", "BLOCK_RATING")
   CreateColorOption("Block Value" , "BLOCK_VALUE")
-  CreateColorOption("Resist All"  , "RESIST_ALL")
   
   CreateDivider()
   
@@ -665,10 +667,10 @@ function Data:MakeOptionsTable(profile, L)
   CreateColorOption("Ranged Attack Power", "R_ATTACK_POW")
   CreateColorOption("Physical Hit"       , "PHYS_HIT")
   CreateColorOption("Physical Crit"      , "PHYS_CRIT")
-  CreateColorOption("Physical Haste"     , "PHYS_HASTE")
-  CreateColorOption("Armor Pen"          , "PHYS_PEN")
   if Data:IsBCC() then
-    CreateColorOption("Expertise", "EXPERTISE")
+    CreateColorOption("Physical Haste", "PHYS_HASTE")
+    CreateColorOption("Armor Pen"     , "PHYS_PEN")
+    CreateColorOption("Expertise"     , "EXPERTISE")
   end
   
   CreateDivider()
