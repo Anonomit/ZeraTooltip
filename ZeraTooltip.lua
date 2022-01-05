@@ -218,13 +218,8 @@ function ZeraTooltip:RewriteSpeed(tooltip)
       if text:find(L["Weapon Speed PATTERN"]) then
         
         -- This should match weapon speed values with any number of decimal places, though by default I think it's always two.
-        local word, s, decimals = text:match(L["Weapon Speed PATTERN"])
-        local speed = s
-        local i = 0
-        for digit in tostring(decimals):gmatch"(%d)" do
-          i = i + 1
-          speed = speed + digit/(10^i)
-        end
+        local word, speed = text:match(L["Weapon Speed PATTERN"])
+        speed = tonumber(speed)
         
         local fill = math.max(0, math.min(Data:Round((speed - Data.WEAPON_SPEED_MIN) / Data.WEAPON_SPEED_DIF * self.db.profile.SPEEDBAR_SIZE, 0), self.db.profile.SPEEDBAR_SIZE))
         local bar = ""

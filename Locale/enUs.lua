@@ -5,26 +5,26 @@ local locale = LibStub("AceLocale-3.0"):NewLocale(ADDON_NAME, "enUS", true)
 local L = {}
 
 
+L["Miscellaneous"] = MISCELLANEOUS
 
-L["Miscellaneous"]         = MISCELLANEOUS
+
+
+
+
+
+
 for i, element in ipairs(Data:GetElements()) do
   L[Data:GetElementEnglish(i) .. " Resist"] = element .. " Resist"
   L[Data:GetElementEnglish(i) .. " Damage"] = element .. " Damage"
 end
 
-
-
-
-
 L["Equip PATTERN"]           = "^%s*Equip:%s*"
 L["Use PATTERN"]             = "^%s*Use:%s*"
 L["Set PATTERN"]             = "^%(?%d*%)?%s*Set:%s*"
 L["SocketBonus PATTERN"]     = "^%s*Socket Bonus:%s*"
+L["Weapon Speed PATTERN"]    = "^(Speed) ([%d%.]+)"
 L["ConjunctiveWord PATTERN"] = "%s+and%s+"
 L["DisjunctiveWord PATTERN"] = "%s+or%s+"
-
-
-L["Weapon Speed PATTERN"] = "(Speed) (%d)%.(%d*)"
 
 
 -- Removes leading/trailing spaces. Also removes leading "your " and appending " spell" or " ability" text when it's meaningless
