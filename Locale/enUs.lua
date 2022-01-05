@@ -257,7 +257,7 @@ L[#L].MAP = {
     OUTPUT = "+%d " .. L["Armor"],
   },
   {
-    INPUT  = "^([%+%-]%d+) " .. L["Armor"] .. "$",
+    INPUT  = "^([%+%-]%d+) Armor$",
     OUTPUT = "%s " .. L["Armor"],
   },
 }
@@ -270,11 +270,11 @@ L[#L].COLOR = "BLOCK_VALUE"
 L[#L].MAP = {
   {
     INPUT  = "^(%d+) " .. "Block" .. "$",
-    OUTPUT = "%d " .. "Block",
+    OUTPUT = "%d Block",
   },
 }
 L[#L].CAPTURES = {
-  "[%+%-]%d+ " .. "Block" .. "$",
+  "%d+ Block$",
 }
 
 for _, stat in ipairs{"Stamina", "Strength", "Agility", "Intellect", "Spirit"} do
@@ -282,7 +282,7 @@ for _, stat in ipairs{"Stamina", "Strength", "Agility", "Intellect", "Spirit"} d
   L[#L].COLOR = stat:upper()
   L[#L].MAP = {
     {
-      INPUT  = "^[%+%-](%d+) " .. L[stat] .. "$",
+      INPUT  = "^[%+%-](%d+) " .. stat .. "$",
       OUTPUT = "+%d " .. L[stat],
     },
   }
@@ -313,11 +313,11 @@ for i, element in pairs(Data:GetElements()) do
   L[#L].MAP = {
     {
       INPUT  = "^%+(%d+) " .. Data:GetElementPattern(i) .. " Resista?n?c?e?$",
-      OUTPUT = "+%d " .. element .. " Resist",
+      OUTPUT = "+%d " .. L[element .. " Resist"],
     },
   }
   L[#L].CAPTURES = {
-    "[%+%-]%d+ " .. element .. " Resist.*",
+    "[%+%-]%d+ " .. L[element .. " Resist"] .. ".*",
   }
 end
 
