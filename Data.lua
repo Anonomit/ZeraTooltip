@@ -3,6 +3,14 @@
 local ADDON_NAME, Data = ...
 
 
+function Data:IsBCC()
+  return Data.WOW_VERSION == "BCC"
+end
+function Data:IsClassic()
+  return Data.WOW_VERSION == "Classic"
+end
+
+
 local function rgb(r, g, b)
   return {r, g, b}
 end
@@ -10,8 +18,8 @@ end
 
 
 
--- Configuration
 
+-- Configuration
 
 -- Fastest weapon speed
 Data.WEAPON_SPEED_MIN = 1.2
@@ -149,10 +157,11 @@ local OPTION_DEFAULTS = {
     },
     
     RECOLOR_STAT = {
-      ["**"]  = true,
+      ["**"] = true,
       
-      SPEED   = false,
-      ENCHANT = false,
+      WEAP_DAMAGE = false,
+      SPEED       = false,
+      ENCHANT     = false,
     },
   },
 }
@@ -203,7 +212,20 @@ Data.RED   = rgb(255,  32,  32)
 Data.GREEN = rgb(  0, 255,   0)
 
 
-Data.ELEMENTS = {
+
+local ELEMENTS_ENGLISH = {
+  "Arcane",
+  "Fire",
+  "Nature",
+  "Frost",
+  "Shadow",
+  "Holy",
+}
+local ELEMENT_KEYS = {}
+for i, element in ipairs(ELEMENTS_ENGLISH) do
+  ELEMENT_KEYS[i] = element:upper()
+end
+local ELEMENTS = {
   STRING_SCHOOL_ARCANE,
   STRING_SCHOOL_FIRE,
   STRING_SCHOOL_NATURE,
@@ -211,7 +233,36 @@ Data.ELEMENTS = {
   STRING_SCHOOL_SHADOW,
   STRING_SCHOOL_HOLY,
 }
+local ELEMENT_PATTERNS = {}
+for i, element in ipairs(ELEMENTS) do
+  local elementPattern = ""
+  for char in element:gmatch"." do
+    if char:match"%u" then
+      elementPattern = ("%s[%s%s]"):format(elementPattern, char, char:lower())
+    elseif char:match"%p" then
+      elementPattern = elementPattern .. "%" .. char
+    else
+      elementPattern = elementPattern .. char
+    end
+  end
+  ELEMENT_PATTERNS[i] = elementPattern
+end
 
+function Data:GetElements()
+  return ELEMENTS
+end
+function Data:GetElement(i)
+  return self:GetElements()[i]
+end
+function Data:GetElementPattern(i)
+  return ELEMENT_PATTERNS[i]
+end
+function Data:GetElementEnglish(i)
+  return ELEMENTS_ENGLISH[i]
+end
+function Data:GetElementKey(i)
+  return ELEMENT_KEYS[i]
+end
 
 
 
@@ -377,8 +428,8 @@ end
 
 
 function Data:Round(num, decimalPlaces)
-  local mult = 10^(decimalPlaces or 0)
-  return math.floor(num * mult + 0.5) / mult
+  local mult = 10^(tonumber(decimalPlaces) or 0)
+  return math.floor(tonumber(num) * mult + 0.5) / mult
 end
 
 
@@ -616,7 +667,9 @@ function Data:MakeOptionsTable(profile, L)
   CreateColorOption("Physical Crit"      , "PHYS_CRIT")
   CreateColorOption("Physical Haste"     , "PHYS_HASTE")
   CreateColorOption("Armor Pen"          , "PHYS_PEN")
-  CreateColorOption("Expertise"          , "EXPERTISE")
+  if Data:IsBCC() then
+    CreateColorOption("Expertise", "EXPERTISE")
+  end
   
   CreateDivider()
   
@@ -624,8 +677,10 @@ function Data:MakeOptionsTable(profile, L)
   CreateColorOption("Spell Damage", "MAGICAL")
   CreateColorOption("Spell Hit"   , "MAGIC_HIT")
   CreateColorOption("Spell Crit"  , "MAGIC_CRIT")
-  CreateColorOption("Spell Haste" , "MAGIC_HASTE")
-  CreateColorOption("Spell Pen"   , "MAGIC_PEN")
+  if Data:IsBCC() then
+    CreateColorOption("Spell Haste", "MAGIC_HASTE")
+    CreateColorOption("Spell Pen"  , "MAGIC_PEN")
+  end
   
   CreateDivider()
   

@@ -13,9 +13,10 @@
 
 embeds.xml
 
+Switch-BCC.lua
 Data.lua
 
-Locale/Classic/enUS.lua
+Locale/enUS.lua
 
 ZeraTooltip.lua
 

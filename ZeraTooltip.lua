@@ -15,16 +15,16 @@ ZeraTooltip.ENABLED           = true
 
 ZeraTooltip.DEBUG             = false
 ZeraTooltip.SHOW_LABELS       = false
-ZeraTooltip.SHIFT_SUPPRESSION = false
+ZeraTooltip.CTRL_SUPPRESSION = false
 
 -- Curseforge automatic packaging will comment this out
 -- https://support.curseforge.com/en/support/solutions/articles/9000197281-automatic-packaging
 --@debug@
-ZeraTooltip.ENABLED           = true
+ZeraTooltip.ENABLED          = true
 
-ZeraTooltip.DEBUG             = true
-ZeraTooltip.SHOW_LABELS       = false
-ZeraTooltip.SHIFT_SUPPRESSION = true
+ZeraTooltip.DEBUG            = true
+ZeraTooltip.SHOW_LABELS      = false
+ZeraTooltip.CTRL_SUPPRESSION = true
 --@end-debug@
 
 
@@ -43,7 +43,7 @@ function ZeraTooltip:RemoveColorText(text)
 end
 
 function ZeraTooltip:TrimLine(text)
-  return text:gsub(L["Equip Pattern"], "")
+  return text:gsub(L["Equip PATTERN"], "")
 end
 
 function ZeraTooltip:RewordLine(text)
@@ -53,7 +53,10 @@ function ZeraTooltip:RewordLine(text)
       local matches = {text:match(input)}
       if #matches > 0 then
         local pattern = type(output) == "function" and output(unpack(matches)) or output:format(unpack(matches))
-        return self:TrimLine(text:gsub(input, pattern)) .. (ZeraTooltip.SHOW_LABELS and ("  [%s]"):format(data.LABEL) or "")
+        local newText = text:gsub(input, pattern)
+        if (not newText:find(L["ConjunctiveWord PATTERN"]) or pattern:find(L["ConjunctiveWord PATTERN"])) then
+          return text:gsub(input, pattern) .. (ZeraTooltip.SHOW_LABELS and ("  [%s %d]"):format(data.LABEL, j) or "")
+        end
       end
     end
   end
@@ -66,8 +69,19 @@ function ZeraTooltip:RewordStats(tooltip)
     local text = fontString:GetText()
     if text then
       text = self:RemoveColorText(text)
+      if text:match(L["Equip PATTERN"]) then
+        text = text:gsub(L["Equip PATTERN"], "")
+        fontString:SetText(text)
+      end
+      local setPrefix = text:match(L["Set PATTERN"])
+      if setPrefix then
+        text = text:sub(#setPrefix + 1, #text)
+      end
       text = self:RewordLine(text)
       if text then
+        if setPrefix then
+          text = setPrefix .. text
+        end
         fontString:SetText(text)
       end
     end
@@ -91,24 +105,29 @@ function ZeraTooltip:ReorderStats(tooltip, simplified, enchanted)
       if Data:IsSameColorFuzzy(color, Data.GREEN) and not enchantLineFound and not text:match(("^%%d+%%s+%s$"):format(L["Armor"])) then
         enchantLineFound = true
       else
-        for j, data in ipairs(L) do
-          local captures = {}
-          for i, capture in ipairs(data.CAPTURES or {}) do
-            table.insert(captures, "^" .. capture)
-          end
-          if not simplified then
-            for i, map in ipairs(data.MAP or {}) do
-              table.insert(captures, map.INPUT)
+        if not text:match(L["Set PATTERN"]) then
+          for j, data in ipairs(L) do
+            local captures = {}
+            for _, capture in ipairs(data.CAPTURES or {}) do
+              table.insert(captures, "^" .. capture)
             end
-          end
-          for k, pattern in ipairs(captures) do
-            if text:match(pattern) then
-              if #groups == 0 or not Data:IsSameColor(groups[#groups].color, color) or groups[#groups].line + #groups[#groups] ~= i then
-                table.insert(groups, {color = color, line = i})
+            if not simplified then
+              for _, map in ipairs(data.MAP or {}) do
+                table.insert(captures, map.INPUT)
               end
-              table.insert(groups[#groups], {order = j, text = text})
-              break
             end
+            local found = false
+            for k, pattern in ipairs(captures) do
+              if text:match(pattern) then
+                if #groups == 0 or not Data:IsSameColor(groups[#groups].color, color) or groups[#groups].line + #groups[#groups] ~= i then
+                  table.insert(groups, {color = color, line = i})
+                end
+                table.insert(groups[#groups], {order = j, text = text})
+                found = true
+                break
+              end
+            end
+            if found then break end
           end
         end
       end
@@ -153,12 +172,13 @@ function ZeraTooltip:RecolorStats(tooltip, simplified, enchanted)
               table.insert(captures, map.INPUT)
             end
           end
+          local found = false
           for k, pattern in ipairs(captures) do
-            if text:match(pattern) and (not text:find(L["ConjunctiveWord Pattern"]) or pattern:find(L["ConjunctiveWord Pattern"])) then
+            if text:match(pattern) and (not text:find(L["ConjunctiveWord PATTERN"]) or pattern:find(L["ConjunctiveWord PATTERN"])) then
               if data.COLOR then
                 local newColor = self:GetColor(data.COLOR)
                 if newColor then
-                  if not Data:IsSameColorFuzzy(color, Data.GRAY) and not text:match(L["SocketBonus Pattern"]) then
+                  if not Data:IsSameColorFuzzy(color, Data.GRAY) and not text:match(L["SocketBonus PATTERN"]) then
                     fontString:SetTextColor(Data:FontifyColor(newColor))
                     if text:find(Data.COLOR_CODE) then
                       local newText = text:gsub(Data.COLOR_CODE, "")
@@ -170,6 +190,7 @@ function ZeraTooltip:RecolorStats(tooltip, simplified, enchanted)
               break
             end
           end
+          if found then break end
         end
       end
     end
@@ -185,10 +206,10 @@ function ZeraTooltip:RewriteSpeed(tooltip)
     local text = fontString:GetText()
     if text then
       text = self:RemoveColorText(text)
-      if text:find(L["Speed Pattern"]) then
+      if text:find(L["Weapon Speed PATTERN"]) then
         
         -- This should match weapon speed values with any number of decimal places, though by default I think it's always two.
-        local word, s, decimals = text:match(L["Speed Pattern"])
+        local word, s, decimals = text:match(L["Weapon Speed PATTERN"])
         local speed = s
         local i = 0
         for digit in tostring(decimals):gmatch"(%d)" do
@@ -251,7 +272,7 @@ end
 
 
 function ZeraTooltip:OnTooltipSetHyperlink(tooltip)
-  if not ZeraTooltip.ENABLED or ZeraTooltip.SHIFT_SUPPRESSION and IsShiftKeyDown() then return end
+  if not ZeraTooltip.ENABLED or ZeraTooltip.CTRL_SUPPRESSION and IsControlKeyDown() then return end
   local name, link = tooltip:GetItem()
   if not link then return end
   
