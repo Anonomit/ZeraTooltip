@@ -738,6 +738,10 @@ L[#L].MAP = {
     OUTPUT = "+%d Spell Damage",
   },
   {
+    INPUT  = "(Increases spell damage by up to %d+)%%",
+    OUTPUT = "%s%%%%",
+  },
+  {
     INPUT  = "Increases spell damage by up to (%d+)",
     OUTPUT = "+%d Spell Damage",
   },
