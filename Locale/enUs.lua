@@ -1545,7 +1545,7 @@ L[#L].CAPTURES = {
 L[#L+1] = {LABEL = "Increase Range"}
 L[#L].MAP = {
   {
-    INPUT  = "Increases? the range of (%D-) by (%d+) yds",
+    INPUT  = "I[mn][pc]r[oe][va]s?es the range of (%D-) by (%d+) ya?r?ds",
     OUTPUT = function(spell, amount) return ("+%sy range for %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
 }
