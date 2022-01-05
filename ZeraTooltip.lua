@@ -11,10 +11,10 @@ local AceDB           = LibStub"AceDB-3.0"
 local AceDBOptions    = LibStub("AceDBOptions-3.0")
 
 
-ZeraTooltip.ENABLED           = true
+ZeraTooltip.ENABLED          = true
 
-ZeraTooltip.DEBUG             = false
-ZeraTooltip.SHOW_LABELS       = false
+ZeraTooltip.DEBUG            = false
+ZeraTooltip.SHOW_LABELS      = false
 ZeraTooltip.CTRL_SUPPRESSION = false
 
 -- Curseforge automatic packaging will comment this out
@@ -52,6 +52,13 @@ function ZeraTooltip:RewordLine(text)
       local input, output = map.INPUT, map.OUTPUT
       local matches = {text:match(input)}
       if #matches > 0 then
+        local newInput = input
+        newInput = (input:find"%$$" and newInput:sub(1, #newInput-1) or newInput) .. "%.$"
+        local newMatches = {text:match(newInput)}
+        if #newMatches > 0 then
+          matches = newMatches
+          input = newInput
+        end
         local pattern = type(output) == "function" and output(unpack(matches)) or output:format(unpack(matches))
         local newText = text:gsub(input, pattern)
         if (not newText:find(L["ConjunctiveWord PATTERN"]) or pattern:find(L["ConjunctiveWord PATTERN"])) then

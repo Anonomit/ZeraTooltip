@@ -257,7 +257,7 @@ L[#L].MAP = {
     OUTPUT = "+%d " .. L["Armor"],
   },
   {
-    INPUT  = "^([%+%-]%d+) " .. L["Armor"] .. "%.$",
+    INPUT  = "^([%+%-]%d+) " .. L["Armor"] .. "$",
     OUTPUT = "%s " .. L["Armor"],
   },
 }
@@ -269,7 +269,7 @@ L[#L+1] = {LABEL = "Block"}
 L[#L].COLOR = "BLOCK_VALUE"
 L[#L].MAP = {
   {
-    INPUT  = "^(%d+) " .. "Block" .. "%.$",
+    INPUT  = "^(%d+) " .. "Block" .. "$",
     OUTPUT = "%d " .. "Block",
   },
 }
@@ -282,7 +282,7 @@ for _, stat in ipairs{"Stamina", "Strength", "Agility", "Intellect", "Spirit"} d
   L[#L].COLOR = stat:upper()
   L[#L].MAP = {
     {
-      INPUT  = "^[%+%-](%d+) " .. L[stat] .. "%.$",
+      INPUT  = "^[%+%-](%d+) " .. L[stat] .. "$",
       OUTPUT = "+%d " .. L[stat],
     },
   }
@@ -295,11 +295,11 @@ L[#L+1] = {LABEL = "All Resist"}
 L[#L].COLOR = "RESIST_ALL"
 L[#L].MAP = {
   {
-    INPUT  = "^[%+%-](%d+) All Resistances%.?$",
+    INPUT  = "^[%+%-](%d+) All Resistances$",
     OUTPUT = "+%d All Resist",
   },
   {
-    INPUT  = "Increases your resistance to all schools of magic by (%d+)%.?",
+    INPUT  = "Increases your resistance to all schools of magic by (%d+)",
     OUTPUT = "+%d All Resist",
   },
 }
@@ -312,7 +312,7 @@ for i, element in pairs(Data:GetElements()) do
   L[#L].COLOR = Data:GetElementKey(i) .. "_RESIST"
   L[#L].MAP = {
     {
-      INPUT  = "^%+(%d+) " .. Data:GetElementPattern(i) .. " Resista?n?c?e?%.?$",
+      INPUT  = "^%+(%d+) " .. Data:GetElementPattern(i) .. " Resista?n?c?e?$",
       OUTPUT = "+%d " .. element .. " Resist",
     },
   }
@@ -344,7 +344,7 @@ L[#L].COLOR = "ARMOR"
 if Data:IsBCC() then
   L[#L].MAP = {
     {
-      INPUT = "Increases defense rating by (%d+)%.?",
+      INPUT = "Increases defense rating by (%d+)",
       OUTPUT = "+%d Defense Rating",
     },
   }
@@ -354,7 +354,7 @@ if Data:IsBCC() then
 elseif Data:IsClassic() then
   L[#L].MAP = {
     {
-      INPUT = "Increased Defense %+(%d+)%.?",
+      INPUT = "Increased Defense %+(%d+)",
       OUTPUT = "+%d Defense",
     },
   }
@@ -371,7 +371,7 @@ if Data:IsBCC() then
   L[#L].COLOR = "RESILIENCE"
   L[#L].MAP = {
     {
-      INPUT = "Improves your resilience rating by (%d+)%.?",
+      INPUT = "Improves your resilience rating by (%d+)",
       OUTPUT = "+%d Resilience",
     },
     {
@@ -389,7 +389,7 @@ L[#L].COLOR = "DODGE"
 if Data:IsBCC() then
   L[#L].MAP = {
     {
-      INPUT = "Increases your dodge rating by (%d+)%.?",
+      INPUT = "Increases your dodge rating by (%d+)",
       OUTPUT = "+%d Dodge Rating",
     },
   }
@@ -399,7 +399,7 @@ if Data:IsBCC() then
 elseif Data:IsClassic() then
   L[#L].MAP = {
     {
-      INPUT = "Increases your chance to dodge an attack by (%d+)%%%.?",
+      INPUT = "Increases your chance to dodge an attack by (%d+)%%",
       OUTPUT = "+%d%%%% Dodge",
     },
   }
@@ -413,7 +413,7 @@ L[#L].COLOR = "PARRY"
 if Data:IsBCC() then
   L[#L].MAP = {
     {
-      INPUT = "Increases your parry rating by (%d+)%.?",
+      INPUT = "Increases your parry rating by (%d+)",
       OUTPUT = "+%d Parry Rating",
     },
   }
@@ -423,7 +423,7 @@ if Data:IsBCC() then
 elseif Data:IsClassic() then
   L[#L].MAP = {
     {
-      INPUT = "Increases your chance to parry ?a?n? ?a?t?t?a?c?k? by (%d+)%%%.?",
+      INPUT = "Increases your chance to parry ?a?n? ?a?t?t?a?c?k? by (%d+)%%",
       OUTPUT = "+%d%%%% Parry",
     },
   }
@@ -437,7 +437,7 @@ L[#L].COLOR = "BLOCK_RATING"
 if Data:IsBCC() then
   L[#L].MAP = {
     {
-      INPUT = "Increases your ?s?h?i?e?l?d? block rating by (%d+)%.?",
+      INPUT = "Increases your ?s?h?i?e?l?d? block rating by (%d+)",
       OUTPUT = "+%d Block Rating",
     },
   }
@@ -447,7 +447,7 @@ if Data:IsBCC() then
 elseif Data:IsClassic() then
   L[#L].MAP = {
     {
-      INPUT = "Increases ?y?o?u?r? chance to block attacks with a shield by (%d+)%%%.?",
+      INPUT = "Increases ?y?o?u?r? chance to block attacks with a shield by (%d+)%%",
       OUTPUT = "+%d%%%% Block Chance",
     },
   }
@@ -459,7 +459,7 @@ end
 L[#L+1] = {LABEL = "Block Value"}
 L[#L].MAP = {
   {
-    INPUT = "Increases the block value of your shield by (%d+)%.?",
+    INPUT = "Increases the block value of your shield by (%d+)",
     OUTPUT = "+%d Block Value",
   },
 }
@@ -472,11 +472,11 @@ for i, element in pairs(Data:GetElements()) do
   L[#L+1] = {LABEL = element .. " Reflect Damage"}
   L[#L].MAP = {
     {
-      INPUT = "When struck in combat inflicts (%d+) " .. Data:GetElementPattern(i) .. " damage to the attacker%.?",
+      INPUT = "When struck in combat inflicts (%d+) " .. Data:GetElementPattern(i) .. " damage to the attacker",
       OUTPUT = "+%d " .. element .. " damage reflected to melee attackers",
     },
     {
-      INPUT = "Deals (%d+) " .. Data:GetElementPattern(i) .. " damage to anyone who strikes you with a melee attack%.?",
+      INPUT = "Deals (%d+) " .. Data:GetElementPattern(i) .. " damage to anyone who strikes you with a melee attack",
       OUTPUT = "+%d " .. element .. " damage reflected to melee attackers",
     },
   }
@@ -520,14 +520,14 @@ L[#L].COLOR = "ATTACK_POW"
 if Data:IsBCC() then
   L[#L].MAP = {
     {
-      INPUT = "Increases attack power by (%d+) in Cat, Bear, Dire Bear, and Moonkin forms only%.?",
+      INPUT = "Increases attack power by (%d+) in Cat, Bear, Dire Bear, and Moonkin forms only",
       OUTPUT = "+%d Attack Power while shapeshifted",
     },
   }
 elseif Data:IsClassic() then
   L[#L].MAP = {
     {
-      INPUT = "%+(%d+) Attack Power in Cat, Bear, and Dire Bear forms only%.?",
+      INPUT = "%+(%d+) Attack Power in Cat, Bear, and Dire Bear forms only",
       OUTPUT = "+%d Attack Power while shapeshifted",
     },
   }
@@ -541,18 +541,18 @@ L[#L].COLOR = "ATTACK_POW"
 if Data:IsBCC() then
   L[#L].MAP = {
     {
-      INPUT = "Increases [Aa]ttack [Pp]ower by (%d+)%.?",
+      INPUT = "Increases [Aa]ttack [Pp]ower by (%d+)",
       OUTPUT = "+%d Attack Power",
     },
   }
 elseif Data:IsClassic() then
   L[#L].MAP = {
     {
-      INPUT = "Increases [Aa]ttack [Pp]ower by (%d+)%.?",
+      INPUT = "Increases [Aa]ttack [Pp]ower by (%d+)",
       OUTPUT = "+%d Attack Power",
     },
     {
-      INPUT = "%+(%d+) Attack Power%.?",
+      INPUT = "%+(%d+) Attack Power",
       OUTPUT = "+%d Attack Power",
     },
   }
@@ -566,14 +566,14 @@ L[#L].COLOR = "R_ATTACK_POW"
 if Data:IsBCC() then
   L[#L].MAP = {
     {
-      INPUT = "Increases ranged attack power by (%d+)%.?",
+      INPUT = "Increases ranged attack power by (%d+)",
       OUTPUT = "+%d Ranged Attack Power",
     },
   }
 elseif Data:IsClassic() then
   L[#L].MAP = {
     {
-      INPUT = "%+(%d+) ranged Attack Power%.?",
+      INPUT = "%+(%d+) ranged Attack Power",
       OUTPUT = "+%d Ranged Attack Power",
     },
   }
@@ -587,7 +587,7 @@ L[#L].COLOR = "PHYS_HIT"
 if Data:IsBCC() then
   L[#L].MAP = {
     {
-      INPUT = "I[mn][pc]r[oe][va]s?es ?y?o?u?r? hit rating by (%d+)%.?",
+      INPUT = "I[mn][pc]r[oe][va]s?es ?y?o?u?r? hit rating by (%d+)",
       OUTPUT = "+%d Physical Hit Rating",
     },
   }
@@ -597,7 +597,7 @@ if Data:IsBCC() then
 elseif Data:IsClassic() then
   L[#L].MAP = {
     {
-      INPUT = "Improves your chance to hit by (%d+)%%%.?",
+      INPUT = "Improves your chance to hit by (%d+)%%",
       OUTPUT = "+%d%%%% Physical Hit Chance",
     },
   }
@@ -611,7 +611,7 @@ L[#L].COLOR = "PHYS_CRIT"
 if Data:IsBCC() then
   L[#L].MAP = {
     {
-      INPUT = "I[mn][pc]r[oe][va]s?es ?y?o?u?r? critical strike rating by (%d+)%.?",
+      INPUT = "I[mn][pc]r[oe][va]s?es ?y?o?u?r? critical strike rating by (%d+)",
       OUTPUT = "+%d Physical Crit Rating",
     },
   }
@@ -621,7 +621,7 @@ if Data:IsBCC() then
 elseif Data:IsClassic() then
   L[#L].MAP = {
     {
-      INPUT = "Improves your chance to get a critical strike by (%d+)%%%.?",
+      INPUT = "Improves your chance to get a critical strike by (%d+)%%",
       OUTPUT = "+%d%%%% Physical Crit Chance",
     },
   }
@@ -635,7 +635,7 @@ if Data:IsBCC() then
   L[#L].COLOR = "PHYS_HASTE"
   L[#L].MAP = {
     {
-      INPUT = "I[mn][pc]r[oe][va]s?es ?y?o?u?r? haste rating by (%d+)%.?",
+      INPUT = "I[mn][pc]r[oe][va]s?es ?y?o?u?r? haste rating by (%d+)",
       OUTPUT = "+%d Physical Haste Rating",
     },
   }
@@ -647,7 +647,7 @@ if Data:IsBCC() then
   L[#L].COLOR = "PHYS_PEN"
   L[#L].MAP = {
     {
-      INPUT = "Your attacks ignore (%d+) of your opponent's armor%.?",
+      INPUT = "Your attacks ignore (%d+) of your opponent's armor",
       OUTPUT = "+%d Armor Pen",
     },
   }
@@ -659,7 +659,7 @@ if Data:IsBCC() then
   L[#L].COLOR = "EXPERTISE"
   L[#L].MAP = {
     {
-      INPUT = "Increases? ?y?o?u?r? expertise rating by (%d+)%.?",
+      INPUT = "Increases? ?y?o?u?r? expertise rating by (%d+)",
       OUTPUT = "+%d Expertise Rating",
     },
   }
@@ -673,7 +673,7 @@ for i, element in pairs(Data:GetElements()) do
   L[#L].COLOR = Data:GetElementKey(i) .. "_DAMAGE"
   L[#L].MAP = {
     {
-      INPUT = "Adds (%d+) " .. Data:GetElementPattern(i) .. " damage to your melee attacks%.?",
+      INPUT = "Adds (%d+) " .. Data:GetElementPattern(i) .. " damage to your melee attacks",
       OUTPUT = "+%d melee " .. element .. " damage",
     },
   }
@@ -700,7 +700,7 @@ L[#L+1] = {LABEL = "Spell Power"}
 L[#L].COLOR = "MAGICAL"
 L[#L].MAP = {
   {
-    INPUT  = "Increases damage and healing done by magical spells and effects by up to (%d+)%.?",
+    INPUT  = "Increases damage and healing done by magical spells and effects by up to (%d+)",
     OUTPUT = "+%d Spell Power",
   },
 }
@@ -717,11 +717,11 @@ for i, element in pairs(Data:GetElements()) do
       OUTPUT = "+%d " .. element .. " Spell Damage",
     },
     {
-      INPUT  = "Increases ?t?h?e? damage done by " .. Data:GetElementPattern(i) .. " spells and effects by up to (%d+)%.?",
+      INPUT  = "Increases ?t?h?e? damage done by " .. Data:GetElementPattern(i) .. " spells and effects by up to (%d+)",
       OUTPUT = "+%d " .. element .. " Spell Damage",
     },
     {
-      INPUT  = "Increases " .. Data:GetElementPattern(i) .. " spell damage by (%d+)%.?",
+      INPUT  = "Increases " .. Data:GetElementPattern(i) .. " spell damage by (%d+)",
       OUTPUT = "+%d " .. element .. " Spell Damage",
     },
   }
@@ -742,11 +742,11 @@ L[#L].MAP = {
     OUTPUT = "+%d Spell Damage",
   },
   {
-    INPUT  = "Increases damage done from spells by up to (%d+)%.?",
+    INPUT  = "Increases damage done from spells by up to (%d+)",
     OUTPUT = "+%d Spell Damage",
   },
   {
-    INPUT  = "Increases spell damage by up to (%d+)%.?",
+    INPUT  = "Increases spell damage by up to (%d+)",
     OUTPUT = "+%d Spell Damage",
   },
 }
@@ -760,7 +760,7 @@ L[#L].COLOR = "MAGIC_HIT"
 if Data:IsBCC() then
   L[#L].MAP = {
     {
-      INPUT  = "I[mn][pc]r[oe][va]s?es ?y?o?u?r? spell hit rating by (%d+)%.?",
+      INPUT  = "I[mn][pc]r[oe][va]s?es ?y?o?u?r? spell hit rating by (%d+)",
       OUTPUT = "+%d Spell Hit Rating",
     },
   }
@@ -770,7 +770,7 @@ if Data:IsBCC() then
 elseif Data:IsClassic() then
   L[#L].MAP = {
     {
-      INPUT  = "Improves your chance to hit with spells by (%d+)%%%.?",
+      INPUT  = "Improves your chance to hit with spells by (%d+)%%",
       OUTPUT = "+%d%%%% Spell Hit Chance",
     },
   }
@@ -784,7 +784,7 @@ L[#L].COLOR = "MAGIC_CRIT"
 if Data:IsBCC() then
   L[#L].MAP = {
     {
-      INPUT  = "I[mn][pc]r[oe][va]s?es ?y?o?u?r? spell critical strike rating by (%d+)%.?",
+      INPUT  = "I[mn][pc]r[oe][va]s?es ?y?o?u?r? spell critical strike rating by (%d+)",
       OUTPUT = "+%d Spell Crit Rating",
     },
   }
@@ -794,7 +794,7 @@ if Data:IsBCC() then
 elseif Data:IsClassic() then
   L[#L].MAP = {
     {
-      INPUT  = "Improves your chance to get a critical strike with spells by (%d+)%%%.?",
+      INPUT  = "Improves your chance to get a critical strike with spells by (%d+)%%",
       OUTPUT = "+%d%%%% Spell Crit Chance",
     },
   }
@@ -808,7 +808,7 @@ if Data:IsBCC() then
   L[#L].COLOR = "MAGIC_HASTE"
   L[#L].MAP = {
     {
-      INPUT  = "I[mn][pc]r[oe][va]s?es ?y?o?u?r? spell haste rating by (%d+)%.?",
+      INPUT  = "I[mn][pc]r[oe][va]s?es ?y?o?u?r? spell haste rating by (%d+)",
       OUTPUT = "+%d Spell Haste Rating",
     },
   }
@@ -822,7 +822,7 @@ L[#L].COLOR = "MAGIC_PEN"
 if Data:IsBCC() then
   L[#L].MAP = {
     {
-      INPUT  = "I[mn][pc]r[oe][va]s?es ?y?o?u?r? spell penetration by (%d+)%.?",
+      INPUT  = "I[mn][pc]r[oe][va]s?es ?y?o?u?r? spell penetration by (%d+)",
       OUTPUT = "+%d Spell Pen",
     },
   }
@@ -832,7 +832,7 @@ if Data:IsBCC() then
 elseif Data:IsClassic() then
   L[#L].MAP = {
     {
-      INPUT  = "Decreases the magical resistances of your spell targets by (%d+)%.?",
+      INPUT  = "Decreases the magical resistances of your spell targets by (%d+)",
       OUTPUT = "+%d Spell Pen",
     },
   }
@@ -862,19 +862,19 @@ L[#L].COLOR = "HEALING"
 if Data:IsBCC() then
   L[#L].MAP = {
     {
-      INPUT = "Increases healing done by up to (%d+) and damage done by up to (%d+) for all magical spells and effects%.?",
+      INPUT = "Increases healing done by up to (%d+) and damage done by up to (%d+) for all magical spells and effects",
       OUTPUT = "+%d Healing and +%d Spell Damage",
     },
     {
-      INPUT = "Increases healing done by spells by up to (%d+) and damage done by spells by up to (%d+)%.?",
+      INPUT = "Increases healing done by spells by up to (%d+) and damage done by spells by up to (%d+)",
       OUTPUT = "+%d Healing and +%d Spell Damage",
     },
     {
-      INPUT = "Increases your spell damage by up to (%d+) and your healing by up to (%d+)%.?",
+      INPUT = "Increases your spell damage by up to (%d+) and your healing by up to (%d+)",
       OUTPUT = function(damage, healing) return ("+%d Healing and +%d Spell Damage"):format(healing, damage) end,
     },
     {
-      INPUT  = "Increases healing done by magical spells by up to (%d+)%.?",
+      INPUT  = "Increases healing done by magical spells by up to (%d+)",
       OUTPUT = "+%d Healing",
     },
   }
@@ -886,7 +886,7 @@ if Data:IsBCC() then
 elseif Data:IsClassic() then
   L[#L].MAP = {
     {
-      INPUT  = "Increases healing done by spells and effects by up to (%d+)%.?",
+      INPUT  = "Increases healing done by spells and effects by up to (%d+)",
       OUTPUT = "+%d Healing",
     },
   }
@@ -899,7 +899,7 @@ L[#L+1] = {LABEL = "Health Restore"}
 L[#L].COLOR = "HEALTH"
 L[#L].MAP = {
   {
-    INPUT  = "Restores (%d+) health per (%d+) sec%.?",
+    INPUT  = "Restores (%d+) health per (%d+) sec",
     OUTPUT = function(amount, period) return ("+%d Hp%d%s"):format(amount, period, tonumber(period) > 1 and ("  (+%s HpM)"):format(Data:Round(amount/period*60, 0)) or "") end,
   }
 }
@@ -911,7 +911,7 @@ L[#L+1] = {LABEL = "Mana Restore"}
 L[#L].COLOR = "MANA"
 L[#L].MAP = {
   {
-    INPUT  = "Restores (%d+) mana per (%d+) seco?n?d?s?%.?",
+    INPUT  = "Restores (%d+) mana per (%d+) seco?n?d?s?",
     OUTPUT = function(amount, period) return ("+%d Mp%d%s"):format(amount, period, tonumber(period) > 1 and ("  (+%s MpM)"):format(Data:Round(amount/period*60, 0)) or "") end,
   }
 }
@@ -976,15 +976,15 @@ L[#L].MAP = {
     OUTPUT = "+8%%%% Run Speed and +%d %s",
   },
   {
-    INPUT  = "Minor increase to running and swimming speed%.?",
+    INPUT  = "Minor increase to running and swimming speed",
     OUTPUT = "+8%%%% Run Speed and +8%%%% Swim Speed",
   },
   {
-    INPUT  = "Increases run speed by (%d+)%%%.?",
+    INPUT  = "Increases run speed by (%d+)%%",
     OUTPUT = "+%d%%%% Run Speed",
   },
   {
-    INPUT  = "Run speed increased slightly%.?",
+    INPUT  = "Run speed increased slightly",
     OUTPUT = "+8%%%% Run Speed",
   },
 }
@@ -995,7 +995,7 @@ L[#L].CAPTURES = {
 L[#L+1] = {LABEL = "Swim Speed"}
 L[#L].MAP = {
   {
-    INPUT  = "Increases swim speed by ([%d%.]*%d+%%?)%.?",
+    INPUT  = "Increases swim speed by ([%d%.]*%d+%%?)",
     OUTPUT = function(amount) return ("+%s Swim Speed"):format(FixPercent(amount)) end,
   }
 }
@@ -1006,11 +1006,11 @@ L[#L].CAPTURES = {
 L[#L+1] = {LABEL = "Mount Speed"}
 L[#L].MAP = {
   {
-    INPUT  = "Increases mount speed by ([%d%.]*%d+%%?)%.?",
+    INPUT  = "Increases mount speed by ([%d%.]*%d+%%?)",
     OUTPUT = function(amount) return ("+%s Mount Speed"):format(FixPercent(amount)) end,
   },
   {
-    INPUT  = "Increases speed in Flight Form and Swift Flight Form by ([%d%.]*%d+%%?)%.?",
+    INPUT  = "Increases speed in Flight Form and Swift Flight Form by ([%d%.]*%d+%%?)",
     OUTPUT = function(amount) return ("+%s Speed in Flight Forms"):format(FixPercent(amount)) end,
   },
 }
@@ -1096,7 +1096,7 @@ L[#L+1] = {LABEL = "Bandage"}
 L[#L].COLOR = "HEALTH"
 L[#L].MAP = {
   {
-    INPUT  = "Heals (%d+) damage over (%d+) sec%.",
+    INPUT  = "Heals (%d+) damage over (%d+) sec",
     OUTPUT = function(amount, duration) return ("+%d health (+%s HpS) over %ds"):format(amount, Data:Round(amount/duration, 0), duration) end,
   },
 }
@@ -1202,7 +1202,7 @@ L[#L+1] = {LABEL = "Skill"}
 L[#L].COLOR = "SKILL"
 L[#L].MAP = {
   {
-    INPUT = "Increased ([%u][%a%-%s]+) %+(%d+)%.?",
+    INPUT = "Increased ([%u][%a%-%s]+) %+(%d+)",
     OUTPUT = function(skill, amount) return ("+%d %s skill"):format(amount, skill) end,
   },
 }
@@ -1213,11 +1213,11 @@ L[#L].CAPTURES = {
 L[#L+1] = {LABEL = "Hit With Ability"}
 L[#L].MAP = {
   {
-    INPUT = "Reduces the chance (%D-) will be resisted by (%d+%%)%.?",
+    INPUT = "Reduces the chance (%D-) will be resisted by (%d+%%)",
     OUTPUT = function(spell, amount) return ("+%s Hit Chance with %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
   {
-    INPUT = "Improves your chance to hit with (%D-) by (%d+%%)%.?",
+    INPUT = "Improves your chance to hit with (%D-) by (%d+%%)",
     OUTPUT = function(spell, amount) return ("+%s Hit Chance with %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
 }
@@ -1229,27 +1229,27 @@ L[#L].CAPTURES = {
 L[#L+1] = {LABEL = "Crit With Ability"}
 L[#L].MAP = {
   {
-    INPUT  = "Increases the critical strike chance of (%D-) by (%d+%%)%.?",
+    INPUT  = "Increases the critical strike chance of (%D-) by (%d+%%)",
     OUTPUT = function(spell, amount) return ("+%s Crit Chance with %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Increases the critical hit chance of (%D-) by (%d+%%)%.?",
+    INPUT  = "Increases the critical hit chance of (%D-) by (%d+%%)",
     OUTPUT = function(spell, amount) return ("+%s Crit Chance with %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Increases the critical hit chance of (%D-) (%d+%%)%.?",
+    INPUT  = "Increases the critical hit chance of (%D-) (%d+%%)",
     OUTPUT = function(spell, amount) return ("+%s Crit Chance with %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Increases your chance of a critical hit with (%D-) by (%d+%%)%.?",
+    INPUT  = "Increases your chance of a critical hit with (%D-) by (%d+%%)",
     OUTPUT = function(spell, amount) return ("+%s Crit Chance with %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Improves your chance to get a critical strike with (%D-) by (%d+%%)%.?",
+    INPUT  = "Improves your chance to get a critical strike with (%D-) by (%d+%%)",
     OUTPUT = function(spell, amount) return ("+%s Crit Chance with %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Your (%D-) has (%d+%%) increased critical strike chance%.?",
+    INPUT  = "Your (%D-) has (%d+%%) increased critical strike chance",
     OUTPUT = function(spell, amount) return ("+%s Crit Chance with %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
 }
@@ -1265,11 +1265,11 @@ L[#L].CAPTURES = {
 L[#L+1] = {LABEL = "Increase Pet Damage"}
 L[#L].MAP = {
   {
-    INPUT  = "(%d+%%) increased damage from your summoned pets' melee attacks and damage spells%.?",
+    INPUT  = "(%d+%%) increased damage from your summoned pets' melee attacks and damage spells",
     OUTPUT = function(amount) return ("+%s pet damage"):format(FixPercent(amount)) end,
   },
   {
-    INPUT  = "Increases? your pet's damage by (%d+%%?)%.?",
+    INPUT  = "Increases? your pet's damage by (%d+%%?)",
     OUTPUT = function(amount) return ("+%s pet damage"):format(FixPercent(amount)) end,
   },
 }
@@ -1335,35 +1335,35 @@ L[#L].CAPTURES = {
 L[#L+1] = {LABEL = "Reduce Cost"}
 L[#L].MAP = {
   {
-    INPUT  = "Reduces ?t?h?e? (%D*)cost of (%D-) by (%d+%%?)%.?",
+    INPUT  = "Reduces ?t?h?e? (%D*)cost of (%D-) by (%d+%%?)",
     OUTPUT = function(resource, spell, amount) return ("-%s %scost for %s"):format(FixPercent(amount), resource, TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Decreases? ?t?h?e? (%D*)cost of (%D-) by (%d+%%?)%.?",
+    INPUT  = "Decreases? ?t?h?e? (%D*)cost of (%D-) by (%d+%%?)",
     OUTPUT = function(resource, spell, amount) return ("-%s %scost for %s"):format(FixPercent(amount), resource, TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Your (%D-) each costs? (%d+%%?) less ([mre][aan][nge][aer]g?y?)%.?",
+    INPUT  = "Your (%D-) each costs? (%d+%%?) less ([mre][aan][nge][aer]g?y?)",
     OUTPUT = function(spell, amount, resource) return ("-%s %s cost for %s"):format(FixPercent(amount), resource, TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Your (%D-) costs? (%d+%%?) less ([mre][aan][nge][aer]g?y?)%.?",
+    INPUT  = "Your (%D-) costs? (%d+%%?) less ([mre][aan][nge][aer]g?y?)",
     OUTPUT = function(spell, amount, resource) return ("-%s %s cost for %s"):format(FixPercent(amount), resource, TrimSpell(spell)) end,
   },
   {
-    INPUT  = "All of your (%D-) costs? (%d+%%?) less ([mre][aan][nge][aer]g?y?)%.?",
+    INPUT  = "All of your (%D-) costs? (%d+%%?) less ([mre][aan][nge][aer]g?y?)",
     OUTPUT = function(spell, amount, resource) return ("-%s %s cost for %s"):format(FixPercent(amount), resource, TrimSpell(spell)) end,
   },
   {
-    INPUT  = "(%D+) cost of (%D-) reduced by (%d+%%?)%.?",
+    INPUT  = "(%D+) cost of (%D-) reduced by (%d+%%?)",
     OUTPUT = function(resource, spell, amount) return ("-%s %s cost for %s"):format(FixPercent(amount), resource:lower(), TrimSpell(spell)) end,
   },
   {
-    INPUT  = "%-(%d+) (%D-) cost to ([%a%s]+)%.",
+    INPUT  = "%-(%d+) (%D-) cost to ([%a%s]+)",
     OUTPUT = function(amount, resource, spell) return ("-%s %s cost for %s"):format(FixPercent(amount), resource:lower(), TrimSpell(spell)) end,
   },
   {
-    INPUT  = "%-(%d+) (%D-) cost for ([%a%s]+)%.",
+    INPUT  = "%-(%d+) (%D-) cost for ([%a%s]+)",
     OUTPUT = function(amount, resource, spell) return ("-%s %s cost for %s"):format(FixPercent(amount), resource:lower(), TrimSpell(spell)) end,
   },
 }
@@ -1374,23 +1374,23 @@ L[#L].CAPTURES = {
 L[#L+1] = {LABEL = "Cooldown Reduction"}
 L[#L].MAP = {
   {
-    INPUT  = "Reduces ?t?h?e? cooldown o[fn] (%D-) by (%d+) seco?n?d?s?%.?",
+    INPUT  = "Reduces ?t?h?e? cooldown o[fn] (%D-) by (%d+) seco?n?d?s?",
     OUTPUT = function(spell, amount) return ("-%ss cooldown on %s"):format(amount, TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Decreases ?t?h?e? cooldown o[fn] (%D-) by (%d+) seco?n?d?s?%.?",
+    INPUT  = "Decreases ?t?h?e? cooldown o[fn] (%D-) by (%d+) seco?n?d?s?",
     OUTPUT = function(spell, amount) return ("-%ss cooldown on %s"):format(amount, TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Reduces ?t?h?e? cooldown o[fn] (%D-) by %-?(%d+) minu?t?e?s?%.?",
+    INPUT  = "Reduces ?t?h?e? cooldown o[fn] (%D-) by %-?(%d+) minu?t?e?s?",
     OUTPUT = function(spell, amount) return ("-%sm cooldown on %s"):format(amount, TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Reduces ?t?h?e? cooldown o[fn] (%D-) by (%d+%%)%.?",
+    INPUT  = "Reduces ?t?h?e? cooldown o[fn] (%D-) by (%d+%%)",
     OUTPUT = function(spell, amount) return ("-%s cooldown on %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Decreases ?t?h?e? cooldown o[fn] (%D-) by (%d+%%)%.?",
+    INPUT  = "Decreases ?t?h?e? cooldown o[fn] (%D-) by (%d+%%)",
     OUTPUT = function(spell, amount) return ("-%s cooldown on %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
 }
@@ -1401,35 +1401,35 @@ L[#L].CAPTURES = {
 L[#L+1] = {LABEL = "Increase Damage"}
 L[#L].MAP = {
   {
-    INPUT  = "Increases your (%D-) damage against (%D+) by (%d+%%?)%.?",
+    INPUT  = "Increases your (%D-) damage against (%D+) by (%d+%%?)",
     OUTPUT = function(spell, targets, amount) return ("+%s damage for %s against %s"):format(FixPercent(amount), TrimSpell(spell), targets) end,
   },
   {
-    INPUT  = "Increases your damage against (%D+) by (%d+%%?)%.?",
+    INPUT  = "Increases your damage against (%D+) by (%d+%%?)",
     OUTPUT = function(targets, amount) return ("+%s damage against %s"):format(FixPercent(amount), targets) end,
   },
   {
-    INPUT  = "Increases the damage dealt by (%D-) by (%d+%%?)%.?",
+    INPUT  = "Increases the damage dealt by (%D-) by (%d+%%?)",
     OUTPUT = function(spell, amount) return ("+%s damage for %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Increases damage caused by (%D-) by (%d+%%?)%.?",
+    INPUT  = "Increases damage caused by (%D-) by (%d+%%?)",
     OUTPUT = function(spell, amount) return ("+%s damage for %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Increases the damage from (%D-) by (%d+%%?)%.?",
+    INPUT  = "Increases the damage from (%D-) by (%d+%%?)",
     OUTPUT = function(spell, amount) return ("+%s damage for %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Increases the damage of (%D-) by (%d+%%?)%.?",
+    INPUT  = "Increases the damage of (%D-) by (%d+%%?)",
     OUTPUT = function(spell, amount) return ("+%s damage for %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Increases the damage done by (%D-) by (%d+%%?)%.?",
+    INPUT  = "Increases the damage done by (%D-) by (%d+%%?)",
     OUTPUT = function(spell, amount) return ("+%s damage for %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Your (%D-) deals? (%d+%%?) more damage%.?",
+    INPUT  = "Your (%D-) deals? (%d+%%?) more damage",
     OUTPUT = function(spell, amount) return ("+%s damage for %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
   {
@@ -1445,19 +1445,19 @@ L[#L].CAPTURES = {
 L[#L+1] = {LABEL = "Increase Healing"}
 L[#L].MAP = {
   {
-    INPUT  = "Your (%D-) heals an additional (%d+) health%.?",
+    INPUT  = "Your (%D-) heals an additional (%d+) health",
     OUTPUT = function(spell, amount) return ("+%s healing for %s"):format(amount, TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Increases the healing from (%D-) by (%d+%%?)%.?",
+    INPUT  = "Increases the healing from (%D-) by (%d+%%?)",
     OUTPUT = function(spell, amount) return ("+%s healing for %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Increases the amount healed by (%D-) by (%d+%%?)%.?",
+    INPUT  = "Increases the amount healed by (%D-) by (%d+%%?)",
     OUTPUT = function(spell, amount) return ("+%s healing for %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Increases healing done by (%D-) by up to (%d+%%?)%.?",
+    INPUT  = "Increases healing done by (%D-) by up to (%d+%%?)",
     OUTPUT = function(spell, amount) return ("+%s healing for %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
 }
@@ -1471,19 +1471,19 @@ L[#L].CAPTURES = {
 L[#L+1] = {LABEL = "Modify Threat"}
 L[#L].MAP = {
   {
-    INPUT  = "Increases the threat generated by (%D-) by (%d+%%?)%.?",
+    INPUT  = "Increases the threat generated by (%D-) by (%d+%%?)",
     OUTPUT = function(spell, amount) return ("+%s threat from %s"):format(FixPercent(amount), spell) end,
   },
   {
-    INPUT  = "Decreases the threat generated by your spells by (%d+%%?)%.?",
+    INPUT  = "Decreases the threat generated by your spells by (%d+%%?)",
     OUTPUT = function(amount) return ("-%s threat from spells"):format(FixPercent(amount)) end,
   },
   {
-    INPUT  = "Reduces the threat generated by (%D-) by (%d+%%?)%.?",
+    INPUT  = "Reduces the threat generated by (%D-) by (%d+%%?)",
     OUTPUT = function(spell, amount) return ("-%s threat from %s"):format(FixPercent(amount), spell) end,
   },
   {
-    INPUT  = "Reduces the threat you generate by (%d+%%)%.?",
+    INPUT  = "Reduces the threat you generate by (%d+%%)",
     OUTPUT = function(amount) return ("-%s threat generated"):format(FixPercent(amount)) end,
   },
 }
@@ -1496,7 +1496,7 @@ L[#L].CAPTURES = {
 L[#L+1] = {LABEL = "Pushback Resist"}
 L[#L].MAP = {
   {
-    INPUT  = "Gives you a (%d-%%) chance to avoid interruption caused by damage while casting ([%a%s]+)%.?",
+    INPUT  = "Gives you a (%d-%%) chance to avoid interruption caused by damage while casting ([%a%s]+)",
     OUTPUT = function(amount, spell) return ("+%s Spell Pushback Resist for %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
 }
@@ -1507,7 +1507,7 @@ L[#L].CAPTURES = {
 L[#L+1] = {LABEL = "Increase Duration"}
 L[#L].MAP = {
   {
-    INPUT  = "Increases the duration of (%D-) by (%d+%%)%.?",
+    INPUT  = "Increases the duration of (%D-) by (%d+%%)",
     OUTPUT = function(spell, amount) return ("+%s duration for %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
   {
@@ -1526,7 +1526,7 @@ L[#L].MAP = {
     OUTPUT = function(amount, spell) return ("-%ss cast time for %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Reduces ?t?h?e? casti?n?g? time o[fn] (%D-) by ([%d%.]+%%?) seco?n?d?s?%.?",
+    INPUT  = "Reduces ?t?h?e? casti?n?g? time o[fn] (%D-) by ([%d%.]+%%?) seco?n?d?s?",
     OUTPUT = function(spell, amount) return ("-%ss cast time for %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
 }
@@ -1537,7 +1537,7 @@ L[#L].CAPTURES = {
 L[#L+1] = {LABEL = "Increase Attack Speed"}
 L[#L].MAP = {
   {
-    INPUT  = "Increases ranged attack speed by (%d+%%)%.?",
+    INPUT  = "Increases ranged attack speed by (%d+%%)",
     OUTPUT = function(amount) return ("+%s Ranged Attack Speed"):format(FixPercent(amount)) end,
   },
   {
@@ -1553,7 +1553,7 @@ L[#L].CAPTURES = {
 L[#L+1] = {LABEL = "Increase Range"}
 L[#L].MAP = {
   {
-    INPUT  = "Increases? the range of (%D-) by (%d+) yds%.?",
+    INPUT  = "Increases? the range of (%D-) by (%d+) yds",
     OUTPUT = function(spell, amount) return ("+%sy range for %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
 }
@@ -1564,7 +1564,7 @@ L[#L].CAPTURES = {
 L[#L+1] = {LABEL = "Increase Radius"}
 L[#L].MAP = {
   {
-    INPUT  = "Increases ?t?h?e? radius of (%D-) by (%d+%%?)%.?",
+    INPUT  = "Increases ?t?h?e? radius of (%D-) by (%d+%%?)",
     OUTPUT = function(spell, amount) return ("+%s radius for %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
 }
@@ -1576,7 +1576,7 @@ L[#L+1] = {LABEL = "Resist Silence or Interrupt"}
 if Data:IsBCC() then
   L[#L].MAP = {
     {
-      INPUT  = "Reduces the duration of any Silence or Interrupt effects used against the wearer by (%d+%%)%. This effect does not stack with other similar effects%.",
+      INPUT  = "Reduces the duration of any Silence or Interrupt effects used against the wearer by (%d+%%)%. This effect does not stack with other similar effects",
       OUTPUT = function(amount) return ("-%s duration to incoming Silence and Interrupt effects. Does not stack with similar effects."):format(FixPercent(amount)) end,
     },
   }
@@ -1586,7 +1586,7 @@ if Data:IsBCC() then
 elseif Data:IsClassic() then
   L[#L].MAP = {
     {
-      INPUT  = "Increases your resistance to [Ss]ilence ?e?f?f?e?c?t?s? by (%d+%%)%.?",
+      INPUT  = "Increases your resistance to [Ss]ilence ?e?f?f?e?c?t?s? by (%d+%%)",
       OUTPUT = function(amount) return ("+%s Resistance to Silence effects"):format(FixPercent(amount)) end,
     },
   }
@@ -1598,15 +1598,15 @@ end
 L[#L+1] = {LABEL = "Increase Absorb"}
 L[#L].MAP = {
   {
-    INPUT  = "Increases the amount of %D- absorbed by (%D-) by (%d+%%?)%.?",
+    INPUT  = "Increases the amount of %D- absorbed by (%D-) by (%d+%%?)",
     OUTPUT = function(spell, amount) return ("+%s damage absorbed by %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Increases the %D- absorbed by (%D-) by (%d+%%?)%.?",
+    INPUT  = "Increases the %D- absorbed by (%D-) by (%d+%%?)",
     OUTPUT = function(spell, amount) return ("+%s damage absorbed by %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
   {
-    INPUT  = "(%d+%%) increase to the ?t?o?t?a?l? damage absorbed by ([%a%s]+%%?)%.?",
+    INPUT  = "(%d+%%) increase to the ?t?o?t?a?l? damage absorbed by ([%a%s]+%%?)",
     OUTPUT = function(amount, spell) return ("+%s damage absorbed by %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
 }
@@ -1622,43 +1622,43 @@ L[#L].CAPTURES = {
 L[#L+1] = {LABEL = "Increase Ability Effectiveness"}
 L[#L].MAP = {
   {
-    INPUT  = "You gain (%d+%%? additional) (%D-) from ([%a%s]+)%.?",
+    INPUT  = "You gain (%d+%%? additional) (%D-) from ([%a%s]+)",
     OUTPUT = function(amount, resource, spell) return ("+%s %s from %s"):format(FixPercent(amount), resource, TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Your (%D-) generates an additional (%d+) ([mre][aan][nge][aer]g?y?)%.?",
+    INPUT  = "Your (%D-) generates an additional (%d+) ([mre][aan][nge][aer]g?y?)",
     OUTPUT = function(spell, amount, resource) return ("+%s %s generated by %s"):format(FixPercent(amount), resource, TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Your (%D-) grants an additional (%d+) ([mre][aan][nge][aer]g?y?)%.?",
+    INPUT  = "Your (%D-) grants an additional (%d+) ([mre][aan][nge][aer]g?y?)",
     OUTPUT = function(spell, amount, resource) return ("+%s %s granted by %s"):format(FixPercent(amount), resource, TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Your (%D-) grants an additional (%d+) (spell damage)%.?",
+    INPUT  = "Your (%D-) grants an additional (%d+) (spell damage)",
     OUTPUT = function(spell, amount, resource) return ("+%s %s granted by %s"):format(FixPercent(amount), resource, TrimSpell(spell)) end,
   },
   {
-    INPUT  = "(%D+ gained) from (%D-) increased by (%d+%%?)%.?",
+    INPUT  = "(%D+ gained) from (%D-) increased by (%d+%%?)",
     OUTPUT = function(resource, spell, amount) return ("+%s %s from %s"):format(FixPercent(amount), resource, TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Increases the (%D- bonus) [of][fr]om (%D-) by (%d+%%?)%.?",
+    INPUT  = "Increases the (%D- bonus) [of][fr]om (%D-) by (%d+%%?)",
     OUTPUT = function(resource, spell, amount) return ("+%s %s from %s"):format(FixPercent(amount), resource, TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Increases the (%D- gained) from (%D-) by (%d+%%?)%.?",
+    INPUT  = "Increases the (%D- gained) from (%D-) by (%d+%%?)",
     OUTPUT = function(resource, spell, amount) return ("+%s %s from %s"):format(FixPercent(amount), resource, TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Increases the (%D- granted) by (%D-) by (%d+%%?)%.?",
+    INPUT  = "Increases the (%D- granted) by (%D-) by (%d+%%?)",
     OUTPUT = function(resource, spell, amount) return ("+%s %s from %s"):format(FixPercent(amount), resource, TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Increases the (%D-) from your (%D-) by (%d+%%?)%.?",
+    INPUT  = "Increases the (%D-) from your (%D-) by (%d+%%?)",
     OUTPUT = function(resource, spell, amount) return ("+%s %s from %s"):format(FixPercent(amount), resource, TrimSpell(spell)) end,
   },
   {
-    INPUT  = "I[mn][pc]r[oe][va]s?es the (%D-) of (%D-) by (%d+%%?)%.?",
+    INPUT  = "I[mn][pc]r[oe][va]s?es the (%D-) of (%D-) by (%d+%%?)",
     OUTPUT = function(resource, spell, amount) return ("+%s %s for %s"):format(FixPercent(amount), resource, TrimSpell(spell)) end,
   },
 }
