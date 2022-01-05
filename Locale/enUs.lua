@@ -100,6 +100,11 @@ L["WEAPON SPEED DESCRIPTION"] = "This will also recolor the weapon speedbar, if 
 L["Enchantment"]             = "Enchantment"
 L["ENCHANTMENT DESCRIPTION"] = "Enchantments will appear in a customizable color."
 
+L["Skill"]             = "Skill"
+L["SKILL DESCRIPTION"] = "This applies to weapon and profession skill bonuses."
+
+
+
 L["Armor"] = "Armor"
 
 L["Stamina"]   = "Stamina"
@@ -1168,6 +1173,7 @@ L[#L].CAPTURES = {
 
 
 L[#L+1] = {LABEL = "Skill"}
+L[#L].COLOR = "SKILL"
 L[#L].MAP = {
   {
     INPUT = "Increased ([%u][%a%-%s]+) %+(%d+)%.?",
