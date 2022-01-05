@@ -161,6 +161,8 @@ function ZeraTooltip:RecolorStats(tooltip, simplified, enchanted)
       if Data:IsSameColorFuzzy(color, Data.GREEN) and not enchantLineFound and not text:match(("^%%d+%%s+%s$"):format(L["Armor"])) then
         fontString:SetTextColor(Data:FontifyColor(self.db.profile.COLORS.ENCHANT))
         enchantLineFound = true
+      elseif not self.db.profile.RECOLOR_USABLE and text:find(L["Use PATTERN"]) then
+        -- continue
       else
         for j, data in ipairs(L) do
           local captures = {}

@@ -90,6 +90,8 @@ local OPTION_DEFAULTS = {
     REORDER  = true,
     RECOLOR  = true,
     
+    RECOLOR_USABLE = true,
+    
     SHOW_SPEEDBAR = true,
     
     -- Bar width. Longer is more accurate but can cause a wider tooltip
@@ -99,59 +101,59 @@ local OPTION_DEFAULTS = {
     SPEED_ACCURACY = 1,
     
     COLORS = {
-      TRAINABLE     = COLORS.ORANGE,
-      WEAP_DAMAGE   = COLORS.TUMBLEWEED,
-      SPEED         = COLORS.WHITE,
-      ENCHANT       = COLORS.GREEN,
-      SKILL         = COLORS.GREEN,
+      TRAINABLE         = COLORS.ORANGE,
+      WEAP_DAMAGE       = COLORS.TUMBLEWEED,
+      SPEED             = COLORS.WHITE,
+      ENCHANT           = COLORS.GREEN,
+      SKILL             = COLORS.GREEN,
       
-      ARMOR         = COLORS.YELLOW,
+      ARMOR             = COLORS.YELLOW,
       
-      STAMINA       = COLORS.PALE_LIGHT_GREEN,
-      STRENGTH      = COLORS.TUMBLEWEED,
-      AGILITY       = COLORS.SANDY_YELLOW,
-      INTELLECT     = COLORS.JORDY_BLUE,
-      SPIRIT        = COLORS.LIGHT_AQUA,
+      STAMINA           = COLORS.PALE_LIGHT_GREEN,
+      STRENGTH          = COLORS.TUMBLEWEED,
+      AGILITY           = COLORS.SANDY_YELLOW,
+      INTELLECT         = COLORS.JORDY_BLUE,
+      SPIRIT            = COLORS.LIGHT_AQUA,
       
-      ARCANE_RESIST = COLORS.ARCANE,
-      FIRE_RESIST   = COLORS.FIRE,
-      NATURE_RESIST = COLORS.NATURE,
-      FROST_RESIST  = COLORS.FROST,
-      SHADOW_RESIST = COLORS.SHADOW,
-      HOLY_RESIST   = COLORS.HOLY,
+      ARCANE_RESIST     = COLORS.ARCANE,
+      FIRE_RESIST       = COLORS.FIRE,
+      NATURE_RESIST     = COLORS.NATURE,
+      FROST_RESIST      = COLORS.FROST,
+      SHADOW_RESIST     = COLORS.SHADOW,
+      HOLY_RESIST       = COLORS.HOLY,
       
-      ARCANE_DAMAGE = COLORS.ARCANE,
-      FIRE_DAMAGE   = COLORS.FIRE,
-      NATURE_DAMAGE = COLORS.NATURE,
-      FROST_DAMAGE  = COLORS.FROST,
-      SHADOW_DAMAGE = COLORS.SHADOW,
-      HOLY_DAMAGE   = COLORS.HOLY,
+      ARCANE_DAMAGE     = COLORS.ARCANE,
+      FIRE_DAMAGE       = COLORS.FIRE,
+      NATURE_DAMAGE     = COLORS.NATURE,
+      FROST_DAMAGE      = COLORS.FROST,
+      SHADOW_DAMAGE     = COLORS.SHADOW,
+      HOLY_DAMAGE       = COLORS.HOLY,
       
-      DEFENSE       = COLORS.PALE_LIGHT_GREEN,
-      RESILIENCE    = COLORS.HONEYSUCKLE,
-      DODGE         = COLORS.HONEYSUCKLE,
-      PARRY         = COLORS.PARIS_GREEN,
-      BLOCK_RATING  = COLORS.LEMON_LIME,
-      BLOCK_VALUE   = COLORS.LEMON_LIME,
-      RESIST_ALL    = COLORS.PALE_LIGHT_GREEN,
+      DEFENSE           = COLORS.PALE_LIGHT_GREEN,
+      RESILIENCE        = COLORS.HONEYSUCKLE,
+      DODGE             = COLORS.HONEYSUCKLE,
+      PARRY             = COLORS.PARIS_GREEN,
+      BLOCK_RATING      = COLORS.LEMON_LIME,
+      BLOCK_VALUE       = COLORS.LEMON_LIME,
+      RESIST_ALL        = COLORS.PALE_LIGHT_GREEN,
       
-      ATTACK_POW    = COLORS.TUMBLEWEED,
-      R_ATTACK_POW  = COLORS.TUMBLEWEED,
-      PHYS_HIT      = COLORS.SANDY_YELLOW,
-      PHYS_CRIT     = COLORS.ATOMIC_TANGERINE,
-      PHYS_HASTE    = COLORS.CITRON,
-      PHYS_PEN      = COLORS.PUMPKIN_ORANGE,
-      EXPERTISE     = COLORS.TUMBLEWEED,
+      ATTACK_POW        = COLORS.TUMBLEWEED,
+      R_ATTACK_POW      = COLORS.TUMBLEWEED,
+      PHYS_HIT          = COLORS.SANDY_YELLOW,
+      PHYS_CRIT         = COLORS.ATOMIC_TANGERINE,
+      PHYS_HASTE        = COLORS.CITRON,
+      PHYS_PEN          = COLORS.PUMPKIN_ORANGE,
+      EXPERTISE         = COLORS.TUMBLEWEED,
       
-      MAGICAL       = COLORS.LIGHT_FUSCHIA_PINK,
-      MAGIC_HIT     = COLORS.BLUSH_PINK,
-      MAGIC_CRIT    = COLORS.PURPLE_MIMOSA,
-      MAGIC_HASTE   = COLORS.LILAC,
-      MAGIC_PEN     = COLORS.HELIOTROPE_PURPLE,
+      MAGICAL           = COLORS.LIGHT_FUSCHIA_PINK,
+      MAGIC_HIT         = COLORS.BLUSH_PINK,
+      MAGIC_CRIT        = COLORS.PURPLE_MIMOSA,
+      MAGIC_HASTE       = COLORS.LILAC,
+      MAGIC_PEN         = COLORS.HELIOTROPE_PURPLE,
       
-      HEALING       = COLORS.LIGHT_CYAN,
-      HEALTH        = COLORS.PALE_LIGHT_GREEN,
-      MANA          = COLORS.JORDY_BLUE,
+      HEALING           = COLORS.LIGHT_CYAN,
+      HEALTH            = COLORS.PALE_LIGHT_GREEN,
+      MANA              = COLORS.JORDY_BLUE,
     },
     
     RECOLOR_STAT = {
@@ -596,10 +598,11 @@ function Data:MakeOptionsTable(profile, L)
   CreateHeader(L["Colors"])
   
   ADDON_OPTIONS.args["ResetColors"] = {
-    name = L["Reset Colors"],
+    name = L["Reset Color Options"],
     order = Order(),
     type = "execute",
     func =  function()
+      profile.RECOLOR_USABLE = OPTION_DEFAULTS.profile.RECOLOR_USABLE
       for _, tbl in ipairs{"RECOLOR_STAT", "COLORS"} do
         for key in pairs(profile[tbl]) do
           profile[tbl][key] = OPTION_DEFAULTS.profile[tbl][key]
@@ -611,11 +614,20 @@ function Data:MakeOptionsTable(profile, L)
   CreateDivider()
   
   CreateDescription("Miscellaneous")
-  CreateColorOption("Trainable Equipment", "TRAINABLE"  , true)
-  CreateColorOption("Weapon Damage"      , "WEAP_DAMAGE", true)
-  CreateColorOption("Weapon Speed"       , "SPEED"      , true)
-  CreateColorOption("Enchantment"        , "ENCHANT"    , true)
-  CreateColorOption("Skill"              , "SKILL"      , true)
+  ADDON_OPTIONS.args["recolor_USABLE"] = {
+    name = L["Recolor Usable Effects"],
+    desc = L["RECOLOR USABLE EFFECTS DESCRIPTION"],
+    order = Order(),
+    type = "toggle",
+    set = function(info, val)        profile.RECOLOR_USABLE = val end,
+    get = function(info)      return profile.RECOLOR_USABLE       end,
+  }
+  CreateNewline()
+  CreateColorOption("Trainable Equipment", "TRAINABLE"        , true)
+  CreateColorOption("Weapon Damage"      , "WEAP_DAMAGE"      , true)
+  CreateColorOption("Weapon Speed"       , "SPEED"            , true)
+  CreateColorOption("Enchantment"        , "ENCHANT"          , true)
+  CreateColorOption("Skill"              , "SKILL"            , true)
   
   CreateDivider()
   

@@ -17,6 +17,7 @@ end
 
 
 L["Equip PATTERN"]           = "^%s*Equip:%s*"
+L["Use PATTERN"]             = "^%s*Use:%s*"
 L["Set PATTERN"]             = "^%(?%d*%)?%s*Set:%s*"
 L["SocketBonus PATTERN"]     = "^%s*Socket Bonus:%s*"
 L["ConjunctiveWord PATTERN"] = "%s+and%s+"
@@ -55,30 +56,33 @@ end
 
 
 
-L["Reword tooltips"]               = "Reword tooltips"
-L["REWORD TOOLTIPS DESCRIPTION"]   = "Shortens some long lines of text on item tooltips. Does not remove any information."
+L["Reword tooltips"]                    = "Reword tooltips"
+L["REWORD TOOLTIPS DESCRIPTION"]        = "Shortens some long lines of text on item tooltips. Does not remove any information."
 
-L["Reorder stats"]                 = "Reorder stats"
-L["REORDER STATS DESCRIPTION"]     = "Makes tooltips display stats in a consistent order. Always Stamina before Intellect, for example."
+L["Reorder stats"]                      = "Reorder stats"
+L["REORDER STATS DESCRIPTION"]          = "Makes tooltips display stats in a consistent order. Always Stamina before Intellect, for example."
 
-L["Recolor stats"]                 = "Recolor stats"
-L["RECOLOR STATS DESCRIPTION"]     = "Adds customizable coloring to stats in tooltips."
+L["Recolor stats"]                      = "Recolor stats"
+L["RECOLOR STATS DESCRIPTION"]          = "Adds customizable coloring to stats in tooltips."
 
-L["Show Speedbar"]                 = "Show Speedbar"
-L["SHOW SPEEDBAR DESCRIPTION"]     = "Displays a bar which visualizes weapon speed. The bar will be more filled for slower weapons."
+L["Recolor Usable Effects"]             = "Recolor usable effects"
+L["RECOLOR USABLE EFFECTS DESCRIPTION"] = "This applies to active trinkets, as well as consumable items like food, drinks, potions, and bandages."
 
-L["Speedbar width"]                = "Speedbar width"
-L["SPEEDBAR SIZE DESCRIPTION"]     =  "The maximum length of the speedbar (for a slow weapon). Higher values make the bar more accurate, but also make the tooltip wider."
+L["Show Speedbar"]                      = "Show Speedbar"
+L["SHOW SPEEDBAR DESCRIPTION"]          = "Displays a bar which visualizes weapon speed. The bar will be more filled for slower weapons."
 
-L["Speed accuracy"]                = "Speed accuracy"
-L["SPEED ACCURACY DESCRIPTION"]    = "The number of decimal places to appear in a weapon's speed. Default tooltips show two, but only one is ever needed."
+L["Speedbar width"]                     = "Speedbar width"
+L["SPEEDBAR SIZE DESCRIPTION"]          = "The maximum length of the speedbar (for a slow weapon). Higher values make the bar more accurate, but also make the tooltip wider."
+
+L["Speed accuracy"]                     = "Speed accuracy"
+L["SPEED ACCURACY DESCRIPTION"]         = "The number of decimal places to appear in a weapon's speed. Default tooltips show two, but only one is ever needed."
 
 
-L["Reset"]        = "Reset"
-L["Color"]        = "Color"
-L["Colors"]       = "Colors"
-L["Reset Colors"] = "Reset Colors"
-L["Speedbar"]     = "Speedbar"
+L["Reset"]               = "Reset"
+L["Color"]               = "Color"
+L["Colors"]              = "Colors"
+L["Reset Color Options"] = "Reset Color Options"
+L["Speedbar"]            = "Speedbar"
 
 L["Base Stats"]            = "Base Stats"
 L["Elemental Resistances"] = "Elemental Resistances"
@@ -249,12 +253,16 @@ L[#L+1] = {LABEL = "Armor"}
 L[#L].COLOR = "ARMOR"
 L[#L].MAP = {
   {
+    INPUT  = "Increases armor by (%d+)",
+    OUTPUT = "+%d " .. L["Armor"],
+  },
+  {
     INPUT  = "^([%+%-]%d+) " .. L["Armor"] .. "%.$",
     OUTPUT = "%s " .. L["Armor"],
   },
 }
 L[#L].CAPTURES = {
-  "[%+%-]?%d+ " .. L["Armor"] .. "$",
+  "[%+%-]?%d+ " .. L["Armor"],
 }
 
 L[#L+1] = {LABEL = "Block"}
@@ -1098,12 +1106,28 @@ L[#L].CAPTURES = {
 
 
 
+L[#L+1] = {LABEL = "Instant Mana and Health"}
+L[#L].MAP = {
+  {
+    INPUT  = "Restores? (%d+) to (%d+) mana and health",
+    OUTPUT = function(amount1, amount2) return ("+%s (%d-%d) mana and health"):format(Data:Round((amount1+amount2)/2, 0), amount1, amount2) end,
+  },
+  {
+    INPUT  = "Restores? (%d+) mana and health",
+    OUTPUT = "+%d mana and health",
+  },
+}
+L[#L].CAPTURES = {
+  "%+%d+ %(%d+%-%d+%) mana and health.*",
+  "%+%d+%%? mana and health.*",
+}
+
 L[#L+1] = {LABEL = "Instant Health"}
 L[#L].COLOR = "HEALTH"
 L[#L].MAP = {
   {
     INPUT  = "Restores? (%d+) to (%d+) health",
-    OUTPUT = function(amount1, amount2) return ("+%s health (%d-%d)"):format(Data:Round((amount1+amount2)/2, 0), amount1, amount2) end,
+    OUTPUT = function(amount1, amount2) return ("+%s (%d-%d) health"):format(Data:Round((amount1+amount2)/2, 0), amount1, amount2) end,
   },
   {
     INPUT  = "Restores? (%d+) health",
@@ -1111,6 +1135,7 @@ L[#L].MAP = {
   },
 }
 L[#L].CAPTURES = {
+  "%+%d+ %(%d+%-%d+%) health.*",
   "%+%d+%%? health.*",
 }
 
@@ -1119,7 +1144,7 @@ L[#L].COLOR = "MANA"
 L[#L].MAP = {
   {
     INPUT  = "Restores? (%d+) to (%d+) mana",
-    OUTPUT = function(amount1, amount2) return ("+%s mana (%d-%d)"):format(Data:Round((amount1+amount2)/2, 0), amount1, amount2) end,
+    OUTPUT = function(amount1, amount2) return ("+%s (%d-%d) mana"):format(Data:Round((amount1+amount2)/2, 0), amount1, amount2) end,
   },
   {
     INPUT  = "Restores? (%d+) mana",
@@ -1127,6 +1152,7 @@ L[#L].MAP = {
   },
 }
 L[#L].CAPTURES = {
+  "%+%d+ %(%d+%-%d+%) mana.*",
   "%+%d+%%? mana.*",
 }
 
