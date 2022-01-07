@@ -1634,8 +1634,12 @@ L[#L].MAP = {
     OUTPUT = function(spell, amount, resource) return ("+%s %s granted by %s"):format(FixPercent(amount), resource, TrimSpell(spell)) end,
   },
   {
-    INPUT  = "Your (%D-) grants an additional (%d+) (spell damage)",
-    OUTPUT = function(spell, amount, resource) return ("+%s %s granted by %s"):format(FixPercent(amount), resource, TrimSpell(spell)) end,
+    INPUT  = "Your (%D-) grants an additional (%d+) spell damage",
+    OUTPUT = function(spell, amount) return ("+%s Spell Damage granted by %s"):format(FixPercent(amount), TrimSpell(spell)) end,
+  },
+  {
+    INPUT  = "Your (%D-) grants an additional (%d+) attack power",
+    OUTPUT = function(spell, amount) return ("+%s Attack Power granted by %s"):format(FixPercent(amount), TrimSpell(spell)) end,
   },
   {
     INPUT  = "(%D+ gained) from (%D-) increased by (%d+%%?)",
