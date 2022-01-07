@@ -245,12 +245,12 @@ L[#L+1] = {LABEL = "Armor"}
 L[#L].COLOR = "ARMOR"
 L[#L].MAP = {
   {
-    INPUT  = "Increases armor by (%d+)",
-    OUTPUT = "+%d " .. L["Armor"],
-  },
-  {
     INPUT  = "^([%+%-]%d+) Armor$",
     OUTPUT = "%s " .. L["Armor"],
+  },
+  {
+    INPUT  = "Increases armor by (%d+)",
+    OUTPUT = "+%d " .. L["Armor"],
   },
 }
 L[#L].CAPTURES = {
@@ -277,9 +277,13 @@ for _, stat in ipairs{"Stamina", "Strength", "Agility", "Intellect", "Spirit"} d
       INPUT  = "^[%+%-](%d+) " .. stat .. "$",
       OUTPUT = "+%d " .. L[stat],
     },
+    {
+      INPUT  = "Increases your " .. stat .. " by %+?(%d+)",
+      OUTPUT = "+%d " .. L[stat],
+    },
   }
   L[#L].CAPTURES = {
-    "[%+%-]%d+ " .. L[stat] .. "$",
+    "[%+%-]%d+ " .. L[stat] .. "",
   }
 end
 
