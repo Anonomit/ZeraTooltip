@@ -58,7 +58,7 @@ L["Recolor stats"]                      = "Recolor stats"
 L["RECOLOR STATS DESCRIPTION"]          = "Adds customizable coloring to stats in tooltips."
 
 L["Recolor Usable Effects"]             = "Recolor usable effects"
-L["RECOLOR USABLE EFFECTS DESCRIPTION"] = "This applies to active trinkets, as well as consumable items like food, drinks, potions, and bandages."
+L["Recolor Usable Effects DESCRIPTION"] = "This applies to active trinkets, as well as consumable items like food, drinks, potions, and bandages."
 
 L["Show Speedbar"]                      = "Show Speedbar"
 L["SHOW SPEEDBAR DESCRIPTION"]          = "Displays a bar which visualizes weapon speed. The bar will be more filled for slower weapons."
@@ -70,11 +70,11 @@ L["Speed accuracy"]                     = "Speed accuracy"
 L["SPEED ACCURACY DESCRIPTION"]         = "The number of decimal places to appear in a weapon's speed. Default tooltips show two, but only one is ever needed."
 
 
-L["Reset"]               = "Reset"
-L["Color"]               = "Color"
-L["Colors"]              = "Colors"
-L["Reset Color Options"] = "Reset Color Options"
-L["Speedbar"]            = "Speedbar"
+L["Reset"]                  = "Reset"
+L["Color"]                  = "Color"
+L["Speedbar Configuration"] = "Speedbar"
+L["Colors Configuration"]   = "Colors"
+L["Reset Color Options"]    = "Reset Color Options"
 
 L["Base Stats"]            = "Base Stats"
 L["Elemental Resistances"] = "Elemental Resistances"
@@ -85,19 +85,19 @@ L["Magical"]               = "Magical"
 L["Healing"]               = "Healing"
 
 L["Trainable Equipment"]             = "Trainable Equipment"
-L["TRAINABLE EQUIPMENT DESCRIPTION"] = "Items which are equippable after more training will appear as a customizable color instead of the default red."
+L["Trainable Equipment DESCRIPTION"] = "Items which are equippable after more training will appear as a customizable color instead of the default red."
 
 L["Weapon Damage"]             = "Weapon Damage"
-L["WEAPON DAMAGE DESCRIPTION"] = "This will only affect weapons which deal physical damage (not wands)."
+L["Weapon Damage DESCRIPTION"] = "This will only affect weapons which deal physical damage (not wands)."
 
 L["Weapon Speed"]             = "Weapon Speed"
-L["WEAPON SPEED DESCRIPTION"] = "This will also recolor the weapon speedbar, if enabled."
+L["Weapon Speed DESCRIPTION"] = "This will also recolor the weapon speedbar, if enabled."
 
 L["Enchantment"]             = "Enchantment"
-L["ENCHANTMENT DESCRIPTION"] = "Enchantments will appear in a customizable color."
+L["Enchantment DESCRIPTION"] = "Enchantments will appear in a customizable color."
 
 L["Skill"]             = "Skill"
-L["SKILL DESCRIPTION"] = "This applies to weapon and profession skill bonuses."
+L["Skill DESCRIPTION"] = "This applies to weapon and profession skill bonuses."
 
 
 

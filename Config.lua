@@ -35,6 +35,8 @@ end
 
 
 
+Data.CHAT_COMMAND = "zt"
+
 -- Fastest weapon speed
 Data.WEAPON_SPEED_MIN = 1.2
 
@@ -178,9 +180,12 @@ local OPTION_DEFAULTS = {
       ENCHANT     = false,
       SKILL       = false,
     },
-    DEBUG = {
-      SHOW_LABELS      = false,
-      CTRL_SUPPRESSION = false,
+    Debug = {
+      enabled         = true,
+      menu            = false,
+      
+      showLabels      = false,
+      ctrlSupprseeion = false,
     },
   },
 }
@@ -195,8 +200,15 @@ local OPTION_DEFAULTS = {
 
 
 
-function Data:GetDefaultOptions()
+function Data:GetDefaultProfile()
   return OPTION_DEFAULTS
+end
+function Data:GetDefaultOption(...)
+  local val = self:GetDefaultProfile().profile
+  for _, key in ipairs{...} do
+    val = val[key]
+  end
+  return val
 end
 
 
@@ -451,265 +463,271 @@ end
 
 
 
-function Data:MakeOptionsTable(db, L)
+local function GetOptionTableHelpers(Options, Addon)
+  local defaultInc = 1000
+  local order      = 1000
   
-  local order = 99
-  local function Order(inc)
-    order = order + (inc and inc or 0) + 1
+  local GUI = {}
+  
+  function GUI:GetOrder()
     return order
   end
-  
-  local ADDON_OPTIONS = {
-    type = "group",
-    args = {}
-  }
-  
-  local function CreateHeader(name)
-    ADDON_OPTIONS.args["divider" .. Order()] = {name = name, order = Order(-1), type = "header"}
+  function GUI:SetOrder(newOrder)
+    order = newOrder
+  end
+  function GUI:Order(inc)
+    self:SetOrder(self:GetOrder() + (inc or defaultInc))
+    return self:GetOrder()
   end
   
-  local function CreateDivider(count)
-    for i = 1, count or Data.OPTIONS_DIVIDER_HEIGHT do
-      ADDON_OPTIONS.args["divider" .. Order()] = {name  = "", order = Order(-1), type  = "description"}
+  function GUI:CreateEntry(key, name, desc, widgetType, order)
+    key = widgetType .. "_" .. (key or "")
+    Options.args[key] = {name = name, desc = desc, type = widgetType, order = order or self:Order()}
+    return Options.args[key]
+  end
+  
+  function GUI:CreateHeader(name)
+    local option = self:CreateEntry(self:Order(), name, nil, "header", self:Order(0))
+  end
+  
+  function GUI:CreateDescription(desc, fontSize)
+    local option = self:CreateEntry(self:Order(), desc, nil, "description", self:Order(0))
+    option.fontSize = fontSize or "large"
+  end
+  function GUI:CreateDivider(count)
+    for i = 1, count or 3 do
+      self:CreateDescription("", "small")
     end
   end
-  local function CreateNewline()
-    CreateDivider(1)
-  end
-  local function CreateDescription(desc)
-    CreateNewline()
-    ADDON_OPTIONS.args["description" .. Order()] = {name  = L[desc], order = Order(-1), type  = "description"}
+  function GUI:CreateNewline()
+    return self:CreateDivider(1)
   end
   
-  local function CreateColorOption(name, key, hasDesc)
-    ADDON_OPTIONS.args[key] = {
-      name = L[name],
-      desc = hasDesc and L[name:upper() .. " DESCRIPTION"] or nil,
-      order = Order(),
-      type = "toggle",
-      set = function(info, val)        db.RECOLOR_STAT[key] = val end,
-      get = function(info)      return db.RECOLOR_STAT[key]       end,
-    }
-    
-    ADDON_OPTIONS.args[key .. " Color"] = {
-      name = L["Color"],
-      order = Order(),
-      type = "color",
-      set = function(_, r, g, b)        db.COLORS[key] = Data:DefontifyColor(r, g, b) end,
-      get = function(info)       return Data:FontifyColor(db.COLORS[key])             end,
-    }
-    
-    ADDON_OPTIONS.args[key .. " Reset"] = {
-      name = L["Reset"],
-      order = Order(),
-      type = "execute",
-      func = function()
-        db.RECOLOR_STAT[key] = OPTION_DEFAULTS.db.RECOLOR_STAT[key]
-        db.COLORS[key] = OPTION_DEFAULTS.db.COLORS[key]
-      end,
-    }
-    
-    CreateNewline()
+  function GUI:CreateToggle(keys, name, desc, disabled)
+    if type(keys) ~= "table" then keys = {keys} end
+    local option = self:CreateEntry(table.concat(keys, "."), name, desc, "toggle")
+    option.disabled = disabled
+    option.set      = function(info, val)        Addon:SetOption(val, unpack(keys)) end
+    option.get      = function(info)      return Addon:GetOption(unpack(keys))      end
+    return option
+  end
+  function GUI:CreateRange(keys, name, desc, min, max, step, disabled)
+    if type(keys) ~= "table" then keys = {keys} end
+    local option = self:CreateEntry(table.concat(keys, "."), name, desc, "range")
+    option.disabled = disabled
+    option.min      = min
+    option.max      = max
+    option.step     = step
+    option.set      = function(info, val)        Addon:SetOption(val, unpack(keys)) end
+    option.get      = function(info)      return Addon:GetOption(unpack(keys))      end
+    return option
+  end
+  function GUI:CreateInput(keys, name, desc, multiline, disabled)
+    if type(keys) ~= "table" then keys = {keys} end
+    local option = self:CreateEntry(table.concat(keys, "."), name, desc, "input")
+    option.multiline = multiline
+    option.disabled  = disabled
+    option.set       = function(info, val)        Addon:SetOption(val, unpack(keys)) end
+    option.get       = function(info)      return Addon:GetOption(unpack(keys))      end
+    return option
+  end
+  function GUI:CreateExecute(key, name, desc, func)
+    local option = self:CreateEntry(key, name, desc, "execute")
+    option.func = func
+    return option
   end
   
-  ADDON_OPTIONS.args["simplify"] = {
-    name = L["Reword tooltips"],
-    desc = L["REWORD TOOLTIPS DESCRIPTION"],
-    order = Order(),
-    type = "toggle",
-    set = function(info, val)        db.SIMPLIFY = val end,
-    get = function(info)      return db.SIMPLIFY       end,
-  }
-  
-  CreateNewline()
-  
-  ADDON_OPTIONS.args["reorder"] = {
-    name = L["Reorder stats"],
-    desc = L["REORDER STATS DESCRIPTION"],
-    order = Order(),
-    type = "toggle",
-    set = function(info, val)        db.REORDER = val end,
-    get = function(info)      return db.REORDER       end,
-  }
-  
-  CreateNewline()
-  
-  ADDON_OPTIONS.args["recolor"] = {
-    name = L["Recolor stats"],
-    desc = L["RECOLOR STATS DESCRIPTION"],
-    order = Order(),
-    type = "toggle",
-    set = function(info, val)        db.RECOLOR = val end,
-    get = function(info)      return db.RECOLOR       end,
-  }
-  
-  
-  CreateHeader(L["Speedbar"])
-  
-  ADDON_OPTIONS.args["show_speedbar"] = {
-    name = L["Show Speedbar"],
-    desc = L["SHOW SPEEDBAR DESCRIPTION"],
-    order = Order(),
-    type = "toggle",
-    set = function(info, val)        db.SHOW_SPEEDBAR = val end,
-    get = function(info)      return db.SHOW_SPEEDBAR       end,
-  }
-  
-  CreateNewline()
-  
-  ADDON_OPTIONS.args["speedbar_size"] = {
-    name = L["Speedbar width"],
-    desc = L["SPEEDBAR SIZE DESCRIPTION"],
-    order = Order(),
-    type = "range",
-    min = 5,
-    max = 25,
-    step = 1,
-    set = function(info, val)        db.SPEEDBAR_SIZE = val end,
-    get = function(info)      return db.SPEEDBAR_SIZE       end,
-  }
-  
-  ADDON_OPTIONS.args["speedbar_size Reset"] = {
-    name = L["Reset"],
-    order = Order(),
-    type = "execute",
-    func = function() db.SPEEDBAR_SIZE = OPTION_DEFAULTS.db.SPEEDBAR_SIZE end,
-  }
-  
-  CreateNewline()
-  
-  ADDON_OPTIONS.args["speed_accuracy"] = {
-    name = L["Speed accuracy"],
-    desc = L["SPEED ACCURACY DESCRIPTION"],
-    order = Order(),
-    type = "range",
-    min = 1,
-    max = 5,
-    step = 1,
-    set = function(info, val)        db.SPEED_ACCURACY = val end,
-    get = function(info)      return db.SPEED_ACCURACY       end,
-  }
-  
-  ADDON_OPTIONS.args["speed_accuracy Reset"] = {
-    name = L["Reset"],
-    order = Order(),
-    type = "execute",
-    func = function() db.SPEED_ACCURACY = OPTION_DEFAULTS.db.SPEED_ACCURACY end,
-  }
-  
-  
-  CreateHeader(L["Colors"])
-  
-  ADDON_OPTIONS.args["ResetColors"] = {
-    name = L["Reset Color Options"],
-    order = Order(),
-    type = "execute",
-    func =  function()
-      db.RECOLOR_USABLE = OPTION_DEFAULTS.db.RECOLOR_USABLE
-      for _, tbl in ipairs{"RECOLOR_STAT", "COLORS"} do
-        for key in pairs(db[tbl]) do
-          db[tbl][key] = OPTION_DEFAULTS.db[tbl][key]
-        end
-      end
-    end,
-  }
-  
-  CreateDivider()
-  
-  CreateDescription("Miscellaneous")
-  ADDON_OPTIONS.args["recolor_USABLE"] = {
-    name = L["Recolor Usable Effects"],
-    desc = L["RECOLOR USABLE EFFECTS DESCRIPTION"],
-    order = Order(),
-    type = "toggle",
-    set = function(info, val)        db.RECOLOR_USABLE = val end,
-    get = function(info)      return db.RECOLOR_USABLE       end,
-  }
-  CreateNewline()
-  CreateColorOption("Trainable Equipment", "TRAINABLE"        , true)
-  CreateColorOption("Weapon Damage"      , "WEAP_DAMAGE"      , true)
-  CreateColorOption("Weapon Speed"       , "SPEED"            , true)
-  CreateColorOption("Enchantment"        , "ENCHANT"          , true)
-  CreateColorOption("Skill"              , "SKILL"            , true)
-  
-  CreateDivider()
-  
-  CreateDescription("Base Stats")
-  CreateColorOption("Armor"    , "ARMOR")
-  CreateColorOption("Stamina"  , "STAMINA")
-  CreateColorOption("Strength" , "STRENGTH")
-  CreateColorOption("Agility"  , "AGILITY")
-  CreateColorOption("Intellect", "INTELLECT")
-  CreateColorOption("Spirit"   , "SPIRIT")
-  
-  CreateDivider()
-  
-  CreateDescription("Elemental Resistances")
-  CreateColorOption("Arcane Resist", "ARCANE_RESIST")
-  CreateColorOption("Fire Resist"  , "FIRE_RESIST")
-  CreateColorOption("Nature Resist", "NATURE_RESIST")
-  CreateColorOption("Frost Resist" , "FROST_RESIST")
-  CreateColorOption("Shadow Resist", "SHADOW_RESIST")
-  CreateColorOption("Holy Resist"  , "HOLY_RESIST")
-  CreateColorOption("Resist All"  , "RESIST_ALL")
-  
-  CreateDivider()
-  
-  CreateDescription("Elemental Damage")
-  CreateColorOption("Arcane Damage", "ARCANE_DAMAGE")
-  CreateColorOption("Fire Damage"  , "FIRE_DAMAGE")
-  CreateColorOption("Nature Damage", "NATURE_DAMAGE")
-  CreateColorOption("Frost Damage" , "FROST_DAMAGE")
-  CreateColorOption("Shadow Damage", "SHADOW_DAMAGE")
-  CreateColorOption("Holy Damage"  , "HOLY_DAMAGE")
-  
-  CreateDivider()
-  
-  CreateDescription("Defensive")
-  CreateColorOption("Defense", "DEFENSE")
-  if Data:IsBCC() then
-    CreateColorOption("Resilience", "RESILIENCE")
-  end
-  CreateColorOption("Dodge"       , "DODGE")
-  CreateColorOption("Parry"       , "PARRY")
-  CreateColorOption("Block Rating", "BLOCK_RATING")
-  CreateColorOption("Block Value" , "BLOCK_VALUE")
-  
-  CreateDivider()
-  
-  CreateDescription("Physical")
-  CreateColorOption("Attack Power"       , "ATTACK_POW")
-  CreateColorOption("Ranged Attack Power", "R_ATTACK_POW")
-  CreateColorOption("Physical Hit"       , "PHYS_HIT")
-  CreateColorOption("Physical Crit"      , "PHYS_CRIT")
-  if Data:IsBCC() then
-    CreateColorOption("Physical Haste", "PHYS_HASTE")
-    CreateColorOption("Armor Pen"     , "PHYS_PEN")
-    CreateColorOption("Expertise"     , "EXPERTISE")
-  end
-  
-  CreateDivider()
-  
-  CreateDescription("Magical")
-  CreateColorOption("Spell Damage", "MAGICAL")
-  CreateColorOption("Spell Hit"   , "MAGIC_HIT")
-  CreateColorOption("Spell Crit"  , "MAGIC_CRIT")
-  if Data:IsBCC() then
-    CreateColorOption("Spell Haste", "MAGIC_HASTE")
-    CreateColorOption("Spell Pen"  , "MAGIC_PEN")
-  end
-  
-  CreateDivider()
-  
-  CreateDescription("Healing")
-  CreateColorOption("Healing", "HEALING")
-  CreateColorOption("Health" , "HEALTH")
-  CreateColorOption("Mana"   , "MANA")
-
-  return ADDON_OPTIONS
+  return GUI
 end
 
 
+function Data:MakeOptionsTable(title, Addon, L)
+  local Options = {
+    name = title,
+    type = "group",
+    args = {}
+  }
+  local GUI = GetOptionTableHelpers(Options, Addon)
+  
+  
+  GUI:CreateToggle("SIMPLIFY", L["Reword tooltips"], L["REWORD TOOLTIPS DESCRIPTION"])
+  GUI:CreateNewline()
+  GUI:CreateToggle("REORDER", L["Reorder stats"], L["REORDER STATS DESCRIPTION"])
+  GUI:CreateNewline()
+  GUI:CreateToggle("RECOLOR", L["Recolor stats"], L["RECOLOR STATS DESCRIPTION"])
+  
+  
+  
+  
+  return Options
+end
+
+
+
+
+function Data:MakeSpeedbarOptionsTable(title, Addon, L)
+  local Options = {
+    name = title,
+    type = "group",
+    args = {}
+  }
+  local GUI = GetOptionTableHelpers(Options, Addon)
+  
+  
+  GUI:CreateToggle("SHOW_SPEEDBAR", L["Show Speedbar"], L["SHOW SPEEDBAR DESCRIPTION"])
+  GUI:CreateNewline()
+  
+  GUI:CreateRange("SPEEDBAR_SIZE", L["Speedbar width"], L["SPEEDBAR SIZE DESCRIPTION"], 5, 25, 1)
+  GUI:CreateExecute("SPEEDBAR_SIZE Reset", L["Reset"], nil, function() Addon:SetOption(self:GetDefaultOptions("profile", "SPEEDBAR_SIZE"), "SPEEDBAR_SIZE") end)
+  
+  GUI:CreateNewline()
+  
+  GUI:CreateRange("SPEED_ACCURACY", L["Speed accuracy"], L["SPEED ACCURACY DESCRIPTION"], 1, 5, 1)
+  GUI:CreateExecute("SPEED_ACCURACY Reset", L["Reset"], nil, function() Addon:SetOption(self:GetDefaultOptions("profile", "SPEEDBAR_SIZE"), "SPEED_ACCURACY") end)
+  
+  
+  return Options
+end
+
+
+function Data:MakeColorsOptionsTable(title, Addon, L)
+  local Options = {
+    name = title,
+    type = "group",
+    args = {}
+  }
+  local GUI = GetOptionTableHelpers(Options, Addon)
+  
+  
+  local function CreateColorOption(key, name, desc)
+    GUI:CreateToggle({"RECOLOR_STAT", key}, name, desc)
+    Options.args["color " .. key] = {
+      name = L["Color"],
+      order = GUI:Order(),
+      type = "color",
+      set = function(_, r, g, b)        Addon:SetOption(self:DefontifyColor(r, g, b), "COLORS", key) end,
+      get = function(info)       return self:FontifyColor(Addon:GetOption("COLORS", key))            end,
+    }
+    GUI:CreateExecute(key .. " Reset", L["Reset"], nil, function() Addon:ResetOption("RECOLOR_STAT", key) Addon:ResetOption("COLORS", key) end)
+    GUI:CreateNewline()
+  end
+  
+  
+  GUI:CreateExecute("ResetColors", L["Reset Color Options"], nil, function()
+    Addon:ResetOption("RECOLOR_USABLE")
+    for _, option in ipairs{"RECOLOR_STAT", "COLORS"} do
+      for color in pairs(Addon:GetOption(option)) do
+        Addon:ResetOption(option, color)
+      end
+    end
+  end)
+  
+  GUI:CreateDivider()
+  
+  GUI:CreateDescription("Miscellaneous")
+  GUI:CreateToggle("RECOLOR_USABLE", L["Recolor Usable Effects"], L["Recolor Usable Effects DESCRIPTION"])
+  
+  GUI:CreateNewline()
+  CreateColorOption("TRAINABLE"  , L["Trainable Equipment"], L["Trainable Equipment DESCRIPTION"])
+  CreateColorOption("WEAP_DAMAGE", L["Weapon Damage"]      , L["Weapon Damage DESCRIPTION"])
+  CreateColorOption("SPEED"      , L["Weapon Speed"]       , L["Weapon Speed DESCRIPTION"])
+  CreateColorOption("ENCHANT"    , L["Enchantment"]        , L["Enchantment DESCRIPTION"])
+  CreateColorOption("SKILL"      , L["Skill"]              , L["Skill DESCRIPTION"])
+  
+  GUI:CreateDivider()
+  
+  GUI:CreateDescription("Base Stats")
+  CreateColorOption("ARMOR"    , L["Armor"])
+  CreateColorOption("STAMINA"  , L["Stamina"])
+  CreateColorOption("STRENGTH" , L["Strength"])
+  CreateColorOption("AGILITY"  , L["Agility"])
+  CreateColorOption("INTELLECT", L["Intellect"])
+  CreateColorOption("SPIRIT"   , L["Spirit"])
+  
+  GUI:CreateDivider()
+  
+  GUI:CreateDescription("Elemental Resistances")
+  CreateColorOption("ARCANE_RESIST", L["Arcane Resist"])
+  CreateColorOption("FIRE_RESIST"  , L["Fire Resist"])
+  CreateColorOption("NATURE_RESIST", L["Nature Resist"])
+  CreateColorOption("FROST_RESIST" , L["Frost Resist"])
+  CreateColorOption("SHADOW_RESIST", L["Shadow Resist"])
+  CreateColorOption("HOLY_RESIST"  , L["Holy Resist"])
+  CreateColorOption("RESIST_ALL"  , L["Resist All"])
+  
+  GUI:CreateDivider()
+  
+  GUI:CreateDescription("Elemental Damage")
+  CreateColorOption("ARCANE_DAMAGE", L["Arcane Damage"])
+  CreateColorOption("FIRE_DAMAGE"  , L["Fire Damage"])
+  CreateColorOption("NATURE_DAMAGE", L["Nature Damage"])
+  CreateColorOption("FROST_DAMAGE" , L["Frost Damage"])
+  CreateColorOption("SHADOW_DAMAGE", L["Shadow Damage"])
+  CreateColorOption("HOLY_DAMAGE"  , L["Holy Damage"])
+  
+  GUI:CreateDivider()
+  
+  GUI:CreateDescription("Defensive")
+  CreateColorOption("DEFENSE", L["Defense"])
+  if Data:IsBCC() then
+    CreateColorOption("RESILIENCE", L["Resilience"])
+  end
+  CreateColorOption("DODGE"       , L["Dodge"])
+  CreateColorOption("PARRY"       , L["Parry"])
+  CreateColorOption("BLOCK_RATING", L["Block Rating"])
+  CreateColorOption("BLOCK_VALUE" , L["Block Value"])
+  
+  GUI:CreateDivider()
+  
+  GUI:CreateDescription("Physical")
+  CreateColorOption("ATTACK_POW"       , L["Attack Power"])
+  CreateColorOption("R_ATTACK_POW", L["Ranged Attack Power"])
+  CreateColorOption("PHYS_HIT"       , L["Physical Hit"])
+  CreateColorOption("PHYS_CRIT"      , L["Physical Crit"])
+  if Data:IsBCC() then
+    CreateColorOption("PHYS_HASTE", L["Physical Haste"])
+    CreateColorOption("PHYS_PEN"     , L["Armor Pen"])
+    CreateColorOption("EXPERTISE"     , L["Expertise"])
+  end
+  
+  GUI:CreateDivider()
+  
+  GUI:CreateDescription("Magical")
+  CreateColorOption("MAGICAL", L["Spell Damage"])
+  CreateColorOption("MAGIC_HIT"   , L["Spell Hit"])
+  CreateColorOption("MAGIC_CRIT"  , L["Spell Crit"])
+  if Data:IsBCC() then
+    CreateColorOption("MAGIC_HASTE", L["Spell Haste"])
+    CreateColorOption("MAGIC_PEN"  , L["Spell Pen"])
+  end
+  
+  GUI:CreateDivider()
+  
+  GUI:CreateDescription("Healing")
+  CreateColorOption("HEALING", L["Healing"])
+  CreateColorOption("HEALTH" , L["Health"])
+  CreateColorOption("MANA"   , L["Mana"])
+  
+  return Options
+end
+
+
+function Data:MakeDebugOptionsTable(title, Addon, L)
+  local Options = {
+    name = title,
+    type = "group",
+    args = {}
+  }
+  local GUI = GetOptionTableHelpers(Options, Addon)
+  
+  GUI:CreateToggle({"Debug", "enabled"}        , "Enabled")
+  GUI:CreateNewline()
+  GUI:CreateToggle({"Debug", "showLabels"}     , "Show Labels")
+  GUI:CreateNewline()
+  GUI:CreateToggle({"Debug", "ctrlSuppression"}, "CTRL Suppression")
+  
+  return Options
+end
 
 
 

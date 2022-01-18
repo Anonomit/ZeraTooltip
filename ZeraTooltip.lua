@@ -2,41 +2,60 @@
 
 local ADDON_NAME, Data = ...
 
-ZeraTooltip = LibStub("AceAddon-3.0"):NewAddon(ADDON_NAME)
+local Addon = LibStub("AceAddon-3.0"):NewAddon(ADDON_NAME, "AceConsole-3.0", "AceHook-3.0")
+ZeraTooltip = Addon
 local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 
 local AceConfig       = LibStub"AceConfig-3.0"
 local AceConfigDialog = LibStub"AceConfigDialog-3.0"
 local AceDB           = LibStub"AceDB-3.0"
-local AceDBOptions    = LibStub("AceDBOptions-3.0")
+local AceDBOptions    = LibStub"AceDBOptions-3.0"
 
 
-local ENABLED = true
-
-function ZeraTooltip:Toggle()
-  ENABLED = not ENABLED
+function Addon:GetDB()
+  return self.db
+end
+function Addon:GetProfile()
+  return self:GetDB().profile
+end
+function Addon:GetOption(...)
+  local val = self:GetProfile()
+  for _, key in ipairs{...} do
+    val = val[key]
+  end
+  return val
+end
+function Addon:SetOption(val, ...)
+  local keys = {...}
+  local lastKey = table.remove(keys, #keys)
+  local tbl = self:GetProfile()
+  for _, key in ipairs(keys) do
+    tbl = tbl[key]
+  end
+  tbl[lastKey] = val
+end
+function Addon:ResetOption(...)
+  return self:SetOption(val, Data:GetDefaultOptions(...))
 end
 
-function ZeraTooltip:GetDB()
-  return self.db.profile
+
+
+function Addon:GetColor(key)
+  assert(self:GetOption("COLORS", key), ("Missing Color entry: %s"):format(key))
+  return self:GetOption("RECOLOR_STAT", key) and self:GetOption("COLORS", key) or nil
 end
 
-function ZeraTooltip:GetColor(key)
-  assert(self:GetDB().COLORS[key], ("Missing Color entry: %s"):format(key))
-  return self:GetDB().RECOLOR_STAT[key] and self:GetDB().COLORS[key] or nil
-end
 
 
-
-function ZeraTooltip:RemoveColorText(text)
+function Addon:RemoveColorText(text)
   return text:gsub(Data.COLOR_CODE, "", 1):gsub(Data.COLOR_CODE_RESET, "")
 end
 
-function ZeraTooltip:TrimLine(text)
+function Addon:TrimLine(text)
   return text:gsub(L["Equip PATTERN"], "")
 end
 
-function ZeraTooltip:RewordLine(text)
+function Addon:RewordLine(text)
   for i, data in ipairs(L) do
     for j, map in ipairs(data.MAP or {}) do
       local input, output = map.INPUT, map.OUTPUT
@@ -52,14 +71,14 @@ function ZeraTooltip:RewordLine(text)
         local pattern = type(output) == "function" and output(unpack(matches)) or output:format(unpack(matches))
         local newText = text:gsub(input, pattern)
         if (not newText:find(L["ConjunctiveWord PATTERN"]) or pattern:find(L["ConjunctiveWord PATTERN"])) then
-          return text:gsub(input, pattern) .. (self:GetDB().DEBUG.SHOW_LABELS and ("  [%s %d]"):format(data.LABEL, j) or "")
+          return text:gsub(input, pattern) .. (self:GetOption("Debug", "showLabels") and ("  [%s %d]"):format(data.LABEL, j) or "")
         end
       end
     end
   end
 end
 
-function ZeraTooltip:RewordStats(tooltip)
+function Addon:RewordStats(tooltip)
   local textLeft = tooltip:GetName().."TextLeft"
   for i = 2, tooltip:NumLines() do
     local fontString = _G[textLeft..i]
@@ -87,7 +106,7 @@ end
 
 
 
-function ZeraTooltip:ReorderStats(tooltip, simplified, enchanted)
+function Addon:ReorderStats(tooltip, simplified, enchanted)
   local enchantLineFound = not enchanted
   local groups = { }
   
@@ -144,7 +163,7 @@ end
 
 
 
-function ZeraTooltip:RecolorStats(tooltip, simplified, enchanted)
+function Addon:RecolorStats(tooltip, simplified, enchanted)
   local enchantLineFound = not enchanted
   
   local textLeft = tooltip:GetName() .. "TextLeft"
@@ -156,9 +175,9 @@ function ZeraTooltip:RecolorStats(tooltip, simplified, enchanted)
       local color = Data:DefontifyColor(fontString:GetTextColor())
       
       if Data:IsSameColorFuzzy(color, Data.GREEN) and not enchantLineFound and not text:match(("^%%d+%%s+%s$"):format(L["Armor"])) then
-        fontString:SetTextColor(Data:FontifyColor(self:GetDB().COLORS.ENCHANT))
+        fontString:SetTextColor(Data:FontifyColor(self:GetOption("COLORS", "ENCHANT")))
         enchantLineFound = true
-      elseif not self:GetDB().RECOLOR_USABLE and text:find(L["Use PATTERN"]) then
+      elseif not self:GetOption"RECOLOR_USABLE" and text:find(L["Use PATTERN"]) then
         -- continue
       else
         for j, data in ipairs(L) do
@@ -198,7 +217,7 @@ end
 
 
 
-function ZeraTooltip:RewriteSpeed(tooltip)
+function Addon:RewriteSpeed(tooltip)
   local textRight = tooltip:GetName().."TextRight"
   for i = 2, tooltip:NumLines() do
     local fontString = _G[textRight..i]
@@ -211,15 +230,15 @@ function ZeraTooltip:RewriteSpeed(tooltip)
         local word, speed = text:match(L["Weapon Speed PATTERN"])
         speed = tonumber(speed)
         
-        local fill = math.max(0, math.min(Data:Round((speed - Data.WEAPON_SPEED_MIN) / Data.WEAPON_SPEED_DIF * self:GetDB().SPEEDBAR_SIZE, 0), self:GetDB().SPEEDBAR_SIZE))
+        local fill = math.max(0, math.min(Data:Round((speed - Data.WEAPON_SPEED_MIN) / Data.WEAPON_SPEED_DIF * self:GetOption"SPEEDBAR_SIZE", 0), self:GetOption"SPEEDBAR_SIZE"))
         local bar = ""
-        if self:GetDB().SHOW_SPEEDBAR then
-          bar = ("  [%s%s]"):format(("I"):rep(fill), (" "):rep(self:GetDB().SPEEDBAR_SIZE - fill))
+        if self:GetOption"SHOW_SPEEDBAR" then
+          bar = ("  [%s%s]"):format(("I"):rep(fill), (" "):rep(self:GetOption"SPEEDBAR_SIZE" - fill))
         end
-        fontString:SetText(("%%s %%.%df%%s"):format(self:GetDB().SPEED_ACCURACY):format(word, speed, bar))
+        fontString:SetText(("%%s %%.%df%%s"):format(self:GetOption"SPEED_ACCURACY"):format(word, speed, bar))
         
         local color = self:GetColor"SPEED"
-        if self:GetDB().RECOLOR and color then
+        if self:GetOption"RECOLOR" and color then
           fontString:SetTextColor(Data:FontifyColor(color))
         end
       end
@@ -229,7 +248,7 @@ end
 
 
 
-function ZeraTooltip:RecolorLearnable(tooltip, itemType, itemSubType, invType)
+function Addon:RecolorLearnable(tooltip, itemType, itemSubType, invType)
   local redWeapon, redSlot
   if Data:IsUsable(itemType, itemSubType, invType) then
     redWeapon, redSlot = Data:GetRedText(itemType, itemSubType, invType)
@@ -265,24 +284,25 @@ end
 
 
 
-function ZeraTooltip:OnTooltipSetHyperlink(tooltip)
-  if not ENABLED or self:GetDB().DEBUG.CTRL_SUPPRESSION and IsControlKeyDown() then return end
+function Addon:OnTooltipSetHyperlink(tooltip)
+  if not self:GetOption("Debug", "enabled") then return end
+  if self:GetOption("Debug", "ctrlSuppression") and IsControlKeyDown() then return end
   local name, link = tooltip:GetItem()
   if not link then return end
   
   local enchanted = not not link:find"item:%d+:%d+"
   local itemType, itemSubType, _, invType = select(6, GetItemInfo(link))
   
-  if self:GetDB().SIMPLIFY then
-    ZeraTooltip:RewordStats(tooltip)
+  if self:GetOption"SIMPLIFY" then
+    Addon:RewordStats(tooltip)
   end
   
-  if self:GetDB().REORDER then
-    ZeraTooltip:ReorderStats(tooltip, self:GetDB().SIMPLIFY, enchanted)
+  if self:GetOption"REORDER" then
+    Addon:ReorderStats(tooltip, self:GetOption"SIMPLIFY", enchanted)
   end
   
-  if self:GetDB().RECOLOR then
-    ZeraTooltip:RecolorStats(tooltip, self:GetDB().SIMPLIFY, enchanted)
+  if self:GetOption"RECOLOR" then
+    Addon:RecolorStats(tooltip, self:GetOption"SIMPLIFY", enchanted)
     self:RecolorLearnable(tooltip, itemType, itemSubType, invType)
   end
   
@@ -290,12 +310,12 @@ function ZeraTooltip:OnTooltipSetHyperlink(tooltip)
 end
 
 
-function ZeraTooltip:HookTooltip(tooltip)
+function Addon:HookTooltip(tooltip)
   tooltip:HookScript("OnTooltipSetItem", function(...) return self:OnTooltipSetHyperlink(...) end)
 end
 
 
-function ZeraTooltip:CreateHooks()
+function Addon:CreateHooks()
   self:HookTooltip(GameTooltip)
   self:HookTooltip(ItemRefTooltip)
   self:HookTooltip(ItemRefShoppingTooltip1)
@@ -305,37 +325,81 @@ function ZeraTooltip:CreateHooks()
 end
 
 
+function Addon:OnChatCommand(input)
+  self:OpenConfig(ADDON_NAME, true)
+end
 
-
-function ZeraTooltip:CreateOptions()
-  AceConfig:RegisterOptionsTable(ADDON_NAME, Data:MakeOptionsTable(self:GetDB(), L))
-  AceConfigDialog:AddToBlizOptions(ADDON_NAME)
+function Addon:OpenConfig(category, expandSection)
+  InterfaceAddOnsList_Update()
+  InterfaceOptionsFrame_OpenToCategory(category)
   
-  local profiles = AceDBOptions:GetOptionsTable(self.db)
-  AceConfig:RegisterOptionsTable("ZeraTooltip.profiles", profiles)
-  AceConfigDialog:AddToBlizOptions("ZeraTooltip.profiles", "Profiles", ADDON_NAME)
-end
-
-
-local function SetDefault(val, default)
-  if val == nil then
-    return default
+  if expandSection then
+    -- Expand config if it's collapsed
+    local i = 1
+    while _G["InterfaceOptionsFrameAddOnsButton"..i] do
+      local frame = _G["InterfaceOptionsFrameAddOnsButton"..i]
+      if frame.element then
+        if frame.element.name == ADDON_NAME then
+          if frame.element.hasChildren and frame.element.collapsed then
+            if _G["InterfaceOptionsFrameAddOnsButton"..i.."Toggle"] and _G["InterfaceOptionsFrameAddOnsButton"..i.."Toggle"].Click then
+              _G["InterfaceOptionsFrameAddOnsButton"..i.."Toggle"]:Click()
+              break
+            end
+          end
+          break
+        end
+      end
+      
+      i = i + 1
+    end
   end
-  return val
+end
+function Addon:MakeDefaultFunc(category)
+  return function()
+    self:GetDB():ResetProfile()
+    self:Printf(L["Profile reset to default."])
+    AceConfigRegistry:NotifyChange(category)
+  end
+end
+function Addon:CreateOptionsCategory(categoryName, options)
+  local category = ADDON_NAME
+  if categoryName then
+    category = ("%s.%s"):format(category, categoryName)
+  end
+  AceConfig:RegisterOptionsTable(category, options)
+  local Panel = AceConfigDialog:AddToBlizOptions(category, categoryName, categoryName and ADDON_NAME or nil)
+  Panel.default = self:MakeDefaultFunc(category)
+  return Panel
 end
 
-function ZeraTooltip:OnInitialize()
+function Addon:CreateOptions()
+  self:CreateOptionsCategory(nil, Data:MakeOptionsTable(ADDON_NAME, self, L))
+  
+  self:CreateOptionsCategory("Speedbar", Data:MakeSpeedbarOptionsTable(L["Speedbar Configuration"], self, L))
+  self:CreateOptionsCategory("Colors"  , Data:MakeColorsOptionsTable(L["Colors Configuration"], self, L))
+  
+  self:CreateOptionsCategory("Profiles", AceDBOptions:GetOptionsTable(self:GetDB()))
+  
+  if self:GetOption("Debug", "menu") then
+    self:CreateOptionsCategory("Debug" , Data:MakeDebugOptionsTable("Debug", self, L))
+  end
+end
+
+
+
+function Addon:OnInitialize()
   Data:OnInitialize(L)
   
-  self.db = AceDB:New("ZeraTooltipDB", Data:GetDefaultOptions(), true)
+  self.db = AceDB:New(("%sDB"):format(ADDON_NAME), Data:GetDefaultProfile(), true)
   
+  self:RegisterChatCommand(Data.CHAT_COMMAND, "OnChatCommand", true)
 end
 
-function ZeraTooltip:OnEnable()
+function Addon:OnEnable()
   self:CreateOptions()
   self:CreateHooks()
 end
 
-function ZeraTooltip:OnDisable()
+function Addon:OnDisable()
   
 end
