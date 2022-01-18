@@ -13,7 +13,7 @@
 
 embeds.xml
 
-Data.lua
+Config.lua
 
 Locale/enUS.lua
 

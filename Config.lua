@@ -34,6 +34,7 @@ end
 --   ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝ 
 
 
+
 -- Fastest weapon speed
 Data.WEAPON_SPEED_MIN = 1.2
 
