@@ -99,96 +99,97 @@ local COLORS = {
   CRYSTAL_BLUE       = rgb( 92, 179, 255),
 }
 
-
-local OPTION_DEFAULTS = {
-  profile = {
-    SIMPLIFY = true,
-    REORDER  = true,
-    RECOLOR  = true,
-    
-    RECOLOR_USABLE = true,
-    
-    SHOW_SPEEDBAR = true,
-    
-    -- Bar width. Longer is more accurate but can cause a wider tooltip
-    SPEEDBAR_SIZE  = 10,
-    
-    -- Number of significant decimal places on weapon speeds
-    SPEED_ACCURACY = 1,
-    
-    COLORS = {
-      TRAINABLE     = COLORS.ORANGE,
-      WEAP_DAMAGE   = COLORS.TUMBLEWEED,
-      SPEED         = COLORS.WHITE,
-      ENCHANT       = COLORS.GREEN,
-      SKILL         = COLORS.GREEN,
+function Data:MakeDefaultOptions()
+  return {
+    profile = {
+      SIMPLIFY = true,
+      REORDER  = true,
+      RECOLOR  = true,
       
-      ARMOR         = COLORS.YELLOW,
+      RECOLOR_USABLE = true,
       
-      STAMINA       = COLORS.PALE_LIGHT_GREEN,
-      STRENGTH      = COLORS.TUMBLEWEED,
-      AGILITY       = COLORS.SANDY_YELLOW,
-      INTELLECT     = COLORS.JORDY_BLUE,
-      SPIRIT        = COLORS.LIGHT_AQUA,
+      SHOW_SPEEDBAR = true,
       
-      ARCANE_RESIST = COLORS.ARCANE,
-      FIRE_RESIST   = COLORS.FIRE,
-      NATURE_RESIST = COLORS.NATURE,
-      FROST_RESIST  = COLORS.FROST,
-      SHADOW_RESIST = COLORS.SHADOW,
-      HOLY_RESIST   = COLORS.HOLY,
+      -- Bar width. Longer is more accurate but can cause a wider tooltip
+      SPEEDBAR_SIZE  = 10,
       
-      ARCANE_DAMAGE = COLORS.ARCANE,
-      FIRE_DAMAGE   = COLORS.FIRE,
-      NATURE_DAMAGE = COLORS.NATURE,
-      FROST_DAMAGE  = COLORS.FROST,
-      SHADOW_DAMAGE = COLORS.SHADOW,
-      HOLY_DAMAGE   = COLORS.HOLY,
+      -- Number of significant decimal places on weapon speeds
+      SPEED_ACCURACY = 1,
       
-      DEFENSE       = COLORS.PALE_LIGHT_GREEN,
-      RESILIENCE    = COLORS.HONEYSUCKLE,
-      DODGE         = COLORS.HONEYSUCKLE,
-      PARRY         = COLORS.PARIS_GREEN,
-      BLOCK_RATING  = COLORS.LEMON_LIME,
-      BLOCK_VALUE   = COLORS.LEMON_LIME,
-      RESIST_ALL    = COLORS.PALE_LIGHT_GREEN,
+      COLORS = {
+        TRAINABLE     = COLORS.ORANGE,
+        WEAP_DAMAGE   = COLORS.TUMBLEWEED,
+        SPEED         = COLORS.WHITE,
+        ENCHANT       = COLORS.GREEN,
+        SKILL         = COLORS.GREEN,
+        
+        ARMOR         = COLORS.YELLOW,
+        
+        STAMINA       = COLORS.PALE_LIGHT_GREEN,
+        STRENGTH      = COLORS.TUMBLEWEED,
+        AGILITY       = COLORS.SANDY_YELLOW,
+        INTELLECT     = COLORS.JORDY_BLUE,
+        SPIRIT        = COLORS.LIGHT_AQUA,
+        
+        ARCANE_RESIST = COLORS.ARCANE,
+        FIRE_RESIST   = COLORS.FIRE,
+        NATURE_RESIST = COLORS.NATURE,
+        FROST_RESIST  = COLORS.FROST,
+        SHADOW_RESIST = COLORS.SHADOW,
+        HOLY_RESIST   = COLORS.HOLY,
+        
+        ARCANE_DAMAGE = COLORS.ARCANE,
+        FIRE_DAMAGE   = COLORS.FIRE,
+        NATURE_DAMAGE = COLORS.NATURE,
+        FROST_DAMAGE  = COLORS.FROST,
+        SHADOW_DAMAGE = COLORS.SHADOW,
+        HOLY_DAMAGE   = COLORS.HOLY,
+        
+        DEFENSE       = COLORS.PALE_LIGHT_GREEN,
+        RESILIENCE    = COLORS.HONEYSUCKLE,
+        DODGE         = COLORS.HONEYSUCKLE,
+        PARRY         = COLORS.PARIS_GREEN,
+        BLOCK_RATING  = COLORS.LEMON_LIME,
+        BLOCK_VALUE   = COLORS.LEMON_LIME,
+        RESIST_ALL    = COLORS.PALE_LIGHT_GREEN,
+        
+        ATTACK_POW    = COLORS.TUMBLEWEED,
+        R_ATTACK_POW  = COLORS.TUMBLEWEED,
+        PHYS_HIT      = COLORS.SANDY_YELLOW,
+        PHYS_CRIT     = COLORS.ATOMIC_TANGERINE,
+        PHYS_HASTE    = COLORS.CITRON,
+        PHYS_PEN      = COLORS.PUMPKIN_ORANGE,
+        EXPERTISE     = COLORS.TUMBLEWEED,
+        
+        MAGICAL       = COLORS.LIGHT_FUSCHIA_PINK,
+        MAGIC_HIT     = COLORS.BLUSH_PINK,
+        MAGIC_CRIT    = COLORS.PURPLE_MIMOSA,
+        MAGIC_HASTE   = COLORS.LILAC,
+        MAGIC_PEN     = COLORS.HELIOTROPE_PURPLE,
+        
+        HEALING       = COLORS.LIGHT_CYAN,
+        HEALTH        = COLORS.PALE_LIGHT_GREEN,
+        MANA          = COLORS.JORDY_BLUE,
+      },
       
-      ATTACK_POW    = COLORS.TUMBLEWEED,
-      R_ATTACK_POW  = COLORS.TUMBLEWEED,
-      PHYS_HIT      = COLORS.SANDY_YELLOW,
-      PHYS_CRIT     = COLORS.ATOMIC_TANGERINE,
-      PHYS_HASTE    = COLORS.CITRON,
-      PHYS_PEN      = COLORS.PUMPKIN_ORANGE,
-      EXPERTISE     = COLORS.TUMBLEWEED,
-      
-      MAGICAL       = COLORS.LIGHT_FUSCHIA_PINK,
-      MAGIC_HIT     = COLORS.BLUSH_PINK,
-      MAGIC_CRIT    = COLORS.PURPLE_MIMOSA,
-      MAGIC_HASTE   = COLORS.LILAC,
-      MAGIC_PEN     = COLORS.HELIOTROPE_PURPLE,
-      
-      HEALING       = COLORS.LIGHT_CYAN,
-      HEALTH        = COLORS.PALE_LIGHT_GREEN,
-      MANA          = COLORS.JORDY_BLUE,
+      RECOLOR_STAT = {
+        ["**"] = true,
+        
+        WEAP_DAMAGE = false,
+        SPEED       = false,
+        ENCHANT     = false,
+        SKILL       = false,
+      },
+      Debug = {
+        enabled         = true,
+        menu            = false,
+        
+        showLabels      = false,
+        ctrlSupprseeion = false,
+      },
     },
-    
-    RECOLOR_STAT = {
-      ["**"] = true,
-      
-      WEAP_DAMAGE = false,
-      SPEED       = false,
-      ENCHANT     = false,
-      SKILL       = false,
-    },
-    Debug = {
-      enabled         = true,
-      menu            = false,
-      
-      showLabels      = false,
-      ctrlSupprseeion = false,
-    },
-  },
-}
+  }
+end
 
 --  ███████╗███╗   ██╗██████╗      ██████╗ ██████╗ ███╗   ██╗███████╗██╗ ██████╗ 
 --  ██╔════╝████╗  ██║██╔══██╗    ██╔════╝██╔═══██╗████╗  ██║██╔════╝██║██╔════╝ 
@@ -199,17 +200,6 @@ local OPTION_DEFAULTS = {
 
 
 
-
-function Data:GetDefaultProfile()
-  return OPTION_DEFAULTS
-end
-function Data:GetDefaultOption(...)
-  local val = self:GetDefaultProfile().profile
-  for _, key in ipairs{...} do
-    val = val[key]
-  end
-  return val
-end
 
 
 function Data:Round(num, decimalPlaces)
@@ -578,12 +568,12 @@ function Data:MakeSpeedbarOptionsTable(title, Addon, L)
   GUI:CreateNewline()
   
   GUI:CreateRange("SPEEDBAR_SIZE", L["Speedbar width"], L["SPEEDBAR SIZE DESCRIPTION"], 5, 25, 1)
-  GUI:CreateExecute("SPEEDBAR_SIZE Reset", L["Reset"], nil, function() Addon:SetOption(self:GetDefaultOptions("profile", "SPEEDBAR_SIZE"), "SPEEDBAR_SIZE") end)
+  GUI:CreateExecute("SPEEDBAR_SIZE Reset", L["Reset"], nil, function() Addon:ResetOption"SPEEDBAR_SIZE" end)
   
   GUI:CreateNewline()
   
   GUI:CreateRange("SPEED_ACCURACY", L["Speed accuracy"], L["SPEED ACCURACY DESCRIPTION"], 1, 5, 1)
-  GUI:CreateExecute("SPEED_ACCURACY Reset", L["Reset"], nil, function() Addon:SetOption(self:GetDefaultOptions("profile", "SPEEDBAR_SIZE"), "SPEED_ACCURACY") end)
+  GUI:CreateExecute("SPEED_ACCURACY Reset", L["Reset"], nil, function() Addon:ResetOption"SPEED_ACCURACY" end)
   
   
   return Options

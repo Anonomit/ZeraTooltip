@@ -15,27 +15,42 @@ local AceDBOptions    = LibStub"AceDBOptions-3.0"
 function Addon:GetDB()
   return self.db
 end
+function Addon:GetDefaultDB()
+  return self.dbDefault
+end
 function Addon:GetProfile()
   return self:GetDB().profile
 end
-function Addon:GetOption(...)
-  local val = self:GetProfile()
+function Addon:GetDefaultProfile()
+  return self:GetDefaultDB().profile
+end
+local function GetOption(self, db, ...)
+  local val = db
   for _, key in ipairs{...} do
     val = val[key]
   end
   return val
 end
-function Addon:SetOption(val, ...)
+function Addon:GetOption(...)
+  return GetOption(self, self:GetProfile(), ...)
+end
+function Addon:GetDefaultOption(...)
+  return GetOption(self, self:GetDefaultProfile(), ...)
+end
+local function SetOption(self, db, val, ...)
   local keys = {...}
   local lastKey = table.remove(keys, #keys)
-  local tbl = self:GetProfile()
+  local tbl = db
   for _, key in ipairs(keys) do
     tbl = tbl[key]
   end
   tbl[lastKey] = val
 end
+function Addon:SetOption(val, ...)
+  return SetOption(self, self:GetProfile(), val, ...)
+end
 function Addon:ResetOption(...)
-  return self:SetOption(val, Data:GetDefaultOptions(...))
+  return self:SetOption(val, self:GetDefaultOptions(...))
 end
 
 
@@ -44,12 +59,39 @@ function Addon:GetColor(key)
   assert(self:GetOption("COLORS", key), ("Missing Color entry: %s"):format(key))
   return self:GetOption("RECOLOR_STAT", key) and self:GetOption("COLORS", key) or nil
 end
+function Addon:ConvertColorToHex(r, g, b)
+  return ("|cff%2x%2x%2x"):format(r, g, b)
+end
+function Addon:ConvertColorFromHex(hex)
+  return tonumber(hex:sub(5, 6), 16), tonumber(hex:sub(7, 8), 16), tonumber(hex:sub(9, 10), 16)
+  -- return tonumber(hex:sub(6, 7), 16), tonumber(hex:sub(8, 9), 16), tonumber(hex:sub(10, 11), 16)
+end
 
 
 
 function Addon:RemoveColorText(text)
   return text:gsub(Data.COLOR_CODE, "", 1):gsub(Data.COLOR_CODE_RESET, "")
 end
+
+function Addon:CleanColoring(tooltip)
+  local textLeft = tooltip:GetName().."TextLeft"
+  for i = 2, tooltip:NumLines() do
+    local fontString = _G[textLeft..i]
+    local text = fontString:GetText()
+    if text then
+      local color, colorlessText = text:match("^(" .. Data.COLOR_CODE .. ")(.*)" .. Data.COLOR_CODE_RESET .. "$")
+      if color and colorlessText then
+        if not colorlessText:find(Data.COLOR_CODE) and not colorlessText:find(Data.COLOR_CODE_RESET) then
+          fontString:SetText(colorlessText)
+          local r, g, b = self:ConvertColorFromHex(color)
+          fontString:SetTextColor(Data:FontifyColor{r, g, b})
+        end
+      end
+    end
+  end
+end
+
+
 
 function Addon:TrimLine(text)
   return text:gsub(L["Equip PATTERN"], "")
@@ -84,7 +126,7 @@ function Addon:RewordStats(tooltip)
     local fontString = _G[textLeft..i]
     local text = fontString:GetText()
     if text then
-      text = self:RemoveColorText(text)
+      -- text = self:RemoveColorText(text)
       if text:match(L["Equip PATTERN"]) then
         text = text:gsub(L["Equip PATTERN"], "")
         fontString:SetText(text)
@@ -115,7 +157,34 @@ function Addon:ReorderStats(tooltip, simplified, enchanted)
     local fontString = _G[textLeft .. i]
     local text = fontString:GetText()
     if text then
-      text = self:RemoveColorText(text)
+      -- print(text:anonDelinkify())
+      -- text = self:RemoveColorText(text)
+      -- print(text:anonDelinkify())
+      if text:match(L["SocketBonus PATTERN"]) then
+        
+      end
+      if i == 10 then
+        ZERA = fontString
+        -- /run local tbl = {} for k, v in pairs(getmetatable(ZERA).__index) do table.insert(tbl, k) end table.sort(tbl) AnonTable(tbl):print()
+        -- /run local tbl = {} for k, v in pairs(getmetatable(ZERA).__index) do table.insert(tbl, {k, type(v)}) end table.sort(tbl, function(a,b) return a[1]<b[1] end) AnonTable(tbl):print()
+        -- /run local tbl = AnonTable() for k, v in pairs(getmetatable(ZERA).__index) do tbl[k]=type(v) end AnonTable(tbl):print()
+        -- /run local tbl = AnonTable() for k, v in pairs(_G) do if type(k) == "string" and k:match"Tooltip" and k:match"Texture" then tbl[k]=type(v) end end AnonTable(tbl):print()
+      elseif i == 5 then
+        ZERA2 = fontString
+      end
+      local color = Data:DefontifyColor(fontString:GetTextColor())
+      
+    end
+  end
+  
+  
+  
+  
+  for i = 2, tooltip:NumLines() do
+    local fontString = _G[textLeft .. i]
+    local text = fontString:GetText()
+    if text then
+      -- local noColorText = self:RemoveColorText(text)
       local color = Data:DefontifyColor(fontString:GetTextColor())
       
       if Data:IsSameColorFuzzy(color, Data.GREEN) and not enchantLineFound and not text:match(("^%%d+%%s+%s$"):format(L["Armor"])) then
@@ -171,7 +240,7 @@ function Addon:RecolorStats(tooltip, simplified, enchanted)
     local fontString = _G[textLeft .. i]
     local text = fontString:GetText()
     if text then
-      text = self:RemoveColorText(text)
+      -- text = self:RemoveColorText(text)
       local color = Data:DefontifyColor(fontString:GetTextColor())
       
       if Data:IsSameColorFuzzy(color, Data.GREEN) and not enchantLineFound and not text:match(("^%%d+%%s+%s$"):format(L["Armor"])) then
@@ -223,7 +292,7 @@ function Addon:RewriteSpeed(tooltip)
     local fontString = _G[textRight..i]
     local text = fontString:GetText()
     if text then
-      text = self:RemoveColorText(text)
+      -- text = self:RemoveColorText(text)
       if text:find(L["Weapon Speed PATTERN"]) then
         
         -- This should match weapon speed values with any number of decimal places, though by default I think it's always two.
@@ -292,6 +361,8 @@ function Addon:OnTooltipSetHyperlink(tooltip)
   
   local enchanted = not not link:find"item:%d+:%d+"
   local itemType, itemSubType, _, invType = select(6, GetItemInfo(link))
+  
+  self:CleanColoring(tooltip)
   
   if self:GetOption"SIMPLIFY" then
     Addon:RewordStats(tooltip)
@@ -388,9 +459,10 @@ end
 
 
 function Addon:OnInitialize()
-  Data:OnInitialize(L)
+  self.db        = AceDB:New(("%sDB"):format(ADDON_NAME)        , Data:MakeDefaultOptions(), true)
+  self.dbdefault = AceDB:New(("%sDB_Default"):format(ADDON_NAME), Data:MakeDefaultOptions(), true)
   
-  self.db = AceDB:New(("%sDB"):format(ADDON_NAME), Data:GetDefaultProfile(), true)
+  Data:OnInitialize(L)
   
   self:RegisterChatCommand(Data.CHAT_COMMAND, "OnChatCommand", true)
 end
