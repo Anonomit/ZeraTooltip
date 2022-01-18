@@ -208,12 +208,6 @@ function Data:Round(num, decimalPlaces)
 end
 
 
-function Data:FontifyColor(color)
-  return color[1]/255, color[2]/255, color[3]/255, 1
-end
-function Data:DefontifyColor(r, g, b)
-  return {r*255, g*255, b*255}
-end
 
 function Data:IsSameColor(color1, color2)
   for k, v in pairs(color1) do
@@ -453,6 +447,12 @@ end
 
 
 
+function Data:FontifyColor(color)
+  return color[1]/255, color[2]/255, color[3]/255, 1
+end
+function Data:DefontifyColor(r, g, b)
+  return {r*255, g*255, b*255}
+end
 local function GetOptionTableHelpers(Options, Addon)
   local defaultInc = 1000
   local order      = 1000
@@ -470,18 +470,21 @@ local function GetOptionTableHelpers(Options, Addon)
     return self:GetOrder()
   end
   
-  function GUI:CreateEntry(key, name, desc, widgetType, order)
-    key = widgetType .. "_" .. (key or "")
-    Options.args[key] = {name = name, desc = desc, type = widgetType, order = order or self:Order()}
+  function GUI:CreateEntry(keys, name, desc, widgetType, disabled, order)
+    if type(keys) ~= "table" then keys = {keys} end
+    local key = widgetType .. "_" .. (table.concat(keys, ".") or "")
+    Options.args[key] = {name = name, desc = desc, type = widgetType, order = order or self:Order(), disabled = disabled}
+    Options.args[key].set = function(info, val)        Addon:SetOption(val, unpack(keys)) end
+    Options.args[key].get = function(info)      return Addon:GetOption(unpack(keys))      end
     return Options.args[key]
   end
   
   function GUI:CreateHeader(name)
-    local option = self:CreateEntry(self:Order(), name, nil, "header", self:Order(0))
+    local option = self:CreateEntry(self:Order(), name, nil, "header", nil, self:Order(0))
   end
   
   function GUI:CreateDescription(desc, fontSize)
-    local option = self:CreateEntry(self:Order(), desc, nil, "description", self:Order(0))
+    local option = self:CreateEntry(self:Order(), desc, nil, "description", nil, self:Order(0))
     option.fontSize = fontSize or "large"
   end
   function GUI:CreateDivider(count)
@@ -494,36 +497,34 @@ local function GetOptionTableHelpers(Options, Addon)
   end
   
   function GUI:CreateToggle(keys, name, desc, disabled)
-    if type(keys) ~= "table" then keys = {keys} end
-    local option = self:CreateEntry(table.concat(keys, "."), name, desc, "toggle")
-    option.disabled = disabled
-    option.set      = function(info, val)        Addon:SetOption(val, unpack(keys)) end
-    option.get      = function(info)      return Addon:GetOption(unpack(keys))      end
+    local option = self:CreateEntry(keys, name, desc, "toggle", disabled)
     return option
   end
+  
   function GUI:CreateRange(keys, name, desc, min, max, step, disabled)
-    if type(keys) ~= "table" then keys = {keys} end
-    local option = self:CreateEntry(table.concat(keys, "."), name, desc, "range")
-    option.disabled = disabled
-    option.min      = min
-    option.max      = max
-    option.step     = step
-    option.set      = function(info, val)        Addon:SetOption(val, unpack(keys)) end
-    option.get      = function(info)      return Addon:GetOption(unpack(keys))      end
+    local option = self:CreateEntry(keys, name, desc, "range", disabled)
+    option.min   = min
+    option.max   = max
+    option.step  = step
     return option
   end
+  
   function GUI:CreateInput(keys, name, desc, multiline, disabled)
-    if type(keys) ~= "table" then keys = {keys} end
-    local option = self:CreateEntry(table.concat(keys, "."), name, desc, "input")
+    local option     = self:CreateEntry(keys, name, desc, "input", disabled)
     option.multiline = multiline
-    option.disabled  = disabled
-    option.set       = function(info, val)        Addon:SetOption(val, unpack(keys)) end
-    option.get       = function(info)      return Addon:GetOption(unpack(keys))      end
     return option
   end
-  function GUI:CreateExecute(key, name, desc, func)
-    local option = self:CreateEntry(key, name, desc, "execute")
-    option.func = func
+  
+  function GUI:CreateColor(keys, name, desc, disabled)
+    local option = self:CreateEntry(keys, name, desc, "color", disabled)
+    option.set   = function(info, r, g, b)        Addon:SetOption(Data:DefontifyColor(r, g, b), unpack(keys)) end
+    option.get   = function(info)          return Data:FontifyColor(Addon:GetOption(unpack(keys)))            end
+    return option
+  end
+  
+  function GUI:CreateExecute(key, name, desc, func, disabled)
+    local option = self:CreateEntry(key, name, desc, "execute", disabled)
+    option.func  = func
     return option
   end
   
@@ -591,13 +592,7 @@ function Data:MakeColorsOptionsTable(title, Addon, L)
   
   local function CreateColorOption(key, name, desc)
     GUI:CreateToggle({"RECOLOR_STAT", key}, name, desc)
-    Options.args["color " .. key] = {
-      name = L["Color"],
-      order = GUI:Order(),
-      type = "color",
-      set = function(_, r, g, b)        Addon:SetOption(self:DefontifyColor(r, g, b), "COLORS", key) end,
-      get = function(info)       return self:FontifyColor(Addon:GetOption("COLORS", key))            end,
-    }
+    GUI:CreateColor({"COLORS", key}, L["Color"], nil, function() return not not not Addon:GetOption("RECOLOR_STAT", key) end)
     GUI:CreateExecute(key .. " Reset", L["Reset"], nil, function() Addon:ResetOption("RECOLOR_STAT", key) Addon:ResetOption("COLORS", key) end)
     GUI:CreateNewline()
   end

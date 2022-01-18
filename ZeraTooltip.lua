@@ -50,7 +50,7 @@ function Addon:SetOption(val, ...)
   return SetOption(self, self:GetProfile(), val, ...)
 end
 function Addon:ResetOption(...)
-  return self:SetOption(val, self:GetDefaultOptions(...))
+  return self:SetOption(self:GetDefaultOption(...), ...)
 end
 
 
@@ -451,8 +451,8 @@ end
 
 
 function Addon:OnInitialize()
-  self.db        = AceDB:New(("%sDB"):format(ADDON_NAME)        , Data:MakeDefaultOptions(), true)
-  self.dbdefault = AceDB:New(("%sDB_Default"):format(ADDON_NAME), Data:MakeDefaultOptions(), true)
+  self.db        = AceDB:New(("%sDB"):format(ADDON_NAME), Data:MakeDefaultOptions(), true)
+  self.dbDefault = AceDB:New({}                         , Data:MakeDefaultOptions(), true)
   
   Data:OnInitialize(L)
   
