@@ -21,6 +21,7 @@ end
 L["Equip PATTERN"]           = "^%s*Equip:%s*"
 L["Use PATTERN"]             = "^%s*Use:%s*"
 L["Set PATTERN"]             = "^%(?%d*%)?%s*Set:%s*"
+L["Socket PATTERN"]          = "^%u%l+%s+Socket$"
 L["SocketBonus PATTERN"]     = "^%s*Socket Bonus:%s*"
 L["Weapon Speed PATTERN"]    = "^(Speed) ([%d%.]+)"
 L["ConjunctiveWord PATTERN"] = "%s+and%s+"

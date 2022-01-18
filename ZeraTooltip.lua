@@ -64,7 +64,6 @@ function Addon:ConvertColorToHex(r, g, b)
 end
 function Addon:ConvertColorFromHex(hex)
   return tonumber(hex:sub(5, 6), 16), tonumber(hex:sub(7, 8), 16), tonumber(hex:sub(9, 10), 16)
-  -- return tonumber(hex:sub(6, 7), 16), tonumber(hex:sub(8, 9), 16), tonumber(hex:sub(10, 11), 16)
 end
 
 
@@ -126,7 +125,6 @@ function Addon:RewordStats(tooltip)
     local fontString = _G[textLeft..i]
     local text = fontString:GetText()
     if text then
-      -- text = self:RemoveColorText(text)
       if text:match(L["Equip PATTERN"]) then
         text = text:gsub(L["Equip PATTERN"], "")
         fontString:SetText(text)
@@ -148,48 +146,41 @@ end
 
 
 
-function Addon:ReorderStats(tooltip, simplified, enchanted)
+function Addon:ReorderStats(tooltip, simplified, enchanted, gems)
   local enchantLineFound = not enchanted
-  local groups = { }
+  local groups           = {}
+  local gemLines         = {}
   
+  -- Exclude lines with gems from reordering
   local textLeft = tooltip:GetName() .. "TextLeft"
   for i = 2, tooltip:NumLines() do
     local fontString = _G[textLeft .. i]
     local text = fontString:GetText()
     if text then
-      -- print(text:anonDelinkify())
-      -- text = self:RemoveColorText(text)
-      -- print(text:anonDelinkify())
       if text:match(L["SocketBonus PATTERN"]) then
-        
+        local gemsRemaining = gems
+        for j = i-1, 2, -1 do
+          if gemsRemaining <= 0 then break end
+          gemLines[j] = true
+          local fontString = _G[textLeft .. j]
+          local text = fontString:GetText()
+          if not text:match(L["Socket PATTERN"]) then
+            gemsRemaining = gemsRemaining - 1
+          end
+        end
       end
-      if i == 10 then
-        ZERA = fontString
-        -- /run local tbl = {} for k, v in pairs(getmetatable(ZERA).__index) do table.insert(tbl, k) end table.sort(tbl) AnonTable(tbl):print()
-        -- /run local tbl = {} for k, v in pairs(getmetatable(ZERA).__index) do table.insert(tbl, {k, type(v)}) end table.sort(tbl, function(a,b) return a[1]<b[1] end) AnonTable(tbl):print()
-        -- /run local tbl = AnonTable() for k, v in pairs(getmetatable(ZERA).__index) do tbl[k]=type(v) end AnonTable(tbl):print()
-        -- /run local tbl = AnonTable() for k, v in pairs(_G) do if type(k) == "string" and k:match"Tooltip" and k:match"Texture" then tbl[k]=type(v) end end AnonTable(tbl):print()
-      elseif i == 5 then
-        ZERA2 = fontString
-      end
-      local color = Data:DefontifyColor(fontString:GetTextColor())
-      
     end
   end
-  
-  
-  
   
   for i = 2, tooltip:NumLines() do
     local fontString = _G[textLeft .. i]
     local text = fontString:GetText()
     if text then
-      -- local noColorText = self:RemoveColorText(text)
       local color = Data:DefontifyColor(fontString:GetTextColor())
       
       if Data:IsSameColorFuzzy(color, Data.GREEN) and not enchantLineFound and not text:match(("^%%d+%%s+%s$"):format(L["Armor"])) then
         enchantLineFound = true
-      else
+      elseif not gemLines[i] then
         if not text:match(L["Set PATTERN"]) then
           for j, data in ipairs(L) do
             local captures = {}
@@ -240,7 +231,6 @@ function Addon:RecolorStats(tooltip, simplified, enchanted)
     local fontString = _G[textLeft .. i]
     local text = fontString:GetText()
     if text then
-      -- text = self:RemoveColorText(text)
       local color = Data:DefontifyColor(fontString:GetTextColor())
       
       if Data:IsSameColorFuzzy(color, Data.GREEN) and not enchantLineFound and not text:match(("^%%d+%%s+%s$"):format(L["Armor"])) then
@@ -292,7 +282,6 @@ function Addon:RewriteSpeed(tooltip)
     local fontString = _G[textRight..i]
     local text = fontString:GetText()
     if text then
-      -- text = self:RemoveColorText(text)
       if text:find(L["Weapon Speed PATTERN"]) then
         
         -- This should match weapon speed values with any number of decimal places, though by default I think it's always two.
@@ -359,7 +348,10 @@ function Addon:OnTooltipSetHyperlink(tooltip)
   local name, link = tooltip:GetItem()
   if not link then return end
   
-  local enchanted = not not link:find"item:%d+:%d+"
+  local enchant, gem1, gem2, gem3, gem4 = link:match"item:%d+:(%d*):(%d*):(%d*):(%d*):(%d*)"
+  local enchanted = not not enchant
+  local gems = (tonumber(gem1) and 1 or 0) + (tonumber(gem2) and 1 or 0) + (tonumber(gem3) and 1 or 0) + (tonumber(gem4) and 1 or 0)
+  
   local itemType, itemSubType, _, invType = select(6, GetItemInfo(link))
   
   self:CleanColoring(tooltip)
@@ -369,7 +361,7 @@ function Addon:OnTooltipSetHyperlink(tooltip)
   end
   
   if self:GetOption"REORDER" then
-    Addon:ReorderStats(tooltip, self:GetOption"SIMPLIFY", enchanted)
+    Addon:ReorderStats(tooltip, self:GetOption"SIMPLIFY", enchanted, gems)
   end
   
   if self:GetOption"RECOLOR" then
