@@ -1005,16 +1005,37 @@ L[#L].CAPTURES = {
 }
 
 L[#L+1] = {LABEL = "Mount Speed"}
-L[#L].MAP = {
-  {
-    INPUT  = "Increases mount speed by ([%d%.]*%d+%%?)",
-    OUTPUT = function(amount) return ("+%s Mount Speed"):format(FixPercent(amount)) end,
-  },
-  {
-    INPUT  = "Increases speed in Flight Form and Swift Flight Form by ([%d%.]*%d+%%?)",
-    OUTPUT = function(amount) return ("+%s Speed in Flight Forms"):format(FixPercent(amount)) end,
-  },
-}
+if Data:IsBCC() then
+  L[#L].MAP = {
+    {
+      INPUT  = "Increases mount speed by ([%d%.]*%d+%%?)",
+      OUTPUT = function(amount) return ("+%s Mount Speed"):format(FixPercent(amount)) end,
+    },
+    {
+      INPUT  = "Increases speed in Flight Form and Swift Flight Form by ([%d%.]*%d+%%?)",
+      OUTPUT = function(amount) return ("+%s Speed in Flight Forms"):format(FixPercent(amount)) end,
+    },
+  }
+elseif Data:IsClassic() then
+  L[#L].MAP = {
+    {
+      INPUT  = "Increases mount speed by ([%d%.]*%d+%%?)",
+      OUTPUT = function(amount) return ("+%s Mount Speed"):format(FixPercent(amount)) end,
+    },
+    {
+      INPUT  = "^Mithril Spurs$",
+      OUTPUT = "+4%%%% Mount Speed",
+    },
+    {
+      INPUT  = "^Minor Mount Speed Increase$",
+      OUTPUT = "+2%%%% Mount Speed",
+    },
+    {
+      INPUT  = "Attaches spurs to your boots that increase your mounted movement speed slightly",
+      OUTPUT = "+4%%%% Mount Speed when attached to boots",
+    },
+  }
+end
 L[#L].CAPTURES = {
   "%+%d+%%? Mount Speed.*",
   "%+%d+%%? Speed in Flight Forms.*",
@@ -1199,12 +1220,62 @@ L[#L].CAPTURES = {
 --  ╚══════╝╚═╝     ╚══════╝ ╚═════╝╚═╝╚═╝  ╚═╝╚══════╝    ╚══════╝╚═╝     ╚═╝     ╚══════╝ ╚═════╝   ╚═╝   ╚══════╝
 
 
+
+
 L[#L+1] = {LABEL = "Skill"}
 L[#L].COLOR = "SKILL"
 L[#L].MAP = {
   {
-    INPUT = "Increased ([%u][%a%-%s]+) %+(%d+)",
+    INPUT = "^(Mining) %+(%d+)",
     OUTPUT = function(skill, amount) return ("+%d %s skill"):format(amount, skill) end,
+  },
+  {
+    INPUT = "^(Herbalism) %+(%d+)",
+    OUTPUT = function(skill, amount) return ("+%d %s skill"):format(amount, skill) end,
+  },
+  {
+    INPUT = "^(Skinning) %+(%d+)",
+    OUTPUT = function(skill, amount) return ("+%d %s skill"):format(amount, skill) end,
+  },
+  {
+    INPUT = "^%+(%d+) (Fishing)",
+    OUTPUT = function(amount, skill) return ("+%d %s skill"):format(amount, skill) end,
+  },
+  {
+    INPUT = "^%+(%d+) (Herbalism)",
+    OUTPUT = function(amount, skill) return ("+%d %s skill"):format(amount, skill) end,
+  },
+  {
+    INPUT = "^%+(%d+) (Mining)",
+    OUTPUT = function(amount, skill) return ("+%d %s skill"):format(amount, skill) end,
+  },
+  {
+    INPUT = "^%+(%d+) (Skinning)",
+    OUTPUT = function(amount, skill) return ("+%d %s skill"):format(amount, skill) end,
+  },
+  {
+    INPUT = "^Increased ([%u][%a%-%s]+) %+(%d+)",
+    OUTPUT = function(skill, amount) return ("+%d %s skill"):format(amount, skill) end,
+  },
+  {
+    INPUT = "^Increases your lockpicking skill slightly",
+    OUTPUT = "+5 Lockpicking skill",
+  },
+  {
+    INPUT = "^Truesilver Line$",
+    OUTPUT = "+3 Fishing skill",
+  },
+  {
+    INPUT = "^Eternium Line$",
+    OUTPUT = "+5 Fishing skill",
+  },
+  {
+    INPUT = "Replaces the fishing line on your fishing pole with a delicately spun truesilver line",
+    OUTPUT = "+3 Fishing skill when applied to a fishing pole",
+  },
+  {
+    INPUT = "Replaces the fishing line on your fishing pole with a high test eternium line",
+    OUTPUT = "+5 Fishing skill when applied to a fishing pole",
   },
 }
 L[#L].CAPTURES = {
