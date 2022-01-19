@@ -349,7 +349,7 @@ function Addon:OnTooltipSetHyperlink(tooltip)
   if not link then return end
   
   local enchant, gem1, gem2, gem3, gem4 = link:match"item:%d+:(%d*):(%d*):(%d*):(%d*):(%d*)"
-  local enchanted = not not enchant
+  local enchanted = not not tonumber(enchant)
   local gems = (tonumber(gem1) and 1 or 0) + (tonumber(gem2) and 1 or 0) + (tonumber(gem3) and 1 or 0) + (tonumber(gem4) and 1 or 0)
   
   local itemType, itemSubType, _, invType = select(6, GetItemInfo(link))
