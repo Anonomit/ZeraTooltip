@@ -422,6 +422,7 @@ end
 function Addon:MakeDefaultFunc(category)
   return function()
     self:GetDB():ResetProfile()
+    self:InitDB()
     self:Printf(L["Profile reset to default."])
     AceConfigRegistry:NotifyChange(category)
   end
@@ -472,6 +473,9 @@ end
 function Addon:OnEnable()
   self.Version = SemVer(GetAddOnMetadata(ADDON_NAME, "Version"))
   self:InitDB()
+  self:GetDB().RegisterCallback(self, "OnProfileChanged", "InitDB")
+  self:GetDB().RegisterCallback(self, "OnProfileCopied" , "InitDB")
+  self:GetDB().RegisterCallback(self, "OnProfileReset"  , "InitDB")
   
   self:CreateOptions()
   self:CreateHooks()
