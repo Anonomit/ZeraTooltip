@@ -1,5 +1,5 @@
 ## Interface: 11401
-## Version: 1.4.1
+## Version: 1.5.0
 ## Author: Anonomit
 
 ## Title: ZeraTooltip
