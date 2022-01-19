@@ -11,6 +11,8 @@ local AceConfigDialog = LibStub"AceConfigDialog-3.0"
 local AceDB           = LibStub"AceDB-3.0"
 local AceDBOptions    = LibStub"AceDBOptions-3.0"
 
+local SemVer          = LibStub"SemVer"
+
 
 function Addon:GetDB()
   return self.db
@@ -450,6 +452,14 @@ end
 
 
 
+function Addon:InitDB()
+  local configVersion = SemVer(self:GetOption"version" or "0.0.0")
+  -- Update data schema here
+  
+  self:SetOption(tostring(self.Version), "version")
+end
+
+
 function Addon:OnInitialize()
   self.db        = AceDB:New(("%sDB"):format(ADDON_NAME), Data:MakeDefaultOptions(), true)
   self.dbDefault = AceDB:New({}                         , Data:MakeDefaultOptions(), true)
@@ -460,6 +470,9 @@ function Addon:OnInitialize()
 end
 
 function Addon:OnEnable()
+  self.Version = SemVer(GetAddOnMetadata(ADDON_NAME, "Version"))
+  self:InitDB()
+  
   self:CreateOptions()
   self:CreateHooks()
 end
