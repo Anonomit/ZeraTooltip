@@ -454,7 +454,7 @@ end
 
 
 function Addon:InitDB()
-  local configVersion = SemVer(self:GetOption"version" or self.Version)
+  local configVersion = SemVer(self:GetOption"version" or tostring(self.Version))
   -- Update data schema here
   
   self:SetOption(tostring(self.Version), "version")
