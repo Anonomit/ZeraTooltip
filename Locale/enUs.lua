@@ -756,6 +756,44 @@ L[#L].CAPTURES = {
   "[%+%-]%d+ Spell Damage and Healing.*",
 }
 
+L[#L+1] = {LABEL = "Healing"}
+L[#L].COLOR = "HEALING"
+if Data:IsBCC() then
+  L[#L].MAP = {
+    {
+      INPUT = "Increases healing done by up to (%d+) and damage done by up to (%d+) for all magical spells and effects",
+      OUTPUT = "+%d Healing and +%d Spell Damage",
+    },
+    {
+      INPUT = "Increases healing done by spells by up to (%d+) and damage done by spells by up to (%d+)",
+      OUTPUT = "+%d Healing and +%d Spell Damage",
+    },
+    {
+      INPUT = "Increases your spell damage by up to (%d+) and your healing by up to (%d+)",
+      OUTPUT = function(damage, healing) return ("+%d Healing and +%d Spell Damage"):format(healing, damage) end,
+    },
+    {
+      INPUT  = "Increases healing done by magical spells by up to (%d+)",
+      OUTPUT = "+%d Healing",
+    },
+  }
+  L[#L].CAPTURES = {
+    "[%+%-]%d+ Healing and [%+%-]%d+ Spell Damage.*",
+    "[%+%-]%d+ Healing [%+%-]%d+ Spell Damage.*",
+    "[%+%-]%d+ Healing.*",
+  }
+elseif Data:IsClassic() then
+  L[#L].MAP = {
+    {
+      INPUT  = "Increases healing done by spells and effects by up to (%d+)",
+      OUTPUT = "+%d Healing",
+    },
+  }
+  L[#L].CAPTURES = {
+    "%+%d+ Healing.*",
+  }
+end
+
 L[#L+1] = {LABEL = "Spell Hit"}
 L[#L].COLOR = "MAGIC_HIT"
 if Data:IsBCC() then
@@ -846,55 +884,13 @@ end
 
 
 
+--  ██████╗ ███████╗███████╗ ██████╗ ██╗   ██╗██████╗  ██████╗███████╗███████╗
+--  ██╔══██╗██╔════╝██╔════╝██╔═══██╗██║   ██║██╔══██╗██╔════╝██╔════╝██╔════╝
+--  ██████╔╝█████╗  ███████╗██║   ██║██║   ██║██████╔╝██║     █████╗  ███████╗
+--  ██╔══██╗██╔══╝  ╚════██║██║   ██║██║   ██║██╔══██╗██║     ██╔══╝  ╚════██║
+--  ██║  ██║███████╗███████║╚██████╔╝╚██████╔╝██║  ██║╚██████╗███████╗███████║
+--  ╚═╝  ╚═╝╚══════╝╚══════╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚══════╝╚══════╝
 
-
-
-
---  ██╗  ██╗███████╗ █████╗ ██╗     ██╗███╗   ██╗ ██████╗ 
---  ██║  ██║██╔════╝██╔══██╗██║     ██║████╗  ██║██╔════╝ 
---  ███████║█████╗  ███████║██║     ██║██╔██╗ ██║██║  ███╗
---  ██╔══██║██╔══╝  ██╔══██║██║     ██║██║╚██╗██║██║   ██║
---  ██║  ██║███████╗██║  ██║███████╗██║██║ ╚████║╚██████╔╝
---  ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝╚═╝  ╚═══╝ ╚═════╝ 
-
-
-L[#L+1] = {LABEL = "Healing"}
-L[#L].COLOR = "HEALING"
-if Data:IsBCC() then
-  L[#L].MAP = {
-    {
-      INPUT = "Increases healing done by up to (%d+) and damage done by up to (%d+) for all magical spells and effects",
-      OUTPUT = "+%d Healing and +%d Spell Damage",
-    },
-    {
-      INPUT = "Increases healing done by spells by up to (%d+) and damage done by spells by up to (%d+)",
-      OUTPUT = "+%d Healing and +%d Spell Damage",
-    },
-    {
-      INPUT = "Increases your spell damage by up to (%d+) and your healing by up to (%d+)",
-      OUTPUT = function(damage, healing) return ("+%d Healing and +%d Spell Damage"):format(healing, damage) end,
-    },
-    {
-      INPUT  = "Increases healing done by magical spells by up to (%d+)",
-      OUTPUT = "+%d Healing",
-    },
-  }
-  L[#L].CAPTURES = {
-    "[%+%-]%d+ Healing and [%+%-]%d+ Spell Damage.*",
-    "[%+%-]%d+ Healing [%+%-]%d+ Spell Damage.*",
-    "[%+%-]%d+ Healing.*",
-  }
-elseif Data:IsClassic() then
-  L[#L].MAP = {
-    {
-      INPUT  = "Increases healing done by spells and effects by up to (%d+)",
-      OUTPUT = "+%d Healing",
-    },
-  }
-  L[#L].CAPTURES = {
-    "%+%d+ Healing.*",
-  }
-end
 
 L[#L+1] = {LABEL = "Health Restore"}
 L[#L].COLOR = "HEALTH"
