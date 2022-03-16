@@ -1068,7 +1068,7 @@ L[#L+1] = {LABEL = "Buff Food"}
 L[#L].MAP = {
   {
     INPUT  = "Restores (%d+) health over (%d+) sec%.%s*Must remain seated while eating.%s+If you spend at least 10 seconds eating you will become well fed and gain (.+) for (%d+) min",
-    OUTPUT = function(amount, duration, buff, buffDuration) return ("+%d health (+%s HpS) over %ds while sitting. After 10s, gain %s for %ds"):format(amount, Data:Round(amount/duration, 0), duration, buff, buffDuration) end,
+    OUTPUT = function(amount, duration, buff, buffDuration) return ("+%d health (+%s HpS) over %ds while sitting. After 10s, gain %s for %dm"):format(amount, Data:Round(amount/duration, 0), duration, buff, buffDuration) end,
   },
 }
 L[#L].CAPTURES = {
@@ -1091,7 +1091,7 @@ L[#L+1] = {LABEL = "Buff Drink"}
 L[#L].MAP = {
   {
     INPUT  = "Restores (%d+) mana over (%d+) sec%.%s*Must remain seated while drinking.%s+ Also (.+) for (%d+) min",
-    OUTPUT = function(amount, duration, buff, buffDuration) return ("+%d mana (+%s HpS) over %ds while sitting. Also %s for %ds"):format(amount, Data:Round(amount/duration, 0), duration, buff, buffDuration) end,
+    OUTPUT = function(amount, duration, buff, buffDuration) return ("+%d mana (+%s HpS) over %ds while sitting. Also %s for %dm"):format(amount, Data:Round(amount/duration, 0), duration, buff, buffDuration) end,
   },
 }
 L[#L].CAPTURES = {
