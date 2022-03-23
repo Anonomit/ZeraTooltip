@@ -1334,15 +1334,31 @@ L[#L+1] = {LABEL = "Increase Pet Damage"}
 L[#L].MAP = {
   {
     INPUT  = "(%d+%%) increased damage from your summoned pets' melee attacks and damage spells",
-    OUTPUT = function(amount) return ("+%s pet damage"):format(FixPercent(amount)) end,
+    OUTPUT = function(amount) return ("+%s pet Damage"):format(FixPercent(amount)) end,
   },
   {
     INPUT  = "Increases? your pet's damage by (%d+%%?)",
-    OUTPUT = function(amount) return ("+%s pet damage"):format(FixPercent(amount)) end,
+    OUTPUT = function(amount) return ("+%s pet Damage"):format(FixPercent(amount)) end,
+  },
+  {
+    INPUT  = "Increases? damage dealt by your pet by (%d+%%?)",
+    OUTPUT = function(amount) return ("+%s pet Damage"):format(FixPercent(amount)) end,
   },
 }
 L[#L].CAPTURES = {
-  "[%+%-]%S* pet damage.*",
+  "[%+%-]%S* pet Damage.*",
+}
+
+
+L[#L+1] = {LABEL = "Increase Pet Critical Chance"}
+L[#L].MAP = {
+  {
+    INPUT  = "Increases? your pet's critical strike chance by (%d+%%?)",
+    OUTPUT = function(amount) return ("+%s pet Crit Chance"):format(FixPercent(amount)) end,
+  },
+}
+L[#L].CAPTURES = {
+  "[%+%-]%S* pet Crit Chance.*",
 }
 
 
