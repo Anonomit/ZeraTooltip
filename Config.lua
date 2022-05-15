@@ -83,6 +83,7 @@ local COLORS = {
   PINK_SHERBET       = rgb(247, 143, 167),
   BLUSH_PINK         = rgb(230, 169, 236),
   LIGHT_FUSCHIA_PINK = rgb(249, 132, 239),
+  PURPLE_PIZZAZZ     = rgb(255,  80, 218),
   BRIGHT_NEON_PINK   = rgb(244,  51, 255),
 
   LILAC              = rgb(206, 162, 253),
@@ -162,7 +163,7 @@ function Data:MakeDefaultOptions()
         EXPERTISE     = COLORS.TUMBLEWEED,
         
         MAGICAL       = COLORS.LIGHT_FUSCHIA_PINK,
-        MAGIC_HIT     = COLORS.BLUSH_PINK,
+        MAGIC_HIT     = COLORS.PURPLE_PIZZAZZ,
         MAGIC_CRIT    = COLORS.PURPLE_MIMOSA,
         MAGIC_HASTE   = COLORS.LILAC,
         MAGIC_PEN     = COLORS.HELIOTROPE_PURPLE,
