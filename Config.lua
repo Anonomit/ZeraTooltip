@@ -435,7 +435,7 @@ function Data:OnInitialize(L)
 
 
   function Data:IsUsable(itemType, itemSubType, invType)
-    return USABLE_EQUIPMENT[self.CLASS][itemType] and USABLE_EQUIPMENT[self.CLASS][itemType][itemSubType] and not UNUSABLE_INVTYPES[invType] and true or false
+    return USABLE_EQUIPMENT[self.CLASS][itemType] and USABLE_EQUIPMENT[self.CLASS][itemType][itemSubType] and not UNUSABLE_INVTYPES[self.CLASS][invType] and true or false
   end
   
   function Data:GetRedText(itemType, itemSubType, invType)
