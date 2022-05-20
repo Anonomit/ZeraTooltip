@@ -190,25 +190,31 @@ L["Totem"]         = "Totem"
 --   ╚══╝╚══╝ ╚══════╝╚═╝  ╚═╝╚═╝      ╚═════╝ ╚═╝  ╚═══╝    ╚══════╝   ╚═╝   ╚═╝  ╚═╝   ╚═╝   ╚══════╝
 
 
+L[#L+1] = {LABEL = "Physical Damage"}
+L[#L].COLOR = "WEAP_DAMAGE"
+L[#L].MAP = {
+  {
+    INPUT  = "(%d+) %- (%d+) Damage",
+    OUTPUT = function(min, max) return ("%d - %d (%d) Damage"):format(min, max, Data:Round((min + max)/2, 0)) end,
+  },
+}
+L[#L].CAPTURES = {
+  "%d+ %- %d+ %(%d+%) Damage",
+}
+
 for i, element in pairs(Data:GetElements()) do
   L[#L+1] = {LABEL = element .. " Damage"}
   L[#L].COLOR = Data:GetElementKey(i) .. "_DAMAGE"
   L[#L].MAP = {
     {
       INPUT  = "(%d+) %- (%d+) " .. Data:GetElementPattern(i) .. " Damage$",
-      OUTPUT = "%d - %d " .. element .. " Damage",
+      OUTPUT = function(min, max) return ("%d - %d (%d) %s Damage"):format(min, max, Data:Round((min + max)/2, 0), element) end,
     },
   }
   L[#L].CAPTURES = {
-    "%d+ %- %d+ " .. element .. " Damage",
+    "%d+ %- %d+ %(%d+%) " .. element .. " Damage",
   }
 end
-
-L[#L+1] = {LABEL = "Physical Damage"}
-L[#L].COLOR = "WEAP_DAMAGE"
-L[#L].CAPTURES = {
-  "%d+ %- %d+ Damage",
-}
 
 L[#L+1] = {LABEL = "Damage per Second"}
 L[#L].MAP = {
@@ -220,7 +226,7 @@ L[#L].MAP = {
     INPUT  = "Adds ([%d%.]+) damage per second",
     OUTPUT = "+%s DPS",
   },
- }
+}
 L[#L].CAPTURES = {
   "%(%s+ DPS%)",
 }
