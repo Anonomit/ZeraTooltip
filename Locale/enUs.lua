@@ -194,7 +194,7 @@ L[#L+1] = {LABEL = "Physical Damage"}
 L[#L].COLOR = "WEAP_DAMAGE"
 L[#L].MAP = {
   {
-    INPUT  = "(%d+) %- (%d+) Damage",
+    INPUT  = "^(%d+) %- (%d+)%s+Damage",
     OUTPUT = function(min, max) return ("%d - %d (%d) Damage"):format(min, max, Data:Round((min + max)/2, 0)) end,
   },
 }
@@ -207,12 +207,38 @@ for i, element in pairs(Data:GetElements()) do
   L[#L].COLOR = Data:GetElementKey(i) .. "_DAMAGE"
   L[#L].MAP = {
     {
-      INPUT  = "(%d+) %- (%d+) " .. Data:GetElementPattern(i) .. " Damage$",
+      INPUT  = "^(%d+) %- (%d+) " .. Data:GetElementPattern(i) .. " Damage$",
       OUTPUT = function(min, max) return ("%d - %d (%d) %s Damage"):format(min, max, Data:Round((min + max)/2, 0), element) end,
     },
   }
   L[#L].CAPTURES = {
     "%d+ %- %d+ %(%d+%) " .. element .. " Damage",
+  }
+end
+
+L[#L+1] = {LABEL = "Bonus Physical Damage"}
+L[#L].COLOR = "WEAP_DAMAGE"
+L[#L].MAP = {
+  {
+    INPUT  = "%+ (%d+) %- (%d+)%s+Damage",
+    OUTPUT = function(min, max) return ("+ %d - %d (%d) Damage"):format(min, max, Data:Round((min + max)/2, 0)) end,
+  },
+}
+L[#L].CAPTURES = {
+  "%+ %d+ %- %d+ %(%d+%) Damage",
+}
+
+for i, element in pairs(Data:GetElements()) do
+  L[#L+1] = {LABEL = "Bonus " .. element .. " Damage"}
+  L[#L].COLOR = Data:GetElementKey(i) .. "_DAMAGE"
+  L[#L].MAP = {
+    {
+      INPUT  = "%+ (%d+) %- (%d+) " .. Data:GetElementPattern(i) .. " Damage$",
+      OUTPUT = function(min, max) return ("+ %d - %d (%d) %s Damage"):format(min, max, Data:Round((min + max)/2, 0), element) end,
+    },
+  }
+  L[#L].CAPTURES = {
+    "%+ %d+ %- %d+ %(%d+%) " .. element .. " Damage",
   }
 end
 
