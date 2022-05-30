@@ -307,8 +307,8 @@ for _, stat in ipairs{"Stamina", "Strength", "Agility", "Intellect", "Spirit"} d
   L[#L].COLOR = stat:upper()
   L[#L].MAP = {
     {
-      INPUT  = "^[%+%-](%d+) " .. stat .. "$",
-      OUTPUT = "+%d " .. L[stat],
+      INPUT  = "^([%+%-])(%d+) " .. stat .. "$",
+      OUTPUT = "%s%d " .. L[stat],
     },
     {
       INPUT  = "Increases your " .. stat .. " by %+?(%d+)",
