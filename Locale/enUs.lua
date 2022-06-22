@@ -197,11 +197,13 @@ L[#L].MAP = {
     INPUT  = "^(%d+) %- (%d+)%s+Damage",
     OUTPUT = function(min, max) return ("%d - %d (%d) Damage"):format(min, max, Data:Round((min + max)/2, 0)) end,
     -- OUTPUT = function(min, max) return ("%d - %d - %d Damage"):format(min, Data:Round((min + max)/2, 0), max) end,
+    -- OUTPUT = function(min, max) return ("%d - (%d) - %d Damage"):format(min, Data:Round((min + max)/2, 0), max) end,
   },
 }
 L[#L].CAPTURES = {
   "%d+ %- %d+ %(%d+%) Damage",
   -- "%d+ %- %d+ %- %d+ Damage",
+  -- "%d+ %- %(%d+%) %- %d+ Damage",
 }
 
 for i, element in pairs(Data:GetElements()) do
