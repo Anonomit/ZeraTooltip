@@ -1,0 +1,14 @@
+<Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+  
+  <Include file="libs\embeds.xml"/>
+  
+  <Script file="Init.lua"/>
+  
+  <Include file="Locale\locale.xml"/>
+  <Include file="LocaleExtra\locale.xml"/>
+  
+  <Include file="Operations\operations.xml"/>
+  
+  <Script file="Config.lua"/>
+  <Script file="ZeraTooltip.lua"/>
+</Ui>

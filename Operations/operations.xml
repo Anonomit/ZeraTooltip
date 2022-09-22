@@ -1,0 +1,23 @@
+<Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+  
+  <Script file="CalculatePadding.lua"/>
+  <Script file="CreateConstructor.lua"/>
+  <Script file="HideLine.lua"/>
+  <Script file="HookTooltips.lua"/>
+  <Script file="ManageConstructors.lua"/>
+  <Script file="ModifyTooltipData.lua"/>
+  <Script file="RebuildTooltip.lua"/>
+  <Script file="RecognizeLineTypes.lua"/>
+  <Script file="RecognizeStat.lua"/>
+  <Script file="RecolorLine.lua"/>
+  <Script file="RewordEnchantment.lua"/>
+  <Script file="RewordLine.lua"/>
+  <Script file="RewordPrefix.lua"/>
+  <Script file="RewordSocketHint.lua"/>
+  <Script file="RewordWeaponStats.lua"/>
+  <Script file="ScanTooltip.lua"/>
+  <Script file="SortStats.lua"/>
+  <Script file="ThrottleAuction.lua"/>
+  <Script file="ThrottleInspect.lua"/>
+  <Script file="ThrottleMail.lua"/>
+</Ui>

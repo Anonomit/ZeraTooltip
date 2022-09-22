@@ -7,7 +7,7 @@
 
 ## SavedVariables: ZeraTooltipDB
 
-## OptionalDeps: Ace3
+## OptionalDeps: Ace3, RatingBuster
 ## X-Embeds: Ace3
 
 
