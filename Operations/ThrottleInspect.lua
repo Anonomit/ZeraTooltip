@@ -14,14 +14,12 @@ local ThrottleInspectPaperDollItemSlotButton
 
 do
   local lastUpdate = TOOLTIP_UPDATE_TIME * (-1) - 1
-  local lastButton
   
   function ThrottleInspectPaperDollItemSlotButton()
     local InspectPaperDollItemSlotButton_OnEnter_old = InspectPaperDollItemSlotButton_OnEnter
     function InspectPaperDollItemSlotButton_OnEnter(self, ...)
-      if Addon:GetOption"fixInspectFrame" and GetTime() - lastUpdate < TOOLTIP_UPDATE_TIME and lastButton == self then return end
+      if Addon:GetOption("throttle", "InspectFrame") and GameTooltip:GetOwner() == self and GetTime() - lastUpdate < TOOLTIP_UPDATE_TIME then return end
       lastUpdate = GetTime()
-      lastButton = self
       InspectPaperDollItemSlotButton_OnEnter_old(self, ...)
     end
   end

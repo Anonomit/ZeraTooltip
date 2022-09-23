@@ -225,13 +225,21 @@ function Addon:MakeDefaultOptions()
         
         cache = {
           ["*"] = true,
+          -- constructor = false,
+          -- text        = false,
+          -- stat        = false,
+        },
+        
+        throttle = {
+          ["*"] = true,
+          -- AuctionFrame    = false,
+          -- InspectFrame    = false,
+          -- MailFrame       = false,
+          -- TradeSkillFrame = false,
         },
         
         -- TODO: config options for blizzard fixes?
-        fixAuctionFrame = true,
-        fixInspectFrame = true,
-        fixMailFrame    = true,
-        fixOptionsMenu  = false,
+        fixOptionsMenu = false,
       },
     },
   }

@@ -17,14 +17,8 @@ setting to show Heroic tag
     would need to make a database of heroic items
 example for above settings: https://www.wowhead.com/wotlk/item=51933/shawl-of-nerubian-silk
 
-recognize ITEM_CREATED_BY
 recognize ITEM_READABLE
 enchantment should be found only if the link has an enchantment
-
-pendant of the null rune
-  average the stuff
-    could generally do this for everything
-      config option?
 
 
 measure performance and memory usage with and without caches. maybe only cache particularly expensive operations? like localeExtras
@@ -323,6 +317,7 @@ function Addon:OnEnable()
   self:ThrottleAuctionUpdates()
   self:ThrottleInspectUpdates()
   self:ThrottleMailUpdates()
+  self:ThrottleTradeSkillUpdates()
 end
 
 function Addon:OnDisable()
