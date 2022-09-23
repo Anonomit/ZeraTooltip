@@ -20,4 +20,5 @@
   <Script file="ThrottleAuction.lua"/>
   <Script file="ThrottleInspect.lua"/>
   <Script file="ThrottleMail.lua"/>
+  <Script file="ThrottleTradeSkill.lua"/>
 </Ui>
