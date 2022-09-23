@@ -395,7 +395,7 @@ function Addon:ResetPrecision(stat)
 end
 
 local function CreateCombineStatsOption(opts)
-  Addon.GUI:CreateToggle(opts, {"combineStats"}, L["Group Secondary Stats with Base Stats"]).width = 2
+  Addon.GUI:CreateToggle(opts, {"combineStats"}, L["Group Secondary Stats with Base Stats"], nil, not Addon:GetOption("allow", "reorder")).width = 2
 end
 
 
@@ -1062,7 +1062,7 @@ function Addon:MakePaddingOptionsTable()
   Addon.GUI:CreateToggle(opts, {"pad", "before", "BonusEffect"}, L["Space Above Bonus Effects"]).width = 2
   
   local paddedAfterPrevious = false
-  local combineStats = self:GetOption"combineStats"
+  local combineStats = self:GetOption("allow", "reorder") and self:GetOption"combineStats"
   
   -- base stats
   local name, beforeStat, afterStat, sample = self.L["Base Stats"], {"pad", "before", "BaseStat"}, {"pad", "after", "BaseStat"}, format(ITEM_MOD_STAMINA, strByte"+", 10)
