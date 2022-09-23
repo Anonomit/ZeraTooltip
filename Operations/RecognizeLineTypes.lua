@@ -10,6 +10,11 @@ local strFind  = string.find
 local strMatch = string.match
 
 
+local ITEM_CREATED_BY = ITEM_CREATED_BY
+do
+  local hex, text = strMatch(ITEM_CREATED_BY, "^|c%x%x(%x%x%x%x%x%x)(.*)|r$")
+  ITEM_CREATED_BY = text or ITEM_CREATED_BY
+end
 local numberPattern = "[%d%"..DECIMAL_SEPERATOR.."]+"
 
 local function strStarts(text, matchStr)
@@ -72,6 +77,7 @@ local contexts = Addon:MakeLookupTable({
   "RequiredLevel",
   "SecondaryStat",
   "LastSecondaryStat",
+  "MadeBy",
   "SetName",
   "setPiece",
   "LastSetPiece",
@@ -262,6 +268,11 @@ local contextActions = Addon:Map({
     end
     if MatchesAny(line.textLeftTextStripped, ITEM_RANDOM_ENCHANT, ITEM_MOD_FERAL_ATTACK_POWER) then
       return SetContext(i-1, tooltipData, line)
+    end
+  end,
+  MadeBy = function(i, tooltipData, line)
+    if MatchesAny(line.textLeftTextStripped, ITEM_CREATED_BY) then
+      return SetContext(i, tooltipData, line)
     end
   end,
   SetName = function(i, tooltipData, line)
