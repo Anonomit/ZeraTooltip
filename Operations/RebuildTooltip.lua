@@ -176,7 +176,7 @@ function Addon:ConstructTooltip(tooltip, constructor)
     local frame = _G[tooltipName.."TextLeft"..source]
     local rightFrame = _G[tooltipName.."TextRight"..source]
     
-    if hideLeft then
+    if hideLeft and frame then
       frame:Hide()
       for _, frame in pairs{frame, rightFrame, textureMap[frame], moneyMap[frame]} do
         if frame and frame:IsShown() then
