@@ -401,7 +401,7 @@ end
 
 -- ZeraTooltip options
 function Addon:MakeOptionsTable()
-  local title = ADDON_NAME
+  local title = ADDON_NAME .. " v" .. tostring(self:GetOption"version")
   self:CreateOptionsCategory(nil, function()
   
   local GUI = self.GUI:ResetOrder()
