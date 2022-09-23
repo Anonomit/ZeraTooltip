@@ -157,11 +157,12 @@ function Addon:MakeDefaultOptions()
           uselessRaces = true,
         },
         doReword = {
-          ["*"]       = true,
-          Enchant     = false,
-          Equip       = false,
-          Use         = false,
-          ChanceOnHit = false,
+          ["*"]         = true,
+          Enchant       = false,
+          WeaponEnchant = false,
+          Equip         = false,
+          Use           = false,
+          ChanceOnHit   = false,
         },
         reword = {
           ["*"] = "",
@@ -199,14 +200,16 @@ function Addon:MakeDefaultOptions()
           ["*"] = true,
         },
         doIcon = {
-          ["*"]   = false,
-          Enchant = true,
+          ["*"]         = false,
+          Enchant       = true,
+          WeaponEnchant = true,
         },
         icon = {
-          Enchant     = "|TInterface\\Buttons\\UI-GroupLoot-DE-Up:0|t",
-          Equip       = "|TInterface\\Tooltips\\ReforgeGreenArrow:0|t",
-          Use         = "|TInterface\\CURSOR\\Cast:0|t",
-          ChanceOnHit = "|TInterface\\Buttons\\UI-GroupLoot-Dice-Up:0|t",
+          Enchant       = "|TInterface\\Buttons\\UI-GroupLoot-DE-Up:0|t",
+          WeaponEnchant = "|TInterface\\CURSOR\\Attack:0|t",
+          Equip         = "|TInterface\\Tooltips\\ReforgeGreenArrow:0|t",
+          Use           = "|TInterface\\CURSOR\\Cast:0|t",
+          ChanceOnHit   = "|TInterface\\Buttons\\UI-GroupLoot-Dice-Up:0|t",
         },
         iconSpace = {
           ["*"] = true,
@@ -831,8 +834,48 @@ function Addon:MakeExtraStatsOptionsTable()
   do
     local stat = "Enchant"
     
-    local defaultText = ENSCRIBE
+    local defaultText = self.L["Enchant"]
     local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.GREEN, defaultText, self:ModifyEnchantment(defaultText))
+    
+    local group = GUI:CreateGroup(opts, stat, formattedText)
+    local opts = group
+    
+    CreateTitle(opts, defaultText, formattedText, changed)
+    
+    -- Color
+    CreateColor(opts, stat, 0.6)
+    
+    -- Reword
+    local disabled = not self:GetOption("allow", "reword")
+    GUI:CreateToggle(opts, {"doReword", stat}, self.L["Rename"], nil, disabled).width = 0.6
+    local option = GUI:CreateInput(opts, {"reword", stat}, self.L["Rename"], nil, nil, disabled or not self:GetOption("doReword", stat))
+    option.set = function(info, val)        self:SetOption(self:CoverSpecialCharacters(val), "reword", stat) end
+    option.get = function(info)      return Addon:UncoverSpecialCharacters(self:GetOption("reword", stat))   end
+    CreateReset(opts, {"reword", stat}, function() self:ResetReword(stat) end)
+    GUI:CreateDivider(opts, 1)
+    
+    -- Icon
+    local disabled = not self:GetOption("allow", "reword")
+    GUI:CreateToggle(opts, {"doIcon", stat}, self.L["Icon"], nil, disabled).width = 0.6
+    GUI:CreateSelect(opts, {"icon", stat}, self.L["Choose an Icon:"], desc, iconsDropdown, icons, disabled)
+    CreateReset(opts, {"icon", stat}, function() self:ResetOption("icon", stat) end)
+    GUI:CreateDivider(opts, 1)
+    
+    -- Icon Space
+    local disabled = disabled or not self:GetOption("doIcon", stat)
+    GUI:CreateToggle(opts, {"iconSpace", stat}, L["Icon Space"], nil, disabled).width = 1.6
+    CreateReset(opts, {"iconSpace", stat}, function() self:ResetOption("iconSpace", stat) end)
+    GUI:CreateDivider(opts, 1)
+    
+    CreateHide(opts, stat, 1.6)
+  end
+  
+  -- Weapon Enchant
+  do
+    local stat = "WeaponEnchant"
+    
+    local defaultText = self.L["Weapon Enchantment"]
+    local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.GREEN, defaultText, self:ModifyWeaponEnchantment(defaultText))
     
     local group = GUI:CreateGroup(opts, stat, formattedText)
     local opts = group
@@ -1064,41 +1107,45 @@ function Addon:MakePaddingOptionsTable()
   local paddedAfterPrevious = false
   local combineStats = self:GetOption("allow", "reorder") and self:GetOption"combineStats"
   
-  -- base stats
+  -- Base Stats
   local name, beforeStat, afterStat, sample = self.L["Base Stats"], {"pad", "before", "BaseStat"}, {"pad", "after", "BaseStat"}, format(ITEM_MOD_STAMINA, strByte"+", 10)
   if beforeStat and self:GetOption(unpack(beforeStat)) and not paddedAfterPrevious then CreateGroupGap(opts, "before" .. name) end
   CreatePaddingOption(opts, name, beforeStat, afterStat, sample)
   if combineStats then
-    -- secondary stats
+    -- Secondary Stats
     local name, beforeStat, afterStat, sample = L["Secondary Stats"], {"pad", "before", "SecondaryStat"}, {"pad", "after", "SecondaryStat"}, ITEM_SPELL_TRIGGER_ONEQUIP .. " " .. format(ITEM_MOD_MANA_REGENERATION, "10")
     CreatePaddingOption(opts, name, beforeStat, afterStat, sample, true)
   end
   paddedAfterPrevious = self:GetOption(unpack(afterStat))
   if paddedAfterPrevious then CreateGroupGap(opts, "after" .. name) end
   
-  -- enchant
-  local name, beforeStat, afterStat, sample = self.L["Enchant"], {"pad", "before", "Enchant"}, {"pad", "after", "Enchant"}, format(ENCHANTED_TOOLTIP_LINE, ENSCRIBE)
+  -- Enchant
+  local name, beforeStat, afterStat, sample = self.L["Enchant"], {"pad", "before", "Enchant"}, {"pad", "after", "Enchant"}, format(ENCHANTED_TOOLTIP_LINE, self.L["Enchant"])
   paddedAfterPrevious = CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, true, paddedAfterPrevious)
   
-  -- sockets
+  -- Weapon Enchant
+  local name, beforeStat, afterStat, sample = self.L["Weapon Enchantment"], {"pad", "before", "WeaponEnchant"}, {"pad", "after", "WeaponEnchant"}, format(ENCHANTED_TOOLTIP_LINE, self.L["Weapon Enchantment"])
+  paddedAfterPrevious = CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, true, paddedAfterPrevious)
+  
+  -- Sockets
   local name, beforeStat, afterStat, sample = L["Sockets"], {"pad", "before", "Socket"}, {"pad", "after", "SocketBonus"}
   paddedAfterPrevious = CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, true, paddedAfterPrevious)
   
   if not combineStats then
-    -- secondary stats
+    -- Secondary Stats
     local name, beforeStat, afterStat, sample = L["Secondary Stats"], {"pad", "before", "SecondaryStat"}, {"pad", "after", "SecondaryStat"}, ITEM_SPELL_TRIGGER_ONEQUIP .. " " .. format(ITEM_MOD_MANA_REGENERATION, "10")
     paddedAfterPrevious = CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, true, paddedAfterPrevious)
   end
   
-  -- set list
+  -- Set List
   local name, beforeStat, afterStat, sample = L["Set List"], {"pad", "before", "SetName"}, {"pad", "after", "SetPiece"}
   paddedAfterPrevious = CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, true, paddedAfterPrevious)
   
-  -- set bonus
+  -- Set Bonus
   local name, beforeStat, afterStat, sample = L["Set List"], {"pad", "before", "SetBonus"}, {"pad", "after", "SetBonus"}, format(ITEM_SET_BONUS, format(ITEM_MOD_MANA_REGENERATION, "10"))
   paddedAfterPrevious = CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, true, paddedAfterPrevious)
   
-  -- end
+  -- End
   local name, beforeStat, afterStat, sample = self.L["End"], nil, {"padLastLine"}
   paddedAfterPrevious = CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, true, paddedAfterPrevious)
   

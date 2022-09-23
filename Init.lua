@@ -177,9 +177,10 @@ L["Custom"] = CUSTOM
 L["Rename"] = PET_RENAME
 L["Hide"]   = HIDE
 
-L["Base Stats"] = PLAYERSTAT_BASE_STATS
-L["Enchant"]    = ENSCRIBE
-L["End"]        = KEY_END
+L["Base Stats"]         = PLAYERSTAT_BASE_STATS
+L["Enchant"]            = ENSCRIBE
+L["Weapon Enchantment"] = WEAPON_ENCHANTMENT
+L["End"]                = KEY_END
 
 L["Other Options"] = UNIT_FRAME_DROPDOWN_SUBSECTION_TITLE_OTHER
 L["Weapon"] = WEAPON
@@ -718,6 +719,7 @@ do
   Addon.statsInfo["Damage"]          = {color = Addon.COLORS.WHITE}
   Addon.statsInfo["DamagePerSecond"] = {color = Addon.COLORS.WHITE}
   Addon.statsInfo["Enchant"]         = {color = Addon.COLORS.GREEN}
+  Addon.statsInfo["WeaponEnchant"]   = {color = Addon.COLORS.GREEN}
   Addon.statsInfo["Speed"]           = {color = Addon.COLORS.WHITE}
   Addon.statsInfo["Speedbar"]        = {color = Addon.COLORS.WHITE}
   Addon.statsInfo["SocketHint"]      = {color = Addon.COLORS.GREEN}

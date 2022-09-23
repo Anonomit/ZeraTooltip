@@ -62,6 +62,7 @@ local contexts = Addon:MakeLookupTable({
   "LastBaseStat",
   "Enchant",
   "RequiredEnchant",
+  "WeaponEnchant",
   "Socket",
   "LastSocket",
   "SocketBonus",
@@ -88,33 +89,32 @@ local contextAscensions = Addon:Map({
   --     lastLine.type = "Type"
   --   end
   -- end,
-  Enchant = function(context, tooltipData, line)
+  Enchant = function(context, tooltipData, line, currentContext)
     -- mark red enchantment lines if I found an "enchantment disabled" line
-    if line.type == "RequiredEnchant" then
+    if currentContext == contexts.RequiredEnchant then
       local lastLine = tooltipData[line.i-2]
       lastLine.type = "Enchant"
     end
   end,
-  BaseStat = function(context, tooltipData, line)
+  BaseStat = function(context, tooltipData, line, currentContext)
     -- mark where the base stats would be if they existed on this item
     if not tooltipData.statStart then
       tooltipData.statStart = line.i - 1
     end
   end,
-  RecipeTitle = function(context, tooltipData, line)
+  RecipeTitle = function(context, tooltipData, line, currentContext)
   -- reset the base stat location
     tooltipData.statStart = nil
     tooltipData.context = contexts.Title
   end,
 }, nil, contexts)
--- for i = #contexts, 1, -1 do contextAscensions[i] = contextAscensions[contexts[i]] end
 
 local function SetContext(context, tooltipData, line)
   local oldContext = tooltipData.context
   tooltipData.context = context
   for i = oldContext + 1, context do
     if contextAscensions[i] then
-      contextAscensions[i](i, tooltipData, line)
+      contextAscensions[i](i, tooltipData, line, context)
     end
   end
   if line then
@@ -214,6 +214,11 @@ local contextActions = Addon:Map({
   RequiredEnchant = function(i, tooltipData, line)
     if tooltipData.hasEnchant and line.colorLeft == Addon.COLORS.RED and MatchesAny(line.textLeftTextStripped, ENCHANT_ITEM_REQ_SKILL, ENCHANT_ITEM_MIN_SKILL, ENCHANT_ITEM_REQ_LEVEL) then
       SetContext(i, tooltipData, line)
+      return SetContext(i, tooltipData, line)
+    end
+  end,
+  WeaponEnchant = function(i, tooltipData, line)
+    if line.colorLeft == Addon.COLORS.GREEN and not StartsWithAny(line.textLeftTextStripped, ITEM_SPELL_TRIGGER_ONEQUIP, ITEM_SPELL_TRIGGER_ONUSE, ITEM_SPELL_TRIGGER_ONPROC) and MatchesAny(line.textLeftTextStripped, "%s(%s)") then
       return SetContext(i, tooltipData, line)
     end
   end,
