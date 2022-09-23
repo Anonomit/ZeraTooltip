@@ -174,7 +174,8 @@ function Addon:MakeDefaultOptions()
           Speed = 1,
         },
         doRecolor = {
-          ["*"] = true,
+          ["*"]   = true,
+          Enchant = false,
         },
         color = (function() local colors = {["*"] = "00ff00"} for stat, StatInfo in pairs(self.statsInfo) do colors[stat] = StatInfo.color end return colors end)(),
         
