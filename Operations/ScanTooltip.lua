@@ -15,7 +15,9 @@ function Addon:PrepareTooltip(tooltip, methodName, ...)
   return pcall(function()
     tooltip:Hide()
     tooltip:SetOwner(UIParent, "ANCHOR_NONE")
-    tooltip[methodName](tooltip, unpack(args, 1, args.n))
+    if methodName then
+      tooltip[methodName](tooltip, unpack(args, 1, args.n))
+    end
   end)
 end
 
@@ -68,6 +70,7 @@ function Addon:ReadTooltip(tooltip, name, link, maxLines)
     textLeftText = text or textLeftText
     
     local realTextLeft = _G[tooltip.tooltip:GetName().."TextLeft"..i]
+    if not realTextLeft then break end
     
     tooltipData[i] = {
       i                     = i,
