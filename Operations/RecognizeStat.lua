@@ -35,6 +35,7 @@ function Addon:RecognizeStat(line)
     line.stat       = cache.stat
     line.normalForm = cache.normalForm
     line.prefix     = cache.prefix
+    line.newPrefix  = cache.newPrefix
     return
   end
   
@@ -75,5 +76,7 @@ function Addon:RecognizeStat(line)
     end
   end
   
-  statCache[line.textLeftText] = {stat = line.stat, normalForm = line.normalForm, prefix = line.prefix}
+  if self:GetOption("cache", "stat") then
+    statCache[line.textLeftText] = {stat = line.stat, normalForm = line.normalForm, prefix = line.prefix, newPrefix = line.newPrefix}
+  end
 end
