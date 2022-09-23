@@ -84,6 +84,7 @@ local contexts = Addon:MakeLookupTable({
   "SetBonus",
   "LastSetBonus",
   "SocketHint",
+  "Delta",
   "RecipeMats",
   "RecipeTitle",
 }, nil, true)
@@ -294,6 +295,16 @@ local contextActions = Addon:Map({
   end,
   SocketHint = function(i, tooltipData, line)
     if StartsWithAny(line.textLeftTextStripped, ITEM_SOCKETABLE) then
+      return SetContext(i, tooltipData, line)
+    end
+  end,
+  Delta = function(i, tooltipData, line)
+    if MatchesAny(line.textLeftTextStripped, ITEM_DELTA_DESCRIPTION, ITEM_DELTA_MULTIPLE_COMPARISON_DESCRIPTION) then
+      -- crop the tooltip here
+      tooltipData.numLines = line.i - 2
+      for i = #tooltipData, tooltipData.numLines + 1, -1 do
+        table.remove(tooltipData, i)
+      end
       return SetContext(i, tooltipData, line)
     end
   end,
