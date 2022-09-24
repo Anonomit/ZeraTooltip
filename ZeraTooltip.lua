@@ -277,7 +277,7 @@ function Addon:InitDB()
   for stat in strGmatch(self:GetOption("order", self.expansionLevel), "[^,]+") do
     stats[stat] = true
   end
-  for stat in strGmatch(self:GetDefaultOption("order", self.expansionLevel, "[^,]+") do
+  for stat in strGmatch(self:GetDefaultOption("order", self.expansionLevel), "[^,]+") do
     if not stats[stat] then
       append = (append or "") .. "," .. stat
     end
