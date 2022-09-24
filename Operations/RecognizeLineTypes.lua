@@ -48,7 +48,7 @@ end
 -- TODO: recognize charges. requires dealing with UI escape sequences
 local contexts = Addon:MakeLookupTable({
   "Init",
-  "CurrentlyEquipped",
+  "PreTitle",
   "Title",
   "Difficulty",
   "Binding",
@@ -132,8 +132,8 @@ local function SetContext(context, tooltipData, line)
 end
 
 local contextActions = Addon:Map({
-  CurrentlyEquipped = function(i, tooltipData, line)
-    if line.textLeftText == CURRENTLY_EQUIPPED then
+  PreTitle = function(i, tooltipData, line)
+    if line.textLeftText == CURRENTLY_EQUIPPED or line.textLeftText == DESTROY_GEM  then
       return SetContext(i, tooltipData, line)
     end
   end,
