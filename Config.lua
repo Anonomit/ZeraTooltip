@@ -1046,6 +1046,62 @@ function Addon:MakeExtraStatsOptionsTable()
       CreateReset(opts, {"hide", "myClass"})
     end
   end
+  
+  -- Level
+  do
+    local stat = "RequiredLevel"
+    
+    local opts = GUI:CreateGroup(opts, stat, nil)
+    local name
+    local sample1 = self.MY_LEVEL - (self.MY_LEVEL == self.MAX_LEVEL and 1 or 0)
+    
+    do
+      local opts = GUI:CreateGroupBox(opts, self.L["Example Text:"])
+      
+      local sampleLevels = {sample1, self.MAX_LEVEL, self.MAX_LEVEL + 1}
+      
+      GUI:CreateDescription(opts, self.L["Default"], "small")
+      for i, level in ipairs(sampleLevels) do
+        local defaultText = format("|cffff%s%s", level > self.MY_LEVEL and "0000" or "ffff", format(ITEM_MIN_LEVEL, level))
+        GUI:CreateDescription(opts, defaultText)
+      end
+      GUI:CreateDivider(opts)
+      
+      local anyChanged
+      local anyChangedOpt = GUI:CreateDescription(opts, " ", "small")
+      
+      for i, level in ipairs(sampleLevels) do
+        local defaultText = format("|cffff%s%s", level > self.MY_LEVEL and "0000" or "ffff", format(ITEM_MIN_LEVEL, level))
+        local formattedText = defaultText
+        local changed = self:GetOption("hide", stat) or self:GetOption("hide", "requiredLevelMet") and level <= self.MY_LEVEL or self:GetOption("hide", "requiredLevelMax") and level == self.MAX_LEVEL
+        if changed then
+          formattedText = "|T132320:0|t " .. self:MakeColorCode(self.COLORS.GRAY, strGsub(formattedText, "|c%x%x%x%x%x%x%x%x", ""))
+        end
+        
+        if changed then anyChanged = true end
+        GUI:CreateDescription(opts, changed and formattedText or " ")
+        if level > self.MY_LEVEL then
+          name = formattedText
+        end
+      end
+      
+      if anyChanged then
+        anyChangedOpt.name = self.L["Current"]
+      end
+    end
+    opts.name = name
+    
+    do
+      local opts = CreateHide(opts, stat)
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"hide", "requiredLevelMet"}, format(self:ChainGsub(self.L["|cff000000%s (low level)|r"], {"|c%x%x%x%x%x%x%x%x", "|r", ""}), format(self.L["Level %d"], sample1)))
+      CreateReset(opts, {"hide", "requiredLevelMet"})
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"hide", "requiredLevelMax"}, self.L["Max Level"])
+      CreateReset(opts, {"hide", "requiredLevelMax"})
+    end
   end
   
   GUI:CreateGroup(opts, "afterRaces" , " ", nil, true)

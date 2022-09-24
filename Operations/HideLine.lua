@@ -31,6 +31,11 @@ function Addon:HideLine(line)
     if line.colorLeft == self.COLORS.WHITE and self:GetOption("hide", "myClass") and line.textLeftText == self.myClassString then
       return HideLeft(line)
     end
+  elseif line.type == "RequiredLevel" then
+    local level = tonumber(strMatch(line.textLeftText, self:ReversePattern(ITEM_MIN_LEVEL)))
+    if level <= self.MY_LEVEL and self:GetOption("hide", "requiredLevelMet") or level == self.MAX_LEVEL and self:GetOption("hide", "requiredLevelMax") then
+      return HideLeft(line)
+    end
   elseif line.prefix and not line.stat then
     local stat = self.prefixStats[line.prefix]
     if stat and self:GetOption("hide", stat) then
