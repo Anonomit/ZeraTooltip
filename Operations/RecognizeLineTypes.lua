@@ -72,8 +72,8 @@ local contexts = Addon:MakeLookupTable({
   "LastSocket",
   "SocketBonus",
   "Durability",
-  "RequiredRace",
-  "RequiredClass",
+  "RequiredRaces",
+  "RequiredClasses",
   "RequiredLevel",
   "SecondaryStat",
   "LastSecondaryStat",
@@ -246,13 +246,13 @@ local contextActions = Addon:Map({
       return SetContext(i, tooltipData, line)
     end
   end,
-  RequiredClass = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, ITEM_CLASSES_ALLOWED) then
+  RequiredRaces = function(i, tooltipData, line)
+    if MatchesAny(line.textLeftTextStripped, ITEM_RACES_ALLOWED) then
       return SetContext(i, tooltipData, line)
     end
   end,
-  RequiredRace = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, ITEM_RACES_ALLOWED) then
+  RequiredClasses = function(i, tooltipData, line)
+    if MatchesAny(line.textLeftTextStripped, ITEM_CLASSES_ALLOWED) then
       return SetContext(i, tooltipData, line)
     end
   end,
