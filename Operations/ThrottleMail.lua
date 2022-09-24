@@ -21,7 +21,6 @@ do
     function InboxFrameItem_OnEnter(self, ...)
       if Addon:GetOption("throttle", "MailFrame") and GameTooltip:GetOwner() == self and GetTime() - lastUpdate < TOOLTIP_UPDATE_TIME then return end
       lastUpdate = GetTime()
-      Addon:Debug"me"
       InboxFrameItem_OnEnter_old(self, ...)
     end
   end

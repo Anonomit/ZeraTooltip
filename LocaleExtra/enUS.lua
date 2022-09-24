@@ -123,7 +123,6 @@ end
 
 
 
-
 -- These tables define additional text replacements that can take place in certain lines.
 -- Martial matches are found and replaced with gsub().
 
@@ -279,7 +278,7 @@ Addon:AddExtraReplacement("Temp Stat Buff",
 
 
 
--- TODO: add a bunch more localeExtras
+-- TODO: add a bunch more replacements
 
 
 

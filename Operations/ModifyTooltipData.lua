@@ -17,6 +17,10 @@ function Addon:ModifyTooltipData(tooltip, tooltipData)
       self:RecolorLine(tooltip, line, tooltipData)
       self:RewordLine(tooltip, line, tooltipData)
     end
+    
+    if self:GetOption("debug", "output", "lineRecognitions") then
+      self:Debug(i, line.textLeftText, "type:", line.type, "stat:", line.stat, "prefix:", line.prefix)
+    end
   end
   
   self:SortStats(tooltipData)

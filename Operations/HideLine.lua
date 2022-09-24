@@ -5,6 +5,9 @@ local ADDON_NAME, Data = ...
 local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 
 
+local strMatch = string.match
+
+
 local function HideLeft(line)
   line.type       = "Padding"
   line.rewordLeft = " "
@@ -20,7 +23,7 @@ function Addon:HideLine(line)
     if self:GetOption("hide", "Speedbar") then
       line.hideRight = true
     end
-  elseif line.type == "RequiredRace" then
+  elseif line.type == "RequiredRaces" then
     if line.colorLeft == self.COLORS.WHITE and self:GetOption("hide", "uselessRaces") and self.uselessRaceStrings[line.textLeftText] then
       return HideLeft(line)
     end

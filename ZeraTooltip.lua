@@ -35,6 +35,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 
 
 local strLower  = string.lower
+local strGmatch = string.gmatch
 local tblConcat = table.concat
 local tblRemove = table.remove
 
@@ -247,6 +248,10 @@ function Addon:CreateOptions()
   self:CreateOptionsCategory(profileOptions.name, profileOptions)
   
   self:MakeResetOptionsTable()
+  
+  if self:IsDebugEnabled() then
+    self:MakeDebugOptionsTable()
+  end
 end
 
 function Addon:InitDB()
@@ -269,16 +274,16 @@ function Addon:InitDB()
   -- add missing stats to list of stats
   local append
   local stats = {}
-  for stat in self:GetOption("order", self.expac):gmatch"[^,]+" do
+  for stat in strGmatch(self:GetOption("order", self.expansionLevel), "[^,]+") do
     stats[stat] = true
   end
-  for stat in self:GetDefaultOption("order", self.expac):gmatch"[^,]+" do
+  for stat in strGmatch(self:GetDefaultOption("order", self.expansionLevel, "[^,]+") do
     if not stats[stat] then
       append = (append or "") .. "," .. stat
     end
   end
   if append then
-    self:SetOption(self:GetOption("order", self.expac) .. append, "order", self.expac)
+    self:SetOption(self:GetOption("order", self.expansionLevel) .. append, "order", self.expansionLevel)
   end
   
   -- load stat order

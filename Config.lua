@@ -148,9 +148,9 @@ function Addon:MakeDefaultOptions()
         },
         
         order = {
-          wrath   = tblConcat(self.statList.wrath  , ","),
-          tbc     = tblConcat(self.statList.tbc    , ","),
-          classic = tblConcat(self.statList.classic, ","),
+          [self.expansions.wrath]   = tblConcat(self.statList[self.expansions.wrath]  , ","),
+          [self.expansions.tbc]     = tblConcat(self.statList[self.expansions.tbc]    , ","),
+          [self.expansions.classic] = tblConcat(self.statList[self.expansions.classic], ","),
         },
         hide = {
           ["*"]        = false,
@@ -161,8 +161,8 @@ function Addon:MakeDefaultOptions()
           Enchant       = false,
           WeaponEnchant = false,
           Equip         = false,
-          Use           = false,
           ChanceOnHit   = false,
+          Use           = false,
         },
         reword = {
           ["*"] = "",
@@ -208,8 +208,8 @@ function Addon:MakeDefaultOptions()
           Enchant       = "|TInterface\\Buttons\\UI-GroupLoot-DE-Up:0|t",
           WeaponEnchant = "|TInterface\\CURSOR\\Attack:0|t",
           Equip         = "|TInterface\\Tooltips\\ReforgeGreenArrow:0|t",
-          Use           = "|TInterface\\CURSOR\\Cast:0|t",
           ChanceOnHit   = "|TInterface\\Buttons\\UI-GroupLoot-Dice-Up:0|t",
+          Use           = "|TInterface\\CURSOR\\Cast:0|t",
         },
         iconSpace = {
           ["*"] = true,
@@ -226,6 +226,26 @@ function Addon:MakeDefaultOptions()
         },
         padLastLine  = true,
         combineStats = true,
+        
+        
+        -- Debug options
+        debug = {
+          enabled = false,
+          
+          output = {
+            suppressAll = false,
+            
+            tooltipHook      = true,
+            lineRecognitions = true,
+          },
+          
+        },
+        
+        constructorCache = {
+          wipeDelay    = 10,  -- time in seconds without constructor being requested before it's cleared
+          minSeenCount = 4,   -- minimum number of times constructor must be requested before it can be cached
+          minSeenTime  = 0.5, -- minimum time in seconds since constructor was first requested before it can be cached
+        },
         
         cache = {
           ["*"] = true,
@@ -368,6 +388,12 @@ function Addon:InitOptionTableHelpers()
     return opts.args[key]
   end
   
+  function GUI:CreateGroupBox(opts, name)
+    local key = "group_" .. self:Order(-1)
+    opts.args[key] = {name = name, type = "group", args = {}, order = self:Order(), inline = true}
+    return opts.args[key]
+  end
+  
   function GUI:CreateGroupTop(name, groupType, disabled)
     return {name = name, type = "group", childGroups = groupType, args = {}, order = self:Order(), disabled = disabled}
   end
@@ -376,12 +402,12 @@ end
 
 
 function Addon:ChangeOrder(from, to)
-  tinsert(self.statList[self.expac], to, tblRemove(self.statList[self.expac], from))
-  self:SetOption(tblConcat(self.statList[self.expac], ","), "order", self.expac)
+  tinsert(self.statList[self.expansionLevel], to, tblRemove(self.statList[self.expansionLevel], from))
+  self:SetOption(tblConcat(self.statList[self.expansionLevel], ","), "order", self.expansionLevel)
   self:RegenerateStatOrder()
 end
 function Addon:ResetOrder()
-  self:ResetOption("order", self.expac)
+  self:ResetOption("order", self.expansionLevel)
   self:RegenerateStatOrder()
 end
 function Addon:ResetReword(stat)
@@ -414,8 +440,7 @@ function Addon:MakeOptionsTable()
     local enabled    = self:GetOption"enabled"
     local invertMode = self:GetOption"invertMode"
     
-    local group = GUI:CreateGroup(opts, 1, self.L["Enable"], "tab")
-    local opts = group
+    local opts = GUI:CreateGroup(opts, 1, self.L["Enable"], "tab")
     
     GUI:CreateToggle(opts, {"enabled"}, self.L["Enabled"])
     GUI:CreateDivider(opts, 2)
@@ -431,8 +456,7 @@ function Addon:MakeOptionsTable()
   end
   
   do
-    local group = GUI:CreateGroup(opts, 2, self.L["Features"], "tab")
-    local opts = group
+    local opts = GUI:CreateGroup(opts, 2, self.L["Features"], "tab")
     
     GUI:CreateToggle(opts, {"allow", "reorder"}, L["Reorder"])
     GUI:CreateNewline(opts)
@@ -486,13 +510,15 @@ local function GetFormattedText(stat, originalColor, defaultText, formattedText)
   end
   return Addon:MakeColorCode(originalColor, defaultText), formattedText, changed
 end
-local function CreateTitle(opts, defaultText, formattedText, changed, gapHeight)
+local function CreateTitle(opts, defaultText, formattedText, changed, newline)
   local self = Addon
   local GUI  = self.GUI
   
+  local opts = GUI:CreateGroupBox(opts, self.L["Example Text:"])
+  
   GUI:CreateDescription(opts, self.L["Default"], "small")
   GUI:CreateDescription(opts, defaultText)
-  GUI:CreateDivider(opts, 1)
+  GUI:CreateDivider(opts)
   if changed then
     GUI:CreateDescription(opts, self.L["Current"], "small")
     GUI:CreateDescription(opts, formattedText)
@@ -500,7 +526,11 @@ local function CreateTitle(opts, defaultText, formattedText, changed, gapHeight)
     GUI:CreateDescription(opts, " ", "small")
     GUI:CreateDescription(opts, " ")
   end
-  GUI:CreateDivider(opts, gapHeight or 2)
+  if newline then
+    GUI:CreateNewline(opts)
+  end
+  
+  return opts
 end
 local function CreateReset(opts, option, func)
   local self = Addon
@@ -508,22 +538,64 @@ local function CreateReset(opts, option, func)
   
   GUI:CreateExecute(opts, option, self.L["Reset"], nil, func or function() self:ResetOption(unpack(option)) end).width = 0.6
 end
-local function CreateColor(opts, stat, toggleWidth, colorWidth)
+local function CreateColor(opts, stat)
   local self = Addon
   local GUI  = self.GUI
+  
+  local opts = GUI:CreateGroupBox(opts, L["Recolor"])
   
   local disabled = not Addon:GetOption("allow", "recolor")
-  GUI:CreateToggle(opts, {"doRecolor", stat}, self.L["Color"], nil, disabled).width = toggleWidth or 0.5
-  GUI:CreateColor(opts, {"color", stat}, self.L["Color"], nil, disabled or not Addon:GetOption("doRecolor", stat)).width = colorWidth
+  GUI:CreateToggle(opts, {"doRecolor", stat}, self.L["Enable"], nil, disabled).width = 0.5
+  GUI:CreateColor(opts, {"color", stat}, self.L["Color"], nil, disabled or not Addon:GetOption("doRecolor", stat)).width = 0.5
   CreateReset(opts, {"color", stat})
-  GUI:CreateDivider(opts, 1)
+  
+  return opts
 end
-local function CreateHide(opts, stat, width)
+local function CreateReword(opts, stat)
   local self = Addon
   local GUI  = self.GUI
   
-  GUI:CreateToggle(opts, {"hide", stat}, self.L["Hide"]).width = width or 0.6
+  local opts = GUI:CreateGroupBox(opts, self.L["Rename"])
+  
+  local disabled = not Addon:GetOption("allow", "reword")
+  GUI:CreateToggle(opts, {"doReword", stat}, self.L["Enable"], nil, disabled).width = 0.6
+  local disabled = disabled or not self:GetOption("doReword", stat)
+  local option = GUI:CreateInput(opts, {"reword", stat}, self.L["Custom"], nil, nil, disabled)
+  option.width = 0.9
+  option.set = function(info, val)        self:SetOption(self:CoverSpecialCharacters(val), "reword", stat) end
+  option.get = function(info)      return Addon:UncoverSpecialCharacters(self:GetOption("reword", stat))   end
+  CreateReset(opts, {"reword", stat}, function() self:ResetReword(stat) end)
+  
+  return opts
+end
+local function CreateHide(opts, stat)
+  local self = Addon
+  local GUI  = self.GUI
+  
+  local opts = GUI:CreateGroupBox(opts, self.L["Hide"])
+  
+  GUI:CreateToggle(opts, {"hide", stat}, self.L["Hide"]).width = 0.6
   CreateReset(opts, {"hide", stat})
+  
+  return opts
+end
+local function CreateIcon(opts, stat)
+  local self = Addon
+  local GUI  = self.GUI
+  
+  local opts = GUI:CreateGroupBox(opts, self.L["Icon"])
+  
+  local disabled = not self:GetOption("allow", "reword")
+  GUI:CreateToggle(opts, {"doIcon", stat}, self.L["Icon"], nil, disabled).width = 0.6
+  GUI:CreateSelect(opts, {"icon", stat}, self.L["Choose an Icon:"], nil, iconsDropdown, icons, disabled).width = 0.7
+  CreateReset(opts, {"icon", stat}, function() self:ResetOption("icon", stat) end)
+  GUI:CreateDivider(opts)
+  
+  local disabled = disabled or not self:GetOption("doIcon", stat)
+  GUI:CreateToggle(opts, {"iconSpace", stat}, L["Icon Space"], nil, disabled).width = 0.7
+  CreateReset(opts, {"iconSpace", stat}, function() self:ResetOption("iconSpace", stat) end)
+  
+  return opts
 end
 local sampleNumber = 10
 local function CreateStatOption(opts, i, stat)
@@ -533,52 +605,48 @@ local function CreateStatOption(opts, i, stat)
   local defaultText = GetDefaultStatText(sampleNumber, stat)
   local formattedText = GetFormattedStatText(sampleNumber, stat)
   
-  local group = GUI:CreateGroup(opts, stat, formattedText)
-  local opts = group
+  local opts = GUI:CreateGroup(opts, stat, formattedText, "tab")
   
-  CreateTitle(opts, defaultText, formattedText, defaultText ~= formattedText, 1)
+  do
+    local opts = CreateTitle(opts, defaultText, formattedText, defaultText ~= formattedText, 1)
+    
+    -- Test
+    local option = GUI:CreateRange(opts, {"sampleNumber"}, L["Test"], nil, -1000000, 1000000, 1)
+    option.softMin = 0
+    option.softMax = 100
+    option.set = function(info, val)        sampleNumber = val end
+    option.get = function(info)      return sampleNumber       end
+  end
   
-  -- Test
-  local option = GUI:CreateRange(opts, {"sampleNumber"}, L["Test"], nil, -1000000, 1000000, 1)
-  option.softMin = 0
-  option.softMax = 100
-  option.set = function(info, val)        sampleNumber = val end
-  option.get = function(info)      return sampleNumber       end
-  GUI:CreateDivider(opts, 1)
+  do -- Reorder
+    local opts = GUI:CreateGroupBox(opts, "Reorder", L["Reorder"])
+    
+    local disabled = not Addon:GetOption("allow", "reorder")
+    local option = GUI:CreateExecute(opts, {"order", stat, "up"}, self.L["Move Up"], nil, function() self:ChangeOrder(i, i-1) end, disabled or i == 1)
+    local option = GUI:CreateExecute(opts, {"order", stat, "wayUp"}, self.L["Move to Top"], nil, function() self:ChangeOrder(i, 1) end, disabled or i == 1)
+    GUI:CreateNewline(opts)
+    local option = GUI:CreateExecute(opts, {"order", stat, "down"}, self.L["Move Down"], nil, function() self:ChangeOrder(i, i+1) end, disabled or i == #self.statList[self.expansionLevel])
+    local option = GUI:CreateExecute(opts, {"order", stat, "wayDown"}, self.L["Move to Bottom"], nil, function() self:ChangeOrder(i, #self.statList[self.expansionLevel]) end, disabled or i == #self.statList[self.expansionLevel])
+  end
   
-  -- Move Up/Down
-  local disabled = not Addon:GetOption("allow", "reorder")
-  local option = GUI:CreateExecute(opts, {"order", stat, "up"}, self.L["Move Up"], nil, function() self:ChangeOrder(i, i-1) end, disabled or i == 1)
-  local option = GUI:CreateExecute(opts, {"order", stat, "wayUp"}, self.L["Move to Top"], nil, function() self:ChangeOrder(i, 1) end, disabled or i == 1)
-  GUI:CreateNewline(opts)
-  local option = GUI:CreateExecute(opts, {"order", stat, "down"}, self.L["Move Down"], nil, function() self:ChangeOrder(i, i+1) end, disabled or i == #self.statList[self.expac])
-  local option = GUI:CreateExecute(opts, {"order", stat, "wayDown"}, self.L["Move to Bottom"], nil, function() self:ChangeOrder(i, #self.statList[self.expac]) end, disabled or i == #self.statList[self.expac])
-  GUI:CreateDivider(opts, 2)
+  CreateColor(opts, stat)
   
-  CreateColor(opts, stat, 0.6)
+  CreateReword(opts, stat)
   
-  -- Reword
-  local disabled = not Addon:GetOption("allow", "reword")
-  GUI:CreateToggle(opts, {"doReword", stat}, self.L["Rename"], nil, disabled).width = 0.6
-  local disabled = disabled or not self:GetOption("doReword", stat)
-  local option = GUI:CreateInput(opts, {"reword", stat}, self.L["Custom"], nil, nil, disabled)
-  option.set = function(info, val)        self:SetOption(self:CoverSpecialCharacters(val), "reword", stat) end
-  option.get = function(info)      return Addon:UncoverSpecialCharacters(self:GetOption("reword", stat))   end
-  CreateReset(opts, {"reword", stat}, function() self:ResetReword(stat) end)
-  GUI:CreateDivider(opts, 1)
+  do -- Multiply
+    local opts = GUI:CreateGroupBox(opts, L["Multiply"])
+    
+    local option = GUI:CreateRange(opts, {"mod", stat}, L["Multiplier"], nil, 0, 1000, nil, disabled)
+    option.width     = 1.5
+    option.softMax   = 12
+    option.bigStep   = 0.1
+    option.isPercent = true
+    CreateReset(opts, {"mod", stat}, function() self:ResetMod(stat) end)
+    GUI:CreateRange(opts, {"precision", stat}, L["Precision"], nil, 0, 5, 1, disabled).width = 1.5
+    CreateReset(opts, {"precision", stat}, function() self:ResetPrecision(stat) end)
+  end
   
-  -- Mod
-  local option = GUI:CreateRange(opts, {"mod", stat}, L["Modifier"], nil, 0, 1000, nil, disabled)
-  option.width     = 1.6
-  option.softMax   = 12
-  option.bigStep   = 0.1
-  option.isPercent = true
-  CreateReset(opts, {"mod", stat}, function() self:ResetMod(stat) end)
-  GUI:CreateRange(opts, {"precision", stat}, L["Precision"], nil, 0, 5, 1, disabled).width = 1.6
-  CreateReset(opts, {"precision", stat}, function() self:ResetPrecision(stat) end)
-  GUI:CreateDivider(opts, 1)
-  
-  CreateHide(opts, stat, 1.6)
+  CreateHide(opts, stat)
 end
 function Addon:MakeStatsOptionsTable()
   local title = self.L["Stats"]
@@ -590,11 +658,11 @@ function Addon:MakeStatsOptionsTable()
   CreateCombineStatsOption(opts)
   
   if Addon:GetOption("allow", "reorder") then
-    for i, stat in ipairs(self.statList[self.expac]) do
+    for i, stat in ipairs(self.statList[self.expansionLevel]) do
       CreateStatOption(opts, i, stat)
     end
   else
-    for stat in strGmatch(self:GetDefaultOption("order", self.expac), "[^,]+") do
+    for stat in strGmatch(self:GetDefaultOption("order", self.expansionLevel), "[^,]+") do
       CreateStatOption(opts, nil, stat)
     end
   end
@@ -623,13 +691,11 @@ function Addon:MakeExtraStatsOptionsTable()
     local _, name = GetFormattedText(stat, self.COLORS.RED, L["Trainable Equipment"], L["Trainable Equipment"])
     local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.RED, defaultText, defaultText)
     
-    local group = GUI:CreateGroup(opts, stat, name)
-    local opts = group
+    local opts = GUI:CreateGroup(opts, stat, name)
     
     CreateTitle(opts, defaultText, formattedText, changed)
     
-    -- Color
-    CreateColor(opts, stat, nil, 0.5)
+    CreateColor(opts, stat)
   end
   
   GUI:CreateGroup(opts, "afterTrainable" , " ").disabled = true
@@ -641,42 +707,43 @@ function Addon:MakeExtraStatsOptionsTable()
     local defaultText = format(DAMAGE_TEMPLATE, sampleDamage * (1-sampleVariance), sampleDamage * (1+sampleVariance))
     local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.WHITE, defaultText, self:ModifyWeaponDamage(defaultText, sampleDamage, 1))
     
-    local group = GUI:CreateGroup(opts, stat, formattedText)
-    local opts = group
+    local opts = GUI:CreateGroup(opts, stat, formattedText)
     
-    CreateTitle(opts, defaultText, formattedText, changed)
+    do
+      local opts = CreateTitle(opts, defaultText, formattedText, changed, 1)
+      
+      -- Test
+      local option = GUI:CreateRange(opts, {"sampleDamage"}, L["Test"], nil, 0, 1000000, 0.5)
+      option.softMax = 1000
+      option.bigStep = 10
+      option.set = function(info, val)        sampleDamage = val end
+      option.get = function(info)      return sampleDamage       end
+      local option = GUI:CreateRange(opts, {"sampleVariance"}, L["Test"], nil, 0, 1, 0.1)
+      option.isPercent = true
+      option.set = function(info, val)        sampleVariance = val end
+      option.get = function(info)      return sampleVariance       end
+    end
     
-    -- Test
-    local option = GUI:CreateRange(opts, {"sampleDamage"}, L["Test"], nil, 0, 1000000, 0.5)
-    option.softMax = 1000
-    option.bigStep = 10
-    option.set = function(info, val)        sampleDamage = val end
-    option.get = function(info)      return sampleDamage       end
-    local option = GUI:CreateRange(opts, {"sampleVariance"}, L["Test"], nil, 0, 1, 0.1)
-    option.isPercent = true
-    option.set = function(info, val)        sampleVariance = val end
-    option.get = function(info)      return sampleVariance       end
-    GUI:CreateDivider(opts, 1)
-    
-    -- Color
     CreateColor(opts, stat)
     
-    -- Reword
-    local disabled = not self:GetOption("allow", "reword")
-    GUI:CreateToggle(opts, {"damage", "showMinMax"}  , L["Show Minimum and Maximum"], nil, disabled or not self:GetOption("damage", "showAverage")).width = 1.5
-    CreateReset(opts, {"damage", "showMinMax"})
-    GUI:CreateNewline(opts)
-    GUI:CreateToggle(opts, {"damage", "showAverage"} , L["Show Average"], nil, disabled or not self:GetOption("damage", "showMinMax")).width = 1.5
-    CreateReset(opts, {"damage", "showAverage"})
-    GUI:CreateNewline(opts)
-    GUI:CreateToggle(opts, {"damage", "showVariance"}, L["Show Variance"], nil, disabled).width = 1.5
-    CreateReset(opts, {"damage", "showVariance"})
-    GUI:CreateNewline(opts)
-    GUI:CreateInput(opts, {"damage", "variancePrefix"} , L["Variance Prefix"], nil, nil, disabled).width = 1.5
-    CreateReset(opts, {"damage", "variancePrefix"})
-    GUI:CreateDivider(opts, 1)
+    do -- Reword
+      local opts = GUI:CreateGroupBox(opts, self.L["Rename"])
+      
+      local disabled = not self:GetOption("allow", "reword")
+      GUI:CreateToggle(opts, {"damage", "showMinMax"}  , L["Show Minimum and Maximum"], nil, disabled or not self:GetOption("damage", "showAverage")).width = 1.5
+      CreateReset(opts, {"damage", "showMinMax"})
+      GUI:CreateNewline(opts)
+      GUI:CreateToggle(opts, {"damage", "showAverage"} , L["Show Average"], nil, disabled or not self:GetOption("damage", "showMinMax")).width = 1.5
+      CreateReset(opts, {"damage", "showAverage"})
+      GUI:CreateNewline(opts)
+      GUI:CreateToggle(opts, {"damage", "showVariance"}, L["Show Variance"], nil, disabled).width = 1.5
+      CreateReset(opts, {"damage", "showVariance"})
+      GUI:CreateNewline(opts)
+      GUI:CreateInput(opts, {"damage", "variancePrefix"} , L["Variance Prefix"], nil, nil, disabled).width = 0.5
+      CreateReset(opts, {"damage", "variancePrefix"})
+    end
     
-    CreateHide(opts, stat, 1.5)
+    CreateHide(opts, stat)
   end
   
   local speedString = strGsub(format("%.2f", sampleSpeed), "%.", DECIMAL_SEPERATOR)
@@ -696,40 +763,36 @@ function Addon:MakeExtraStatsOptionsTable()
       disabled = true
     end
     
-    local group = GUI:CreateGroup(opts, stat, "  " .. (formattedText))
-    group.disabled = disabled
-    local opts = group
+    local opts = GUI:CreateGroup(opts, stat, "  " .. (formattedText), nil, disabled)
     
-    CreateTitle(opts, defaultText, formattedText, changed)
-    
-    -- Test
-    local option = GUI:CreateRange(opts, {"sampleSpeed"}, L["Test"], nil, self:GetDefaultOption("speedBar", "min"), self:GetDefaultOption("speedBar", "max"), 0.1)
-    option.set = function(info, val)        sampleSpeed = val end
-    option.get = function(info)      return sampleSpeed       end
-    GUI:CreateDivider(opts, 1)
-    
-    -- Color
-    CreateColor(opts, stat, 0.6)
-    
-    -- Reword
-    local disabled = not self:GetOption("allow", "reword")
-    GUI:CreateToggle(opts, {"doReword", stat}, L["Prefix"], nil, disabled).width = 0.6
-    local option = GUI:CreateInput(opts, {"reword", stat}, self.L["Rename"], nil, nil, disabled or not self:GetOption("doReword", stat))
-    option.set = function(info, val)        self:SetOption(self:CoverSpecialCharacters(val), "reword", stat) end
-    option.get = function(info)      return Addon:UncoverSpecialCharacters(self:GetOption("reword", stat))   end
-    CreateReset(opts, {"reword", stat}, function() self:ResetReword(stat) end)
-    GUI:CreateDivider(opts, 1)
-    
-    GUI:CreateRange(opts, {"precision", stat}, L["Precision"], nil, 0, 5, 1, disabled).width = 1.6
-    CreateReset(opts, {"precision", stat}, function() self:ResetOption("precision", stat) end)
-    GUI:CreateDivider(opts, 1)
-    
-    CreateHide(opts, stat, 1.6)
+    if not disabled then
+      do
+        local opts = CreateTitle(opts, defaultText, formattedText, changed, 1)
+        
+        -- Test
+        local option = GUI:CreateRange(opts, {"sampleSpeed"}, L["Test"], nil, self:GetDefaultOption("speedBar", "min"), self:GetDefaultOption("speedBar", "max"), 0.1)
+        option.set = function(info, val)        sampleSpeed = val end
+        option.get = function(info)      return sampleSpeed       end
+      end
+      
+      CreateColor(opts, stat)
+      
+      CreateReword(opts, stat)
+      
+      do -- Precision
+        local opts = GUI:CreateGroupBox(opts, L["Precision"])
+        
+        GUI:CreateRange(opts, {"precision", stat}, L["Precision"], nil, 0, 5, 1, disabled)
+        CreateReset(opts, {"precision", stat}, function() self:ResetOption("precision", stat) end)
+      end
+      
+      CreateHide(opts, stat)
+    end
   end
   
   GUI:CreateGroup(opts, "afterSpeed" , " ", nil, true)
   
-  -- Weapon dps
+  -- Weapon DPS
   local sampleDPS = strGsub(format("%.1f", sampleDamage / sampleSpeed), "%.", DECIMAL_SEPERATOR)
   do
     local stat = "DamagePerSecond"
@@ -749,27 +812,22 @@ function Addon:MakeExtraStatsOptionsTable()
       end
     end
     
-    local group = GUI:CreateGroup(opts, stat, formattedText)
-    local opts = group
+    local opts = GUI:CreateGroup(opts, stat, formattedText)
     
     CreateTitle(opts, defaultText, formattedText, changed)
     
-    -- Color
-    CreateColor(opts, stat, 0.6)
+    CreateColor(opts, stat)
     
-    -- Reword
-    local disabled = not self:GetOption("allow", "reword")
-    GUI:CreateToggle(opts, {"doReword", stat}, self.L["Rename"], nil, disabled).width = 0.6
-    local option = GUI:CreateInput(opts, {"reword", stat}, self.L["Rename"], nil, nil, disabled or not self:GetOption("doReword", stat))
-    option.set = function(info, val)        self:SetOption(self:CoverSpecialCharacters(val), "reword", stat) end
-    option.get = function(info)      return Addon:UncoverSpecialCharacters(self:GetOption("reword", stat))   end
-    CreateReset(opts, {"reword", stat}, function() self:ResetReword(stat) end)
-    GUI:CreateNewline(opts)
-    GUI:CreateToggle(opts, {"dps", "removeBrackets"}, L["Remove Brackets"], nil, disabled).width = 1.6
-    CreateReset(opts, {"dps", "removeBrackets"})
-    GUI:CreateDivider(opts, 1)
+    CreateReword(opts, stat)
     
-    CreateHide(opts, stat, 1.6)
+    do -- Remove Brackers
+      local opts = GUI:CreateGroupBox(opts, L["Remove Brackets"])
+      
+      GUI:CreateToggle(opts, {"dps", "removeBrackets"}, L["Remove Brackets"], nil, disabled)
+      CreateReset(opts, {"dps", "removeBrackets"})
+    end
+    
+    CreateHide(opts, stat)
   end
   
   -- Weapon Speedbar
@@ -786,46 +844,53 @@ function Addon:MakeExtraStatsOptionsTable()
       disabled = true
     end
     
-    local group = GUI:CreateGroup(opts, stat, "  " .. (name or formattedText))
-    group.disabled = disabled
-    local opts = group
+    local opts = GUI:CreateGroup(opts, stat, "  " .. (name or formattedText), nil, disabled)
     
-    GUI:CreateDescription(opts, tostring(defaultSpeed), "small")
-    GUI:CreateDescription(opts, formattedText)
-    GUI:CreateDivider(opts, 1)
-    
-    -- Test
-    local option = GUI:CreateRange(opts, {"sampleSpeed"}, L["Test"], nil, self:GetDefaultOption("speedBar", "min"), self:GetDefaultOption("speedBar", "max"), 0.1)
-    option.set = function(info, val)        sampleSpeed = val end
-    option.get = function(info)      return sampleSpeed       end
-    GUI:CreateDivider(opts, 1)
-    
-    -- Color
-    CreateColor(opts, stat, nil, 0.5)
-    
-    -- Reword
-    local disabled = not self:GetOption("allow", "reword")
-    GUI:CreateToggle(opts, {"speedBar", "speedPrefix"}, L["Show Speed"], nil, disabled)
-    CreateReset(opts, {"speedBar", "speedPrefix"})
-    GUI:CreateNewline(opts)
-    local option = GUI:CreateInput(opts, {"speedBar", "fillChar"} , L["Fill Character"], nil, nil, disabled)
-    CreateReset(opts, {"speedBar", "fillChar"})
-    GUI:CreateNewline(opts)
-    local option = GUI:CreateInput(opts, {"speedBar", "blankChar"}, L["Blank Character"], nil, nil, disabled)
-    CreateReset(opts, {"speedBar", "blankChar"})
-    GUI:CreateDivider(opts, 1)
-    
-    
-    local option = GUI:CreateRange(opts, {"speedBar", "min"}, self.L["Minimum"], nil, self:GetDefaultOption("speedBar", "min"), self:GetDefaultOption("speedBar", "max"), 0.1, disabled)
-    option.set = function(info, val) self:SetOption(val, "speedBar", "min") self:SetOption(mathMax(val, self:GetOption("speedBar", "max")), "speedBar", "max") end
-    local option = GUI:CreateRange(opts, {"speedBar", "max"}, self.L["Maximum"], nil, self:GetDefaultOption("speedBar", "min"), self:GetDefaultOption("speedBar", "max"), 0.1, disabled)
-    option.set = function(info, val) self:SetOption(val, "speedBar", "max") self:SetOption(mathMin(val, self:GetOption("speedBar", "min")), "speedBar", "min") end
-    GUI:CreateNewline(opts)
-    GUI:CreateRange(opts, {"speedBar", "size"}, self.L["Frame Width"], nil, 0, 30, 1, disabled)
-    CreateReset(opts, {"speedBar", "size"}, func)
-    GUI:CreateDivider(opts, 1)
-    
-    CreateHide(opts, stat, 1)
+    if not disabled then
+      
+      do
+        local opts = GUI:CreateGroupBox(opts, self.L["Example Text:"])
+        
+        GUI:CreateDescription(opts, tostring(defaultSpeed), "small")
+        GUI:CreateDescription(opts, formattedText)
+        GUI:CreateDivider(opts)
+        
+        -- Test
+        local option = GUI:CreateRange(opts, {"sampleSpeed"}, L["Test"], nil, self:GetDefaultOption("speedBar", "min"), self:GetDefaultOption("speedBar", "max"), 0.1)
+        option.set = function(info, val)        sampleSpeed = val end
+        option.get = function(info)      return sampleSpeed       end
+      end
+      
+      CreateColor(opts, stat)
+      
+      do -- Reword
+        local opts = GUI:CreateGroupBox(opts, self.L["Rename"])
+        
+        local disabled = not self:GetOption("allow", "reword")
+        GUI:CreateToggle(opts, {"speedBar", "speedPrefix"}, L["Show Speed"], nil, disabled)
+        CreateReset(opts, {"speedBar", "speedPrefix"})
+        GUI:CreateNewline(opts)
+        local option = GUI:CreateInput(opts, {"speedBar", "fillChar"} , L["Fill Character"], nil, nil, disabled)
+        CreateReset(opts, {"speedBar", "fillChar"})
+        GUI:CreateNewline(opts)
+        local option = GUI:CreateInput(opts, {"speedBar", "blankChar"}, L["Blank Character"], nil, nil, disabled)
+        CreateReset(opts, {"speedBar", "blankChar"})
+      end
+      
+      do
+        local opts = GUI:CreateGroupBox(opts, self.L["Settings"])
+        
+        local option = GUI:CreateRange(opts, {"speedBar", "min"}, self.L["Minimum"], nil, self:GetDefaultOption("speedBar", "min"), self:GetDefaultOption("speedBar", "max"), 0.1, disabled)
+        option.set = function(info, val) self:SetOption(val, "speedBar", "min") self:SetOption(mathMax(val, self:GetOption("speedBar", "max")), "speedBar", "max") end
+        local option = GUI:CreateRange(opts, {"speedBar", "max"}, self.L["Maximum"], nil, self:GetDefaultOption("speedBar", "min"), self:GetDefaultOption("speedBar", "max"), 0.1, disabled)
+        option.set = function(info, val) self:SetOption(val, "speedBar", "max") self:SetOption(mathMin(val, self:GetOption("speedBar", "min")), "speedBar", "min") end
+        GUI:CreateNewline(opts)
+        GUI:CreateRange(opts, {"speedBar", "size"}, self.L["Frame Width"], nil, 0, 30, 1, disabled)
+        CreateReset(opts, {"speedBar", "size"}, func)
+      end
+      
+      CreateHide(opts, stat)
+    end
   end
   
   GUI:CreateGroup(opts, "afterSpeedbar" , " ", nil, true)
@@ -837,37 +902,17 @@ function Addon:MakeExtraStatsOptionsTable()
     local defaultText = self.L["Enchant"]
     local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.GREEN, defaultText, self:ModifyEnchantment(defaultText))
     
-    local group = GUI:CreateGroup(opts, stat, formattedText)
-    local opts = group
+    local opts = GUI:CreateGroup(opts, stat, formattedText)
     
     CreateTitle(opts, defaultText, formattedText, changed)
     
-    -- Color
-    CreateColor(opts, stat, 0.6)
+    CreateColor(opts, stat)
     
-    -- Reword
-    local disabled = not self:GetOption("allow", "reword")
-    GUI:CreateToggle(opts, {"doReword", stat}, self.L["Rename"], nil, disabled).width = 0.6
-    local option = GUI:CreateInput(opts, {"reword", stat}, self.L["Rename"], nil, nil, disabled or not self:GetOption("doReword", stat))
-    option.set = function(info, val)        self:SetOption(self:CoverSpecialCharacters(val), "reword", stat) end
-    option.get = function(info)      return Addon:UncoverSpecialCharacters(self:GetOption("reword", stat))   end
-    CreateReset(opts, {"reword", stat}, function() self:ResetReword(stat) end)
-    GUI:CreateDivider(opts, 1)
+    CreateReword(opts, stat)
     
-    -- Icon
-    local disabled = not self:GetOption("allow", "reword")
-    GUI:CreateToggle(opts, {"doIcon", stat}, self.L["Icon"], nil, disabled).width = 0.6
-    GUI:CreateSelect(opts, {"icon", stat}, self.L["Choose an Icon:"], desc, iconsDropdown, icons, disabled)
-    CreateReset(opts, {"icon", stat}, function() self:ResetOption("icon", stat) end)
-    GUI:CreateDivider(opts, 1)
+    CreateIcon(opts, stat)
     
-    -- Icon Space
-    local disabled = disabled or not self:GetOption("doIcon", stat)
-    GUI:CreateToggle(opts, {"iconSpace", stat}, L["Icon Space"], nil, disabled).width = 1.6
-    CreateReset(opts, {"iconSpace", stat}, function() self:ResetOption("iconSpace", stat) end)
-    GUI:CreateDivider(opts, 1)
-    
-    CreateHide(opts, stat, 1.6)
+    CreateHide(opts, stat)
   end
   
   -- Weapon Enchant
@@ -877,37 +922,17 @@ function Addon:MakeExtraStatsOptionsTable()
     local defaultText = self.L["Weapon Enchantment"]
     local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.GREEN, defaultText, self:ModifyWeaponEnchantment(defaultText))
     
-    local group = GUI:CreateGroup(opts, stat, formattedText)
-    local opts = group
+    local opts = GUI:CreateGroup(opts, stat, formattedText)
     
     CreateTitle(opts, defaultText, formattedText, changed)
     
-    -- Color
-    CreateColor(opts, stat, 0.6)
+    CreateColor(opts, stat)
     
-    -- Reword
-    local disabled = not self:GetOption("allow", "reword")
-    GUI:CreateToggle(opts, {"doReword", stat}, self.L["Rename"], nil, disabled).width = 0.6
-    local option = GUI:CreateInput(opts, {"reword", stat}, self.L["Rename"], nil, nil, disabled or not self:GetOption("doReword", stat))
-    option.set = function(info, val)        self:SetOption(self:CoverSpecialCharacters(val), "reword", stat) end
-    option.get = function(info)      return Addon:UncoverSpecialCharacters(self:GetOption("reword", stat))   end
-    CreateReset(opts, {"reword", stat}, function() self:ResetReword(stat) end)
-    GUI:CreateDivider(opts, 1)
+    CreateReword(opts, stat)
     
-    -- Icon
-    local disabled = not self:GetOption("allow", "reword")
-    GUI:CreateToggle(opts, {"doIcon", stat}, self.L["Icon"], nil, disabled).width = 0.6
-    GUI:CreateSelect(opts, {"icon", stat}, self.L["Choose an Icon:"], desc, iconsDropdown, icons, disabled)
-    CreateReset(opts, {"icon", stat}, function() self:ResetOption("icon", stat) end)
-    GUI:CreateDivider(opts, 1)
+    CreateIcon(opts, stat)
     
-    -- Icon Space
-    local disabled = disabled or not self:GetOption("doIcon", stat)
-    GUI:CreateToggle(opts, {"iconSpace", stat}, L["Icon Space"], nil, disabled).width = 1.6
-    CreateReset(opts, {"iconSpace", stat}, function() self:ResetOption("iconSpace", stat) end)
-    GUI:CreateDivider(opts, 1)
-    
-    CreateHide(opts, stat, 1.6)
+    CreateHide(opts, stat)
   end
   
   GUI:CreateGroup(opts, "afterEnchant" , " ", nil, true)
@@ -933,20 +958,25 @@ function Addon:MakeExtraStatsOptionsTable()
       self:MakeColorCode(self.COLORS.WHITE, sampleText)
     end
     
-    local group = GUI:CreateGroup(opts, stat, formattedText)
-    local opts = group
+    local opts = GUI:CreateGroup(opts, stat, formattedText)
     
-    CreateTitle(opts, defaultText, formattedText, changed)
-    GUI:CreateDescription(opts, L["Test"], "small")
-    GUI:CreateDescription(opts, sampleText)
-    GUI:CreateDivider(opts, 2)
+    do
+      local opts = CreateTitle(opts, defaultText, formattedText, changed)
+      GUI:CreateDivider(opts)
+      
+      GUI:CreateDescription(opts, L["Test"], "small")
+      GUI:CreateDescription(opts, sampleText)
+    end
     
-    -- Reword
-    GUI:CreateToggle(opts, {"hide", "uselessRaces"}, L["Hide Pointless Lines"]).width = 1
-    CreateReset(opts, {"hide", "uselessRaces"})
-    GUI:CreateDivider(opts, 1)
+    do
+      local opts = CreateHide(opts, stat)
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"hide", "uselessRaces"}, L["Hide Pointless Lines"])
+      CreateReset(opts, {"hide", "uselessRaces"})
+    end
+  end
     
-    CreateHide(opts, stat, 1)
   end
   
   GUI:CreateGroup(opts, "afterRaces" , " ", nil, true)
@@ -954,8 +984,8 @@ function Addon:MakeExtraStatsOptionsTable()
   -- Prefixes
   for _, data in ipairs{
     {"Equip",       ITEM_SPELL_TRIGGER_ONEQUIP},
-    {"Use",         ITEM_SPELL_TRIGGER_ONUSE},
     -- {"ChanceOnHit", ITEM_SPELL_TRIGGER_ONPROC},
+    {"Use",         ITEM_SPELL_TRIGGER_ONUSE},
   } do
     local stat   = data[1]
     local prefix = data[2]
@@ -963,43 +993,25 @@ function Addon:MakeExtraStatsOptionsTable()
     local defaultText = format("%s %s", prefix, format(ITEM_RESIST_ALL, strByte"+", sampleNumber))
     local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.GREEN, defaultText, self:ModifyPrefix(defaultText, prefix))
     
-    local group = GUI:CreateGroup(opts, stat, formattedText)
-    local opts = group
+    local opts = GUI:CreateGroup(opts, stat, formattedText)
     
     CreateTitle(opts, defaultText, formattedText, changed)
     
-    -- Color
-    CreateColor(opts, stat, 0.6)
+    CreateColor(opts, stat)
     
-    -- Reword
-    local disabled = not self:GetOption("allow", "reword")
-    GUI:CreateToggle(opts, {"doReword", stat}, self.L["Rename"], nil, disabled).width = 0.6
-    local option = GUI:CreateInput(opts, {"reword", stat}, self.L["Rename"], nil, nil, disabled or not self:GetOption("doReword", stat))
-    option.set = function(info, val)        self:SetOption(self:CoverSpecialCharacters(val), "reword", stat) end
-    option.get = function(info)      return Addon:UncoverSpecialCharacters(self:GetOption("reword", stat))   end
-    CreateReset(opts, {"reword", stat}, function() self:ResetReword(stat) end)
-    GUI:CreateDivider(opts, 1)
+    do
+      local opts = CreateReword(opts, stat)
+      GUI:CreateNewline(opts)
+      
+      -- Trim Space
+      local disabled = disabled or not self:GetOption("doReword", stat)
+      GUI:CreateToggle(opts, {"trimSpace", stat}, L["Remove Space"], nil, disabled)
+      CreateReset(opts, {"trimSpace", stat}, function() self:ResetOption("trimSpace", stat) end)
+    end
     
-    -- Trim Space
-    local disabled = disabled or not self:GetOption("doReword", stat)
-    GUI:CreateToggle(opts, {"trimSpace", stat}, L["Remove Space"], nil, disabled).width = 1.6
-    CreateReset(opts, {"trimSpace", stat}, function() self:ResetOption("trimSpace", stat) end)
-    GUI:CreateDivider(opts, 1)
+    CreateIcon(opts, stat)
     
-    -- Icon
-    local disabled = not self:GetOption("allow", "reword")
-    GUI:CreateToggle(opts, {"doIcon", stat}, self.L["Icon"], nil, disabled).width = 0.6
-    GUI:CreateSelect(opts, {"icon", stat}, self.L["Choose an Icon:"], desc, iconsDropdown, icons, disabled)
-    CreateReset(opts, {"icon", stat}, function() self:ResetOption("icon", stat) end)
-    GUI:CreateDivider(opts, 1)
-    
-    -- Icon Space
-    local disabled = disabled or not self:GetOption("doIcon", stat)
-    GUI:CreateToggle(opts, {"iconSpace", stat}, L["Icon Space"], nil, disabled).width = 1.6
-    CreateReset(opts, {"iconSpace", stat}, function() self:ResetOption("iconSpace", stat) end)
-    GUI:CreateDivider(opts, 1)
-    
-    CreateHide(opts, stat, 1.6)
+    CreateHide(opts, stat)
   end
   
   GUI:CreateGroup(opts, "afterPrefixes" , " ", nil, true)
@@ -1011,40 +1023,36 @@ function Addon:MakeExtraStatsOptionsTable()
     local defaultText = ITEM_SOCKETABLE
     local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.GREEN, defaultText, self:RewordSocketHint(defaultText))
     
-    local group = GUI:CreateGroup(opts, stat, formattedText)
-    local opts = group
+    local opts = GUI:CreateGroup(opts, stat, formattedText)
     
     CreateTitle(opts, defaultText, formattedText, changed)
     
-    -- Color
-    CreateColor(opts, stat, 0.6)
+    CreateColor(opts, stat)
     
-    -- Reword
-    local disabled = not self:GetOption("allow", "reword")
-    GUI:CreateToggle(opts, {"doReword", stat}, self.L["Rename"], nil, disabled).width = 0.6
-    local option = GUI:CreateInput(opts, {"reword", stat}, self.L["Rename"], nil, nil, not self:GetOption("doReword", stat))
-    option.set = function(info, val)        self:SetOption(self:CoverSpecialCharacters(val), "reword", stat) end
-    option.get = function(info)      return Addon:UncoverSpecialCharacters(self:GetOption("reword", stat))   end
-    CreateReset(opts, {"reword", stat}, function() self:ResetReword(stat) end)
-    GUI:CreateDivider(opts, 1)
+    CreateReword(opts, stat)
     
-    CreateHide(opts, stat, 1.6)
+    CreateHide(opts, stat)
   end
   
-  GUI:CreateGroup(opts, "afterSocketHint" , " ", nil, true)
-  
   -- Misc locale rewording
-  do
-    local stat = "Miscellaneous"
-    local name = Addon:MakeColorCode(self.COLORS.WHITE, self.L["Miscellaneous"])
+  if #self.localeExtraReplacements > 0 then
+    GUI:CreateGroup(opts, "afterSocketHint" , " ", nil, true)
     
-    local group = GUI:CreateGroup(opts, stat, name)
-    local opts = group
-    
-    -- Reword
-    local disabled = not self:GetOption("allow", "reword")
-    GUI:CreateToggle(opts, {"doReword", stat}, self.L["Rename"], nil, disabled).width = 0.6
-    CreateReset(opts, {"doReword", stat})
+    do
+      local stat = "Miscellaneous"
+      local name = Addon:MakeColorCode(self.COLORS.WHITE, self.L["Miscellaneous"])
+      
+      local opts = GUI:CreateGroup(opts, stat, name)
+      
+      do
+        local opts = GUI:CreateGroupBox(opts, self.L["Miscellaneous"])
+        
+        -- Reword
+        local disabled = not self:GetOption("allow", "reword")
+        GUI:CreateToggle(opts, {"doReword", stat}, self.L["Rename"], nil, disabled).width = 0.6
+        CreateReset(opts, {"doReword", stat})
+      end
+    end
   end
   
   return opts
@@ -1064,8 +1072,7 @@ local function CreatePaddingOption(opts, name, beforeStat, afterStat, sample, di
   local self = Addon
   local GUI  = self.GUI
   
-  local group = GUI:CreateGroup(opts, name, name, nil, disabled)
-  local opts = group
+  local opts = GUI:CreateGroup(opts, name, name, nil, disabled)
   
   if beforeStat then
     GUI:CreateToggle(opts, beforeStat, L["Space Above"], nil, disabled)
@@ -1181,6 +1188,99 @@ function Addon:MakeResetOptionsTable()
     GUI:CreateDescription(opts, cat)
     CreateReset(opts, {cat}, func)
     GUI:CreateNewline(opts)
+  end
+  
+  return opts
+  end)
+end
+
+
+-- Debug Options
+function Addon:MakeDebugOptionsTable()
+  local title = self.L["Debug"]
+  self:CreateOptionsCategory(title, function()
+  
+  local GUI = self.GUI:ResetOrder()
+  local opts = GUI:CreateGroupTop(title, "tab")
+  
+  -- Debug Messages
+  do
+    local opts = GUI:CreateGroup(opts, GUI:Order(), self.L["Enable"])
+    
+    GUI:CreateToggle(opts, {"debug", "enabled"}, self.L["Debug"])
+    GUI:CreateExecute(opts, "reload", self.L["Reload UI"], nil, ReloadUI)
+    GUI:CreateNewline(opts)
+    
+    
+    do
+      local opts = GUI:CreateGroupBox(opts, "Messages")
+      
+      GUI:CreateToggle(opts, {"debug", "output", "suppressAll"}, self.debugPrefix .. " " .. self.L["Hide messages like this one."]).width = 2
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"debug", "output", "tooltipHook"}, "Tooltip Hook Messages")
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"debug", "output", "lineRecognitions"}, "Line Recognitions")
+    end
+    
+    --[[
+    output = {
+      suppressAll = false,
+      
+      tooltipHook      = true,
+      lineRecognitions = true,
+    },--]]
+  end
+  
+  -- Caches
+  do
+    local opts = GUI:CreateGroup(opts, GUI:Order(), "Cache")
+    
+    GUI:CreateToggle(opts, {"cache", "constructor"}, "Cache Constructors")
+    GUI:CreateNewline(opts)
+    
+    GUI:CreateToggle(opts, {"cache", "text"}, "Cache Text Rewords")
+    GUI:CreateNewline(opts)
+    
+    GUI:CreateToggle(opts, {"cache", "stat"}, "Cache Stat Recognition")
+    GUI:CreateNewline(opts)
+    
+    local option = GUI:CreateRange(opts, {"constructorCache", "wipeDelay"}, "Wipe Delay", "Time in seconds without constructor being requested before it's cleared.", 0, 1000000, 0.001)
+    option.softMax = 60
+    option.bigStep = 1
+    GUI:CreateNewline(opts)
+    
+    local option = GUI:CreateRange(opts, {"constructorCache", "minSeenCount"}, "Minimum Seen Count", "Minimum number of times constructor must be requested before it can be cached.", 0, 1000000, 1)
+    option.softMax = 50
+    GUI:CreateNewline(opts)
+    
+    local option = GUI:CreateRange(opts, {"constructorCache", "minSeenTime"}, "Minimum Seen Time", "Minimum time in seconds since constructor was first requested before it can be cached.", 0, 1000000, 0.001)
+    option.softMax = 10
+    option.bigStep = 0.25
+  end
+  
+  -- Throttles
+  do
+    local opts = GUI:CreateGroup(opts, GUI:Order(), "Throttles")
+    
+    GUI:CreateToggle(opts, {"throttle", "AuctionFrame"}, "Throttle AuctionFrame", "Throttle tooltips updates from this frame so they use the regular tooltip update interval.")
+    GUI:CreateNewline(opts)
+    
+    GUI:CreateToggle(opts, {"throttle", "InspectFrame"}, "Throttle InspectFrame", "Throttle tooltips updates from this frame so they use the regular tooltip update interval.")
+    GUI:CreateNewline(opts)
+    
+    GUI:CreateToggle(opts, {"throttle", "MailFrame"}, "Throttle MailFrame", "Throttle tooltips updates from this frame so they use the regular tooltip update interval.")
+    GUI:CreateNewline(opts)
+    
+    GUI:CreateToggle(opts, {"throttle", "TradeSkillFrame"}, "Throttle TradeSkillFrame", "Throttle tooltips updates from this frame so they use the regular tooltip update interval.")
+  end
+  
+  -- Fixes
+  do
+    local opts = GUI:CreateGroup(opts, GUI:Order(), "Fixes")
+    
+    GUI:CreateToggle(opts, {"fixOptionsMenu"}, "Fix Options Menu", "Fix a bug with Interface Options so that it can be opened to a category that isn't visible without scrolling.")
   end
   
   return opts

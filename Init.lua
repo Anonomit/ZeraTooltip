@@ -11,7 +11,7 @@ Addon.onSetHandlers = {}
 -- Curseforge automatic packaging will comment this out
 -- https://support.curseforge.com/en/support/solutions/articles/9000197281-automatic-packaging
 --@debug@
-  Addon.debug = true
+  local debugMode = true
   
   -- GAME_LOCALE = "enUS" -- AceLocale override
   
@@ -19,14 +19,26 @@ Addon.onSetHandlers = {}
   
   -- DECIMAL_SEPERATOR = ","
 --@end-debug@
-function Addon:Debug(...)
-  if self.debug then
-    self:Print(...)
+function Addon:IsDebugEnabled()
+  if self.GetOption then
+    return self:GetOption("debug", "enabled")
+  else
+    return debugMode
   end
 end
-function Addon:Debugf(...)
-  if self.debug then
-    self:Printf(...)
+
+do
+  Addon.debugPrefix = "[" .. BINDING_HEADER_DEBUG .. "]"
+  local function Debug(self, methodName, ...)
+    if not self:IsDebugEnabled() then return end
+    if self.GetOption and self:GetOption("debug", "output", "suppressAll") then return end
+    return self[methodName](self, ...)
+  end
+  function Addon:Debug(...)
+    return Debug(self, "Print", self.debugPrefix, ...)
+  end
+  function Addon:Debugf(...)
+    return Debug(self, "Printf", self.debugPrefix, ...)
   end
 end
 
@@ -44,20 +56,30 @@ Addon.SemVer     = LibStub"SemVer"
 
 
 
-local buildMajor = tonumber(GetBuildInfo():match"^(%d+)%.")
-if buildMajor >= 9 then
-  Addon.expac = "retail"
-elseif buildMajor >= 3 then
-  Addon.expac = "wrath"
-elseif buildMajor == 2 then
-  Addon.expac = "tbc"
-elseif buildMajor == 1 then
-  Addon.expac = "classic"
+do
+  Addon.expansions = {
+    retail  = 9,
+    wrath   = 3,
+    wotlk   = 3,
+    tbc     = 2,
+    bcc     = 2,
+    classic = 1,
+  }
+  Addon.expansionLevel = tonumber(GetBuildInfo():match"^(%d+)%.")
+  if Addon.expansionLevel >= Addon.expansions.retail then
+    Addon.expansionName = "retail"
+  elseif Addon.expansionLevel >= Addon.expansions.wrath then
+    Addon.expansionName = "wrath"
+  elseif Addon.expansionLevel == Addon.expansions.tbc then
+    Addon.expansionName = "tbc"
+  elseif Addon.expansionLevel == Addon.expansions.classic then
+    Addon.expansionName = "classic"
+  end
+  Addon.isRetail  = Addon.expansionName == "retail"
+  Addon.isWrath   = Addon.expansionName == "wrath"
+  Addon.isTBC     = Addon.expansionName == "tbc"
+  Addon.isClassic = Addon.expansionName == "classic"
 end
-Addon.isRetail  = Addon.expac == "retail"
-Addon.isWrath   = Addon.expac == "wrath"
-Addon.isTBC     = Addon.expac == "tbc"
-Addon.isClassic = Addon.expac == "classic"
 
 
 
@@ -91,19 +113,21 @@ function Addon:StripText(text)
 end
 
 function Addon:ChainGsub(text, ...)
-  for _, patterns in ipairs{...} do
-    local newText = tblRemove(patterns)
-    for _, oldText in ipairs(patterns) do
+  for i, patterns in ipairs{...} do
+    local newText = patterns[#patterns]
+    for i = 1, #patterns - 1 do
+      local oldText = patterns[i]
       text = strGsub(text, oldText, newText)
     end
   end
   return text
 end
 
+local chainGsubPattern = {{"%%%d%$", "%%"}, {"[+-]", "%%%1"}, {"[%(%)%.]", "%%%0"}, {"%%c", "([+-])"}, {"%%d", "(%%d+)"}, {"%%s", "(.*)"}, {"|4[^:]-:[^:]-:[^:]-;", ".-"}, {"|4[^:]-:[^:]-;", ".-"}}
 local reversedPatternsCache = {}
 function Addon:ReversePattern(text)
   if not reversedPatternsCache[text] then
-    reversedPatternsCache[text] = "^" .. self:ChainGsub(text, {"%%%d%$", "%%"}, {"[+-]", "%%%1"}, {"[%(%)%.]", "%%%0"}, {"%%c", "([+-])"}, {"%%d", "(%%d+)"}, {"%%s", "(.*)"}, {"|4[^:]-:[^:]-:[^:]-;", ".-"}, {"|4[^:]-:[^:]-;", ".-"}) .. "$"
+    reversedPatternsCache[text] = "^" .. self:ChainGsub(text, unpack(chainGsubPattern)) .. "$"
   end
   return reversedPatternsCache[text]
 end
@@ -138,8 +162,8 @@ end
 local L = setmetatable({}, {
   __index = function(self, key)
     rawset(self, key, key)
-    if Addon.debug then
-      geterrorhandler()(ADDON_NAME..": Missing entry for '"..tostring(key).."'")
+    if Addon:IsDebugEnabled() then
+      geterrorhandler()(ADDON_NAME..": Missing automatic translation for '"..tostring(key).."'")
     end
     return key
   end
@@ -163,8 +187,9 @@ L["Features"] = FEATURES_LABEL
 
 L["Stats"] = PET_BATTLE_STATS_LABEL
 
-L["Default"] = DEFAULT
-L["Current"] = REFORGE_CURRENT
+L["Example Text:"] = EXAMPLE_TEXT
+L["Default"]       = DEFAULT
+L["Current"]       = REFORGE_CURRENT
 
 L["Move Up"]        = TRACKER_SORT_MANUAL_UP
 L["Move Down"]      = TRACKER_SORT_MANUAL_DOWN
@@ -182,29 +207,47 @@ L["Enchant"]            = ENSCRIBE
 L["Weapon Enchantment"] = WEAPON_ENCHANTMENT
 L["End"]                = KEY_END
 
+L["Settings"]      = SETTINGS
 L["Other Options"] = UNIT_FRAME_DROPDOWN_SUBSECTION_TITLE_OTHER
-L["Weapon"] = WEAPON
--- L["Weapon Damage"] = DAMAGE_TOOLTIP
--- L["Damage Per Second"] = ITEM_MOD_DAMAGE_PER_SECOND_SHORT
+L["Weapon"]        = WEAPON
 L["Miscellaneous"] = MISCELLANEOUS
--- missing?
--- L["Test"]        = TEST_BUILD
-L["Minimum"]     = MINIMUM
-L["Maximum"]     = MAXIMUM
-L["Frame Width"] = COMPACT_UNIT_FRAME_PROFILE_FRAMEWIDTH
-L["Icon"] = EMBLEM_SYMBOL
+L["Minimum"]       = MINIMUM
+L["Maximum"]       = MAXIMUM
+L["Frame Width"]   = COMPACT_UNIT_FRAME_PROFILE_FRAMEWIDTH
+
+L["Icon"]            = EMBLEM_SYMBOL
 L["Choose an Icon:"] = MACRO_POPUP_CHOOSE_ICON
+
+L["Me"]                         = COMBATLOG_FILTER_STRING_ME
+L["Max Level"]                  = GUILD_RECRUITMENT_MAXLEVEL
+L["Level %d"]                   = UNIT_LEVEL_TEMPLATE
+L["|cff000000%s (low level)|r"] = TRIVIAL_QUEST_DISPLAY
 
 L["All"] = ALL
 
 L["ERROR"] = ERROR_CAPS
 
 
+L["Debug"]                        = BINDING_HEADER_DEBUG
+L["Reload UI"]                    = RELOADUI
+L["Hide messages like this one."] = COMBAT_LOG_MENU_SPELL_HIDE
+
+
+
+-- L["Weapon Damage"] = DAMAGE_TOOLTIP
+-- L["Damage Per Second"] = ITEM_MOD_DAMAGE_PER_SECOND_SHORT
+
+-- missing?
+-- L["Test"]        = TEST_BUILD
+
+
+
+
 
 Addon.prefixStats = {
   [ITEM_SPELL_TRIGGER_ONEQUIP] = "Equip",
-  [ITEM_SPELL_TRIGGER_ONUSE]   = "Use",
   [ITEM_SPELL_TRIGGER_ONPROC]  = "ChanceOnHit",
+  [ITEM_SPELL_TRIGGER_ONUSE]   = "Use",
 }
 
 
@@ -303,9 +346,9 @@ end
 
 
 Addon.statList = {
-  classic = {},
-  tbc     = {},
-  wrath   = {},
+  [Addon.expansions.classic] = {},
+  [Addon.expansions.tbc]     = {},
+  [Addon.expansions.wrath]   = {},
 }
 Addon.statsInfo = setmetatable({}, {__index = function() return {} end})
 Addon.statOrder = {}
@@ -314,7 +357,8 @@ Addon.statOrder = {}
 Addon.defaultRewordLocaleOverrides    = {}
 Addon.defaultModLocaleOverrides       = {}
 Addon.defaultPrecisionLocaleOverrides = {}
-Addon.localeExtras                    = {}
+Addon.localeExtraStatCaptures         = {}
+Addon.localeExtraReplacements         = {}
 
 function Addon:AddDefaultRewordByLocale(stat, val)
   Addon.defaultRewordLocaleOverrides[stat] = val
@@ -327,42 +371,42 @@ function Addon:AddDefaultPrecisionByLocale(stat, val)
 end
 
 function Addon:AddExtraStatCapture(stat, ...)
-  if not Addon.localeExtras[stat] then
-    Addon.localeExtras[stat] = {}
+  if not Addon.localeExtraStatCaptures[stat] then
+    Addon.localeExtraStatCaptures[stat] = {}
   end
   for i, rule in ipairs{...} do
-    table.insert(Addon.localeExtras[stat], rule)
+    table.insert(Addon.localeExtraStatCaptures[stat], rule)
   end
 end
 
 local replacementKeys = {}
 function Addon:AddExtraReplacement(label, ...)
   if not replacementKeys[label] then
-    table.insert(Addon.localeExtras, {label = label})
-    replacementKeys[label] = #Addon.localeExtras
+    table.insert(Addon.localeExtraReplacements, {label = label})
+    replacementKeys[label] = #Addon.localeExtraReplacements
   end
   for i, rule in ipairs{...} do
-    table.insert(Addon.localeExtras[replacementKeys[label]], rule)
+    table.insert(Addon.localeExtraReplacements[replacementKeys[label]], rule)
   end
 end
 
 
-
+-- Races
 do
   Addon.MY_RACE_NAME = UnitRace"player"
   
   -- Races: Human, Orc, Dwarf, Night Elf, Undead, Tauren, Gnome, Troll, Blood Elf, Draenei
   local raceIDs = {}
-  raceIDs.classic = {1, 2, 3, 4, 5, 6, 7, 8}
-  raceIDs.tbc     = {1, 2, 3, 4, 5, 6, 7, 8, 10, 11}
-  raceIDs.wrath   = raceIDs.tbc
+  raceIDs[Addon.expansions.classic] = {1, 2, 3, 4, 5, 6, 7, 8}
+  raceIDs[Addon.expansions.tbc]     = {1, 2, 3, 4, 5, 6, 7, 8, 10, 11}
+  raceIDs[Addon.expansions.wrath]   = raceIDs[Addon.expansions.tbc]
   
   Addon.raceNames = {}
   
   local allRaces     = {}
   local factionRaces = {Alliance = {}, Horde = {}}
   
-  for _, raceID in ipairs(raceIDs[Addon.expac]) do
+  for _, raceID in ipairs(raceIDs[Addon.expansionLevel]) do
     local raceName = C_CreatureInfo.GetRaceInfo(raceID).raceName
     local factionTag = C_CreatureInfo.GetFactionInfo(raceID).groupTag
     Addon.raceNames[raceID] = raceName
@@ -373,15 +417,45 @@ do
   Addon.uselessRaceStrings = {}
   local sample = format(ITEM_RACES_ALLOWED, tblConcat(allRaces, ", "))
   Addon.uselessRaceStrings[1] = sample -- used as an example in config
+  
   Addon.uselessRaceStrings[sample] = true
   Addon.uselessRaceStrings[format(ITEM_RACES_ALLOWED, tblConcat(factionRaces.Alliance, ", "))] = true
   Addon.uselessRaceStrings[format(ITEM_RACES_ALLOWED, tblConcat(factionRaces.Horde, ", "))] = true
 end
 
 
-
+-- Classes
 do
-  Addon.MY_CLASS = select(2, UnitClassBase"player")
+  local _
+  Addon.MY_CLASS_NAME, _, Addon.MY_CLASS = UnitClass"player"
+  
+  Addon.myClassString = format(ITEM_CLASSES_ALLOWED, Addon.MY_CLASS_NAME)
+  
+  local sampleClasses = {{5, 9, 2}, {7, 1, 3}, {4, 6, 8, 11}}
+  if Addon.expansionLevel < Addon.expansions.wrath then
+    tblRemove(sampleClasses[3], 2)
+  end
+  
+  Addon.sampleRequiredClassesStrings = {}
+  for i, classes in ipairs(sampleClasses) do
+    local red = true
+    for _, class in ipairs(classes) do
+      if class == Addon.MY_CLASS then
+        red = false
+      end
+    end
+    
+    local classes = table.concat(Addon:Map(classes, function(v) return C_CreatureInfo.GetClassInfo(v).className end), red and "|cffff0000, " or ", ")
+    local text = format("|cffff%s" .. ITEM_CLASSES_ALLOWED, red and "0000" or "ffff", classes)
+    table.insert(Addon.sampleRequiredClassesStrings, text)
+    if not red then
+      Addon.sampleRequiredClassesStrings.mine = #Addon.sampleRequiredClassesStrings
+    end
+  end
+  
+  Addon.sampleRequiredClassesString = format("%s" .. ITEM_CLASSES_ALLOWED, "", table.concat({C_CreatureInfo.GetClassInfo(5).className, C_CreatureInfo.GetClassInfo(9).className, C_CreatureInfo.GetClassInfo(2).className}, ", "))
+  
+  Addon.classColorReplacements = {}
   
   -- WARRIOR, PALADIN, HUNTER, ROGUE, PRIEST, DEATHKNIGHT, SHAMAN, MAGE, WARLOCK, MONK, DRUID, DEMONHUNTER
   local ID = {}
@@ -389,6 +463,8 @@ do
     local classInfo = C_CreatureInfo.GetClassInfo(i)
     if classInfo then
       ID[classInfo.classFile] = classInfo.classID
+      
+      table.insert(Addon.classColorReplacements, {" " .. classInfo.className, "|c" .. select(4, GetClassColor(classInfo.classFile)) .. "%0|r"})
     end
   end
   
@@ -449,15 +525,23 @@ do
 end
 
 
+-- Levels
+do
+  Addon.MAX_LEVEL = MAX_PLAYER_LEVEL_TABLE[GetExpansionLevel()]
+  
+  Addon.MY_LEVEL = UnitLevel"player"
+  
+  Addon:RegisterEvent("PLAYER_LEVEL_UP", function(_, level) Addon.MY_LEVEL = UnitLevel"player" end)
+end
 
 
 
 function Addon:RegenerateStatOrder()
-  wipe(self.statList[self.expac])
+  wipe(self.statList[self.expansionLevel])
   wipe(self.statOrder)
-  for stat in strGmatch(self:GetOption("order", self.expac), "[^,]+") do
-    tinsert(self.statList[self.expac], stat)
-    self.statOrder[stat] = #self.statList[self.expac]
+  for stat in strGmatch(self:GetOption("order", self.expansionLevel), "[^,]+") do
+    tinsert(self.statList[self.expansionLevel], stat)
+    self.statOrder[stat] = #self.statList[self.expansionLevel]
   end
 end
 
@@ -597,10 +681,10 @@ do
   
   for i, data in ipairs(statsData) do
     local expacs = {}
-    expacs.classic       = data[1]
-    expacs.tbc           = data[2]
-    expacs.wrath         = data[3]
-    local stat           = data[4]
+    expacs[Addon.expansions.classic] = data[1]
+    expacs[Addon.expansions.tbc]     = data[2]
+    expacs[Addon.expansions.wrath]   = data[3]
+    local stat                       = data[4]
     
     
     for expac, list in pairs(Addon.statList) do
@@ -608,7 +692,7 @@ do
         tinsert(list, stat)
       end
     end
-    if expacs[Addon.expac] then
+    if expacs[Addon.expansionLevel] then
       local normalName     = data[5]
       -- local function ReorderByLocale() return GetLocaleStatFormat(reorderLocaleMode, normalName) end
       -- local normalPattern  = GetLocaleStatFormat(normalName)
@@ -695,7 +779,7 @@ do
           if not HasNumber(match1, match2) then return end
           return format(normalFormPattern, match1, match2)
         end
-        for _, rule in ipairs(Addon.localeExtras[stat] or {}) do
+        for _, rule in ipairs(Addon.localeExtraStatCaptures[stat] or {}) do
           local matches = rule.OUTPUT and {rule.OUTPUT(strMatch(text, rule.INPUT))} or {strMatch(text, rule.INPUT)}
           if #matches > 0 then
             if not HasNumber(matches[1], matches[2]) then return end

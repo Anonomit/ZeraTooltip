@@ -8,10 +8,6 @@ local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 -- TODO: check for more ways of setting tooltip
 -- TODO: wipe only certain hashmap sections on relevant events? probably not necessary since the link is in the hash
 
-local CACHE_WIPE_DELAY  = 10 -- time without requesting constructor for info to be wiped
-local SEEN_BEFORE_CACHE = 4  -- minimum number of times to have requested constructor before it can be cached
-local TIME_SINCE_CACHE  = 1  -- minimum time since first requesting constructor before it can be cached
-
 
 local constructorCleanup = {}
 local constructorCount   = {}
@@ -93,7 +89,7 @@ local function StartCleanup(hash)
   if constructorCleanup[hash] then
     constructorCleanup[hash]:Cancel()
   end
-  constructorCleanup[hash] = C_Timer.NewTicker(CACHE_WIPE_DELAY, function() Cleanup(hash) end, 1)
+  constructorCleanup[hash] = C_Timer.NewTicker(Addon:GetOption("constructorCache", "wipeDelay"), function() Cleanup(hash) end, 1)
 end
 
 
@@ -111,7 +107,7 @@ function Addon:SetConstructor(constructor, tooltip, link, methodName, ...)
   
   StartCleanup(hash)
   
-  if constructorCount[hash] >= SEEN_BEFORE_CACHE and GetTime() - constructorClock[hash] >= TIME_SINCE_CACHE then
+  if constructorCount[hash] >= self:GetOption("constructorCache", "minSeenCount") and GetTime() - constructorClock[hash] >= self:GetOption("constructorCache", "minSeenTime") then
     constructorCache[hash] = constructor
   end
 end

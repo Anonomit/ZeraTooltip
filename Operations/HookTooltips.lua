@@ -63,6 +63,17 @@ local function OnTooltipItemMethod(tooltip, methodName, ...)
   if not name or not link then return end
   local isComparison = compareMethods[methodName]
   
+  if Addon:GetOption("debug", "output", "tooltipHook") then
+    local args = {...}
+    local n = select("#", ...)
+    for i = 1, n do
+      if type(args[i]) == "table" and args[i].GetName then
+        args[i] = args[i]:GetName()
+      end
+      Addon:Debug(link, tooltip:GetName(), methodName, unpack(args, 1, n))
+    end
+  end
+  
   local args = {...}
   args.n = select("#", ...)
   if not recursion and isComparison then
