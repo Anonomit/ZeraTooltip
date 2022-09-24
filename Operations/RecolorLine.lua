@@ -48,6 +48,8 @@ function Addon:RecolorLine(tooltip, line, tooltipData)
     end
   elseif line.type == "DamagePerSecond" and line.rewordRight then
     line.recolorRight = self.COLORS.WHITE -- the speedbar default tooltip color is yellow but let's pretend it's white
+  elseif line.type == "RequiredClasses" then
+    -- Handled as a reword instead
   end
   
   if sides.left ~= line.realColor then

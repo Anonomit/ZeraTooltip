@@ -976,7 +976,76 @@ function Addon:MakeExtraStatsOptionsTable()
       CreateReset(opts, {"hide", "uselessRaces"})
     end
   end
+  
+  -- Classes
+  do
+    local stat = "RequiredClasses"
     
+    local opts = GUI:CreateGroup(opts, stat, nil)
+    local name
+    
+    do
+      local opts = GUI:CreateGroupBox(opts, self.L["Example Text:"])
+      
+      GUI:CreateDescription(opts, self.L["Default"], "small")
+      for i, sample in ipairs(self.sampleRequiredClassesStrings) do
+        local defaultText = sample
+        GUI:CreateDescription(opts, defaultText)
+      end
+      GUI:CreateDescription(opts, self.myClassString)
+      
+      GUI:CreateDivider(opts)
+      
+      for i, sample in ipairs(self.sampleRequiredClassesStrings) do
+        local defaultText = sample
+        local formattedText = defaultText
+        local changed
+        if self:GetOption("hide", stat) then
+          formattedText = "|T132320:0|t " .. self:MakeColorCode(self.COLORS.GRAY, strGsub(formattedText, "|c%x%x%x%x%x%x%x%x", ""))
+          changed = true
+        elseif self:GetOption("doRecolor", stat) then
+          formattedText = self:ChainGsub(formattedText, unpack(self.classColorReplacements))
+          changed = true
+        end
+        
+        if i == 1 then
+          GUI:CreateDescription(opts, (changed or self:GetOption("hide", "myClass")) and self.L["Current"] or " ", "small")
+        end
+        GUI:CreateDescription(opts, changed and formattedText or " ")
+        if i == self.sampleRequiredClassesStrings.mine then
+          name = formattedText
+        end
+      end
+      
+      local formattedText = self.myClassString
+      local changed
+      if self:GetOption("hide", stat) or self:GetOption("hide", "myClass") then
+        formattedText = "|T132320:0|t " .. self:MakeColorCode(self.COLORS.GRAY, formattedText)
+        changed = true
+      elseif self:GetOption("doRecolor", stat) then
+        formattedText = self:ChainGsub(formattedText, unpack(self.classColorReplacements))
+        changed = true
+      end
+      GUI:CreateDescription(opts, changed and formattedText or " ")
+    end
+    opts.name = name
+    
+    do
+      local opts = GUI:CreateGroupBox(opts, L["Recolor"])
+      
+      local disabled = not Addon:GetOption("allow", "recolor")
+      GUI:CreateToggle(opts, {"doRecolor", stat}, self.L["Enable"], nil, disabled).width = 0.5
+      CreateReset(opts, {"color", stat})
+    end
+    
+    do
+      local opts = CreateHide(opts, stat)
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"hide", "myClass"}, self.L["Me"]).width = 0.6
+      CreateReset(opts, {"hide", "myClass"})
+    end
+  end
   end
   
   GUI:CreateGroup(opts, "afterRaces" , " ", nil, true)

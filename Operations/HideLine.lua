@@ -27,6 +27,10 @@ function Addon:HideLine(line)
     if line.colorLeft == self.COLORS.WHITE and self:GetOption("hide", "uselessRaces") and self.uselessRaceStrings[line.textLeftText] then
       return HideLeft(line)
     end
+  elseif line.type == "RequiredClasses" then
+    if line.colorLeft == self.COLORS.WHITE and self:GetOption("hide", "myClass") and line.textLeftText == self.myClassString then
+      return HideLeft(line)
+    end
   elseif line.prefix and not line.stat then
     local stat = self.prefixStats[line.prefix]
     if stat and self:GetOption("hide", stat) then
