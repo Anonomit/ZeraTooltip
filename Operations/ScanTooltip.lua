@@ -14,7 +14,11 @@ function Addon:PrepareTooltip(tooltip, methodName, ...)
   local args = {n = select("#", ...), ...}
   return pcall(function()
     tooltip:Hide()
-    tooltip:SetOwner(UIParent, "ANCHOR_NONE")
+    if self:GetOption("debugOutput", tooltip.tooltip:GetName()) then
+      tooltip:SetOwner(UIParent, "ANCHOR_TOP")
+    else
+      tooltip:SetOwner(UIParent, "ANCHOR_NONE")
+    end
     if methodName then
       tooltip[methodName](tooltip, unpack(args, 1, args.n))
     end
@@ -81,10 +85,9 @@ function Addon:ReadTooltip(tooltip, name, link, maxLines)
       colorRight            = textRightText and self:GetTextColorAsHex(textRight) or nil,
       texture               = textureMap[textLeft],
       moneyFrame            = moneyMap[textLeft],
-      realText              = realTextLeft:GetText() or " ",
+      realTextLeft          = realTextLeft:GetText() or " ",
       realColor             = self:GetTextColorAsHex(realTextLeft),
     }
-    if not tooltipData[i].realText then break end
   end
   tooltipData.numLines = #tooltipData
   

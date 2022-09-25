@@ -63,14 +63,14 @@ local function OnTooltipItemMethod(tooltip, methodName, ...)
   if not name or not link then return end
   local isComparison = compareMethods[methodName]
   
-  if Addon:GetOption("debug", "output", "tooltipHook") then
+  if Addon:GetOption("debugOutput", "tooltipHook") then
     local args = {...}
     local n = select("#", ...)
     for i = 1, n do
       if type(args[i]) == "table" and args[i].GetName then
         args[i] = args[i]:GetName()
       end
-      Addon:Debug(link, tooltip:GetName(), methodName, unpack(args, 1, n))
+      Addon:Debug("Intial", link, tooltip:GetName(), methodName, unpack(args, 1, n))
     end
   end
   
@@ -91,7 +91,10 @@ local function OnTooltipItemMethod(tooltip, methodName, ...)
     
     if tooltip:IsShown() then
       local constructor = self:GetConstructor(tooltip, link, methodName, ...)
-      if not constructor then
+      if not constructor or not self:ValidateConstructor(tooltip, constructor) then
+        if constructor then -- failed validation
+          constructor = self:WipeConstructor(tooltip, link, methodName, ...)
+        end
         if isComparison and not recursion then
           if not self:PrepareTooltip(args[1]) then return end
         end
@@ -135,8 +138,22 @@ local function OnTooltipSetItem(tooltip)
   scannerTooltip.updates = scannerTooltip.updates + 1
   if scannerTooltip.isRecipe and scannerTooltip.updates % 2 == 1 then return end
   
+  if self:GetOption("debugOutput", "tooltipHook") then
+    local args = {unpack(scannerTooltip.lastCall, 1, scannerTooltip.lastCall.n)}
+    local n = scannerTooltip.lastCall.n
+    for i = 1, n do
+      if type(args[i]) == "table" and args[i].GetName then
+        args[i] = args[i]:GetName()
+      end
+      Addon:Debug("OnTooltipSetItem", link, tooltip:GetName(), unpack(args, 1, n))
+    end
+  end
+  
   local constructor = self:GetConstructor(tooltip, unpack(scannerTooltip.lastCall, 1, scannerTooltip.lastCall.n))
-  if not constructor then
+  if not constructor or not self:ValidateConstructor(tooltip, constructor) then
+    if constructor then -- failed validation
+      constructor = self:WipeConstructor(tooltip, unpack(scannerTooltip.lastCall, 1, scannerTooltip.lastCall.n))
+    end
     local tooltipData = self:ReadTooltip(scannerTooltip, name, link, scannerTooltip.isRecipe and scannerTooltip.lengths[1] or nil)
     if #tooltipData > 0 then
       self:ModifyTooltipData(scannerTooltip.tooltip, tooltipData)

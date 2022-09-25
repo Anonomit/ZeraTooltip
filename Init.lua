@@ -6,7 +6,7 @@ local ADDON_NAME, Data = ...
 
 
 local Addon = LibStub("AceAddon-3.0"):NewAddon(ADDON_NAME, "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0")
-Addon.onSetHandlers = {}
+Addon.onOptionSetHandlers = {}
 
 -- Curseforge automatic packaging will comment this out
 -- https://support.curseforge.com/en/support/solutions/articles/9000197281-automatic-packaging
@@ -21,7 +21,7 @@ Addon.onSetHandlers = {}
 --@end-debug@
 function Addon:IsDebugEnabled()
   if self.GetOption then
-    return self:GetOption("debug", "enabled")
+    return self:GetOption"debug"
   else
     return debugMode
   end
@@ -31,14 +31,26 @@ do
   Addon.debugPrefix = "[" .. BINDING_HEADER_DEBUG .. "]"
   local function Debug(self, methodName, ...)
     if not self:IsDebugEnabled() then return end
-    if self.GetOption and self:GetOption("debug", "output", "suppressAll") then return end
+    if self.GetOption and self:GetOption("debugOutput", "suppressAll") then return end
     return self[methodName](self, ...)
   end
   function Addon:Debug(...)
     return Debug(self, "Print", self.debugPrefix, ...)
   end
   function Addon:Debugf(...)
-    return Debug(self, "Printf", self.debugPrefix, ...)
+    return Debug(self, "Printf", "%s " .. select(1, ...), self.debugPrefix, select(2, ...))
+  end
+  
+  local function DebugIf(self, methodName, keys, ...)
+    if self.GetOption and self:GetOption(unpack(keys)) then
+      return self[methodName](self, ...)
+    end
+  end
+  function Addon:DebugIf(keys, ...)
+    return DebugIf(self, "Debug", keys, ...)
+  end
+  function Addon:DebugfIf(keys, ...)
+    return DebugIf(self, "Debugf", keys, ...)
   end
 end
 
@@ -231,7 +243,7 @@ L["ERROR"] = ERROR_CAPS
 L["Debug"]                        = BINDING_HEADER_DEBUG
 L["Reload UI"]                    = RELOADUI
 L["Hide messages like this one."] = COMBAT_LOG_MENU_SPELL_HIDE
-
+L["Delete"] = DELETE
 
 
 -- L["Weapon Damage"] = DAMAGE_TOOLTIP

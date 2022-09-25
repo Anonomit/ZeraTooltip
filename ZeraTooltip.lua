@@ -24,6 +24,12 @@ enchantment should be found only if the link has an enchantment
 measure performance and memory usage with and without caches. maybe only cache particularly expensive operations? like localeExtras
 
 
+show races, classes, level at top
+show heroic tag
+show ilvl
+show bind time
+
+
 --]]
 
 local ADDON_NAME, Data = ...
@@ -95,7 +101,7 @@ local function SetOption(self, db, val, ...)
     tbl = tbl[key]
   end
   tbl[lastKey] = val
-  Addon.OnSet(self, db, val, ...)
+  Addon.OnOptionSet(Addon, db, val, ...)
 end
 function Addon:SetOption(val, ...)
   return SetOption(self, Addon.GetProfile(self), val, ...)
@@ -104,9 +110,14 @@ function Addon:ResetOption(...)
   return Addon.SetOption(self, Addon.Copy(self, Addon.GetDefaultOption(self, ...)), ...)
 end
 
-function Addon:OnSet(...)
-  for _, func in next, Addon.onSetHandlers, nil do
-    func(...)
+function Addon:OnOptionSet(...)
+  if not self:GetDB() then return end -- db hasn't loaded yet
+  for funcName, func in next, Addon.onOptionSetHandlers, nil do
+    if type(func) == "function" then
+      func(self, ...)
+    else
+      self[funcName](self, ...)
+    end
   end
 end
 
@@ -216,7 +227,7 @@ do
     skip = false
   end
 
-  hooksecurefunc("InterfaceOptionsFrame_OpenToCategory", function(...) if Addon:GetOption"fixOptionsMenu" then InterfaceOptionsFrame_OpenToCategory_Fix(...) end end)
+  hooksecurefunc("InterfaceOptionsFrame_OpenToCategory", function(...) if Addon:GetOption("fix", "InterfaceOptionsFrame") then InterfaceOptionsFrame_OpenToCategory_Fix(...) end end)
   
   function Addon:OpenConfig(category)
     InterfaceOptionsFrame_OpenToCategory_Fix(category)
@@ -238,19 +249,19 @@ end
 function Addon:CreateOptions()
   self:InitOptionTableHelpers()
   
-  self:MakeOptionsTable()
+  self:MakeAddonOptions()
   
-  self:MakeStatsOptionsTable()
-  self:MakePaddingOptionsTable()
-  self:MakeExtraStatsOptionsTable()
+  self:MakeStatsOptions()
+  self:MakePaddingOptions()
+  self:MakeExtraOptions()
   
   local profileOptions = self.AceDBOptions:GetOptionsTable(self:GetDB())
   self:CreateOptionsCategory(profileOptions.name, profileOptions)
   
-  self:MakeResetOptionsTable()
+  self:MakeResetOptions()
   
   if self:IsDebugEnabled() then
-    self:MakeDebugOptionsTable()
+    self:MakeDebugOptions()
   end
 end
 

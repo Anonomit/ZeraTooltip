@@ -9,12 +9,16 @@ local strMatch = string.match
 local strGsub  = string.gsub
 local strFind  = string.find
 
-
+local cacheSize = 0
 local textCache = {}
-local function WipeTextCache()
+function Addon:WipeTextCache()
   wipe(textCache)
+  cacheSize = 0
 end
-Addon.onSetHandlers["WipeTextCache"] = WipeTextCache
+function Addon:GetTextCacheSize()
+  return cacheSize
+end
+Addon.onOptionSetHandlers["WipeTextCache"] = true
 
 
 local miscRewordLines = {
@@ -91,7 +95,7 @@ function Addon:RewordLine(tooltip, line, tooltipData)
     end
     
     -- check compatibility
-    if line.realText ~= line.textLeftText then
+    if line.realTextLeft ~= line.textLeftText then
       -- some other addon is modifying tooltip text
       
       -- RatingBuster compatibility
@@ -126,10 +130,11 @@ function Addon:RewordLine(tooltip, line, tooltipData)
     
     if self:GetOption("cache", "text") then
       textCache[line.textLeftText] = {text, line.rewordRight}
+      cacheSize = cacheSize + 1
     end
   end
   
-  if text ~= line.realText then
+  if text ~= line.realTextLeft then
     line.rewordLeft = text
   end
 end

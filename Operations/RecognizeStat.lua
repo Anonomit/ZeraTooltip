@@ -19,11 +19,16 @@ local typesToSearch = {
 }
 
 
+local cacheSize = 0
 local statCache = {}
-local function WipeStatCache()
+function Addon:WipeStatCache()
   wipe(statCache)
+  cacheSize = 0
 end
-Addon.onSetHandlers["WipeStatCache"] = WipeStatCache
+function Addon:GetStatCacheSize()
+  return cacheSize
+end
+Addon.onOptionSetHandlers["WipeStatCache"] = true
 
 
 function Addon:RecognizeStat(line)
@@ -78,5 +83,6 @@ function Addon:RecognizeStat(line)
   
   if self:GetOption("cache", "stat") then
     statCache[line.textLeftText] = {stat = line.stat, normalForm = line.normalForm, prefix = line.prefix, newPrefix = line.newPrefix}
+    cacheSize = cacheSize + 1
   end
 end

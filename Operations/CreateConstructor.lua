@@ -11,6 +11,8 @@ local tblSort   = table.sort
 
 
 function Addon:CreateConstructor(tooltipData)
+  local constructor = {numLines = tooltipData.numLines}
+  
   local merge         = {}
   local moves         = {}
   local pads          = {}
@@ -20,6 +22,13 @@ function Addon:CreateConstructor(tooltipData)
   local rewordRights  = {}
   local hideLefts     = {}
   local hideRights    = {}
+  
+  if self:GetOption("constructor", "doValidation") then
+    constructor.validation = {}
+    for _, line in ipairs(tooltipData) do
+      constructor.validation[line.i] = line.realTextLeft
+    end
+  end
   
   -- hide left (also hides right)
   for i = #tooltipData, 1, -1 do
@@ -32,10 +41,7 @@ function Addon:CreateConstructor(tooltipData)
   end
   
   assert(#tooltipData ~= 0, "A tooltip loaded incorrectly.")
-  local constructor = {
-    numLines = tooltipData.numLines,
-    lastLine = tooltipData[#tooltipData].i
-  }
+  constructor.lastLine = tooltipData[#tooltipData].i
   
   for i = #tooltipData, 1, -1 do
     local line = tooltipData[i]

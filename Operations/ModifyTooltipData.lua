@@ -18,9 +18,7 @@ function Addon:ModifyTooltipData(tooltip, tooltipData)
       self:RewordLine(tooltip, line, tooltipData)
     end
     
-    if self:GetOption("debug", "output", "lineRecognitions") then
-      self:Debug(i, line.textLeftText, "type:", line.type, "stat:", line.stat, "prefix:", line.prefix)
-    end
+    self:DebugfIf({"debugOutput", "lineRecognitions"}, "line: %d, textLeft: '%s', type: '%s', stat: '%s', prefix: '%s'", i, line.textLeftText, tostring(line.type), tostring(line.stat), tostring(line.prefix))
   end
   
   self:SortStats(tooltipData)

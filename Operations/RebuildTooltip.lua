@@ -229,3 +229,35 @@ function Addon:ConstructTooltip(tooltip, constructor)
   end
   return fullDestructor
 end
+
+
+function Addon:ValidateConstructor(tooltip, constructor)
+  if not self:GetOption("constructor", "doValidation") then
+    return true
+  end
+  if not constructor.validation then
+    self:DebugIf({"debugOutput", "constructorValidationFailed"}, "Constructor validation failed. Constructor has no validation table")
+    return false
+  end
+  
+  local tooltipName = tooltip:GetName()
+  
+  for i = constructor.numLines, 1, -1 do
+    local validation = constructor.validation[i]
+    if not validation then
+      self:DebugfIf({"debugOutput", "constructorValidationFailed"}, "Constructor validation failed. Line %d, Missing validation data", i)
+    end
+    
+    local frame = _G[tooltipName.."TextLeft"..i]
+    if not frame then
+      self:DebugfIf({"debugOutput", "constructorValidationFailed"}, "Constructor validation failed. Line %d, Expected '%s', Could not find %s", i, validation, tooltipName.."TextLeft"..i)
+      return false
+    end
+    if frame:GetText() ~= validation then
+      self:DebugfIf({"debugOutput", "constructorValidationFailed"}, "Constructor validation failed. Line %d, Expected '%s', Found '%s'", i, validation, frame:GetText())
+      return false
+    end
+  end
+  
+  return true
+end

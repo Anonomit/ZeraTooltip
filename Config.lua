@@ -229,22 +229,29 @@ function Addon:MakeDefaultOptions()
         
         
         -- Debug options
-        debug = {
-          enabled = false,
+        debug = false,
           
-          output = {
-            suppressAll = false,
-            
-            tooltipHook      = true,
-            lineRecognitions = true,
-          },
+        debugOutput = {
+          suppressAll = false,
           
+          tooltipHook                 = true,
+          lineRecognitions            = true,
+          constructorCached           = true,
+          constructorWiped            = true,
+          constructorValidationFailed = true,
+          
+          GameTooltip      = true,
+          ItemRefTooltip   = true,
+          ShoppingTooltip1 = true,
+          ShoppingTooltip2 = true,
         },
         
-        constructorCache = {
-          wipeDelay    = 10,  -- time in seconds without constructor being requested before it's cleared
-          minSeenCount = 4,   -- minimum number of times constructor must be requested before it can be cached
-          minSeenTime  = 0.5, -- minimum time in seconds since constructor was first requested before it can be cached
+        constructor = {
+          doValidation = true,
+          
+          cacheWipeDelay    = 10,  -- time in seconds without constructor being requested before it's cleared
+          cacheMinSeenCount = 4,   -- minimum number of times constructor must be requested before it can be cached
+          cacheMinSeenTime  = 0.5, -- minimum time in seconds since constructor was first requested before it can be cached
         },
         
         cache = {
@@ -263,7 +270,9 @@ function Addon:MakeDefaultOptions()
         },
         
         -- TODO: config options for blizzard fixes?
-        fixOptionsMenu = false,
+        fix = {
+          InterfaceOptionsFrame = false,
+        },
       },
     },
   }
@@ -429,7 +438,7 @@ end
 
 
 -- ZeraTooltip options
-function Addon:MakeOptionsTable()
+function Addon:MakeAddonOptions()
   local title = ADDON_NAME .. " v" .. tostring(self:GetOption"version")
   self:CreateOptionsCategory(nil, function()
   
@@ -536,7 +545,7 @@ local function CreateReset(opts, option, func)
   local self = Addon
   local GUI  = self.GUI
   
-  GUI:CreateExecute(opts, option, self.L["Reset"], nil, func or function() self:ResetOption(unpack(option)) end).width = 0.6
+  GUI:CreateExecute(opts, {"reset", unpack(option)}, self.L["Reset"], nil, func or function() self:ResetOption(unpack(option)) end).width = 0.6
 end
 local function CreateColor(opts, stat)
   local self = Addon
@@ -648,7 +657,7 @@ local function CreateStatOption(opts, i, stat)
   
   CreateHide(opts, stat)
 end
-function Addon:MakeStatsOptionsTable()
+function Addon:MakeStatsOptions()
   local title = self.L["Stats"]
   self:CreateOptionsCategory(title, function()
   
@@ -672,11 +681,115 @@ function Addon:MakeStatsOptionsTable()
 end
 
 
+-- Padding options
+local function CreateGroupGap(opts, name, disabled)
+  if disabled then return end
+  local self = Addon
+  local GUI  = self.GUI
+  
+  GUI:CreateGroup(opts, name, " ", nil, true)
+end
+local function CreatePaddingOption(opts, name, beforeStat, afterStat, sample, disabled)
+  local self = Addon
+  local GUI  = self.GUI
+  
+  local opts = GUI:CreateGroup(opts, name, name, nil, disabled)
+  
+  if beforeStat then
+    GUI:CreateToggle(opts, beforeStat, L["Space Above"], nil, disabled)
+  else -- only happens at the end
+    return GUI:CreateToggle(opts, afterStat, L["Space Below"], nil, disabled)
+  end
+  
+  GUI:CreateNewline(opts)
+  if sample then
+    GUI:CreateDescription(opts, sample)
+  else
+    GUI:CreateDescription(opts, " ")
+  end
+  
+  if afterStat then
+    GUI:CreateNewline(opts)
+    GUI:CreateToggle(opts, afterStat, L["Space Below"], nil, disabled)
+  end
+end
+local function CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, disabled, paddedAfterPrevious)
+  local self = Addon
+  
+  if beforeStat and self:GetOption(unpack(beforeStat)) and not paddedAfterPrevious then CreateGroupGap(opts, "before" .. name) end
+  CreatePaddingOption(opts, name, beforeStat, afterStat, sample)
+  paddedAfterPrevious = self:GetOption(unpack(afterStat))
+  if paddedAfterPrevious then CreateGroupGap(opts, "after" .. name) end
+  return paddedAfterPrevious
+end
+function Addon:MakePaddingOptions()
+  local title = L["Spacing"]
+  self:CreateOptionsCategory(title, function()
+  
+  local GUI = self.GUI:ResetOrder()
+  local opts = GUI:CreateGroupTop(title)
+  
+  CreateCombineStatsOption(opts)
+  Addon.GUI:CreateToggle(opts, {"pad", "before", "BonusEffect"}, L["Space Above Bonus Effects"]).width = 2
+  
+  local paddedAfterPrevious = false
+  local combineStats = self:GetOption("allow", "reorder") and self:GetOption"combineStats"
+  
+  -- Base Stats
+  local name, beforeStat, afterStat, sample = self.L["Base Stats"], {"pad", "before", "BaseStat"}, {"pad", "after", "BaseStat"}, format(ITEM_MOD_STAMINA, strByte"+", 10)
+  if beforeStat and self:GetOption(unpack(beforeStat)) and not paddedAfterPrevious then CreateGroupGap(opts, "before" .. name) end
+  CreatePaddingOption(opts, name, beforeStat, afterStat, sample)
+  if combineStats then
+    -- Secondary Stats
+    local name, beforeStat, afterStat, sample = L["Secondary Stats"], {"pad", "before", "SecondaryStat"}, {"pad", "after", "SecondaryStat"}, ITEM_SPELL_TRIGGER_ONEQUIP .. " " .. format(ITEM_MOD_MANA_REGENERATION, "10")
+    CreatePaddingOption(opts, name, beforeStat, afterStat, sample, true)
+  end
+  paddedAfterPrevious = self:GetOption(unpack(afterStat))
+  if paddedAfterPrevious then CreateGroupGap(opts, "after" .. name) end
+  
+  -- Enchant
+  local name, beforeStat, afterStat, sample = self.L["Enchant"], {"pad", "before", "Enchant"}, {"pad", "after", "Enchant"}, format(ENCHANTED_TOOLTIP_LINE, self.L["Enchant"])
+  paddedAfterPrevious = CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, true, paddedAfterPrevious)
+  
+  -- Weapon Enchant
+  local name, beforeStat, afterStat, sample = self.L["Weapon Enchantment"], {"pad", "before", "WeaponEnchant"}, {"pad", "after", "WeaponEnchant"}, format(ENCHANTED_TOOLTIP_LINE, self.L["Weapon Enchantment"])
+  paddedAfterPrevious = CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, true, paddedAfterPrevious)
+  
+  -- Sockets
+  local name, beforeStat, afterStat, sample = L["Sockets"], {"pad", "before", "Socket"}, {"pad", "after", "SocketBonus"}
+  paddedAfterPrevious = CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, true, paddedAfterPrevious)
+  
+  if not combineStats then
+    -- Secondary Stats
+    local name, beforeStat, afterStat, sample = L["Secondary Stats"], {"pad", "before", "SecondaryStat"}, {"pad", "after", "SecondaryStat"}, ITEM_SPELL_TRIGGER_ONEQUIP .. " " .. format(ITEM_MOD_MANA_REGENERATION, "10")
+    paddedAfterPrevious = CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, true, paddedAfterPrevious)
+  end
+  
+  -- Set List
+  local name, beforeStat, afterStat, sample = L["Set List"], {"pad", "before", "SetName"}, {"pad", "after", "SetPiece"}
+  paddedAfterPrevious = CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, true, paddedAfterPrevious)
+  
+  -- Set Bonus
+  local name, beforeStat, afterStat, sample = L["Set List"], {"pad", "before", "SetBonus"}, {"pad", "after", "SetBonus"}, format(ITEM_SET_BONUS, format(ITEM_MOD_MANA_REGENERATION, "10"))
+  paddedAfterPrevious = CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, true, paddedAfterPrevious)
+  
+  -- End
+  local name, beforeStat, afterStat, sample = self.L["End"], nil, {"padLastLine"}
+  paddedAfterPrevious = CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, true, paddedAfterPrevious)
+  
+  
+  GUI:CreateGroup(opts, "-", "------------------", nil, true)
+  
+  return opts
+  end)
+end
+
+
 local sampleDamage   = 20
 local sampleVariance = 0.5
 local sampleSpeed    = 2.6
 -- Misc options
-function Addon:MakeExtraStatsOptionsTable()
+function Addon:MakeExtraOptions()
   local title = self.L["Other Options"]
   self:CreateOptionsCategory(title, function()
   
@@ -1035,7 +1148,7 @@ function Addon:MakeExtraStatsOptionsTable()
       
       local disabled = not Addon:GetOption("allow", "recolor")
       GUI:CreateToggle(opts, {"doRecolor", stat}, self.L["Enable"], nil, disabled).width = 0.5
-      CreateReset(opts, {"color", stat})
+      CreateReset(opts, {"doRecolor", stat})
     end
     
     do
@@ -1185,112 +1298,8 @@ function Addon:MakeExtraStatsOptionsTable()
 end
 
 
--- Padding options
-local function CreateGroupGap(opts, name, disabled)
-  if disabled then return end
-  local self = Addon
-  local GUI  = self.GUI
-  
-  GUI:CreateGroup(opts, name, " ", nil, true)
-end
-local function CreatePaddingOption(opts, name, beforeStat, afterStat, sample, disabled)
-  local self = Addon
-  local GUI  = self.GUI
-  
-  local opts = GUI:CreateGroup(opts, name, name, nil, disabled)
-  
-  if beforeStat then
-    GUI:CreateToggle(opts, beforeStat, L["Space Above"], nil, disabled)
-  else -- only happens at the end
-    return GUI:CreateToggle(opts, afterStat, L["Space Below"], nil, disabled)
-  end
-  
-  GUI:CreateNewline(opts)
-  if sample then
-    GUI:CreateDescription(opts, sample)
-  else
-    GUI:CreateDescription(opts, " ")
-  end
-  
-  if afterStat then
-    GUI:CreateNewline(opts)
-    GUI:CreateToggle(opts, afterStat, L["Space Below"], nil, disabled)
-  end
-end
-local function CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, disabled, paddedAfterPrevious)
-  local self = Addon
-  
-  if beforeStat and self:GetOption(unpack(beforeStat)) and not paddedAfterPrevious then CreateGroupGap(opts, "before" .. name) end
-  CreatePaddingOption(opts, name, beforeStat, afterStat, sample)
-  paddedAfterPrevious = self:GetOption(unpack(afterStat))
-  if paddedAfterPrevious then CreateGroupGap(opts, "after" .. name) end
-  return paddedAfterPrevious
-end
-function Addon:MakePaddingOptionsTable()
-  local title = L["Spacing"]
-  self:CreateOptionsCategory(title, function()
-  
-  local GUI = self.GUI:ResetOrder()
-  local opts = GUI:CreateGroupTop(title)
-  
-  CreateCombineStatsOption(opts)
-  Addon.GUI:CreateToggle(opts, {"pad", "before", "BonusEffect"}, L["Space Above Bonus Effects"]).width = 2
-  
-  local paddedAfterPrevious = false
-  local combineStats = self:GetOption("allow", "reorder") and self:GetOption"combineStats"
-  
-  -- Base Stats
-  local name, beforeStat, afterStat, sample = self.L["Base Stats"], {"pad", "before", "BaseStat"}, {"pad", "after", "BaseStat"}, format(ITEM_MOD_STAMINA, strByte"+", 10)
-  if beforeStat and self:GetOption(unpack(beforeStat)) and not paddedAfterPrevious then CreateGroupGap(opts, "before" .. name) end
-  CreatePaddingOption(opts, name, beforeStat, afterStat, sample)
-  if combineStats then
-    -- Secondary Stats
-    local name, beforeStat, afterStat, sample = L["Secondary Stats"], {"pad", "before", "SecondaryStat"}, {"pad", "after", "SecondaryStat"}, ITEM_SPELL_TRIGGER_ONEQUIP .. " " .. format(ITEM_MOD_MANA_REGENERATION, "10")
-    CreatePaddingOption(opts, name, beforeStat, afterStat, sample, true)
-  end
-  paddedAfterPrevious = self:GetOption(unpack(afterStat))
-  if paddedAfterPrevious then CreateGroupGap(opts, "after" .. name) end
-  
-  -- Enchant
-  local name, beforeStat, afterStat, sample = self.L["Enchant"], {"pad", "before", "Enchant"}, {"pad", "after", "Enchant"}, format(ENCHANTED_TOOLTIP_LINE, self.L["Enchant"])
-  paddedAfterPrevious = CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, true, paddedAfterPrevious)
-  
-  -- Weapon Enchant
-  local name, beforeStat, afterStat, sample = self.L["Weapon Enchantment"], {"pad", "before", "WeaponEnchant"}, {"pad", "after", "WeaponEnchant"}, format(ENCHANTED_TOOLTIP_LINE, self.L["Weapon Enchantment"])
-  paddedAfterPrevious = CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, true, paddedAfterPrevious)
-  
-  -- Sockets
-  local name, beforeStat, afterStat, sample = L["Sockets"], {"pad", "before", "Socket"}, {"pad", "after", "SocketBonus"}
-  paddedAfterPrevious = CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, true, paddedAfterPrevious)
-  
-  if not combineStats then
-    -- Secondary Stats
-    local name, beforeStat, afterStat, sample = L["Secondary Stats"], {"pad", "before", "SecondaryStat"}, {"pad", "after", "SecondaryStat"}, ITEM_SPELL_TRIGGER_ONEQUIP .. " " .. format(ITEM_MOD_MANA_REGENERATION, "10")
-    paddedAfterPrevious = CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, true, paddedAfterPrevious)
-  end
-  
-  -- Set List
-  local name, beforeStat, afterStat, sample = L["Set List"], {"pad", "before", "SetName"}, {"pad", "after", "SetPiece"}
-  paddedAfterPrevious = CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, true, paddedAfterPrevious)
-  
-  -- Set Bonus
-  local name, beforeStat, afterStat, sample = L["Set List"], {"pad", "before", "SetBonus"}, {"pad", "after", "SetBonus"}, format(ITEM_SET_BONUS, format(ITEM_MOD_MANA_REGENERATION, "10"))
-  paddedAfterPrevious = CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, true, paddedAfterPrevious)
-  
-  -- End
-  local name, beforeStat, afterStat, sample = self.L["End"], nil, {"padLastLine"}
-  paddedAfterPrevious = CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, true, paddedAfterPrevious)
-  
-  
-  GUI:CreateGroup(opts, "-", "------------------", nil, true)
-  
-  return opts
-  end)
-end
-
-
 -- Reset Options
-function Addon:MakeResetOptionsTable()
+function Addon:MakeResetOptions()
   local title = self.L["Reset"]
   self:CreateOptionsCategory(title, function()
   
@@ -1321,91 +1330,143 @@ end
 
 
 -- Debug Options
-function Addon:MakeDebugOptionsTable()
+function Addon:MakeDebugOptions()
   local title = self.L["Debug"]
   self:CreateOptionsCategory(title, function()
   
   local GUI = self.GUI:ResetOrder()
   local opts = GUI:CreateGroupTop(title, "tab")
   
-  -- Debug Messages
+  -- Enable
   do
     local opts = GUI:CreateGroup(opts, GUI:Order(), self.L["Enable"])
     
-    GUI:CreateToggle(opts, {"debug", "enabled"}, self.L["Debug"])
-    GUI:CreateExecute(opts, "reload", self.L["Reload UI"], nil, ReloadUI)
-    GUI:CreateNewline(opts)
+    do
+      local opts = GUI:CreateGroupBox(opts, "Debug")
+      GUI:CreateToggle(opts, {"debug"}, self.L["Enable"])
+      GUI:CreateNewline(opts)
+      GUI:CreateExecute(opts, "reload", self.L["Reload UI"], nil, ReloadUI)
+    end
+  end
+  
+  -- Debug Output
+  do
+    local opts = GUI:CreateGroup(opts, GUI:Order(), "Output")
     
+    local disabled = not self:GetOption"debug"
     
     do
-      local opts = GUI:CreateGroupBox(opts, "Messages")
+      local opts = GUI:CreateGroupBox(opts, "Suppress All")
       
-      GUI:CreateToggle(opts, {"debug", "output", "suppressAll"}, self.debugPrefix .. " " .. self.L["Hide messages like this one."]).width = 2
-      GUI:CreateNewline(opts)
-      
-      GUI:CreateToggle(opts, {"debug", "output", "tooltipHook"}, "Tooltip Hook Messages")
-      GUI:CreateNewline(opts)
-      
-      GUI:CreateToggle(opts, {"debug", "output", "lineRecognitions"}, "Line Recognitions")
+      GUI:CreateToggle(opts, {"debugOutput", "suppressAll"}, self.debugPrefix .. " " .. self.L["Hide messages like this one."], nil, disabled).width = 2
     end
     
-    --[[
-    output = {
-      suppressAll = false,
+    do
+      local opts = GUI:CreateGroupBox(opts, "Message Types")
       
-      tooltipHook      = true,
-      lineRecognitions = true,
-    },--]]
+      local disabled = disabled or self:GetOption("debugOutput", "suppressAll")
+      
+      GUI:CreateToggle(opts, {"debugOutput", "tooltipHook"}, "Tooltip Hook Trigger", nil, disabled).width = 2
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"debugOutput", "lineRecognitions"}, "Line Recognitions", nil, disabled).width = 2
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"debugOutput", "constructorCached"}, "Constructor Cached", nil, disabled).width = 2
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"debugOutput", "constructorWiped"}, "Constructor Wiped", nil, disabled).width = 2
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"debugOutput", "constructorValidationFailed"}, "Constructor Validation Failure", nil, disabled).width = 2
+    end
+    
+    do
+      local opts = GUI:CreateGroupBox(opts, "Tooltips")
+      
+      GUI:CreateToggle(opts, {"debugOutput", "GameTooltip"}, "GameTooltip", nil, disabled)
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"debugOutput", "ItemRefTooltip"}, "ItemRefTooltip", nil, disabled)
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"debugOutput", "ShoppingTooltip1"}, "ShoppingTooltip1", nil, disabled)
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"debugOutput", "ShoppingTooltip2"}, "ShoppingTooltip2", nil, disabled)
+      GUI:CreateNewline(opts)
+      GUI:CreateExecute(opts, "reload", self.L["Reload UI"], nil, ReloadUI)
+    end
   end
   
   -- Caches
   do
     local opts = GUI:CreateGroup(opts, GUI:Order(), "Cache")
     
-    GUI:CreateToggle(opts, {"cache", "constructor"}, "Cache Constructors")
-    GUI:CreateNewline(opts)
+    local group
     
-    GUI:CreateToggle(opts, {"cache", "text"}, "Cache Text Rewords")
-    GUI:CreateNewline(opts)
+    for _, data in ipairs{
+      {"Text Rewords"     , {"cache", "text"}       , "WipeTextCache"       , "GetTextCacheSize"},
+      {"Stat Recognitions", {"cache", "stat"}       , "WipeStatCache"       , "GetStatCacheSize"},
+      {"Constructors"     , {"cache", "constructor"}, "WipeConstructorCache", "GetConstructorCacheSize"},
+    } do
+      local opts = GUI:CreateGroupBox(opts, data[1] .. ": " .. self[data[4]](self))
+      group = opts
+      
+      GUI:CreateToggle(opts, data[2], self.L["Enable"])
+      CreateReset(opts, data[2])
+      GUI:CreateExecute(opts, {"wipe", unpack(data[2])}, self.L["Delete"], nil, function() self[data[3]](self) end).width = 0.6
+    end
     
-    GUI:CreateToggle(opts, {"cache", "stat"}, "Cache Stat Recognition")
-    GUI:CreateNewline(opts)
-    
-    local option = GUI:CreateRange(opts, {"constructorCache", "wipeDelay"}, "Wipe Delay", "Time in seconds without constructor being requested before it's cleared.", 0, 1000000, 0.001)
-    option.softMax = 60
-    option.bigStep = 1
-    GUI:CreateNewline(opts)
-    
-    local option = GUI:CreateRange(opts, {"constructorCache", "minSeenCount"}, "Minimum Seen Count", "Minimum number of times constructor must be requested before it can be cached.", 0, 1000000, 1)
-    option.softMax = 50
-    GUI:CreateNewline(opts)
-    
-    local option = GUI:CreateRange(opts, {"constructorCache", "minSeenTime"}, "Minimum Seen Time", "Minimum time in seconds since constructor was first requested before it can be cached.", 0, 1000000, 0.001)
-    option.softMax = 10
-    option.bigStep = 0.25
+    do
+      local opts = group
+      GUI:CreateDivider(opts)
+      
+      local disabled = not self:GetOption("cache", "constructor")
+      
+      local option = GUI:CreateRange(opts, {"constructor", "cacheWipeDelay"}, "Wipe Delay", "Time in seconds without constructor being requested before it's cleared.", 0, 1000000, 0.001, disabled)
+      option.softMax = 60
+      option.bigStep = 1
+      CreateReset(opts, {"constructor", "cacheWipeDelay"})
+      GUI:CreateNewline(opts)
+      
+      local option = GUI:CreateRange(opts, {"constructor", "cacheMinSeenCount"}, "Minimum Seen Count", "Minimum number of times constructor must be requested before it can be cached.", 0, 1000000, 1, disabled)
+      option.softMax = 50
+      CreateReset(opts, {"constructor", "cacheMinSeenCount"})
+      GUI:CreateNewline(opts)
+      
+      local option = GUI:CreateRange(opts, {"constructor", "cacheMinSeenTime"}, "Minimum Seen Time", "Minimum time in seconds since constructor was first requested before it can be cached.", 0, 1000000, 0.001, disabled)
+      option.softMax = 10
+      option.bigStep = 0.25
+      CreateReset(opts, {"constructor", "cacheMinSeenTime"})
+    end
   end
   
   -- Throttles
   do
     local opts = GUI:CreateGroup(opts, GUI:Order(), "Throttles")
     
-    GUI:CreateToggle(opts, {"throttle", "AuctionFrame"}, "Throttle AuctionFrame", "Throttle tooltips updates from this frame so they use the regular tooltip update interval.")
-    GUI:CreateNewline(opts)
-    
-    GUI:CreateToggle(opts, {"throttle", "InspectFrame"}, "Throttle InspectFrame", "Throttle tooltips updates from this frame so they use the regular tooltip update interval.")
-    GUI:CreateNewline(opts)
-    
-    GUI:CreateToggle(opts, {"throttle", "MailFrame"}, "Throttle MailFrame", "Throttle tooltips updates from this frame so they use the regular tooltip update interval.")
-    GUI:CreateNewline(opts)
-    
-    GUI:CreateToggle(opts, {"throttle", "TradeSkillFrame"}, "Throttle TradeSkillFrame", "Throttle tooltips updates from this frame so they use the regular tooltip update interval.")
+    for _, frameName in ipairs{
+      "AuctionFrame",
+      "InspectFrame",
+      "MailFrame",
+      "TradeSkillFrame",
+    } do
+      local opts = GUI:CreateGroupBox(opts, frameName)
+      
+      GUI:CreateToggle(opts, {"throttle", frameName}, "Throttle " .. frameName, "Throttle tooltips updates from this frame so they use the regular tooltip update interval.")
+    end
   end
   
   -- Fixes
   do
     local opts = GUI:CreateGroup(opts, GUI:Order(), "Fixes")
     
-    GUI:CreateToggle(opts, {"fixOptionsMenu"}, "Fix Options Menu", "Fix a bug with Interface Options so that it can be opened to a category that isn't visible without scrolling.")
+    do
+      local opts = GUI:CreateGroupBox(opts, "Options Menu")
+      
+      GUI:CreateToggle(opts, {"fix", "InterfaceOptionsFrame"}, "Fix Category Opening", "Fix a bug with Interface Options so that it can be opened to a category that isn't visible without scrolling.").width = 2
+    end
   end
   
   return opts
