@@ -24,10 +24,10 @@ enchantment should be found only if the link has an enchantment
 measure performance and memory usage with and without caches. maybe only cache particularly expensive operations? like localeExtras
 
 
-show races, classes, level at top
+reorder races, classes, level
 show heroic tag
 show ilvl
-show bind time
+REFUND_TIME_REMAINING
 
 
 --]]

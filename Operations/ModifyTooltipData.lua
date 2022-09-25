@@ -21,7 +21,7 @@ function Addon:ModifyTooltipData(tooltip, tooltipData)
     self:DebugfIf({"debugOutput", "lineRecognitions"}, "line: %d, textLeft: '%s', type: '%s', stat: '%s', prefix: '%s'", i, line.textLeftText, tostring(line.type), tostring(line.stat), tostring(line.prefix))
   end
   
-  self:SortStats(tooltipData)
+  self:ReorderLines(tooltipData)
   
   self:CalculatePadding(tooltipData)
 end

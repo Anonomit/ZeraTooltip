@@ -84,29 +84,36 @@ local contexts = Addon:MakeLookupTable({
   "SetBonus",
   "LastSetBonus",
   "SocketHint",
+  "SoulboundTradeable",
   "Delta",
   "RecipeMats",
   "RecipeTitle",
 }, nil, true)
 
 local contextAscensions = Addon:Map({
+  Binding = function(context, tooltipData, line, currentContext)
+    -- mark where the binding would be if it existed on this item
+    if not tooltipData.binding then
+      tooltipData.binding = line.i
+    end
+  end,
   -- Damage = function(context, tooltipData, line)
   --   local lastLine = tooltipData[line.i-1]
   --   if not lastLine.type then
   --     lastLine.type = "Type"
   --   end
   -- end,
+  BaseStat = function(context, tooltipData, line, currentContext)
+    -- mark where the base stats would be if they existed on this item
+    if not tooltipData.statStart then
+      tooltipData.statStart = line.i - 1
+    end
+  end,
   Enchant = function(context, tooltipData, line, currentContext)
     -- mark red enchantment lines if I found an "enchantment disabled" line
     if currentContext == contexts.RequiredEnchant then
       local lastLine = tooltipData[line.i-2]
       lastLine.type = "Enchant"
-    end
-  end,
-  BaseStat = function(context, tooltipData, line, currentContext)
-    -- mark where the base stats would be if they existed on this item
-    if not tooltipData.statStart then
-      tooltipData.statStart = line.i - 1
     end
   end,
   RecipeTitle = function(context, tooltipData, line, currentContext)
@@ -147,6 +154,7 @@ local contextActions = Addon:Map({
   end,
   Binding = function(i, tooltipData, line)
     if MatchesAny(line.textLeftTextStripped, ITEM_SOULBOUND, ITEM_BIND_ON_EQUIP, ITEM_BIND_ON_USE, ITEM_BIND_ON_PICKUP, ITEM_BIND_TO_ACCOUNT, ITEM_BIND_TO_BNETACCOUNT) then
+      tooltipData.binding = line.i
       return SetContext(i, tooltipData, line)
     end
   end,
@@ -295,6 +303,11 @@ local contextActions = Addon:Map({
   end,
   SocketHint = function(i, tooltipData, line)
     if StartsWithAny(line.textLeftTextStripped, ITEM_SOCKETABLE) then
+      return SetContext(i, tooltipData, line)
+    end
+  end,
+  SoulboundTradeable = function(i, tooltipData, line)
+    if line.colorLeft == Addon.COLORS.SKY_BLUE and MatchesAny(line.textLeftTextStripped, BIND_TRADE_TIME_REMAINING) then
       return SetContext(i, tooltipData, line)
     end
   end,

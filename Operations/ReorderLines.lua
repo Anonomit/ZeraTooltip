@@ -17,8 +17,8 @@ local function StatSorter(a, b)
   return GetStatSortValue(a) < GetStatSortValue(b)
 end
 
-function Addon:SortStats(tooltipData)
-  if not self:GetOption("allow", "reorder") then return end
+local function SortStats(tooltipData)
+  if not Addon:GetOption("allow", "reorder") then return end
   local stats = {
     BaseStat = {},
     SecondaryStat = {},
@@ -43,7 +43,7 @@ function Addon:SortStats(tooltipData)
   --   end
   -- end
   
-  if self:GetOption"combineStats" then
+  if Addon:GetOption"combineStats" then
     while #stats.SecondaryStat > 0 do
       tinsert(stats.BaseStat, tblRemove(stats.SecondaryStat, 1))
     end
@@ -56,4 +56,25 @@ function Addon:SortStats(tooltipData)
       tinsert(tooltipData, statTable.location, tblRemove(statTable, #statTable))
     end
   end
+end
+
+function Addon:ReorderLines(tooltipData)
+  
+  SortStats(tooltipData)
+  
+  local i = 1
+  while i <= #tooltipData do
+    local line = tooltipData[i]
+    
+    if not line.hide then
+      if line.type == "SoulboundTradeable" then
+        if self:GetOption("doReorder", line.type) then
+          tinsert(tooltipData, (tooltipData.binding or 1) + 1, tblRemove(tooltipData, i))
+        end
+      end
+    end
+    
+    i = i + 1
+  end
+  
 end

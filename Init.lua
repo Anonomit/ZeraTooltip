@@ -219,6 +219,7 @@ L["Enchant"]            = ENSCRIBE
 L["Weapon Enchantment"] = WEAPON_ENCHANTMENT
 L["End"]                = KEY_END
 
+L["Trade"]         = TRADE
 L["Settings"]      = SETTINGS
 L["Other Options"] = UNIT_FRAME_DROPDOWN_SUBSECTION_TITLE_OTHER
 L["Weapon"]        = WEAPON
@@ -566,12 +567,13 @@ end
 
 -- https://colornamer.robertcooper.me/
 Addon.COLORS = {
-  WHITE  = rgb(255, 255, 255),
-  GRAY   = rgb(127, 127, 127),
-  RED    = rgb(255,  32,  32),
-  ORANGE = rgb(255, 127,  32),
-  GREEN  = rgb(  0, 255,   0),
-  BLUE   = rgb(  0,   0, 255),
+  WHITE     = rgb(255, 255, 255),
+  GRAY      = rgb(127, 127, 127),
+  RED       = rgb(255,  32,  32),
+  ORANGE    = rgb(255, 127,  32),
+  GREEN     = rgb(  0, 255,   0),
+  BLUE      = rgb(  0,   0, 255),
+  SKY_BLUE  = rgb(  0, 204, 255), -- used by BIND_TRADE_TIME_REMAINING
 
   ARCANE = rgb(255, 127, 255),
   FIRE   = rgb(255, 128,   0),
@@ -811,14 +813,15 @@ do
     end
   end
   
-  Addon.statsInfo["Trainable"]       = {color = Addon.COLORS.ORANGE}
-  Addon.statsInfo["Damage"]          = {color = Addon.COLORS.WHITE}
-  Addon.statsInfo["DamagePerSecond"] = {color = Addon.COLORS.WHITE}
-  Addon.statsInfo["Enchant"]         = {color = Addon.COLORS.GREEN}
-  Addon.statsInfo["WeaponEnchant"]   = {color = Addon.COLORS.GREEN}
-  Addon.statsInfo["Speed"]           = {color = Addon.COLORS.WHITE}
-  Addon.statsInfo["Speedbar"]        = {color = Addon.COLORS.WHITE}
-  Addon.statsInfo["SocketHint"]      = {color = Addon.COLORS.GREEN}
+  Addon.statsInfo["SoulboundTradeable"] = {color = Addon.COLORS.SKY_BLUE}
+  Addon.statsInfo["Trainable"]          = {color = Addon.COLORS.ORANGE}
+  Addon.statsInfo["Damage"]             = {color = Addon.COLORS.WHITE}
+  Addon.statsInfo["DamagePerSecond"]    = {color = Addon.COLORS.WHITE}
+  Addon.statsInfo["Enchant"]            = {color = Addon.COLORS.GREEN}
+  Addon.statsInfo["WeaponEnchant"]      = {color = Addon.COLORS.GREEN}
+  Addon.statsInfo["Speed"]              = {color = Addon.COLORS.WHITE}
+  Addon.statsInfo["Speedbar"]           = {color = Addon.COLORS.WHITE}
+  Addon.statsInfo["SocketHint"]         = {color = Addon.COLORS.GREEN}
 end
 
 

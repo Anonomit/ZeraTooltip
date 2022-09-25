@@ -180,6 +180,10 @@ function Addon:MakeDefaultOptions()
         },
         color = (function() local colors = {["*"] = "00ff00"} for stat, StatInfo in pairs(self.statsInfo) do colors[stat] = StatInfo.color end return colors end)(),
         
+        doReorder = {
+          ["*"] = true,
+        },
+        
         damage = {
           ["*"]              = true,
           showVariance       = false,
@@ -234,16 +238,16 @@ function Addon:MakeDefaultOptions()
         debugOutput = {
           suppressAll = false,
           
-          tooltipHook                 = true,
-          lineRecognitions            = true,
-          constructorCached           = true,
-          constructorWiped            = true,
-          constructorValidationFailed = true,
+          tooltipHook                 = false,
+          lineRecognitions            = false,
+          constructorCached           = false,
+          constructorWiped            = false,
+          constructorValidationFailed = false,
           
-          GameTooltip      = true,
-          ItemRefTooltip   = true,
-          ShoppingTooltip1 = true,
-          ShoppingTooltip2 = true,
+          GameTooltip      = false,
+          ItemRefTooltip   = false,
+          ShoppingTooltip1 = false,
+          ShoppingTooltip2 = false,
         },
         
         constructor = {
@@ -796,6 +800,47 @@ function Addon:MakeExtraOptions()
   local GUI = self.GUI:ResetOrder()
   local opts = GUI:CreateGroupTop(title)
   
+  -- Soulbound Tradeable
+  local function MakeSoulboundOption()
+    local stat = "SoulboundTradeable"
+    
+    do
+      local defaultText = format(BIND_TRADE_TIME_REMAINING, format(INT_SPELL_DURATION_HOURS, 2))
+      local formattedText = Addon:RewordTradeable(defaultText)
+      local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.SKY_BLUE, defaultText, formattedText)
+      
+      local opts = GUI:CreateGroup(opts, stat, formattedText)
+      
+      CreateTitle(opts, defaultText, formattedText, changed)
+      
+      -- Reorder
+      do
+        local opts = GUI:CreateGroupBox(opts, L["Reorder"])
+        
+        local disabled = not Addon:GetOption("allow", "reorder")
+        
+        GUI:CreateToggle(opts, {"doReorder", stat}, self.L["Enable"], nil, disabled).width = 0.6
+        CreateReset(opts, {"doReorder", stat}, function() self:ResetOption("doReorder", stat) end)
+      end
+      
+      CreateColor(opts, stat)
+      
+      -- Reword
+      do
+        local opts = GUI:CreateGroupBox(opts, self.L["Rename"])
+        
+        local disabled = not Addon:GetOption("allow", "reword")
+        GUI:CreateToggle(opts, {"doReword", stat}, self.L["Enable"], nil, disabled).width = 0.6
+        CreateReset(opts, {"doReword", stat}, function() self:ResetOption("doReword", stat) end)
+      end
+      
+      CreateHide(opts, stat)
+    end
+    
+    GUI:CreateGroup(opts, "afterSoulboundTradeable" , " ").disabled = true
+  end
+  if self:GetOption("doReorder", "SoulboundTradeable") then MakeSoulboundOption() end
+  
   -- Trainable
   do
     local stat = "Trainable"
@@ -1253,6 +1298,8 @@ function Addon:MakeExtraOptions()
   end
   
   GUI:CreateGroup(opts, "afterPrefixes" , " ", nil, true)
+  
+  if not self:GetOption("doReorder", "SoulboundTradeable") then MakeSoulboundOption() end
   
   -- Socket Hint
   do

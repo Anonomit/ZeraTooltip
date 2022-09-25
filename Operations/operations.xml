@@ -14,9 +14,10 @@
   <Script file="RewordLine.lua"/>
   <Script file="RewordPrefix.lua"/>
   <Script file="RewordSocketHint.lua"/>
+  <Script file="RewordTradeable.lua"/>
   <Script file="RewordWeaponStats.lua"/>
   <Script file="ScanTooltip.lua"/>
-  <Script file="SortStats.lua"/>
+  <Script file="ReorderLines.lua"/>
   <Script file="ThrottleAuction.lua"/>
   <Script file="ThrottleInspect.lua"/>
   <Script file="ThrottleMail.lua"/>
