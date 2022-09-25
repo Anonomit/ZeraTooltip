@@ -450,32 +450,40 @@ function Addon:MakeAddonOptions()
   local opts = GUI:CreateGroupTop(title, "tab")
   
   do
-    local enabled    = self:GetOption"enabled"
-    local invertMode = self:GetOption"invertMode"
-    
     local opts = GUI:CreateGroup(opts, 1, self.L["Enable"], "tab")
     
-    GUI:CreateToggle(opts, {"enabled"}, self.L["Enabled"])
-    GUI:CreateDivider(opts, 2)
+    do
+      local opts = GUI:CreateGroupBox(opts, ADDON_NAME)
+      
+      GUI:CreateToggle(opts, {"enabled"}, self.L["Enabled"])
+    end
     
-    local text = enabled and self.L["Disable"] or self.L["Enable"]
-    GUI:CreateSelect(opts, {"invertMode"}, text, desc, {none = self.L["never"], any = self.L["any"], all = self.L["all"]}, {"none", "any", "all"}).width = 0.7
-    GUI:CreateNewline(opts)
-    
-    local disabled = invertMode == "none"
-    GUI:CreateToggle(opts, {"modKeys", "shift"}, self.L["SHIFT key"], nil, disabled).width = 0.8
-    GUI:CreateToggle(opts, {"modKeys", "ctrl"} , self.L["CTRL key"] , nil, disabled).width = 0.8
-    GUI:CreateToggle(opts, {"modKeys", "alt"}  , self.L["ALT key"]  , nil, disabled).width = 0.8
+    do
+      local opts = GUI:CreateGroupBox(opts, self.L["Modifiers:"])
+      
+      local text = self:GetOption"enabled" and self.L["Disable"] or self.L["Enable"]
+      GUI:CreateSelect(opts, {"invertMode"}, text, desc, {none = self.L["never"], any = self.L["any"], all = self.L["all"]}, {"none", "any", "all"}).width = 0.7
+      GUI:CreateNewline(opts)
+      
+      local disabled = self:GetOption"invertMode" == "none"
+      GUI:CreateToggle(opts, {"modKeys", "shift"}, self.L["SHIFT key"], nil, disabled).width = 0.8
+      GUI:CreateToggle(opts, {"modKeys", "ctrl"} , self.L["CTRL key"] , nil, disabled).width = 0.8
+      GUI:CreateToggle(opts, {"modKeys", "alt"}  , self.L["ALT key"]  , nil, disabled).width = 0.8
+    end
   end
   
   do
     local opts = GUI:CreateGroup(opts, 2, self.L["Features"], "tab")
     
-    GUI:CreateToggle(opts, {"allow", "reorder"}, L["Reorder"])
-    GUI:CreateNewline(opts)
-    GUI:CreateToggle(opts, {"allow", "reword"} , self.L["Rename"])
-    GUI:CreateNewline(opts)
-    GUI:CreateToggle(opts, {"allow", "recolor"}, L["Recolor"])
+    do
+      local opts = GUI:CreateGroupBox(opts, self.L["Features"])
+      
+      GUI:CreateToggle(opts, {"allow", "reorder"}, L["Reorder"])
+      GUI:CreateNewline(opts)
+      GUI:CreateToggle(opts, {"allow", "reword"} , self.L["Rename"])
+      GUI:CreateNewline(opts)
+      GUI:CreateToggle(opts, {"allow", "recolor"}, L["Recolor"])
+    end
   end
   
   return opts

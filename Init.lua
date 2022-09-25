@@ -186,6 +186,7 @@ L["Enable"]  = ENABLE
 L["Disable"] = DISABLE
 L["Enabled"] = VIDEO_OPTIONS_ENABLED
 -- L["Disabled"] = ADDON_DISABLED
+L["Modifiers:"] = MODIFIERS_COLON
 
 L["never"] = strLower(CALENDAR_REPEAT_NEVER)
 L["any"]   = strLower(SPELL_TARGET_TYPE1_DESC)
