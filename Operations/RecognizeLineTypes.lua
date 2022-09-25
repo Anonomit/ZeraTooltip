@@ -225,7 +225,7 @@ local contextActions = Addon:Map({
     end
   end,
   WeaponEnchant = function(i, tooltipData, line)
-    if line.colorLeft == Addon.COLORS.GREEN and not StartsWithAny(line.textLeftTextStripped, ITEM_SPELL_TRIGGER_ONEQUIP, ITEM_SPELL_TRIGGER_ONUSE, ITEM_SPELL_TRIGGER_ONPROC) and MatchesAny(line.textLeftTextStripped, "%s(%s)") then
+    if line.colorLeft == Addon.COLORS.GREEN and not StartsWithAny(line.textLeftTextStripped, ITEM_SPELL_TRIGGER_ONEQUIP, ITEM_SPELL_TRIGGER_ONUSE, ITEM_SPELL_TRIGGER_ONPROC) then
       return SetContext(i, tooltipData, line)
     end
   end,
