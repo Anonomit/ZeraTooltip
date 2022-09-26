@@ -10,6 +10,14 @@ local mathMin  = math.min
 
 
 
+local weaponInvTypes = {
+  INVTYPE_WEAPON         = true,
+  INVTYPE_2HWEAPON       = true,
+  INVTYPE_WEAPONMAINHAND = true,
+  INVTYPE_WEAPONOFFHAND  = true,
+}
+
+
 function Addon:PrepareTooltip(tooltip, methodName, ...)
   local args = {n = select("#", ...), ...}
   return pcall(function()
@@ -97,6 +105,8 @@ function Addon:ReadTooltip(tooltip, name, link, maxLines)
   if strFind(link, "item:%d+:%d+") then
     tooltipData.hasEnchant = true
   end
+  local _, _, _, itemEquipLoc = GetItemInfoInstant(tooltipData.id)
+  tooltipData.isWeapon = weaponInvTypes[itemEquipLoc]
   
   return tooltipData
 end

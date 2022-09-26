@@ -18,7 +18,6 @@ setting to show Heroic tag
 example for above settings: https://www.wowhead.com/wotlk/item=51933/shawl-of-nerubian-silk
 
 recognize ITEM_READABLE
-enchantment should be found only if the link has an enchantment
 
 
 measure performance and memory usage with and without caches. maybe only cache particularly expensive operations? like localeExtras
@@ -28,7 +27,24 @@ reorder races, classes, level
 show heroic tag
 show ilvl
 REFUND_TIME_REMAINING
-
+durability
+multiple lines:
+  SPELL_SCHOOL%d_CAP
+  or AMMO_SCHOOL_DAMAGE_TEMPLATE
+  or PLUS_AMMO_SCHOOL_DAMAGE_TEMPLATE
+  or DAMAGE_TEMPLATE_WITH_SCHOOL
+  or PLUS_DAMAGE_TEMPLATE_WITH_SCHOOL
+  or SINGLE_DAMAGE_TEMPLATE_WITH_SCHOOL
+  or PLUS_SINGLE_DAMAGE_TEMPLATE_WITH_SCHOOL
+  or AMMO_DAMAGE_TEMPLATE
+  or PLUS_AMMO_DAMAGE_TEMPLATE
+  or SINGLE_DAMAGE_TEMPLATE
+  or PLUS_SINGLE_DAMAGE_TEMPLATE
+  or DAMAGE_TEMPLATE
+  or PLUS_DAMAGE_TEMPLATE on the left,
+  SPEED on the right if it's the first line in the loop (rather "%s %.2f" where %s is SPEED, %f is weapon interval / 1000.0)
+  
+if casting disenchant: ITEM_DISENCHANT_NOT_DISENCHANTABLE or ITEM_DISENCHANT_ANY_SKILL or ITEM_DISENCHANT_MIN_SKILL
 
 --]]
 

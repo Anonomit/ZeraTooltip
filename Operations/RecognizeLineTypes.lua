@@ -77,12 +77,12 @@ local contexts = Addon:MakeLookupTable({
   "RequiredLevel",
   "SecondaryStat",
   "LastSecondaryStat",
-  "MadeBy",
   "SetName",
   "setPiece",
   "LastSetPiece",
   "SetBonus",
   "LastSetBonus",
+  "MadeBy",
   "SocketHint",
   "SoulboundTradeable",
   "Delta",
@@ -138,7 +138,8 @@ local function SetContext(context, tooltipData, line)
   return -1
 end
 
-local contextActions = Addon:Map({
+local contextActions
+contextActions = Addon:Map({
   PreTitle = function(i, tooltipData, line)
     if line.textLeftText == CURRENTLY_EQUIPPED or line.textLeftText == DESTROY_GEM  then
       return SetContext(i, tooltipData, line)
@@ -222,7 +223,7 @@ local contextActions = Addon:Map({
     end
   end,
   Enchant = function(i, tooltipData, line)
-    if tooltipData.hasEnchant and line.colorLeft == Addon.COLORS.GREEN and not StartsWithAny(line.textLeftTextStripped, ITEM_SPELL_TRIGGER_ONEQUIP, ITEM_SPELL_TRIGGER_ONUSE, ITEM_SPELL_TRIGGER_ONPROC) then
+    if tooltipData.hasEnchant and line.colorLeft == Addon.COLORS.GREEN then
       return SetContext(i, tooltipData, line)
     end
   end,
@@ -233,7 +234,18 @@ local contextActions = Addon:Map({
     end
   end,
   WeaponEnchant = function(i, tooltipData, line)
-    if line.colorLeft == Addon.COLORS.GREEN and not StartsWithAny(line.textLeftTextStripped, ITEM_SPELL_TRIGGER_ONEQUIP, ITEM_SPELL_TRIGGER_ONUSE, ITEM_SPELL_TRIGGER_ONPROC) then
+    if tooltipData.isWeapon and line.colorLeft == Addon.COLORS.GREEN then
+      for _, alt in ipairs{
+        contexts.LastSecondaryStat,
+        contexts.MadeBy,
+        contexts.SocketHint,
+      } do
+        local increment = contextActions[alt](alt, tooltipData, line)
+        if increment then
+          return alt - i + increment
+        end
+      end
+      -- didn't match any other possible green line
       return SetContext(i, tooltipData, line)
     end
   end,
@@ -280,7 +292,7 @@ local contextActions = Addon:Map({
     end
   end,
   MadeBy = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, ITEM_CREATED_BY) then
+    if line.colorLeft == Addon.COLORS.GREEN and MatchesAny(line.textLeftTextStripped, ITEM_CREATED_BY, ITEM_WRITTEN_BY, ITEM_WRAPPED_BY) then
       return SetContext(i, tooltipData, line)
     end
   end,
@@ -295,14 +307,14 @@ local contextActions = Addon:Map({
     end
   end,
   LastSetBonus = function(i, tooltipData, line)
-  local prefix = MatchesAny(line.textLeftTextStripped, ITEM_SET_BONUS_GRAY, ITEM_SET_BONUS)
+  local prefix = (line.colorLeft == Addon.COLORS.GRAY or line.colorLeft == Addon.COLORS.GREEN) and MatchesAny(line.textLeftTextStripped, ITEM_SET_BONUS_GRAY, ITEM_SET_BONUS)
     if prefix then
       line.prefix = prefix
       return SetContext(i-1, tooltipData, line)
     end
   end,
   SocketHint = function(i, tooltipData, line)
-    if StartsWithAny(line.textLeftTextStripped, ITEM_SOCKETABLE) then
+    if line.colorLeft == Addon.COLORS.GREEN and StartsWithAny(line.textLeftTextStripped, ITEM_SOCKETABLE) then
       return SetContext(i, tooltipData, line)
     end
   end,
