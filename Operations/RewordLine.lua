@@ -33,8 +33,8 @@ function Addon:RewordLine(tooltip, line, tooltipData)
   local text = line.textLeftText
   
   -- TODO: config options for indenting negative stats
-  if textCache[line.textLeftText] then
-    text, line.rewordRight = unpack(textCache[line.textLeftText], 1, 2)
+  if self:GetOption("cache", "text") and textCache[line.type] and textCache[line.type][line.textLeftText] then
+    text, line.rewordRight = unpack(textCache[line.type][line.textLeftText], 1, 2)
   else
     
     
@@ -133,7 +133,10 @@ function Addon:RewordLine(tooltip, line, tooltipData)
     end
     
     if self:GetOption("cache", "text") then
-      textCache[line.textLeftText] = {text, line.rewordRight}
+      if not textCache[line.type] then
+        textCache[line.type] = {}
+      end
+      textCache[line.type][line.textLeftText] = {text, line.rewordRight}
       cacheSize = cacheSize + 1
     end
   end
