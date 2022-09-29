@@ -1,5 +1,5 @@
 ## Interface: 30400
-## Version: 2.1.1
+## Version: 2.1.2
 ## Author: Anonomit
 
 ## Title: ZeraTooltip
