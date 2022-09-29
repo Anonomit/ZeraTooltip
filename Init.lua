@@ -569,7 +569,7 @@ end
 -- https://colornamer.robertcooper.me/
 Addon.COLORS = {
   WHITE     = rgb(255, 255, 255),
-  GRAY      = rgb(127, 127, 127),
+  GRAY      = rgb(128, 128, 128),
   RED       = rgb(255,  32,  32),
   ORANGE    = rgb(255, 127,  32),
   GREEN     = rgb(  0, 255,   0),
