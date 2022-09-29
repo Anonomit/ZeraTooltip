@@ -13,12 +13,12 @@ function Addon:ModifyTooltipData(tooltip, tooltipData)
   for i, line in ipairs(tooltipData) do
     self:RecognizeStat(line)
     
+    self:DebugfIf({"debugOutput", "lineRecognitions"}, "line: %d, textLeft: '%s', type: '%s', stat: '%s', prefix: '%s', colorLeft: '%s'", i, line.textLeftText, tostring(line.type), tostring(line.stat), tostring(line.prefix), line.colorLeft)
+    
     if not self:HideLine(line) then
       self:RecolorLine(tooltip, line, tooltipData)
       self:RewordLine(tooltip, line, tooltipData)
     end
-    
-    self:DebugfIf({"debugOutput", "lineRecognitions"}, "line: %d, textLeft: '%s', type: '%s', stat: '%s', prefix: '%s'", i, line.textLeftText, tostring(line.type), tostring(line.stat), tostring(line.prefix))
   end
   
   self:ReorderLines(tooltipData)

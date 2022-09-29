@@ -187,6 +187,7 @@ contextActions = Addon:Map({
   Damage = function(i, tooltipData, line)
     if MatchesAny(line.textLeftTextStripped, DAMAGE_TEMPLATE, DAMAGE_TEMPLATE_WITH_SCHOOL, SINGLE_DAMAGE_TEMPLATE) then
       local speed = strMatch(line.textRightText or "", numberPattern)
+      if not speed then return end -- SINGLE_DAMAGE_TEMPLATE can match unrelated lines, like in Chaotic gems
       tooltipData.speedStringFull = line.textRightText
       tooltipData.speedString     = speed
       if DECIMAL_SEPERATOR ~= "." then
