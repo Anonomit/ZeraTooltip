@@ -179,11 +179,8 @@ local HandlerList = TipHooker.HandlerList or {}
 TipHooker.HandlerList = HandlerList
 local Set = {
   item = function(methodName, tooltip, ...)
-    if not tooltip.GetItem then return end
-    local name, link = tooltip:GetItem()
-    if not name then return end -- Check if tooltip really has an item
     for handler in pairs(HandlerList.item) do
-      handler(tooltip, methodName, name, link, ...)
+      handler(tooltip, methodName, ...)
     end
   end,
   buff = function(methodName, tooltip, unitId, buffIndex, raidFilter)

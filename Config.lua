@@ -238,11 +238,13 @@ function Addon:MakeDefaultOptions()
         debugOutput = {
           suppressAll = false,
           
-          tooltipHook                 = false,
-          lineRecognitions            = false,
-          constructorCached           = false,
-          constructorWiped            = false,
-          constructorValidationFailed = false,
+          tooltipMethodHook         = false,
+          tooltipOnSetItemHook      = false,
+          tooltipHookFail           = false,
+          lineRecognitions          = false,
+          constructorCached         = false,
+          constructorWiped          = false,
+          constructorValidationFail = false,
           
           GameTooltip      = false,
           ItemRefTooltip   = false,
@@ -1421,7 +1423,13 @@ function Addon:MakeDebugOptions()
       
       local disabled = disabled or self:GetOption("debugOutput", "suppressAll")
       
-      GUI:CreateToggle(opts, {"debugOutput", "tooltipHook"}, "Tooltip Hook Trigger", nil, disabled).width = 2
+      GUI:CreateToggle(opts, {"debugOutput", "tooltipMethodHook"}, "Tooltip Method Hook", nil, disabled).width = 2
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"debugOutput", "tooltipOnSetItemHook"}, "Tooltip tooltipOnSetItem Hook", nil, disabled).width = 2
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"debugOutput", "tooltipHookFail"}, "Tooltip Hook Failure", nil, disabled).width = 2
       GUI:CreateNewline(opts)
       
       GUI:CreateToggle(opts, {"debugOutput", "lineRecognitions"}, "Line Recognitions", nil, disabled).width = 2
@@ -1433,7 +1441,7 @@ function Addon:MakeDebugOptions()
       GUI:CreateToggle(opts, {"debugOutput", "constructorWiped"}, "Constructor Wiped", nil, disabled).width = 2
       GUI:CreateNewline(opts)
       
-      GUI:CreateToggle(opts, {"debugOutput", "constructorValidationFailed"}, "Constructor Validation Failure", nil, disabled).width = 2
+      GUI:CreateToggle(opts, {"debugOutput", "constructorValidationFail"}, "Constructor Validation Failure", nil, disabled).width = 2
     end
     
     do

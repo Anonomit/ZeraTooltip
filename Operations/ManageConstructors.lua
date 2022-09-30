@@ -42,7 +42,7 @@ local hashMaps = {
   -- SetCraftSpell           = function(link) end,
   -- SetCraftItem            = function(link) end,
   SetTradeSkillItem       = function(link, index, reagent) return format("%s-%d-%d", link, index, reagent or 0) end,
-  SetTrainerService       = function(link) end,
+  SetTrainerService       = function(link, index) return format("%s-%d", link, index) end, -- Doesn't work because tooltip:GetItem() returns nil
   -- mail
   SetInboxItem            = function(link, mailSlot, index) return format("%s-%d-%d", link, mailSlot, index or 0) end,
   SetSendMailItem         = function(link, index) return format("%s-%s", link, index) end,

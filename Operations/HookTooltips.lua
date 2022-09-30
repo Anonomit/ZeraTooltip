@@ -5,8 +5,9 @@ local ADDON_NAME, Data = ...
 local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 
 
-local strGsub = string.gsub
-local tinsert = table.insert
+local strGsub   = string.gsub
+local tinsert   = table.insert
+local tblConcat = table.concat
 
 
 local tooltipScanners = {}
@@ -51,6 +52,18 @@ local function ResetScanner(scannerTooltip, link, methodName, ...)
   scannerTooltip.lengths  = {}
 end
 
+local function ConvertArgs(...)
+  local args = {n = select("#", ...), ...}
+  for i = 1, args.n do
+    if type(args[i]) == "table" and args[i].GetName then
+      args[i] = args[i]:GetName()
+    else
+      args[i] = tostring(args[i])
+    end
+  end
+  return args
+end
+
 local compareMethods = setmetatable({SetCompareItem = true, SetHyperlinkCompareItem = true}, {__index = function() return false end})
 local recursion      = false -- used for shopping tooltips
 local alreadyPrepped = false -- used for shopping tooltips
@@ -58,20 +71,26 @@ local function OnTooltipItemMethod(tooltip, methodName, ...)
   local self = Addon
   if not self:IsEnabled() then return end
   
-  if not tooltip.GetItem then return end
+  if not tooltip.GetItem then
+    if Addon:GetOption("debugOutput", "tooltipHookFail") then
+      local args = ConvertArgs(...)
+      Addon:Debugf("Bad Hook (no field 'GetItem'): %s:%s(%s)", tooltip:GetName(), methodName, tblConcat({unpack(args, 1, args.n)}, ", "))
+    end
+    return
+  end
   local name, link = tooltip:GetItem()
-  if not name or not link then return end
+  if not name or not link then
+    if Addon:GetOption("debugOutput", "tooltipHookFail") then
+      local args = ConvertArgs(...)
+      Addon:Debugf("Bad Hook (GetItem() returned nil): %s:%s(%s)", tooltip:GetName(), methodName, tblConcat({unpack(args, 1, args.n)}, ", "))
+    end
+    return
+  end
   local isComparison = compareMethods[methodName]
   
-  if Addon:GetOption("debugOutput", "tooltipHook") then
-    local args = {...}
-    local n = select("#", ...)
-    for i = 1, n do
-      if type(args[i]) == "table" and args[i].GetName then
-        args[i] = args[i]:GetName()
-      end
-      Addon:Debug("Intial", link, tooltip:GetName(), methodName, unpack(args, 1, n))
-    end
+  if Addon:GetOption("debugOutput", "tooltipMethodHook") then
+    local args = ConvertArgs(...)
+    Addon:Debugf("Hook: %s:%s(%s) - %s", tooltip:GetName(), methodName, tblConcat({unpack(args, 1, args.n)}, ", "), link)
   end
   
   local args = {...}
@@ -138,15 +157,11 @@ local function OnTooltipSetItem(tooltip)
   scannerTooltip.updates = scannerTooltip.updates + 1
   if scannerTooltip.isRecipe and scannerTooltip.updates % 2 == 1 then return end
   
-  if self:GetOption("debugOutput", "tooltipHook") then
-    local args = {unpack(scannerTooltip.lastCall, 1, scannerTooltip.lastCall.n)}
-    local n = scannerTooltip.lastCall.n
-    for i = 1, n do
-      if type(args[i]) == "table" and args[i].GetName then
-        args[i] = args[i]:GetName()
-      end
-      Addon:Debug("OnTooltipSetItem", link, tooltip:GetName(), unpack(args, 1, n))
-    end
+  if self:GetOption("debugOutput", "tooltipOnSetItemHook") then
+    local methodName = scannerTooltip.lastCall[2]
+    local args = ConvertArgs(unpack(scannerTooltip.lastCall, 3, scannerTooltip.lastCall.n))
+    Addon:Debugf("OnTooltipSetItem: %s:%s(%s) - %s", tooltip:GetName(), methodName, tblConcat({unpack(args, 1, args.n)}, ", "), link)
+    -- Addon:Debug("OnTooltipSetItem", link, tooltip:GetName(), unpack(args, 1, n))
   end
   
   local constructor = self:GetConstructor(tooltip, unpack(scannerTooltip.lastCall, 1, scannerTooltip.lastCall.n))
@@ -172,7 +187,7 @@ function Addon:HookTooltips()
   self.TipHooker2:Hook(OnTooltipSetItem, "item")
   
   -- hook tooltips with a more powerful method
-  self.TipHooker:Hook(function(tooltip, methodName, _, _, ...) OnTooltipItemMethod(tooltip, methodName, ...) end, "item")
+  self.TipHooker:Hook(OnTooltipItemMethod, "item")
   self.TipHooker:Hook(function(tooltip, methodName, slot) OnTooltipItemMethod(tooltip, methodName, slot) end, "action")
 end
 
