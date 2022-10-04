@@ -135,7 +135,7 @@ function Addon:MakeDefaultOptions()
     db = {
       profile = {
         
-        enabled = true,
+        enabled    = true,
         invertMode = "none",
         modKeys = {
           ["*"] = true,
@@ -157,12 +157,13 @@ function Addon:MakeDefaultOptions()
           uselessRaces = true,
         },
         doReword = {
-          ["*"]         = true,
-          Enchant       = false,
-          WeaponEnchant = false,
-          Equip         = false,
-          ChanceOnHit   = false,
-          Use           = false,
+          ["*"]              = true,
+          Enchant            = false,
+          WeaponEnchant      = false,
+          Equip              = false,
+          ChanceOnHit        = false,
+          Use                = false,
+          SoulboundTradeable = false,
         },
         reword = {
           ["*"] = "",
