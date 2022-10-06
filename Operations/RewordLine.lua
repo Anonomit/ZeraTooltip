@@ -68,6 +68,10 @@ function Addon:RewordLine(tooltip, line, tooltipData)
       if self:GetOption("doRecolor", line.type) then
         text = self:ChainGsub(text, unpack(self.classColorReplacements))
       end
+    elseif line.type == "Refundable" then
+      if self:GetOption("doReword", line.type) then
+        text = self:RewordRefundable(text)
+      end
     elseif line.type == "SoulboundTradeable" then
       if self:GetOption("doReword", line.type) then
         text = self:RewordTradeable(text)

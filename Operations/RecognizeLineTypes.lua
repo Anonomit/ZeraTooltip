@@ -84,6 +84,7 @@ local contexts = Addon:MakeLookupTable({
   "LastSetBonus",
   "MadeBy",
   "SocketHint",
+  "Refundable",
   "SoulboundTradeable",
   "Delta",
   "RecipeMats",
@@ -316,6 +317,11 @@ contextActions = Addon:Map({
   end,
   SocketHint = function(i, tooltipData, line)
     if line.colorLeft == Addon.COLORS.GREEN and StartsWithAny(line.textLeftTextStripped, ITEM_SOCKETABLE) then
+      return SetContext(i, tooltipData, line)
+    end
+  end,
+  Refundable = function(i, tooltipData, line)
+    if line.colorLeft == Addon.COLORS.SKY_BLUE and MatchesAny(line.textLeftTextStripped, REFUND_TIME_REMAINING) then
       return SetContext(i, tooltipData, line)
     end
   end,

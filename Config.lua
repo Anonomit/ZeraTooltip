@@ -164,6 +164,7 @@ function Addon:MakeDefaultOptions()
           Equip              = false,
           ChanceOnHit        = false,
           Use                = false,
+          Refundable         = false,
           SoulboundTradeable = false,
         },
         reword = {
@@ -817,8 +818,49 @@ function Addon:MakeExtraOptions()
   local GUI = self.GUI:ResetOrder()
   local opts = GUI:CreateGroupTop(title)
   
+  -- Refundable
+  local function MakeRefundableOption()
+    local stat = "Refundable"
+    
+    do
+      local defaultText = format(REFUND_TIME_REMAINING, format(INT_SPELL_DURATION_HOURS, 2))
+      local formattedText = Addon:RewordRefundable(defaultText)
+      local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.SKY_BLUE, defaultText, formattedText)
+      
+      local opts = GUI:CreateGroup(opts, stat, formattedText)
+      
+      CreateTitle(opts, defaultText, formattedText, changed)
+      
+      -- Reorder
+      do
+        local opts = GUI:CreateGroupBox(opts, L["Reorder"])
+        
+        local disabled = not Addon:GetOption("allow", "reorder")
+        
+        GUI:CreateToggle(opts, {"doReorder", stat}, self.L["Enable"], nil, disabled).width = 0.6
+        CreateReset(opts, {"doReorder", stat}, function() self:ResetOption("doReorder", stat) end)
+      end
+      
+      CreateColor(opts, stat)
+      
+      -- Reword
+      do
+        local opts = GUI:CreateGroupBox(opts, self.L["Rename"])
+        
+        local disabled = not Addon:GetOption("allow", "reword")
+        GUI:CreateToggle(opts, {"doReword", stat}, self.L["Enable"], nil, disabled).width = 0.6
+        CreateReset(opts, {"doReword", stat}, function() self:ResetOption("doReword", stat) end)
+      end
+      
+      CreateHide(opts, stat)
+    end
+    
+    if self:GetOption("doReorder", "Refundable") ~= self:GetOption("doReorder", "SoulboundTradeable") then
+      GUI:CreateGroup(opts, "afterRefundable" , " ").disabled = true
+    end
+  end
   -- Soulbound Tradeable
-  local function MakeSoulboundOption()
+  local function MakeTradeableOption()
     local stat = "SoulboundTradeable"
     
     do
@@ -856,7 +898,8 @@ function Addon:MakeExtraOptions()
     
     GUI:CreateGroup(opts, "afterSoulboundTradeable" , " ").disabled = true
   end
-  if self:GetOption("doReorder", "SoulboundTradeable") then MakeSoulboundOption() end
+  if self:GetOption("doReorder", "Refundable") then MakeRefundableOption() end
+  if self:GetOption("doReorder", "SoulboundTradeable") then MakeTradeableOption() end
   
   -- Trainable
   do
@@ -1358,7 +1401,8 @@ function Addon:MakeExtraOptions()
   
   GUI:CreateGroup(opts, "afterPrefixes" , " ", nil, true)
   
-  if not self:GetOption("doReorder", "SoulboundTradeable") then MakeSoulboundOption() end
+  if not self:GetOption("doReorder", "Refundable") then MakeRefundableOption() end
+  if not self:GetOption("doReorder", "SoulboundTradeable") then MakeTradeableOption() end
   
   -- Socket Hint
   do

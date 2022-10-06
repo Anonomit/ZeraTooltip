@@ -67,7 +67,11 @@ function Addon:ReorderLines(tooltipData)
     local line = tooltipData[i]
     
     if not line.hide then
-      if line.type == "SoulboundTradeable" then
+      if line.type == "Refundable" then
+        if self:GetOption("doReorder", line.type) then
+          tinsert(tooltipData, 2, tblRemove(tooltipData, i))
+        end
+      elseif line.type == "SoulboundTradeable" then
         if self:GetOption("doReorder", line.type) then
           tinsert(tooltipData, (tooltipData.binding or 1) + 1, tblRemove(tooltipData, i))
         end

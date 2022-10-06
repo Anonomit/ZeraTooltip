@@ -29,6 +29,9 @@ L["Set List"]           = true
 L["Set Bonus"]          = true
 
 
+-- refundable
+L["Refund"] = true
+
 -- trainable
 L["Trainable Equipment"] = true
 

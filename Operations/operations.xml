@@ -15,7 +15,7 @@
   <Script file="RewordLine.lua"/>
   <Script file="RewordPrefix.lua"/>
   <Script file="RewordSocketHint.lua"/>
-  <Script file="RewordTradeable.lua"/>
+  <Script file="RewordTradeableRefundable.lua"/>
   <Script file="RewordWeaponStats.lua"/>
   <Script file="ScanTooltip.lua"/>
   <Script file="ReorderLines.lua"/>

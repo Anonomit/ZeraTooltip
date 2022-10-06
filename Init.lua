@@ -823,6 +823,7 @@ do
   Addon.statsInfo["WeaponEnchant"]      = {color = Addon.COLORS.GREEN}
   Addon.statsInfo["Durability"]         = {color = Addon.COLORS.WHITE}
   Addon.statsInfo["SocketHint"]         = {color = Addon.COLORS.GREEN}
+  Addon.statsInfo["Refundable"]         = {color = Addon.COLORS.SKY_BLUE}
   Addon.statsInfo["SoulboundTradeable"] = {color = Addon.COLORS.SKY_BLUE}
 end
 
