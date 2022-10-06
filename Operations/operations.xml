@@ -10,6 +10,7 @@
   <Script file="RecognizeLineTypes.lua"/>
   <Script file="RecognizeStat.lua"/>
   <Script file="RecolorLine.lua"/>
+  <Script file="RewordDurability.lua"/>
   <Script file="RewordEnchantment.lua"/>
   <Script file="RewordLine.lua"/>
   <Script file="RewordPrefix.lua"/>

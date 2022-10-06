@@ -814,15 +814,16 @@ do
     end
   end
   
-  Addon.statsInfo["SoulboundTradeable"] = {color = Addon.COLORS.SKY_BLUE}
   Addon.statsInfo["Trainable"]          = {color = Addon.COLORS.ORANGE}
   Addon.statsInfo["Damage"]             = {color = Addon.COLORS.WHITE}
+  Addon.statsInfo["Speed"]              = {color = Addon.COLORS.WHITE}
   Addon.statsInfo["DamagePerSecond"]    = {color = Addon.COLORS.WHITE}
+  Addon.statsInfo["Speedbar"]           = {color = Addon.COLORS.WHITE}
   Addon.statsInfo["Enchant"]            = {color = Addon.COLORS.GREEN}
   Addon.statsInfo["WeaponEnchant"]      = {color = Addon.COLORS.GREEN}
-  Addon.statsInfo["Speed"]              = {color = Addon.COLORS.WHITE}
-  Addon.statsInfo["Speedbar"]           = {color = Addon.COLORS.WHITE}
+  Addon.statsInfo["Durability"]         = {color = Addon.COLORS.WHITE}
   Addon.statsInfo["SocketHint"]         = {color = Addon.COLORS.GREEN}
+  Addon.statsInfo["SoulboundTradeable"] = {color = Addon.COLORS.SKY_BLUE}
 end
 
 

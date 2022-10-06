@@ -23,9 +23,14 @@ recognize ITEM_READABLE
 measure performance and memory usage with and without caches. maybe only cache particularly expensive operations? like localeExtras
 
 
+show weapon damage variance as exact quantity
+
+color different types of soulbound
+
 reorder races, classes, level
 show heroic tag
 show ilvl
+show max stack
 REFUND_TIME_REMAINING
 durability
 multiple lines:

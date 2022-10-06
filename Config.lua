@@ -160,6 +160,7 @@ function Addon:MakeDefaultOptions()
           ["*"]              = true,
           Enchant            = false,
           WeaponEnchant      = false,
+          Durability         = false,
           Equip              = false,
           ChanceOnHit        = false,
           Use                = false,
@@ -201,6 +202,11 @@ function Addon:MakeDefaultOptions()
           blankChar   = " ",
           speedPrefix = false,
         },
+        durability = {
+          showCur     = true,
+          showMax     = true,
+          showPercent = true,
+        },
         trimSpace = {
           ["*"] = true,
         },
@@ -212,6 +218,7 @@ function Addon:MakeDefaultOptions()
         icon = {
           Enchant       = "|TInterface\\Buttons\\UI-GroupLoot-DE-Up:0|t",
           WeaponEnchant = "|TInterface\\CURSOR\\Attack:0|t",
+          Durability    = "|TInterface\\COMMON\\RingBorder:0|t",
           Equip         = "|TInterface\\Tooltips\\ReforgeGreenArrow:0|t",
           ChanceOnHit   = "|TInterface\\Buttons\\UI-GroupLoot-Dice-Up:0|t",
           Use           = "|TInterface\\CURSOR\\Cast:0|t",
@@ -276,7 +283,6 @@ function Addon:MakeDefaultOptions()
           -- TradeSkillFrame = false,
         },
         
-        -- TODO: config options for blizzard fixes?
         fix = {
           InterfaceOptionsFrame = false,
         },
@@ -1105,6 +1111,48 @@ function Addon:MakeExtraOptions()
   end
   
   GUI:CreateGroup(opts, "afterEnchant" , " ", nil, true)
+  
+  -- Durability
+  do
+    local stat = "Durability"
+    
+    local defaultDurability, defaultDurabilityFull = 5, 50
+    local defaultText = format(DURABILITY_TEMPLATE, defaultDurability, defaultDurabilityFull)
+    local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.WHITE, defaultText, self:ModifyDurability(defaultText))
+    
+    local opts = GUI:CreateGroup(opts, stat, formattedText, nil, disabled)
+      
+    CreateTitle(opts, defaultText, formattedText, changed)
+    
+    CreateColor(opts, stat)
+    
+    do
+      local opts = CreateReword(opts, stat)
+      GUI:CreateNewline(opts)
+      
+      -- Trim Space
+      local disabled = disabled or not self:GetOption("doReword", stat)
+      GUI:CreateToggle(opts, {"trimSpace", stat}, L["Remove Space"], nil, disabled)
+      CreateReset(opts, {"trimSpace", stat}, function() self:ResetOption("trimSpace", stat) end)
+      GUI:CreateNewline(opts)
+      
+      local disabled = false
+      GUI:CreateToggle(opts, {"durability", "showCur"}  , L["Show Current"], nil, disabled or self:GetOption("durability", "showMax") or not self:GetOption("durability", "showMax") and not self:GetOption("durability", "showPercent")).width = 1.5
+      CreateReset(opts, {"durability", "showCur"})
+      GUI:CreateNewline(opts)
+      GUI:CreateToggle(opts, {"durability", "showMax"} , L["Show Maximum"], nil, disabled or not self:GetOption("durability", "showCur") and not self:GetOption("durability", "showAverage")).width = 1.5
+      CreateReset(opts, {"durability", "showMax"})
+      GUI:CreateNewline(opts)
+      GUI:CreateToggle(opts, {"durability", "showPercent"}, L["Show Average"], nil, disabled or not self:GetOption("durability", "showCur") and not self:GetOption("durability", "showMax")).width = 1.5
+      CreateReset(opts, {"durability", "showPercent"})
+    end
+    
+    CreateIcon(opts, stat)
+    
+    CreateHide(opts, stat)
+  end
+  
+  GUI:CreateGroup(opts, "afterDurability" , " ", nil, true)
   
   -- Races
   do

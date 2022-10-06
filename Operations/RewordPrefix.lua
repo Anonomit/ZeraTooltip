@@ -12,10 +12,8 @@ local coveredPrefixes = Addon:Map(Addon.prefixStats, function(v, k) return Addon
 local emptyPrefixes   = Addon:Map(coveredPrefixes, function(v) return v .. " *" end)
 
 local stat = "Equip"
-local defaultText = ITEM_SPELL_TRIGGER_ONEQUIP
-local coveredDefaultText = Addon:CoverSpecialCharacters(ITEM_SPELL_TRIGGER_ONEQUIP)
 function Addon:ModifyPrefix(text, prefix)
-  if not Addon:GetOption("allow", "reword") then return text end
+  if not self:GetOption("allow", "reword") then return text end
   local stat = self.prefixStats[prefix]
   if not stat then return text end
   

@@ -62,6 +62,8 @@ function Addon:RewordLine(tooltip, line, tooltipData)
       text = Addon:ModifyEnchantment(text)
     elseif line.type == "WeaponEnchant" then
       text = Addon:ModifyWeaponEnchantment(text)
+    elseif line.type == "Durability" then
+      text = self:ModifyDurability(text)
     elseif line.type == "RequiredClasses" then
       if self:GetOption("doRecolor", line.type) then
         text = self:ChainGsub(text, unpack(self.classColorReplacements))
