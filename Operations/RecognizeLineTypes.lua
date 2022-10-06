@@ -52,8 +52,6 @@ local contexts = Addon:MakeLookupTable({
   "Title",
   "Difficulty",
   "Binding",
-  "RequiredSkill",
-  "AlreadyKnown",
   "Unique",
   "LastUnique",
   "Embed",
@@ -75,6 +73,9 @@ local contexts = Addon:MakeLookupTable({
   "RequiredRaces",
   "RequiredClasses",
   "RequiredLevel",
+  "RequiredSkill",
+  "AlreadyKnown",
+  "RequiredRep",
   "SecondaryStat",
   "LastSecondaryStat",
   "SetName",
@@ -165,23 +166,28 @@ contextActions = Addon:Map({
       return SetContext(i-1, tooltipData, line)
     end
   end,
-  RequiredSkill = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, ITEM_MIN_SKILL) then
-      return SetContext(i, tooltipData, line)
-    end
-  end,
-  AlreadyKnown = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, ITEM_SPELL_KNOWN) then
-      return SetContext(i, tooltipData, line)
-    end
-  end,
   Embed = function(i, tooltipData, line)
     if StartsWithAny(line.textLeftTextStripped, "\n") then -- TODO: get recipes working better... if I really need to?
       return SetContext(i, tooltipData, line)
     end
   end,
   RedType = function(i, tooltipData, line)
-    if line.colorRight == Addon.COLORS.RED or line.colorLeft == Addon.COLORS.RED and not MatchesAny(line.textLeftTextStripped, ITEM_CLASSES_ALLOWED, ITEM_RACES_ALLOWED, ITEM_MIN_LEVEL, ENCHANT_ITEM_REQ_SKILL, ENCHANT_ITEM_MIN_SKILL, ENCHANT_ITEM_REQ_LEVEL) then
+    if line.colorRight == Addon.COLORS.RED then
+      return SetContext(i, tooltipData, line)
+    elseif line.colorLeft == Addon.COLORS.RED then
+      for _, alt in ipairs{
+        contexts.RequiredEnchant,
+        contexts.RequiredClasses,
+        contexts.RequiredRaces,
+        contexts.RequiredLevel,
+        contexts.RequiredRep,
+      } do
+        local increment = contextActions[alt](alt, tooltipData, line)
+        if increment then
+          return alt - i + increment
+        end
+      end
+      -- didn't match any other possible red line
       return SetContext(i, tooltipData, line)
     end
   end,
@@ -280,6 +286,29 @@ contextActions = Addon:Map({
   end,
   RequiredLevel = function(i, tooltipData, line)
     if MatchesAny(line.textLeftTextStripped, ITEM_MIN_LEVEL) then
+      return SetContext(i, tooltipData, line)
+    end
+  end,
+  RequiredSkill = function(i, tooltipData, line)
+    for _, alt in ipairs{
+      contexts.RequiredRep,
+    } do
+      local increment = contextActions[alt](alt, tooltipData, line)
+      if increment then
+        return alt - i + increment
+      end
+    end
+    if MatchesAny(line.textLeftTextStripped, ITEM_MIN_SKILL, ITEM_REQ_SKILL) then
+      return SetContext(i, tooltipData, line)
+    end
+  end,
+  AlreadyKnown = function(i, tooltipData, line)
+    if MatchesAny(line.textLeftTextStripped, ITEM_SPELL_KNOWN) then
+      return SetContext(i, tooltipData, line)
+    end
+  end,
+  RequiredRep = function(i, tooltipData, line)
+    if MatchesAny(line.textLeftTextStripped, ITEM_REQ_REPUTATION) then
       return SetContext(i, tooltipData, line)
     end
   end,
