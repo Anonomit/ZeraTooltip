@@ -190,6 +190,7 @@ function Addon:MakeDefaultOptions()
         damage = {
           ["*"]              = true,
           showVariance       = false,
+          variancePercent    = true,
           ["variancePrefix"] = "+-",
         },
         dps = {
@@ -956,6 +957,9 @@ function Addon:MakeExtraOptions()
       GUI:CreateNewline(opts)
       GUI:CreateToggle(opts, {"damage", "showVariance"}, L["Show Variance"], nil, disabled).width = 1.5
       CreateReset(opts, {"damage", "showVariance"})
+      GUI:CreateNewline(opts)
+      GUI:CreateToggle(opts, {"damage", "variancePercent"}, L["Show Percent"], nil, disabled or not self:GetOption("damage", "showVariance")).width = 1.5
+      CreateReset(opts, {"damage", "variancePercent"})
       GUI:CreateNewline(opts)
       GUI:CreateInput(opts, {"damage", "variancePrefix"} , L["Variance Prefix"], nil, nil, disabled).width = 0.5
       CreateReset(opts, {"damage", "variancePrefix"})

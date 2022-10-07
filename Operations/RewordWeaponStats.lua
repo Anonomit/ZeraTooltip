@@ -22,7 +22,8 @@ function Addon:ModifyWeaponDamage(text, dps, speed)
     min, max = tonumber(min), tonumber(max)
     local mid = dps * speed
     local average = showAverage and format("%d", mid) or nil
-    local variance = showVariance and format("%s%d%%%%", self:GetOption("damage", "variancePrefix"), self:Round((max/mid-1)*100, 10)) or nil
+    local usePercent = self:GetOption("damage", "variancePercent")
+    local variance = showVariance and format("%s%d%s", self:GetOption("damage", "variancePrefix"), usePercent and self:Round((max/mid-1)*100, 10) or self:Round(max-mid, 1), usePercent and "%%" or "") or nil
     local minMax = showMinMax and minMax or nil
     
     local pattern

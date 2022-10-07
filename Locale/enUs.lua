@@ -55,6 +55,9 @@ L["Show Speed"]      = true
 L["Fill Character"]  = true
 L["Blank Character"] = true
 
+-- durability
+L["Show Percent"] = true
+
 -- races
 L["Hide Pointless Lines"] = true
 
