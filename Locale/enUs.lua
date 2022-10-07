@@ -40,6 +40,7 @@ L["Show Minimum and Maximum"] = true
 L["Show Average"]             = true
 L["Show Variance"]            = true
 L["Variance Prefix"]          = true
+L["Show Percent"]             = true
 
 -- dps
 L["Remove Brackets"] = true
@@ -56,7 +57,7 @@ L["Fill Character"]  = true
 L["Blank Character"] = true
 
 -- durability
-L["Show Percent"] = true
+L["Show Current"] = true
 
 -- races
 L["Hide Pointless Lines"] = true

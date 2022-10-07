@@ -19,31 +19,14 @@ local stat = "Durability"
 local function RewordDurabilityNumbers(text)
   local self = Addon
   
-  local showMax     = self:GetOption("allow", "reword") and self:GetOption("durability", "showMax")
-  local showPercent = self:GetOption("allow", "reword") and self:GetOption("durability", "showPercent")
-  if showMax and not showPercent then return text end -- no changes to make
-  local showCur = self:GetOption("allow", "reword") and self:GetOption("durability", "showCur")
+  if not self:GetOption("durability", "showPercent") then return text end -- no changes to make
   
   local curMax, cur, max = strMatch(text, "((%d+) ?%/ ?(%d+))")
-  if cur then
+  if cur and max then
     cur, max = tonumber(cur), tonumber(max)
-    local percent = showPercent and self:Round((cur/max)*100, 1) or nil
+    local percent = self:Round((cur/max)*100, 1)
     
-    local pattern
-    if showMax then
-      pattern = format("%s / %s", cur, max)
-    elseif showCur then
-      pattern = tostring(cur)
-    end
-    if percent then
-      if pattern then
-        pattern = format("%s (%s%%%%)", pattern, percent)
-      else
-        pattern = format("%s%%%%", percent)
-      end
-    end
-    
-    return strGsub(text, "%d+ ?%/ ?%d+", pattern)
+    return strGsub(text, "%d+ ?%/ ?%d+", self:GetOption("durability", "showCur") and format("%s (%s%%%%)", text, percent) or format("%s%%%%", percent))
   end
   return text
 end

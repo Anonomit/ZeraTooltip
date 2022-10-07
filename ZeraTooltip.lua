@@ -8,6 +8,7 @@ color elemental weapon damage differently than weapon damage
 option to force word wrap on/off for each stat?
   not sure what the use of this would be besides maybe fixing unforseen incompatibility issues
 
+setting to show max stack
 setting to show item level
   showItemLevel cvar missing?
 setting to show Heroic tag
@@ -21,16 +22,14 @@ recognize ITEM_READABLE
 measure performance and memory usage with and without caches. maybe only cache particularly expensive operations? like localeExtras
 
 
-show weapon damage variance as exact quantity
+durability
+  color gradient
+  bar
 
 color different types of soulbound
 
 reorder races, classes, level
-show heroic tag
-show ilvl
-show max stack
-REFUND_TIME_REMAINING
-durability
+
 multiple lines:
   SPELL_SCHOOL%d_CAP
   or AMMO_SCHOOL_DAMAGE_TEMPLATE

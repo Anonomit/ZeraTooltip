@@ -95,6 +95,7 @@ local icons = {
   -- "|TInterface\\HELPFRAME\\HelpIcon-Suggestion:0|t",
   -- "|TInterface\\HELPFRAME\\ReportLagIcon-Spells:0|t",
   
+  "|TInterface\\MINIMAP\\TRACKING\\Repair:0|t",
   "|TInterface\\MINIMAP\\Dungeon:0|t",
   "|TInterface\\MINIMAP\\Raid:0|t",
   "|TInterface\\MINIMAP\\TempleofKotmogu_ball_cyan:0|t",
@@ -220,7 +221,7 @@ function Addon:MakeDefaultOptions()
         icon = {
           Enchant       = "|TInterface\\Buttons\\UI-GroupLoot-DE-Up:0|t",
           WeaponEnchant = "|TInterface\\CURSOR\\Attack:0|t",
-          Durability    = "|TInterface\\COMMON\\RingBorder:0|t",
+          Durability    = "|TInterface\\MINIMAP\\TRACKING\\Repair:0|t",
           Equip         = "|TInterface\\Tooltips\\ReforgeGreenArrow:0|t",
           ChanceOnHit   = "|TInterface\\Buttons\\UI-GroupLoot-Dice-Up:0|t",
           Use           = "|TInterface\\CURSOR\\Cast:0|t",
@@ -1186,13 +1187,10 @@ function Addon:MakeExtraOptions()
       GUI:CreateNewline(opts)
       
       local disabled = false
-      GUI:CreateToggle(opts, {"durability", "showCur"}  , L["Show Current"], nil, disabled or self:GetOption("durability", "showMax") or not self:GetOption("durability", "showMax") and not self:GetOption("durability", "showPercent")).width = 1.5
+      GUI:CreateToggle(opts, {"durability", "showCur"}  , L["Show Current"], nil, disabled or not self:GetOption("durability", "showPercent"))
       CreateReset(opts, {"durability", "showCur"})
       GUI:CreateNewline(opts)
-      GUI:CreateToggle(opts, {"durability", "showMax"} , L["Show Maximum"], nil, disabled or not self:GetOption("durability", "showCur") and not self:GetOption("durability", "showAverage")).width = 1.5
-      CreateReset(opts, {"durability", "showMax"})
-      GUI:CreateNewline(opts)
-      GUI:CreateToggle(opts, {"durability", "showPercent"}, L["Show Average"], nil, disabled or not self:GetOption("durability", "showCur") and not self:GetOption("durability", "showMax")).width = 1.5
+      GUI:CreateToggle(opts, {"durability", "showPercent"}, L["Show Percent"], nil, disabled or not self:GetOption("durability", "showCur"))
       CreateReset(opts, {"durability", "showPercent"})
     end
     
