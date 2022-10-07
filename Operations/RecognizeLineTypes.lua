@@ -54,6 +54,7 @@ local contexts = Addon:MakeLookupTable({
   "Binding",
   "Unique",
   "LastUnique",
+  "LockedWithProfession",
   "Embed",
   "Type",
   "RedType",
@@ -164,6 +165,11 @@ contextActions = Addon:Map({
   LastUnique = function(i, tooltipData, line)
     if MatchesAny(line.textLeftTextStripped, ITEM_UNIQUE, ITEM_UNIQUE_MULTIPLE, ITEM_UNIQUE_EQUIPPABLE, ITEM_LIMIT_CATEGORY_MULTIPLE, ITEM_LIMIT_CATEGORY) then
       return SetContext(i-1, tooltipData, line)
+    end
+  end,
+  LockedWithProfession = function(i, tooltipData, line)
+    if line.colorLeft == Addon.COLORS.RED and MatchesAny(line.textLeftTextStripped, ITEM_MIN_SKILL) then
+      return SetContext(i, tooltipData, line)
     end
   end,
   Embed = function(i, tooltipData, line)
@@ -290,15 +296,7 @@ contextActions = Addon:Map({
     end
   end,
   RequiredSkill = function(i, tooltipData, line)
-    for _, alt in ipairs{
-      contexts.RequiredRep,
-    } do
-      local increment = contextActions[alt](alt, tooltipData, line)
-      if increment then
-        return alt - i + increment
-      end
-    end
-    if MatchesAny(line.textLeftTextStripped, ITEM_MIN_SKILL, ITEM_REQ_SKILL) then
+    if MatchesAny(line.textLeftTextStripped, ITEM_MIN_SKILL) then
       return SetContext(i, tooltipData, line)
     end
   end,
