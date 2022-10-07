@@ -2,9 +2,7 @@
 --[[
 TODO...
 
-regressions:
-  no longer supporting tbc (impossible to test on this client)
-  can't color elemental weapon damage differently than weapon damage
+color elemental weapon damage differently than weapon damage
 
 
 option to force word wrap on/off for each stat?
@@ -213,8 +211,9 @@ do
     end
   end
   
+  local skip
   local function InterfaceOptionsFrame_OpenToCategory_Fix(panel)
-    if skip or InCombatLockdown() then return end
+    if skip --[[or InCombatLockdown()--]] then return end
     local panelName = GetPanelName(panel)
     if not panelName then return end -- if its not part of our list return early
     local noncollapsedHeaders = {}
@@ -247,11 +246,24 @@ do
     InterfaceOptionsFrame_OpenToCategory(panel)
     skip = false
   end
-
-  hooksecurefunc("InterfaceOptionsFrame_OpenToCategory", function(...) if Addon:GetOption("fix", "InterfaceOptionsFrame") then InterfaceOptionsFrame_OpenToCategory_Fix(...) end end)
+  
+  local isMe = false
+  hooksecurefunc("InterfaceOptionsFrame_OpenToCategory", function(...)
+    if skip then return end
+    if Addon:GetOption("fix", "InterfaceOptionsFrameForAll") or Addon:GetOption("fix", "InterfaceOptionsFrameForMe") and isMe then
+      Addon:DebugIf({"debugOutput", "InterfaceOptionsFrameFix"}, "Patching Interface Options")
+      InterfaceOptionsFrame_OpenToCategory_Fix(...)
+      isMe = false
+    end
+  end)
   
   function Addon:OpenConfig(category)
-    InterfaceOptionsFrame_OpenToCategory_Fix(category)
+    isMe = Addon:GetOption("fix", "InterfaceOptionsFrameForMe")
+    if isMe then
+      InterfaceOptionsFrame_OpenToCategory(category)
+      isMe = true
+    end
+    InterfaceOptionsFrame_OpenToCategory(category)
   end
 end
 

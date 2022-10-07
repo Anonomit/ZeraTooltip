@@ -255,6 +255,7 @@ function Addon:MakeDefaultOptions()
           constructorCached         = false,
           constructorWiped          = false,
           constructorValidationFail = false,
+          InterfaceOptionsFrameFix  = false,
           
           GameTooltip      = false,
           ItemRefTooltip   = false,
@@ -286,7 +287,8 @@ function Addon:MakeDefaultOptions()
         },
         
         fix = {
-          InterfaceOptionsFrame = false,
+          InterfaceOptionsFrameForMe  = true,
+          InterfaceOptionsFrameForAll = false,
         },
       },
     },
@@ -1539,6 +1541,9 @@ function Addon:MakeDebugOptions()
       GUI:CreateNewline(opts)
       
       GUI:CreateToggle(opts, {"debugOutput", "constructorValidationFail"}, "Constructor Validation Failure", nil, disabled).width = 2
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"debugOutput", "InterfaceOptionsFrameFix"}, "Interface Options Patch", nil, disabled).width = 2
     end
     
     do
@@ -1625,7 +1630,10 @@ function Addon:MakeDebugOptions()
     do
       local opts = GUI:CreateGroupBox(opts, "Options Menu")
       
-      GUI:CreateToggle(opts, {"fix", "InterfaceOptionsFrame"}, "Fix Category Opening", "Fix a bug with Interface Options so that it can be opened to a category that isn't visible without scrolling.").width = 2
+      GUI:CreateToggle(opts, {"fix", "InterfaceOptionsFrameForMe"}, "Fix Category Opening For Me", "Fix a bug with Interface Options so that it can be opened to this addon when scrolling would be required.").width = 2
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"fix", "InterfaceOptionsFrameForAll"}, "Fix Category Opening For All", "Fix a bug with Interface Options so that it can be opened to a category that isn't visible without scrolling.").width = 2
     end
   end
   
