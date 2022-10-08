@@ -26,7 +26,7 @@ local function RewordDurabilityNumbers(text)
     cur, max = tonumber(cur), tonumber(max)
     local percent = self:Round((cur/max)*100, 1)
     
-    return strGsub(text, "%d+ ?%/ ?%d+", self:GetOption("durability", "showCur") and format("%s (%s%%%%)", text, percent) or format("%s%%%%", percent))
+    return strGsub(text, "%d+ ?%/ ?%d+", self:GetOption("durability", "showCur") and format("%s (%s%%%%)", curMax, percent) or format("%s%%%%", percent))
   end
   return text
 end
