@@ -814,6 +814,11 @@ do
     end
   end
   
+  Addon.statsInfo["AlreadyBound"]       = {color = Addon.COLORS.WHITE}
+  Addon.statsInfo["CharacterBound"]     = {color = Addon.COLORS.WHITE}
+  Addon.statsInfo["AccountBound"]       = {color = Addon.COLORS.WHITE}
+  Addon.statsInfo["Tradeable"]          = {color = Addon.COLORS.WHITE}
+  
   Addon.statsInfo["Trainable"]          = {color = Addon.COLORS.ORANGE}
   Addon.statsInfo["Damage"]             = {color = Addon.COLORS.WHITE}
   Addon.statsInfo["Speed"]              = {color = Addon.COLORS.WHITE}

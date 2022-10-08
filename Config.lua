@@ -54,6 +54,8 @@ end
 
 
 local icons = {
+  "|TInterface\\AddOns\\" .. ADDON_NAME .. "\\Assets\\Textures\\Samwise:0|t",
+  
   "|TInterface\\Buttons\\UI-AttributeButton-Encourage-Up:0|t",
   "|TInterface\\Buttons\\UI-GroupLoot-Coin-Up:0|t",
   "|TInterface\\Buttons\\UI-GroupLoot-DE-Up:0|t",
@@ -77,6 +79,30 @@ local icons = {
   -- "|TInterface\\COMMON\\Indicator-Yellow:0|t",
   -- "|TInterface\\COMMON\\Indicator-Red:0|t",
   "|TInterface\\COMMON\\RingBorder:0|t",
+  
+  "|TInterface\\ContainerFrame\\KeyRing-Bag-Icon:0|t",
+  "|TInterface\\ICONS\\INV_Misc_Key_01:0|t",
+  "|TInterface\\ICONS\\INV_Misc_Key_02:0|t",
+  "|TInterface\\ICONS\\INV_Misc_Key_03:0|t",
+  "|TInterface\\ICONS\\INV_Misc_Key_04:0|t",
+  "|TInterface\\ICONS\\INV_Misc_Key_05:0|t",
+  "|TInterface\\ICONS\\INV_Misc_Key_06:0|t",
+  "|TInterface\\ICONS\\INV_Misc_Key_07:0|t",
+  "|TInterface\\ICONS\\INV_Misc_Key_08:0|t",
+  "|TInterface\\ICONS\\INV_Misc_Key_09:0|t",
+  "|TInterface\\ICONS\\INV_Misc_Key_10:0|t",
+  "|TInterface\\ICONS\\INV_Misc_Key_11:0|t",
+  "|TInterface\\ICONS\\INV_Misc_Key_12:0|t",
+  "|TInterface\\ICONS\\INV_Misc_Key_13:0|t",
+  "|TInterface\\ICONS\\INV_Misc_Key_14:0|t",
+  "|TInterface\\ICONS\\INV_Misc_Key_15:0|t",
+  
+  
+  -- "|TInterface\\LFGFRAME\\UI-LFG-ICON-LOCK:0|t",
+  "|TInterface\\PetBattles\\PetBattle-LockIcon:0|t",
+  -- "|TInterface\\Store\\category-icon-key:0|t",
+  
+  "|TInterface\\MINIMAP\\TRACKING\\Auctioneer:0|t",
   
   "|TInterface\\CURSOR\\Attack:0|t",
   -- "|TInterface\\CURSOR\\Missions:0|t",
@@ -219,12 +245,17 @@ function Addon:MakeDefaultOptions()
           WeaponEnchant = true,
         },
         icon = {
-          Enchant       = "|TInterface\\Buttons\\UI-GroupLoot-DE-Up:0|t",
-          WeaponEnchant = "|TInterface\\CURSOR\\Attack:0|t",
-          Durability    = "|TInterface\\MINIMAP\\TRACKING\\Repair:0|t",
-          Equip         = "|TInterface\\Tooltips\\ReforgeGreenArrow:0|t",
-          ChanceOnHit   = "|TInterface\\Buttons\\UI-GroupLoot-Dice-Up:0|t",
-          Use           = "|TInterface\\CURSOR\\Cast:0|t",
+          ["*"]          = "|TInterface\\AddOns\\" .. ADDON_NAME .. "\\Assets\\Textures\\Samwise:0|t",
+          AlreadyBound   = "|TInterface\\PetBattles\\PetBattle-LockIcon:0|t",
+          CharacterBound = "|TInterface\\PetBattles\\PetBattle-LockIcon:0|t",
+          AccountBound   = "|TInterface\\PetBattles\\PetBattle-LockIcon:0|t",
+          Tradeable      = "|TInterface\\MINIMAP\\TRACKING\\Auctioneer:0|t",
+          Enchant        = "|TInterface\\Buttons\\UI-GroupLoot-DE-Up:0|t",
+          WeaponEnchant  = "|TInterface\\CURSOR\\Attack:0|t",
+          Durability     = "|TInterface\\MINIMAP\\TRACKING\\Repair:0|t",
+          Equip          = "|TInterface\\Tooltips\\ReforgeGreenArrow:0|t",
+          ChanceOnHit    = "|TInterface\\Buttons\\UI-GroupLoot-Dice-Up:0|t",
+          Use            = "|TInterface\\CURSOR\\Cast:0|t",
         },
         iconSpace = {
           ["*"] = true,
@@ -567,6 +598,37 @@ local function CreateTitle(opts, defaultText, formattedText, changed, newline)
   
   return opts
 end
+local function CreateSamples(opts, samples)
+  local self = Addon
+  local GUI  = self.GUI
+  
+  local opts = GUI:CreateGroupBox(opts, self.L["Example Text:"])
+  
+  local changed = false
+  
+  GUI:CreateDescription(opts, self.L["Default"], "small")
+  for _, texts in ipairs(samples) do
+    GUI:CreateDescription(opts, texts[1])
+    if texts[1] ~= texts[2] then
+      changed = true
+    end
+  end
+  GUI:CreateDivider(opts)
+  if changed then
+    GUI:CreateDescription(opts, self.L["Current"], "small")
+  else
+    GUI:CreateDescription(opts, " ", "small")
+  end
+  for _, texts in ipairs(samples) do
+    if texts[1] ~= texts[2] then
+      GUI:CreateDescription(opts, texts[2])
+    else
+      GUI:CreateDescription(opts, " ")
+    end
+  end
+  
+  return opts
+end
 local function CreateReset(opts, option, func)
   local self = Addon
   local GUI  = self.GUI
@@ -821,6 +883,36 @@ function Addon:MakeExtraOptions()
   
   local GUI = self.GUI:ResetOrder()
   local opts = GUI:CreateGroupTop(title)
+  
+  
+  -- Binding
+  for _, data in ipairs{
+    {"AlreadyBound",   ITEM_SOULBOUND},
+    {"CharacterBound", ITEM_BIND_ON_PICKUP},
+    {"AccountBound",   ITEM_BIND_TO_ACCOUNT, ITEM_BIND_TO_BNETACCOUNT},
+    {"Tradeable",      ITEM_BIND_ON_EQUIP,   ITEM_BIND_ON_USE},
+  } do
+    local stat = data[1]
+    
+    local samples = {}
+    for i = 2, #data do
+      local defaultText = data[i]
+      local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.WHITE, defaultText, self:RewordBinding(defaultText, stat))
+      tinsert(samples, {defaultText, formattedText})
+    end
+    
+    local opts = GUI:CreateGroup(opts, stat, samples[1][2], nil, disabled)
+      
+    CreateSamples(opts, samples)
+    
+    CreateColor(opts, stat)
+    
+    CreateIcon(opts, stat)
+    
+    CreateHide(opts, stat)
+  end
+  
+  GUI:CreateGroup(opts, "afterBinding" , " ", nil, true)
   
   -- Refundable
   local function MakeRefundableOption()

@@ -15,7 +15,11 @@ local function HideLeft(line)
 end
 
 function Addon:HideLine(line)
-  if line.type == "Damage" then
+  if line.type == "Binding" then
+    if self:GetOption("hide", line.bindType) then
+      return HideLeft(line)
+    end
+  elseif line.type == "Damage" then
     if self:GetOption("hide", "Speed") then
       line.hideRight = true
     end

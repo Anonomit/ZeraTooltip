@@ -42,6 +42,8 @@ function Addon:RewordLine(tooltip, line, tooltipData)
       if Addon:GetOption("allow", "reword") and self:GetOption("doReword", line.stat) then
         text = line.normalForm
       end
+    elseif line.type == "Binding" then
+      text = self:RewordBinding(text, line.bindType)
     elseif line.type == "Damage" then
       text = self:ModifyWeaponDamage(text, tooltipData.dps, tooltipData.speed)
       if not line.hideRight then

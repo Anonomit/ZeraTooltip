@@ -26,8 +26,6 @@ durability
   color gradient
   bar
 
-color different types of soulbound
-
 reorder races, classes, level
 
 multiple lines:

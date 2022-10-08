@@ -17,6 +17,16 @@ do
 end
 local numberPattern = "[%d%"..DECIMAL_SEPERATOR.."]+"
 
+
+local bindTypes = {
+  [ITEM_SOULBOUND]           = "AlreadyBound",
+  [ITEM_BIND_ON_EQUIP]       = "Tradeable",
+  [ITEM_BIND_ON_USE]         = "Tradeable",
+  [ITEM_BIND_ON_PICKUP]      = "CharacterBound",
+  [ITEM_BIND_TO_ACCOUNT]     = "AccountBound",
+  [ITEM_BIND_TO_BNETACCOUNT] = "AccountBound",
+}
+
 local function strStarts(text, matchStr)
   return strFind(text, matchStr) == 1
 end
@@ -157,8 +167,10 @@ contextActions = Addon:Map({
     end
   end,
   Binding = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, ITEM_SOULBOUND, ITEM_BIND_ON_EQUIP, ITEM_BIND_ON_USE, ITEM_BIND_ON_PICKUP, ITEM_BIND_TO_ACCOUNT, ITEM_BIND_TO_BNETACCOUNT) then
+    local bindType = MatchesAny(line.textLeftTextStripped, ITEM_SOULBOUND, ITEM_BIND_ON_EQUIP, ITEM_BIND_ON_USE, ITEM_BIND_ON_PICKUP, ITEM_BIND_TO_ACCOUNT, ITEM_BIND_TO_BNETACCOUNT)
+    if bindType then
       tooltipData.binding = line.i
+      line.bindType       = bindTypes[bindType]
       return SetContext(i, tooltipData, line)
     end
   end,
