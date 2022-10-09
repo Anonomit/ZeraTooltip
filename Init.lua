@@ -232,6 +232,7 @@ L["Frame Width"]   = COMPACT_UNIT_FRAME_PROFILE_FRAMEWIDTH
 
 L["Icon"]            = EMBLEM_SYMBOL
 L["Choose an Icon:"] = MACRO_POPUP_CHOOSE_ICON
+L["Manual"]          = TRACKER_SORT_MANUAL
 
 L["Me"]                         = COMBATLOG_FILTER_STRING_ME
 L["Max Level"]                  = GUILD_RECRUITMENT_MAXLEVEL
@@ -554,6 +555,23 @@ end
 Addon.MY_NAME = UnitName"player"
 
 
+-- Sample title item name
+do
+  Addon.SAMPLE_TITLE_ID = 6948
+  Addon.SAMPLE_TITLE_NAME = GetItemInfo(Addon.SAMPLE_TITLE_ID)
+  if not Addon.SAMPLE_TITLE_NAME then
+    Addon:RegisterEvent("GET_ITEM_INFO_RECEIVED", function(_, id)
+      if id == Addon.SAMPLE_TITLE_ID then
+        Addon.SAMPLE_TITLE_NAME = GetItemInfo(Addon.SAMPLE_TITLE_ID)
+        if Addon.SAMPLE_TITLE_NAME then
+          Addon:UnregisterEvent("GET_ITEM_INFO_RECEIVED")
+        end
+      end
+    end)
+  end
+end
+
+
 -- Strip text recoloring
 Addon.ITEM_CREATED_BY = ITEM_CREATED_BY
 Addon.ITEM_WRAPPED_BY = ITEM_WRAPPED_BY
@@ -563,6 +581,26 @@ do
   
   local hex, text = strMatch(Addon.ITEM_WRAPPED_BY, "^|c%x%x(%x%x%x%x%x%x)(.*)|r$")
   Addon.ITEM_WRAPPED_BY = text or Addon.ITEM_WRAPPED_BY
+end
+
+
+function Addon:MakeIcon(texture, size)
+  return "|T" .. texture .. ":" .. tostring(size or "0") .. "|t"
+end
+function Addon:UnmakeIcon(texture)
+  return self:ChainGsub(texture, {"^|T", ":%d+|t$", ""})
+end
+
+function Addon:InsertIcon(text, stat, customTexture)
+  local self = Addon
+  
+  if self:GetOption("doIcon", stat) then
+    if self:GetOption("iconSpace", stat) then
+      text = " " .. text
+    end
+    text = self:MakeIcon(customTexture or self:GetOption("icon", stat), self:GetOption("iconSizeManual", stat) and self:GetOption("iconSize", stat) or 0) .. text
+  end
+  return text
 end
 
 
@@ -830,21 +868,30 @@ do
     end
   end
   
+  Addon.statsInfo["Title"]              = {color = Addon.COLORS.WHITE}
+  
   Addon.statsInfo["AlreadyBound"]       = {color = Addon.COLORS.WHITE}
   Addon.statsInfo["CharacterBound"]     = {color = Addon.COLORS.WHITE}
   Addon.statsInfo["AccountBound"]       = {color = Addon.COLORS.WHITE}
   Addon.statsInfo["Tradeable"]          = {color = Addon.COLORS.WHITE}
   
   Addon.statsInfo["Trainable"]          = {color = Addon.COLORS.ORANGE}
+  
   Addon.statsInfo["Damage"]             = {color = Addon.COLORS.WHITE}
   Addon.statsInfo["Speed"]              = {color = Addon.COLORS.WHITE}
+  
   Addon.statsInfo["DamagePerSecond"]    = {color = Addon.COLORS.WHITE}
   Addon.statsInfo["Speedbar"]           = {color = Addon.COLORS.WHITE}
+  
   Addon.statsInfo["Enchant"]            = {color = Addon.COLORS.GREEN}
   Addon.statsInfo["WeaponEnchant"]      = {color = Addon.COLORS.GREEN}
+  
   Addon.statsInfo["Durability"]         = {color = Addon.COLORS.WHITE}
+  
   Addon.statsInfo["MadeBy"]             = {color = Addon.COLORS.GREEN}
+  
   Addon.statsInfo["SocketHint"]         = {color = Addon.COLORS.GREEN}
+  
   Addon.statsInfo["Refundable"]         = {color = Addon.COLORS.SKY_BLUE}
   Addon.statsInfo["SoulboundTradeable"] = {color = Addon.COLORS.SKY_BLUE}
 end

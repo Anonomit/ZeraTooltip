@@ -101,12 +101,13 @@ function Addon:ReadTooltip(tooltip, name, link, maxLines)
   
   -- tooltipData.name = name
   -- tooltipData.link = link
-  tooltipData.id = strMatch(link, "item:(%d+):")
+  tooltipData.id = tonumber(strMatch(link, "item:(%d+):"))
   if strFind(link, "item:%d+:%d+") then
     tooltipData.hasEnchant = true
   end
-  local _, _, _, itemEquipLoc = GetItemInfoInstant(tooltipData.id)
+  local _, _, _, itemEquipLoc, icon = GetItemInfoInstant(tooltipData.id)
   tooltipData.isWeapon = weaponInvTypes[itemEquipLoc]
+  tooltipData.icon     = icon
   
   return tooltipData
 end

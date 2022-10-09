@@ -33,7 +33,7 @@ end
 
 
 function Addon:ModifyDurability(text)
-  if not Addon:GetOption("allow", "reword") then return text end
+  if not self:GetOption("allow", "reword") then return text end
   
   text = RewordDurabilityNumbers(text)
   
@@ -48,13 +48,7 @@ function Addon:ModifyDurability(text)
     end
   end
   
-  if self:GetOption("doIcon", stat) then
-    if self:GetOption("iconSpace", stat) then
-      text = self:GetOption("icon", stat) .. " " .. text
-    else
-      text = self:GetOption("icon", stat) .. text
-    end
-  end
+  text = self:InsertIcon(text, stat)
   
   return text
 end

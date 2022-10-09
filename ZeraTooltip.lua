@@ -16,19 +16,12 @@ setting to show Heroic tag
     would need to make a database of heroic items
 example for above settings: https://www.wowhead.com/wotlk/item=51933/shawl-of-nerubian-silk
 
-recognize ITEM_READABLE
-
-title icon
-  do NOT allow titles to be hidden
-
 measure performance and memory usage with and without caches. maybe only cache particularly expensive operations? like localeExtras
 
 
 durability
   color gradient
   bar
-
-reorder races, classes, level
 
 multiple lines:
   SPELL_SCHOOL%d_CAP
@@ -310,6 +303,13 @@ function Addon:InitDB()
   -- clear settings from earlier than 2.0.0 (wrath launch)
   if configVersion < self.SemVer"2.0.0" then
     return self:GetDB():ResetProfile()
+  end
+  
+  -- convert icons to newer format
+  if configVersion < self.SemVer"2.2.0" then
+    for stat, icon in pairs(self:GetOption("icon")) do
+      self:SetOption(self:UnmakeIcon(icon), "icon", stat)
+    end
   end
   
   

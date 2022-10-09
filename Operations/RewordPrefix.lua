@@ -28,13 +28,7 @@ function Addon:ModifyPrefix(text, prefix)
     end
   end
   
-  if self:GetOption("doIcon", stat) then
-    if self:GetOption("iconSpace", stat) then
-      text = self:GetOption("icon", stat) .. " " .. text
-    else
-      text = self:GetOption("icon", stat) .. text
-    end
-  end
+  text = self:InsertIcon(text, stat)
   
   return text
 end

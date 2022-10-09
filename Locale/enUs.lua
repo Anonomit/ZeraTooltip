@@ -28,6 +28,8 @@ L["Sockets"]            = true
 L["Set List"]           = true
 L["Set Bonus"]          = true
 
+-- title
+L["Hearthstone"] = true
 
 -- refundable
 L["Refund"] = true
@@ -64,6 +66,7 @@ L["Hide Pointless Lines"] = true
 
 -- prefixes
 L["Remove Space"] = true
+L["Icon Size"]    = true
 L["Icon Space"]   = true
 
 -- reset

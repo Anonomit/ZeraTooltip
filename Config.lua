@@ -53,107 +53,108 @@ end
 --   ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝ 
 
 
-local icons = {
-  "|TInterface\\AddOns\\" .. ADDON_NAME .. "\\Assets\\Textures\\Samwise:0|t",
+local iconPaths = {
+  "Interface\\AddOns\\" .. ADDON_NAME .. "\\Assets\\Textures\\Samwise",
   
-  "|TInterface\\Buttons\\UI-AttributeButton-Encourage-Up:0|t",
-  "|TInterface\\Buttons\\UI-GroupLoot-Coin-Up:0|t",
-  "|TInterface\\Buttons\\UI-GroupLoot-DE-Up:0|t",
-  "|TInterface\\Buttons\\UI-GroupLoot-Dice-Up:0|t",
+  "Interface\\Buttons\\UI-AttributeButton-Encourage-Up",
+  "Interface\\Buttons\\UI-GroupLoot-Coin-Up",
+  "Interface\\Buttons\\UI-GroupLoot-DE-Up",
+  "Interface\\Buttons\\UI-GroupLoot-Dice-Up",
   
-  "|TInterface\\Buttons\\UI-PlusButton-Up:0|t",
-  "|TInterface\\Buttons\\UI-PlusButton-Disabled:0|t",
-  "|TInterface\\Buttons\\UI-CheckBox-Check:0|t",
-  "|TInterface\\Buttons\\UI-CheckBox-Check-Disabled:0|t",
-  -- "|TInterface\\Buttons\\UI-SliderBar-Button-Vertical:0|t",
+  "Interface\\Buttons\\UI-PlusButton-Up",
+  "Interface\\Buttons\\UI-PlusButton-Disabled",
+  "Interface\\Buttons\\UI-CheckBox-Check",
+  "Interface\\Buttons\\UI-CheckBox-Check-Disabled",
+  -- "Interface\\Buttons\\UI-SliderBar-Button-Vertical",
   
-  -- "|TInterface\\COMMON\\FavoritesIcon:0|t",
-  -- "|TInterface\\COMMON\\friendship-archivistscodex:0|t",
-  -- "|TInterface\\COMMON\\friendship-FistHuman:0|t",
-  -- "|TInterface\\COMMON\\friendship-FistOrc:0|t",
-  "|TInterface\\COMMON\\friendship-heart:0|t",
-  "|TInterface\\COMMON\\friendship-manaorb:0|t",
-  -- "|TInterface\\COMMON\\help-i:0|t",
-  -- "|TInterface\\COMMON\\Indicator-Gray:0|t",
-  -- "|TInterface\\COMMON\\Indicator-Green:0|t",
-  -- "|TInterface\\COMMON\\Indicator-Yellow:0|t",
-  -- "|TInterface\\COMMON\\Indicator-Red:0|t",
-  "|TInterface\\COMMON\\RingBorder:0|t",
+  -- "Interface\\COMMON\\FavoritesIcon",
+  -- "Interface\\COMMON\\friendship-archivistscodex",
+  -- "Interface\\COMMON\\friendship-FistHuman",
+  -- "Interface\\COMMON\\friendship-FistOrc",
+  "Interface\\COMMON\\friendship-heart",
+  "Interface\\COMMON\\friendship-manaorb",
+  -- "Interface\\COMMON\\help-i",
+  -- "Interface\\COMMON\\Indicator-Gray",
+  -- "Interface\\COMMON\\Indicator-Green",
+  -- "Interface\\COMMON\\Indicator-Yellow",
+  -- "Interface\\COMMON\\Indicator-Red",
+  "Interface\\COMMON\\RingBorder",
   
-  "|TInterface\\ContainerFrame\\KeyRing-Bag-Icon:0|t",
-  "|TInterface\\ICONS\\INV_Misc_Key_01:0|t",
-  "|TInterface\\ICONS\\INV_Misc_Key_02:0|t",
-  "|TInterface\\ICONS\\INV_Misc_Key_03:0|t",
-  "|TInterface\\ICONS\\INV_Misc_Key_04:0|t",
-  "|TInterface\\ICONS\\INV_Misc_Key_05:0|t",
-  "|TInterface\\ICONS\\INV_Misc_Key_06:0|t",
-  "|TInterface\\ICONS\\INV_Misc_Key_07:0|t",
-  "|TInterface\\ICONS\\INV_Misc_Key_08:0|t",
-  "|TInterface\\ICONS\\INV_Misc_Key_09:0|t",
-  "|TInterface\\ICONS\\INV_Misc_Key_10:0|t",
-  "|TInterface\\ICONS\\INV_Misc_Key_11:0|t",
-  "|TInterface\\ICONS\\INV_Misc_Key_12:0|t",
-  "|TInterface\\ICONS\\INV_Misc_Key_13:0|t",
-  "|TInterface\\ICONS\\INV_Misc_Key_14:0|t",
-  "|TInterface\\ICONS\\INV_Misc_Key_15:0|t",
+  "Interface\\ContainerFrame\\KeyRing-Bag-Icon",
+  "Interface\\ICONS\\INV_Misc_Key_01",
+  "Interface\\ICONS\\INV_Misc_Key_02",
+  "Interface\\ICONS\\INV_Misc_Key_03",
+  "Interface\\ICONS\\INV_Misc_Key_04",
+  "Interface\\ICONS\\INV_Misc_Key_05",
+  "Interface\\ICONS\\INV_Misc_Key_06",
+  "Interface\\ICONS\\INV_Misc_Key_07",
+  "Interface\\ICONS\\INV_Misc_Key_08",
+  "Interface\\ICONS\\INV_Misc_Key_09",
+  "Interface\\ICONS\\INV_Misc_Key_10",
+  "Interface\\ICONS\\INV_Misc_Key_11",
+  "Interface\\ICONS\\INV_Misc_Key_12",
+  "Interface\\ICONS\\INV_Misc_Key_13",
+  "Interface\\ICONS\\INV_Misc_Key_14",
+  "Interface\\ICONS\\INV_Misc_Key_15",
   
   
-  -- "|TInterface\\LFGFRAME\\UI-LFG-ICON-LOCK:0|t",
-  "|TInterface\\PetBattles\\PetBattle-LockIcon:0|t",
-  -- "|TInterface\\Store\\category-icon-key:0|t",
+  -- "Interface\\LFGFRAME\\UI-LFG-ICON-LOCK",
+  "Interface\\PetBattles\\PetBattle-LockIcon",
+  -- "Interface\\Store\\category-icon-key",
   
-  "|TInterface\\MINIMAP\\TRACKING\\Auctioneer:0|t",
+  "Interface\\MINIMAP\\TRACKING\\Auctioneer",
   
-  "|TInterface\\CURSOR\\Attack:0|t",
-  -- "|TInterface\\CURSOR\\Missions:0|t",
-  "|TInterface\\CURSOR\\Cast:0|t",
-  "|TInterface\\CURSOR\\Point:0|t",
-  "|TInterface\\CURSOR\\Crosshairs:0|t",
+  "Interface\\CURSOR\\Attack",
+  -- "Interface\\CURSOR\\Missions",
+  "Interface\\CURSOR\\Cast",
+  "Interface\\CURSOR\\Point",
+  "Interface\\CURSOR\\Crosshairs",
   
-  "|TInterface\\FriendsFrame\\InformationIcon:0|t",
-  -- "|TInterface\\FriendsFrame\\StatusIcon-Away:0|t",
-  -- "|TInterface\\FriendsFrame\\StatusIcon-DnD:0|t",
-  "|TInterface\\FriendsFrame\\StatusIcon-Offline:0|t",
-  "|TInterface\\FriendsFrame\\StatusIcon-Online:0|t",
+  "Interface\\FriendsFrame\\InformationIcon",
+  -- "Interface\\FriendsFrame\\StatusIcon-Away",
+  -- "Interface\\FriendsFrame\\StatusIcon-DnD",
+  "Interface\\FriendsFrame\\StatusIcon-Offline",
+  "Interface\\FriendsFrame\\StatusIcon-Online",
   
-  "|TInterface\\HELPFRAME\\HotIssueIcon:0|t",
-  -- "|TInterface\\HELPFRAME\\HelpIcon-HotIssues:0|t",
-  -- "|TInterface\\HELPFRAME\\HelpIcon-Suggestion:0|t",
-  -- "|TInterface\\HELPFRAME\\ReportLagIcon-Spells:0|t",
+  "Interface\\HELPFRAME\\HotIssueIcon",
+  -- "Interface\\HELPFRAME\\HelpIcon-HotIssues",
+  -- "Interface\\HELPFRAME\\HelpIcon-Suggestion",
+  -- "Interface\\HELPFRAME\\ReportLagIcon-Spells",
   
-  "|TInterface\\MINIMAP\\TRACKING\\Repair:0|t",
-  "|TInterface\\MINIMAP\\Dungeon:0|t",
-  "|TInterface\\MINIMAP\\Raid:0|t",
-  "|TInterface\\MINIMAP\\TempleofKotmogu_ball_cyan:0|t",
-  "|TInterface\\MINIMAP\\TempleofKotmogu_ball_green:0|t",
-  "|TInterface\\MINIMAP\\TempleofKotmogu_ball_orange:0|t",
-  "|TInterface\\MINIMAP\\TempleofKotmogu_ball_purple:0|t",
-  "|TInterface\\MINIMAP\\Vehicle-AllianceMagePortal:0|t",
-  "|TInterface\\MINIMAP\\Vehicle-HordeMagePortal:0|t",
+  "Interface\\MINIMAP\\TRACKING\\Repair",
+  "Interface\\MINIMAP\\Dungeon",
+  "Interface\\MINIMAP\\Raid",
+  "Interface\\MINIMAP\\TempleofKotmogu_ball_cyan",
+  "Interface\\MINIMAP\\TempleofKotmogu_ball_green",
+  "Interface\\MINIMAP\\TempleofKotmogu_ball_orange",
+  "Interface\\MINIMAP\\TempleofKotmogu_ball_purple",
+  "Interface\\MINIMAP\\Vehicle-AllianceMagePortal",
+  "Interface\\MINIMAP\\Vehicle-HordeMagePortal",
   
-  "|TInterface\\MONEYFRAME\\Arrow-Left-Down:0|t",
-  -- "|TInterface\\MONEYFRAME\\Arrow-Left-Up:0|t",
-  "|TInterface\\MONEYFRAME\\Arrow-Right-Down:0|t",
-  -- "|TInterface\\MONEYFRAME\\Arrow-Right-Up:0|t",
+  "Interface\\MONEYFRAME\\Arrow-Left-Down",
+  -- "Interface\\MONEYFRAME\\Arrow-Left-Up",
+  "Interface\\MONEYFRAME\\Arrow-Right-Down",
+  -- "Interface\\MONEYFRAME\\Arrow-Right-Up",
   
-  "|TInterface\\Transmogrify\\transmog-tooltip-arrow:0|t",
+  "Interface\\Transmogrify\\transmog-tooltip-arrow",
   
-  "|TInterface\\Tooltips\\ReforgeGreenArrow:0|t",
+  "Interface\\Tooltips\\ReforgeGreenArrow",
   
-  "|TInterface\\OPTIONSFRAME\\VoiceChat-Play:0|t",
-  "|TInterface\\OPTIONSFRAME\\VoiceChat-Record:0|t",
+  "Interface\\OPTIONSFRAME\\VoiceChat-Play",
+  "Interface\\OPTIONSFRAME\\VoiceChat-Record",
   
-  "|TInterface\\RAIDFRAME\\ReadyCheck-Ready:0|t",
+  "Interface\\RAIDFRAME\\ReadyCheck-Ready",
   
-  "|TInterface\\TARGETINGFRAME\\UI-RaidTargetingIcon_1:0|t",
-  "|TInterface\\TARGETINGFRAME\\UI-RaidTargetingIcon_2:0|t",
-  "|TInterface\\TARGETINGFRAME\\UI-RaidTargetingIcon_3:0|t",
-  "|TInterface\\TARGETINGFRAME\\UI-RaidTargetingIcon_4:0|t",
-  "|TInterface\\TARGETINGFRAME\\UI-RaidTargetingIcon_5:0|t",
-  "|TInterface\\TARGETINGFRAME\\UI-RaidTargetingIcon_6:0|t",
-  "|TInterface\\TARGETINGFRAME\\UI-RaidTargetingIcon_7:0|t",
-  "|TInterface\\TARGETINGFRAME\\UI-RaidTargetingIcon_8:0|t",
+  "Interface\\TARGETINGFRAME\\UI-RaidTargetingIcon_1",
+  "Interface\\TARGETINGFRAME\\UI-RaidTargetingIcon_2",
+  "Interface\\TARGETINGFRAME\\UI-RaidTargetingIcon_3",
+  "Interface\\TARGETINGFRAME\\UI-RaidTargetingIcon_4",
+  "Interface\\TARGETINGFRAME\\UI-RaidTargetingIcon_5",
+  "Interface\\TARGETINGFRAME\\UI-RaidTargetingIcon_6",
+  "Interface\\TARGETINGFRAME\\UI-RaidTargetingIcon_7",
+  "Interface\\TARGETINGFRAME\\UI-RaidTargetingIcon_8",
 }
+local icons         = Addon:Map(iconPaths, function(v) return "|T" .. v .. ":0|t" end)
 local iconsDropdown = Addon:Map(icons, nil, function(v) return v end)
 
 
@@ -206,6 +207,7 @@ function Addon:MakeDefaultOptions()
         },
         doRecolor = {
           ["*"]   = true,
+          Title   = false,
           Enchant = false,
         },
         color = (function() local colors = {["*"] = "00ff00"} for stat, StatInfo in pairs(self.statsInfo) do colors[stat] = StatInfo.color end return colors end)(),
@@ -250,17 +252,25 @@ function Addon:MakeDefaultOptions()
           WeaponEnchant = true,
         },
         icon = {
-          ["*"]          = "|TInterface\\AddOns\\" .. ADDON_NAME .. "\\Assets\\Textures\\Samwise:0|t",
-          AlreadyBound   = "|TInterface\\PetBattles\\PetBattle-LockIcon:0|t",
-          CharacterBound = "|TInterface\\PetBattles\\PetBattle-LockIcon:0|t",
-          AccountBound   = "|TInterface\\PetBattles\\PetBattle-LockIcon:0|t",
-          Tradeable      = "|TInterface\\MINIMAP\\TRACKING\\Auctioneer:0|t",
-          Enchant        = "|TInterface\\Buttons\\UI-GroupLoot-DE-Up:0|t",
-          WeaponEnchant  = "|TInterface\\CURSOR\\Attack:0|t",
-          Durability     = "|TInterface\\MINIMAP\\TRACKING\\Repair:0|t",
-          Equip          = "|TInterface\\Tooltips\\ReforgeGreenArrow:0|t",
-          ChanceOnHit    = "|TInterface\\Buttons\\UI-GroupLoot-Dice-Up:0|t",
-          Use            = "|TInterface\\CURSOR\\Cast:0|t",
+          ["*"]          = "Interface\\AddOns\\" .. ADDON_NAME .. "\\Assets\\Textures\\Samwise",
+          AlreadyBound   = "Interface\\PetBattles\\PetBattle-LockIcon",
+          CharacterBound = "Interface\\PetBattles\\PetBattle-LockIcon",
+          AccountBound   = "Interface\\PetBattles\\PetBattle-LockIcon",
+          Tradeable      = "Interface\\MINIMAP\\TRACKING\\Auctioneer",
+          Enchant        = "Interface\\Buttons\\UI-GroupLoot-DE-Up",
+          WeaponEnchant  = "Interface\\CURSOR\\Attack",
+          Durability     = "Interface\\MINIMAP\\TRACKING\\Repair",
+          Equip          = "Interface\\Tooltips\\ReforgeGreenArrow",
+          ChanceOnHit    = "Interface\\Buttons\\UI-GroupLoot-Dice-Up",
+          Use            = "Interface\\CURSOR\\Cast",
+        },
+        iconSizeManual = {
+          ["*"] = false,
+          Title = true,
+        },
+        iconSize = {
+          ["*"] = 16,
+          Title = 24,
         },
         iconSpace = {
           ["*"] = true,
@@ -675,11 +685,22 @@ local function CreateIcon(opts, stat)
   
   local disabled = not self:GetOption("allow", "reword")
   GUI:CreateToggle(opts, {"doIcon", stat}, self.L["Icon"], nil, disabled).width = 0.6
-  GUI:CreateSelect(opts, {"icon", stat}, self.L["Choose an Icon:"], nil, iconsDropdown, icons, disabled).width = 0.7
+  local option = GUI:CreateSelect(opts, {"icon", stat}, self.L["Choose an Icon:"], nil, iconsDropdown, icons, disabled)
+  option.width = 0.7
+  option.set   = function(info, v) self:SetOption(self:UnmakeIcon(v), "icon", stat)   end
+  option.get   = function(info)    return self:MakeIcon(self:GetOption("icon", stat)) end
   CreateReset(opts, {"icon", stat}, function() self:ResetOption("icon", stat) end)
-  GUI:CreateDivider(opts)
+  GUI:CreateNewline(opts)
   
   local disabled = disabled or not self:GetOption("doIcon", stat)
+  GUI:CreateToggle(opts, {"iconSizeManual", stat}, self.L["Manual"], nil, disabled).width = 0.6
+  local option = GUI:CreateRange(opts, {"iconSize", stat}, L["Icon Size"], nil, 0, 96, 1, disabled or not self:GetOption("iconSizeManual", stat))
+  option.width = 0.7
+  option.softMin = 8
+  option.softMax = 32
+  CreateReset(opts, {"iconSize", stat}, function() self:ResetOption("iconSize", stat) end)
+  GUI:CreateNewline(opts)
+  
   GUI:CreateToggle(opts, {"iconSpace", stat}, L["Icon Space"], nil, disabled).width = 0.7
   CreateReset(opts, {"iconSpace", stat}, function() self:ResetOption("iconSpace", stat) end)
   
@@ -877,10 +898,11 @@ function Addon:MakePaddingOptions()
 end
 
 
+local hearthstoneIcon = select(5, GetItemInfoInstant(Addon.SAMPLE_TITLE_ID))
 local sampleDamage   = 20
 local sampleVariance = 0.5
 local sampleSpeed    = 2.6
-local sampleNames = {
+Addon.SAMPLE_NAMES = {
   "Activision",
   "Arthas",
   "Batman",
@@ -935,6 +957,38 @@ function Addon:MakeExtraOptions()
   
   local GUI = self.GUI:ResetOrder()
   local opts = GUI:CreateGroupTop(title)
+  
+  -- Title
+  do
+    local stat = "Title"
+    
+    local defaultText = self.SAMPLE_TITLE_NAME or L["Hearthstone"]
+    local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.WHITE, defaultText, self:RewordTitle(defaultText, hearthstoneIcon))
+    
+    local opts = GUI:CreateGroup(opts, stat, formattedText)
+    
+    CreateTitle(opts, defaultText, formattedText, changed)
+    
+    local opts = GUI:CreateGroupBox(opts, self.L["Icon"])
+    
+    local disabled = not self:GetOption("allow", "reword")
+    GUI:CreateToggle(opts, {"doIcon", stat}, self.L["Icon"], nil, disabled).width = 0.6
+    CreateReset(opts, {"doIcon", stat}, function() self:ResetOption("doIcon", stat) end)
+    GUI:CreateNewline(opts)
+    
+    local disabled = disabled or not self:GetOption("doIcon", stat)
+    GUI:CreateToggle(opts, {"iconSizeManual", stat}, self.L["Manual"], nil, disabled).width = 0.6
+    local option = GUI:CreateRange(opts, {"iconSize", stat}, L["Icon Size"], nil, 0, 96, 1, disabled or not self:GetOption("iconSizeManual", stat))
+    option.width = 0.7
+    option.softMin = 8
+    option.softMax = 32
+    CreateReset(opts, {"iconSize", stat}, function() self:ResetOption("iconSize", stat) end)
+    GUI:CreateNewline(opts)
+    
+    GUI:CreateToggle(opts, {"iconSpace", stat}, L["Icon Space"], nil, disabled).width = 0.7
+    CreateReset(opts, {"iconSpace", stat}, function() self:ResetOption("iconSpace", stat) end)
+  end
+  GUI:CreateGroup(opts, GUI:Order(), " ", nil, true)
   
   -- Races
   local function MakeRequiredRacesOption()
@@ -1550,7 +1604,7 @@ function Addon:MakeExtraOptions()
     
     local samples = {}
     local secondName = UnitExists"target" and UnitName"target" or nil
-    secondName = secondName and secondName ~= self.MY_NAME and secondName or sampleNames[random(#sampleNames)]
+    secondName = secondName and secondName ~= self.MY_NAME and secondName or self.SAMPLE_NAMES[random(#self.SAMPLE_NAMES)]
     for _, name in ipairs{self.MY_NAME, secondName} do
       for _, pattern in ipairs{self.ITEM_CREATED_BY, self.ITEM_WRAPPED_BY, ITEM_WRITTEN_BY} do
         local defaultText = format(pattern, name)
@@ -1648,10 +1702,11 @@ function Addon:MakeResetOptions()
   for _, v in ipairs{
     {self.L["All"]    , function() self:ResetProfile()     end},
     {L["Order"]       , function() self:ResetOrder()       end},
-    {self.L["Color"]  , function() self:ResetOption"color" end},
-    {self.L["Rename"] , function() self:ResetReword()      end},
+    {self.L["Color"]  , function() self:ResetOption"color" self:ResetOption"doRecolor" end},
+    {self.L["Rename"] , function() self:ResetReword()      self:ResetOption"doReword" end},
     {L["Mod"]         , function() self:ResetMod()         end},
     {L["Precision"]   , function() self:ResetPrecision()   end},
+    {self.L["Icon"]   , function() self:ResetOption"icon"  self:ResetOption"doIcon" self:ResetOption"iconSizeManual" self:ResetOption"iconSize" self:ResetOption"iconSpace" end},
     {self.L["Hide"]   , function() self:ResetOption"hide"  end},
     {L["Spacing"]     , function() self:ResetOption"pad"   end},
   } do
