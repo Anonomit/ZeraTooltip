@@ -1,4 +1,32 @@
+<h2>2.2.0</h2>
+<p>&nbsp;</p>
+<p><strong>New Features</strong></p>
+<ul>
+<li>Icons can now be manually resized.</li>
+<li>Titles can now show the item's icon. This defaults to on.</li>
+<li>Durability can now be customized.</li>
+<li>Item 'Binding Type' (Soulbound, BoP, BoE, etc) can now be customized.</li>
+<li>'Refundable Item' text can now be customized.</li>
+<li>'Made By' lines can now be customized.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Changes</strong></p>
+<ul>
+<li>Added new icons to the list of options.</li>
+<li>Soulbound tradeable items are no longer reworded by default, to ensure clarity. This option will be reset for everyone.</li>
+<li>Weapon Damage is now able to display variance as a plain number, instead of as a percentage.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Fixes</strong></p>
+<ul>
+<li>Reduced false positive matches for trainable equipment. Tabards with reputation requirements should not longer be considered to be trainable.</li>
+<li>Improved line recognition in general, especially for green lines.</li>
+<li>Fixed an issue preventing `/zt` from opening options when in combat.</li>
+<li>Increased cache threshold. This will lead to more processing, but few validation failures. Hoping that it fixes a rare bug which I've been unable to reproduce.</li>
+</ul>
+<p>&nbsp;</p>
 <h2>2.1.2</h2>
+<p>&nbsp;</p>
 <p><strong>Fixes</strong></p>
 <ul>
 <li>Grey set bonuses are once again correctly recognized.</li>
@@ -6,6 +34,7 @@
 </ul>
 <p>&nbsp;</p>
 <h2>2.1.1</h2>
+<p>&nbsp;</p>
 <p><strong>Fixes</strong></p>
 <ul>
 <li>Text cache is now smarter, and will not add/remove icons/prefixes to the wrong lines.</li>
