@@ -300,9 +300,9 @@ function Addon:MakeDefaultOptions()
         constructor = {
           doValidation = true,
           
-          cacheWipeDelay    = 10,  -- time in seconds without constructor being requested before it's cleared
-          cacheMinSeenCount = 4,   -- minimum number of times constructor must be requested before it can be cached
-          cacheMinSeenTime  = 0.5, -- minimum time in seconds since constructor was first requested before it can be cached
+          cacheWipeDelay    = 3, -- time in seconds without constructor being requested before it's cleared
+          cacheMinSeenCount = 6, -- minimum number of times constructor must be requested before it can be cached
+          cacheMinSeenTime  = 1, -- minimum time in seconds since constructor was first requested before it can be cached
         },
         
         cache = {
@@ -849,7 +849,7 @@ function Addon:MakePaddingOptions(categoryName, chatCmd, arg1, ...)
   local opts = GUI:CreateGroupTop(title)
   
   CreateCombineStatsOption(opts)
-  Addon.GUI:CreateToggle(opts, {"pad", "before", "BonusEffect"}, L["Space Above Bonus Effects"]).width = 2
+  Addon.GUI:CreateToggle(opts, {"pad", "before", "BonusEffect"}, L["Add Space Above Bonus Effects"]).width = 2
   
   local paddedAfterPrevious = false
   local combineStats = self:GetOption("allow", "reorder") and self:GetOption"combineStats"
@@ -1745,7 +1745,7 @@ function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
   local panel = self:CreateOptionsCategory(categoryName, function()
   
   local GUI = self.GUI:ResetOrder()
-  local opts = GUI:CreateGroupTop(title)
+  local opts = GUI:CreateGroupTop(title, "tab")
   
   -- Enable
   do

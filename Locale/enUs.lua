@@ -13,7 +13,7 @@ L["Reorder"] = true
 L["Recolor"] = true
 
 L["Group Secondary Stats with Base Stats"] = true
-L["Space Above Bonus Effects"]             = true
+L["Add Space Above Bonus Effects"]         = true
 
 L["Multiply"]   = true
 L["Multiplier"] = true
