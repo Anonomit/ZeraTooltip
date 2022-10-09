@@ -248,6 +248,7 @@ function Addon:MakeDefaultOptions()
         },
         doIcon = {
           ["*"]         = false,
+          Title         = true,
           Enchant       = true,
           WeaponEnchant = true,
         },
