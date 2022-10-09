@@ -167,9 +167,15 @@ local strSub   = string.sub
 
 
 
-
 function Addon:OnChatCommand(input)
-  self:OpenConfig(ADDON_NAME)
+  local arg = self:GetArgs(input, 1)
+  
+  local func = arg and self.chatArgs[arg] or nil
+  if func then
+    func(self)
+  else
+    self:OpenConfig(ADDON_NAME)
+  end
 end
 
 -- Fix InterfaceOptionsFrame_OpenToCategory not actually opening the category (and not even scrolling to it)
@@ -274,19 +280,28 @@ end
 function Addon:CreateOptions()
   self:InitOptionTableHelpers()
   
-  self:MakeAddonOptions()
+  self:MakeAddonOptions(self.chatCommands[1])
   
-  self:MakeStatsOptions()
-  self:MakePaddingOptions()
-  self:MakeExtraOptions()
+  self:MakeStatsOptions(self.L["Stats"], self.chatCommands[1], "stats", "stat")
+  self:MakePaddingOptions(L["Spacing"], self.chatCommands[1], "spacing", "space", "spaces", "padding", "pad")
+  self:MakeExtraOptions(self.L["Miscellaneous"], self.chatCommands[1], "misc", "miscellaneous", "other")
   
-  local profileOptions = self.AceDBOptions:GetOptionsTable(self:GetDB())
-  self:CreateOptionsCategory(profileOptions.name, profileOptions)
+  do
+    local args = {"profiles", "profile", "prof"}
+    local profileOptions = self.AceDBOptions:GetOptionsTable(self:GetDB())
+    local categoryName = profileOptions.name
+    profileOptions.name = format("%s > %s  (/%s %s)", ADDON_NAME, profileOptions.name, self.chatCommands[1], args[1])
+    local panel = self:CreateOptionsCategory(categoryName, profileOptions)
+    local function OpenOptions() return self:OpenConfig(panel) end
+    for _, arg in ipairs(args) do
+      self.chatArgs[arg] = OpenOptions
+    end
+  end
   
-  self:MakeResetOptions()
+  self:MakeResetOptions(self.L["Reset"], self.chatCommands[1], "reset", "res")
   
   if self:IsDebugEnabled() then
-    self:MakeDebugOptions()
+    self:MakeDebugOptions(self.L["Debug"], self.chatCommands[1], "debug", "db")
   end
 end
 
@@ -340,7 +355,10 @@ function Addon:OnInitialize()
   self.db        = self.AceDB:New(("%sDB"):format(ADDON_NAME), self:MakeDefaultOptions(), true)
   self.dbDefault = self.AceDB:New({}                         , self:MakeDefaultOptions(), true)
   
-  self:RegisterChatCommand("zt", "OnChatCommand", true)
+  self.chatCommands = {"zt", "zera", ADDON_NAME:lower()}
+  for _, chatCommand in ipairs(self.chatCommands) do
+    self:RegisterChatCommand(chatCommand, "OnChatCommand", true)
+  end
   
   self.tooltipCache = {}
 end
@@ -352,7 +370,13 @@ function Addon:OnEnable()
   self:GetDB().RegisterCallback(self, "OnProfileCopied" , "InitDB")
   self:GetDB().RegisterCallback(self, "OnProfileReset"  , "InitDB")
   
+  self.chatArgs = {}
+  do
+    local function PrintVersion() self:Printf("Version: %s", tostring(self.Version)) end
+    for _, arg in ipairs{"version", "vers", "ver", "v"} do self.chatArgs[arg] = PrintVersion end
+  end
   self:CreateOptions()
+  
   self:HookTooltips() -- TODO: delay hooking to make sure I'm last?
   
   -- fix some blizzard addons not respecting tooltip.updateTooltip

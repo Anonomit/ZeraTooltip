@@ -222,7 +222,7 @@ L["End"]                = KEY_END
 
 L["Trade"]         = TRADE
 L["Settings"]      = SETTINGS
-L["Other Options"] = UNIT_FRAME_DROPDOWN_SUBSECTION_TITLE_OTHER
+-- L["Other Options"] = UNIT_FRAME_DROPDOWN_SUBSECTION_TITLE_OTHER
 L["Other"]         = FACTION_OTHER
 L["Weapon"]        = WEAPON
 L["Miscellaneous"] = MISCELLANEOUS

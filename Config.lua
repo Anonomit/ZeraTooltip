@@ -488,9 +488,9 @@ end
 
 
 -- ZeraTooltip options
-function Addon:MakeAddonOptions()
-  local title = ADDON_NAME .. " v" .. tostring(self:GetOption"version")
-  self:CreateOptionsCategory(nil, function()
+function Addon:MakeAddonOptions(chatCmd)
+  local title = format("%s v%s  (/%s)", ADDON_NAME, tostring(self:GetOption"version"), chatCmd)
+  local panel = self:CreateOptionsCategory(nil, function()
   
   local GUI = self.GUI:ResetOrder()
   local opts = GUI:CreateGroupTop(title, "tab")
@@ -534,6 +534,7 @@ function Addon:MakeAddonOptions()
   
   return opts
   end)
+  function self:OpenAddonOptions() return self:OpenConfig(panel) end
 end
 
 
@@ -770,9 +771,9 @@ local function CreateStatOption(opts, i, stat)
   
   CreateHide(opts, stat)
 end
-function Addon:MakeStatsOptions()
-  local title = self.L["Stats"]
-  self:CreateOptionsCategory(title, function()
+function Addon:MakeStatsOptions(categoryName, chatCmd, arg1, ...)
+  local title = format("%s > %s  (/%s %s)", ADDON_NAME, categoryName, chatCmd, arg1)
+  local panel = self:CreateOptionsCategory(categoryName, function()
   
   local GUI = self.GUI:ResetOrder()
   local opts = GUI:CreateGroupTop(title)
@@ -791,6 +792,10 @@ function Addon:MakeStatsOptions()
   
   return opts
   end)
+  local function OpenOptions() return self:OpenConfig(panel) end
+  for _, arg in ipairs{arg1, ...} do
+    self.chatArgs[arg] = OpenOptions
+  end
 end
 
 
@@ -835,9 +840,9 @@ local function CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, samp
   if paddedAfterPrevious then CreateGroupGap(opts, "after" .. name) end
   return paddedAfterPrevious
 end
-function Addon:MakePaddingOptions()
-  local title = L["Spacing"]
-  self:CreateOptionsCategory(title, function()
+function Addon:MakePaddingOptions(categoryName, chatCmd, arg1, ...)
+  local title = format("%s > %s  (/%s %s)", ADDON_NAME, categoryName, chatCmd, arg1)
+  local panel = self:CreateOptionsCategory(categoryName, function()
   
   local GUI = self.GUI:ResetOrder()
   local opts = GUI:CreateGroupTop(title)
@@ -895,6 +900,10 @@ function Addon:MakePaddingOptions()
   
   return opts
   end)
+  local function OpenOptions() return self:OpenConfig(panel) end
+  for _, arg in ipairs{arg1, ...} do
+    self.chatArgs[arg] = OpenOptions
+  end
 end
 
 
@@ -951,9 +960,9 @@ Addon.SAMPLE_NAMES = {
   "Yoda",
 }
 -- Misc options
-function Addon:MakeExtraOptions()
-  local title = self.L["Other Options"]
-  self:CreateOptionsCategory(title, function()
+function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
+  local title = format("%s > %s  (/%s %s)", ADDON_NAME, categoryName, chatCmd, arg1)
+  local panel = self:CreateOptionsCategory(categoryName, function()
   
   local GUI = self.GUI:ResetOrder()
   local opts = GUI:CreateGroupTop(title)
@@ -1686,27 +1695,31 @@ function Addon:MakeExtraOptions()
   
   return opts
   end)
+  local function OpenOptions() return self:OpenConfig(panel) end
+  for _, arg in ipairs{arg1, ...} do
+    self.chatArgs[arg] = OpenOptions
+  end
 end
 
 
 -- Reset Options
-function Addon:MakeResetOptions()
-  local title = self.L["Reset"]
-  self:CreateOptionsCategory(title, function()
+function Addon:MakeResetOptions(categoryName, chatCmd, arg1, ...)
+  local title = format("%s > %s  (/%s %s)", ADDON_NAME, categoryName, chatCmd, arg1)
+  local panel = self:CreateOptionsCategory(categoryName, function()
   
   local GUI = self.GUI:ResetOrder()
   local opts = GUI:CreateGroupTop(title)
   
-  GUI:CreateDivider(opts, 2)
+  GUI:CreateDivider(opts)
   
   for _, v in ipairs{
     {self.L["All"]    , function() self:ResetProfile()     end},
     {L["Order"]       , function() self:ResetOrder()       end},
     {self.L["Color"]  , function() self:ResetOption"color" self:ResetOption"doRecolor" end},
     {self.L["Rename"] , function() self:ResetReword()      self:ResetOption"doReword" end},
+    {self.L["Icon"]   , function() self:ResetOption"icon"  self:ResetOption"doIcon" self:ResetOption"iconSizeManual" self:ResetOption"iconSize" self:ResetOption"iconSpace" end},
     {L["Mod"]         , function() self:ResetMod()         end},
     {L["Precision"]   , function() self:ResetPrecision()   end},
-    {self.L["Icon"]   , function() self:ResetOption"icon"  self:ResetOption"doIcon" self:ResetOption"iconSizeManual" self:ResetOption"iconSize" self:ResetOption"iconSpace" end},
     {self.L["Hide"]   , function() self:ResetOption"hide"  end},
     {L["Spacing"]     , function() self:ResetOption"pad"   end},
   } do
@@ -1718,16 +1731,20 @@ function Addon:MakeResetOptions()
   
   return opts
   end)
+  local function OpenOptions() return self:OpenConfig(panel) end
+  for _, arg in ipairs{arg1, ...} do
+    self.chatArgs[arg] = OpenOptions
+  end
 end
 
 
 -- Debug Options
-function Addon:MakeDebugOptions()
-  local title = self.L["Debug"]
-  self:CreateOptionsCategory(title, function()
+function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
+  local title = format("%s > %s  (/%s %s)", ADDON_NAME, categoryName, chatCmd, arg1)
+  local panel = self:CreateOptionsCategory(categoryName, function()
   
   local GUI = self.GUI:ResetOrder()
-  local opts = GUI:CreateGroupTop(title, "tab")
+  local opts = GUI:CreateGroupTop(title)
   
   -- Enable
   do
@@ -1878,5 +1895,9 @@ function Addon:MakeDebugOptions()
   
   return opts
   end)
+  local function OpenOptions() return self:OpenConfig(panel) end
+  for _, arg in ipairs{arg1, ...} do
+    self.chatArgs[arg] = OpenOptions
+  end
 end
 
