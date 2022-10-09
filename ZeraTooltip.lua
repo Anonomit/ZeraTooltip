@@ -18,6 +18,8 @@ example for above settings: https://www.wowhead.com/wotlk/item=51933/shawl-of-ne
 
 recognize ITEM_READABLE
 
+title icon
+  do NOT allow titles to be hidden
 
 measure performance and memory usage with and without caches. maybe only cache particularly expensive operations? like localeExtras
 

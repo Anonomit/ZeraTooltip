@@ -223,6 +223,7 @@ L["End"]                = KEY_END
 L["Trade"]         = TRADE
 L["Settings"]      = SETTINGS
 L["Other Options"] = UNIT_FRAME_DROPDOWN_SUBSECTION_TITLE_OTHER
+L["Other"]         = FACTION_OTHER
 L["Weapon"]        = WEAPON
 L["Miscellaneous"] = MISCELLANEOUS
 L["Minimum"]       = MINIMUM
@@ -549,6 +550,21 @@ do
 end
 
 
+-- Name
+Addon.MY_NAME = UnitName"player"
+
+
+-- Strip text recoloring
+Addon.ITEM_CREATED_BY = ITEM_CREATED_BY
+Addon.ITEM_WRAPPED_BY = ITEM_WRAPPED_BY
+do
+  local hex, text = strMatch(Addon.ITEM_CREATED_BY, "^|c%x%x(%x%x%x%x%x%x)(.*)|r$")
+  Addon.ITEM_CREATED_BY = text or Addon.ITEM_CREATED_BY
+  
+  local hex, text = strMatch(Addon.ITEM_WRAPPED_BY, "^|c%x%x(%x%x%x%x%x%x)(.*)|r$")
+  Addon.ITEM_WRAPPED_BY = text or Addon.ITEM_WRAPPED_BY
+end
+
 
 function Addon:RegenerateStatOrder()
   wipe(self.statList[self.expansionLevel])
@@ -827,6 +843,7 @@ do
   Addon.statsInfo["Enchant"]            = {color = Addon.COLORS.GREEN}
   Addon.statsInfo["WeaponEnchant"]      = {color = Addon.COLORS.GREEN}
   Addon.statsInfo["Durability"]         = {color = Addon.COLORS.WHITE}
+  Addon.statsInfo["MadeBy"]             = {color = Addon.COLORS.GREEN}
   Addon.statsInfo["SocketHint"]         = {color = Addon.COLORS.GREEN}
   Addon.statsInfo["Refundable"]         = {color = Addon.COLORS.SKY_BLUE}
   Addon.statsInfo["SoulboundTradeable"] = {color = Addon.COLORS.SKY_BLUE}

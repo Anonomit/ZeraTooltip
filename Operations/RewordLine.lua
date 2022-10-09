@@ -149,7 +149,7 @@ function Addon:RewordLine(tooltip, line, tooltipData)
     end
   end
   
-  if text ~= line.realTextLeft then
+  if text ~= line.realTextLeft and text ~= line.textLeftText then
     line.rewordLeft = text
   end
 end

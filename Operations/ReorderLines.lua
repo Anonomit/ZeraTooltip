@@ -36,13 +36,6 @@ local function SortStats(tooltipData)
     stats.BaseStat.location = tooltipData.statStart + 1
   end
   
-  -- TODO: bring padding if needed?
-  -- if (tooltipData[stats.BaseStat.location + 1] or {}).type ~= "Padding" then
-  --   if (tooltipData[(stats.SecondaryStat.location or -1) + 1] or {}).type == "Padding" then
-  --     tinsert(tooltipData[stats.SecondaryStat.location + 1], tblRemove(tooltipData, stats.SecondaryStat.location + 1))
-  --   end
-  -- end
-  
   if Addon:GetOption"combineStats" then
     while #stats.SecondaryStat > 0 do
       tinsert(stats.BaseStat, tblRemove(stats.SecondaryStat, 1))
@@ -62,6 +55,7 @@ function Addon:ReorderLines(tooltipData)
   
   SortStats(tooltipData)
   
+  local offset = 0
   local i = 1
   while i <= #tooltipData do
     local line = tooltipData[i]
@@ -69,11 +63,16 @@ function Addon:ReorderLines(tooltipData)
     if not line.hide then
       if line.type == "Refundable" then
         if self:GetOption("doReorder", line.type) then
-          tinsert(tooltipData, 2, tblRemove(tooltipData, i))
+          tinsert(tooltipData, 2 + offset, tblRemove(tooltipData, i))
         end
       elseif line.type == "SoulboundTradeable" then
         if self:GetOption("doReorder", line.type) then
-          tinsert(tooltipData, (tooltipData.binding or 1) + 1, tblRemove(tooltipData, i))
+          tinsert(tooltipData, (tooltipData.binding or 1) + 1 + offset, tblRemove(tooltipData, i))
+        end
+      elseif line.type == "RequiredRaces" or line.type == "RequiredClasses" or line.type == "RequiredLevel" then
+        if self:GetOption("doReorder", line.type) then
+          tinsert(tooltipData, 2, tblRemove(tooltipData, i))
+          offset = offset + 1
         end
       end
     end

@@ -10,11 +10,12 @@ local strFind  = string.find
 local strMatch = string.match
 
 
-local ITEM_CREATED_BY = ITEM_CREATED_BY
-do
-  local hex, text = strMatch(ITEM_CREATED_BY, "^|c%x%x(%x%x%x%x%x%x)(.*)|r$")
-  ITEM_CREATED_BY = text or ITEM_CREATED_BY
-end
+
+-- stripped text recoloring
+local ITEM_CREATED_BY = Addon.ITEM_CREATED_BY
+local ITEM_WRAPPED_BY = Addon.ITEM_WRAPPED_BY
+
+
 local numberPattern = "[%d%"..DECIMAL_SEPERATOR.."]+"
 
 
@@ -333,7 +334,9 @@ contextActions = Addon:Map({
     end
   end,
   MadeBy = function(i, tooltipData, line)
-    if line.colorLeft == Addon.COLORS.GREEN and MatchesAny(line.textLeftTextStripped, ITEM_CREATED_BY, ITEM_WRITTEN_BY, ITEM_WRAPPED_BY) then
+    local madeType = line.colorLeft == Addon.COLORS.GREEN and MatchesAny(line.textLeftTextStripped, ITEM_CREATED_BY, ITEM_WRAPPED_BY, ITEM_WRITTEN_BY)
+    if madeType then
+      line.madeType = madeType
       return SetContext(i, tooltipData, line)
     end
   end,

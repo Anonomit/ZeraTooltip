@@ -6,6 +6,7 @@
   <Script file="HookTooltips.lua"/>
   <Script file="ManageConstructors.lua"/>
   <Script file="ModifyBinding.lua"/>
+  <Script file="ModifyMadeBy.lua"/>
   <Script file="ModifyTooltipData.lua"/>
   <Script file="RebuildTooltip.lua"/>
   <Script file="RecognizeLineTypes.lua"/>

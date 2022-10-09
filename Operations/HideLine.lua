@@ -40,6 +40,10 @@ function Addon:HideLine(line)
     if level <= self.MY_LEVEL and self:GetOption("hide", "requiredLevelMet") or level == self.MAX_LEVEL and self:GetOption("hide", "requiredLevelMax") then
       return HideLeft(line)
     end
+  elseif line.type == "MadeBy" then
+    if self:ShouldHideMadeBy(line.textLeftText, line.madeType) then
+      return HideLeft(line)
+    end
   elseif line.prefix and not line.stat then
     local stat = self.prefixStats[line.prefix]
     if stat and self:GetOption("hide", stat) then

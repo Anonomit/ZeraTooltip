@@ -8,6 +8,7 @@ local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 local tinsert   = table.insert
 local tblRemove = table.remove
 local tblSort   = table.sort
+local tblConcat = table.concat
 
 
 function Addon:CreateConstructor(tooltipData)
@@ -101,6 +102,34 @@ function Addon:CreateConstructor(tooltipData)
   end
   
   tblSort(constructor, function(a, b) return a[1] > b[1] end)
+  
+  if self:GetOption("debugOutput", "constructorCreated") then
+    for i, line in ipairs(constructor) do
+      local texts = {}
+      for _, data in ipairs{
+        {"instruction",  i},
+        {"validation",   constructor.validation[line[1]]},
+        {"source",       line[1]},
+        {"dest",         line[2]},
+        {"hideLeft",     line[3]},
+        {"rewordLeft",   line[4]},
+        {"rewordRight",  line[5]},
+        {"pad",          line[6]},
+        {"recolorLeft",  line[7]},
+        {"recolorRight", line[8]},
+        {"hideRight",    line[9]},
+      } do
+        if data[2] then
+          if type(data[2]) == "string" then
+            table.insert(texts, data[1] .. ": '" .. data[2] .. "'")
+          else
+            table.insert(texts, data[1] .. ": " .. tostring(data[2]))
+          end
+        end
+      end
+      self:Debug(tblConcat(texts, ", "))
+    end
+  end
   
   return constructor
 end

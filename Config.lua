@@ -211,7 +211,12 @@ function Addon:MakeDefaultOptions()
         color = (function() local colors = {["*"] = "00ff00"} for stat, StatInfo in pairs(self.statsInfo) do colors[stat] = StatInfo.color end return colors end)(),
         
         doReorder = {
-          ["*"] = true,
+          ["*"]              = true,
+          RequiredRaces      = true,
+          RequiredClasses    = true,
+          RequiredLevel      = false,
+          Refundable         = true,
+          SoulboundTradeable = true,
         },
         
         damage = {
@@ -278,21 +283,7 @@ function Addon:MakeDefaultOptions()
         debug = false,
           
         debugOutput = {
-          suppressAll = false,
-          
-          tooltipMethodHook         = false,
-          tooltipOnSetItemHook      = false,
-          tooltipHookFail           = false,
-          lineRecognitions          = false,
-          constructorCached         = false,
-          constructorWiped          = false,
-          constructorValidationFail = false,
-          InterfaceOptionsFrameFix  = false,
-          
-          GameTooltip      = false,
-          ItemRefTooltip   = false,
-          ShoppingTooltip1 = false,
-          ShoppingTooltip2 = false,
+          ["*"] = false,
         },
         
         constructor = {
@@ -694,6 +685,19 @@ local function CreateIcon(opts, stat)
   
   return opts
 end
+local function CreateReorder(opts, stat)
+  local self = Addon
+  local GUI  = self.GUI
+  
+  local opts = GUI:CreateGroupBox(opts, L["Reorder"])
+  
+  local disabled = not Addon:GetOption("allow", "reorder")
+  
+  GUI:CreateToggle(opts, {"doReorder", stat}, self.L["Enable"], nil, disabled).width = 0.6
+  CreateReset(opts, {"doReorder", stat}, function() self:ResetOption("doReorder", stat) end)
+  
+  return opts
+end
 local sampleNumber = 10
 local function CreateStatOption(opts, i, stat)
   local self = Addon
@@ -876,6 +880,54 @@ end
 local sampleDamage   = 20
 local sampleVariance = 0.5
 local sampleSpeed    = 2.6
+local sampleNames = {
+  "Activision",
+  "Arthas",
+  "Batman",
+  "Blizzard",
+  "Bugs Bunny",
+  "Captain Hook",
+  "Chewbacca",
+  "Deckard Cain",
+  "Diablo",
+  "Doctor Robotnik",
+  "Doctor Who",
+  "Donkey Kong",
+  "Dracula",
+  "Elmer Fudd",
+  "Frankenstein",
+  "Gul'dan",
+  "Harry Potter",
+  "Hello Kitty Island Adventure",
+  "Illidan",
+  "Indiana Jones",
+  "Inspector Gadget",
+  "Jack the Ripper",
+  "Kael'thas",
+  "Kel'Thuzad",
+  "Kil'jaeden",
+  "King Kong",
+  "Kirby",
+  "Mal'Ganis",
+  "Nova",
+  "Princess Peach",
+  "Microsoft",
+  "Mickey Mouse",
+  "Muradin",
+  "Nefarion",
+  "Onyxia",
+  "Rexxar",
+  "Santa",
+  "Scooby Doo",
+  "Sherlock Holmes",
+  "Spongebob Squarepants",
+  "The Lost Vikings",
+  "Tyrande",
+  "Uncle Roman",
+  "Uther",
+  "Winnie the Pooh",
+  "Yoda",
+}
 -- Misc options
 function Addon:MakeExtraOptions()
   local title = self.L["Other Options"]
@@ -884,6 +936,183 @@ function Addon:MakeExtraOptions()
   local GUI = self.GUI:ResetOrder()
   local opts = GUI:CreateGroupTop(title)
   
+  -- Races
+  local function MakeRequiredRacesOption()
+    local stat = "RequiredRaces"
+    
+    local defaultText = format(ITEM_RACES_ALLOWED, Addon.MY_RACE_NAME)
+    local formattedText = defaultText
+    local changed
+    if self:GetOption("hide", stat) then
+      formattedText = "|T132320:0|t " .. self:MakeColorCode(self.COLORS.GRAY, formattedText)
+      changed = true
+    else
+      formattedText = self:MakeColorCode(self.COLORS.WHITE, formattedText)
+    end
+    
+    local sampleText = self.uselessRaceStrings[1]
+    if self:GetOption("hide", stat) or self:GetOption("hide", "uselessRaces") then
+      sampleText = "|T132320:0|t " .. self:MakeColorCode(self.COLORS.GRAY, sampleText)
+    else
+      self:MakeColorCode(self.COLORS.WHITE, sampleText)
+    end
+    
+    local opts = GUI:CreateGroup(opts, stat, formattedText)
+    
+    do
+      local opts = CreateTitle(opts, defaultText, formattedText, changed)
+      GUI:CreateDivider(opts)
+      
+      GUI:CreateDescription(opts, L["Test"], "small")
+      GUI:CreateDescription(opts, sampleText)
+    end
+    
+    CreateReorder(opts, stat)
+    
+    do
+      local opts = CreateHide(opts, stat)
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"hide", "uselessRaces"}, L["Hide Pointless Lines"])
+      CreateReset(opts, {"hide", "uselessRaces"})
+    end
+  end
+  -- Classes
+  local function MakeRequiredClassesOption()
+    local stat = "RequiredClasses"
+    
+    local opts = GUI:CreateGroup(opts, stat, nil)
+    local name
+    
+    do
+      local opts = GUI:CreateGroupBox(opts, self.L["Example Text:"])
+      
+      GUI:CreateDescription(opts, self.L["Default"], "small")
+      for i, sample in ipairs(self.sampleRequiredClassesStrings) do
+        local defaultText = sample
+        GUI:CreateDescription(opts, defaultText)
+      end
+      GUI:CreateDescription(opts, self.myClassString)
+      
+      GUI:CreateDivider(opts)
+      
+      for i, sample in ipairs(self.sampleRequiredClassesStrings) do
+        local defaultText = sample
+        local formattedText = defaultText
+        local changed
+        if self:GetOption("hide", stat) then
+          formattedText = "|T132320:0|t " .. self:MakeColorCode(self.COLORS.GRAY, strGsub(formattedText, "|c%x%x%x%x%x%x%x%x", ""))
+          changed = true
+        elseif self:GetOption("doRecolor", stat) then
+          formattedText = self:ChainGsub(formattedText, unpack(self.classColorReplacements))
+          changed = true
+        end
+        
+        if i == 1 then
+          GUI:CreateDescription(opts, (changed or self:GetOption("hide", "myClass")) and self.L["Current"] or " ", "small")
+        end
+        GUI:CreateDescription(opts, changed and formattedText or " ")
+        if i == self.sampleRequiredClassesStrings.mine then
+          name = formattedText
+        end
+      end
+      
+      local formattedText = self.myClassString
+      local changed
+      if self:GetOption("hide", stat) or self:GetOption("hide", "myClass") then
+        formattedText = "|T132320:0|t " .. self:MakeColorCode(self.COLORS.GRAY, formattedText)
+        changed = true
+      elseif self:GetOption("doRecolor", stat) then
+        formattedText = self:ChainGsub(formattedText, unpack(self.classColorReplacements))
+        changed = true
+      end
+      GUI:CreateDescription(opts, changed and formattedText or " ")
+    end
+    opts.name = name
+    
+    CreateReorder(opts, stat)
+    
+    do
+      local opts = GUI:CreateGroupBox(opts, L["Recolor"])
+      
+      local disabled = not Addon:GetOption("allow", "recolor")
+      GUI:CreateToggle(opts, {"doRecolor", stat}, self.L["Enable"], nil, disabled).width = 0.5
+      CreateReset(opts, {"doRecolor", stat})
+    end
+    
+    do
+      local opts = CreateHide(opts, stat)
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"hide", "myClass"}, self.L["Me"]).width = 0.6
+      CreateReset(opts, {"hide", "myClass"})
+    end
+  end
+  -- Level
+  local function MakeRequiredLevelOption()
+    local stat = "RequiredLevel"
+    
+    local opts = GUI:CreateGroup(opts, stat, nil)
+    local name
+    local sample1 = self.MY_LEVEL - (self.MY_LEVEL == self.MAX_LEVEL and 1 or 0)
+    
+    do
+      local opts = GUI:CreateGroupBox(opts, self.L["Example Text:"])
+      
+      local sampleLevels = {sample1, self.MAX_LEVEL, self.MAX_LEVEL + 1}
+      
+      GUI:CreateDescription(opts, self.L["Default"], "small")
+      for i, level in ipairs(sampleLevels) do
+        local defaultText = format("|cffff%s%s", level > self.MY_LEVEL and "0000" or "ffff", format(ITEM_MIN_LEVEL, level))
+        GUI:CreateDescription(opts, defaultText)
+      end
+      GUI:CreateDivider(opts)
+      
+      local anyChanged
+      local anyChangedOpt = GUI:CreateDescription(opts, " ", "small")
+      
+      for i, level in ipairs(sampleLevels) do
+        local defaultText = format("|cffff%s%s", level > self.MY_LEVEL and "0000" or "ffff", format(ITEM_MIN_LEVEL, level))
+        local formattedText = defaultText
+        local changed = self:GetOption("hide", stat) or self:GetOption("hide", "requiredLevelMet") and level <= self.MY_LEVEL or self:GetOption("hide", "requiredLevelMax") and level == self.MAX_LEVEL
+        if changed then
+          formattedText = "|T132320:0|t " .. self:MakeColorCode(self.COLORS.GRAY, strGsub(formattedText, "|c%x%x%x%x%x%x%x%x", ""))
+        end
+        
+        if changed then anyChanged = true end
+        GUI:CreateDescription(opts, changed and formattedText or " ")
+        if level > self.MY_LEVEL then
+          name = formattedText
+        end
+      end
+      
+      if anyChanged then
+        anyChangedOpt.name = self.L["Current"]
+      end
+    end
+    opts.name = name
+    
+    CreateReorder(opts, stat)
+    
+    do
+      local opts = CreateHide(opts, stat)
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"hide", "requiredLevelMet"}, format(self:ChainGsub(self.L["|cff000000%s (low level)|r"], {"|c%x%x%x%x%x%x%x%x", "|r", ""}), format(self.L["Level %d"], sample1)))
+      CreateReset(opts, {"hide", "requiredLevelMet"})
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"hide", "requiredLevelMax"}, self.L["Max Level"])
+      CreateReset(opts, {"hide", "requiredLevelMax"})
+    end
+  end
+  
+  if self:GetOption("doReorder", "RequiredRaces")   then MakeRequiredRacesOption() end
+  if self:GetOption("doReorder", "RequiredClasses") then MakeRequiredClassesOption() end
+  if self:GetOption("doReorder", "RequiredLevel")   then MakeRequiredLevelOption() end
+  if self:GetOption("doReorder", "RequiredRaces") or self:GetOption("doReorder", "RequiredClasses") or self:GetOption("doReorder", "RequiredLevel") then
+    GUI:CreateGroup(opts, GUI:Order(), " ", nil, true)
+  end
   
   -- Binding
   for _, data in ipairs{
@@ -911,8 +1140,7 @@ function Addon:MakeExtraOptions()
     
     CreateHide(opts, stat)
   end
-  
-  GUI:CreateGroup(opts, "afterBinding" , " ", nil, true)
+  GUI:CreateGroup(opts, GUI:Order(), " ", nil, true)
   
   -- Refundable
   local function MakeRefundableOption()
@@ -927,15 +1155,7 @@ function Addon:MakeExtraOptions()
       
       CreateTitle(opts, defaultText, formattedText, changed)
       
-      -- Reorder
-      do
-        local opts = GUI:CreateGroupBox(opts, L["Reorder"])
-        
-        local disabled = not Addon:GetOption("allow", "reorder")
-        
-        GUI:CreateToggle(opts, {"doReorder", stat}, self.L["Enable"], nil, disabled).width = 0.6
-        CreateReset(opts, {"doReorder", stat}, function() self:ResetOption("doReorder", stat) end)
-      end
+      CreateReorder(opts, stat)
       
       CreateColor(opts, stat)
       
@@ -952,7 +1172,7 @@ function Addon:MakeExtraOptions()
     end
     
     if self:GetOption("doReorder", "Refundable") ~= self:GetOption("doReorder", "SoulboundTradeable") then
-      GUI:CreateGroup(opts, "afterRefundable" , " ").disabled = true
+      GUI:CreateGroup(opts, GUI:Order(), " ").disabled = true
     end
   end
   -- Soulbound Tradeable
@@ -968,15 +1188,7 @@ function Addon:MakeExtraOptions()
       
       CreateTitle(opts, defaultText, formattedText, changed)
       
-      -- Reorder
-      do
-        local opts = GUI:CreateGroupBox(opts, L["Reorder"])
-        
-        local disabled = not Addon:GetOption("allow", "reorder")
-        
-        GUI:CreateToggle(opts, {"doReorder", stat}, self.L["Enable"], nil, disabled).width = 0.6
-        CreateReset(opts, {"doReorder", stat}, function() self:ResetOption("doReorder", stat) end)
-      end
+      CreateReorder(opts, stat)
       
       CreateColor(opts, stat)
       
@@ -991,10 +1203,9 @@ function Addon:MakeExtraOptions()
       
       CreateHide(opts, stat)
     end
-    
-    GUI:CreateGroup(opts, "afterSoulboundTradeable" , " ").disabled = true
+    GUI:CreateGroup(opts, GUI:Order(), " ").disabled = true
   end
-  if self:GetOption("doReorder", "Refundable") then MakeRefundableOption() end
+  if self:GetOption("doReorder", "Refundable")         then MakeRefundableOption() end
   if self:GetOption("doReorder", "SoulboundTradeable") then MakeTradeableOption() end
   
   -- Trainable
@@ -1011,8 +1222,7 @@ function Addon:MakeExtraOptions()
     
     CreateColor(opts, stat)
   end
-  
-  GUI:CreateGroup(opts, "afterTrainable" , " ").disabled = true
+  GUI:CreateGroup(opts, GUI:Order(), " ").disabled = true
   
   -- Weapon Damage
   do
@@ -1106,8 +1316,7 @@ function Addon:MakeExtraOptions()
       CreateHide(opts, stat)
     end
   end
-  
-  GUI:CreateGroup(opts, "afterSpeed" , " ", nil, true)
+  GUI:CreateGroup(opts, GUI:Order(), " ", nil, true)
   
   -- Weapon DPS
   local sampleDPS = strGsub(format("%.1f", sampleDamage / sampleSpeed), "%.", DECIMAL_SEPERATOR)
@@ -1209,8 +1418,7 @@ function Addon:MakeExtraOptions()
       CreateHide(opts, stat)
     end
   end
-  
-  GUI:CreateGroup(opts, "afterSpeedbar" , " ", nil, true)
+  GUI:CreateGroup(opts, GUI:Order(), " ", nil, true)
   
   -- Enchant
   do
@@ -1251,8 +1459,7 @@ function Addon:MakeExtraOptions()
     
     CreateHide(opts, stat)
   end
-  
-  GUI:CreateGroup(opts, "afterEnchant" , " ", nil, true)
+  GUI:CreateGroup(opts, GUI:Order(), " ", nil, true)
   
   -- Durability
   do
@@ -1290,177 +1497,15 @@ function Addon:MakeExtraOptions()
     
     CreateHide(opts, stat)
   end
+  GUI:CreateGroup(opts, GUI:Order(), " ", nil, true)
   
-  GUI:CreateGroup(opts, "afterDurability" , " ", nil, true)
   
-  -- Races
-  do
-    local stat = "RequiredRaces"
-    
-    local defaultText = format(ITEM_RACES_ALLOWED, Addon.MY_RACE_NAME)
-    local formattedText = defaultText
-    local changed
-    if self:GetOption("hide", stat) then
-      formattedText = "|T132320:0|t " .. self:MakeColorCode(self.COLORS.GRAY, formattedText)
-      changed = true
-    else
-      formattedText = self:MakeColorCode(self.COLORS.WHITE, formattedText)
-    end
-    
-    local sampleText = self.uselessRaceStrings[1]
-    if self:GetOption("hide", stat) or self:GetOption("hide", "uselessRaces") then
-      sampleText = "|T132320:0|t " .. self:MakeColorCode(self.COLORS.GRAY, sampleText)
-    else
-      self:MakeColorCode(self.COLORS.WHITE, sampleText)
-    end
-    
-    local opts = GUI:CreateGroup(opts, stat, formattedText)
-    
-    do
-      local opts = CreateTitle(opts, defaultText, formattedText, changed)
-      GUI:CreateDivider(opts)
-      
-      GUI:CreateDescription(opts, L["Test"], "small")
-      GUI:CreateDescription(opts, sampleText)
-    end
-    
-    do
-      local opts = CreateHide(opts, stat)
-      GUI:CreateNewline(opts)
-      
-      GUI:CreateToggle(opts, {"hide", "uselessRaces"}, L["Hide Pointless Lines"])
-      CreateReset(opts, {"hide", "uselessRaces"})
-    end
+  if not self:GetOption("doReorder", "RequiredRaces")   then MakeRequiredRacesOption() end
+  if not self:GetOption("doReorder", "RequiredClasses") then MakeRequiredClassesOption() end
+  if not self:GetOption("doReorder", "RequiredLevel")   then MakeRequiredLevelOption() end
+  if not self:GetOption("doReorder", "RequiredRaces") or not self:GetOption("doReorder", "RequiredClasses") or not self:GetOption("doReorder", "RequiredLevel") then
+    GUI:CreateGroup(opts, GUI:Order(), " ", nil, true)
   end
-  
-  -- Classes
-  do
-    local stat = "RequiredClasses"
-    
-    local opts = GUI:CreateGroup(opts, stat, nil)
-    local name
-    
-    do
-      local opts = GUI:CreateGroupBox(opts, self.L["Example Text:"])
-      
-      GUI:CreateDescription(opts, self.L["Default"], "small")
-      for i, sample in ipairs(self.sampleRequiredClassesStrings) do
-        local defaultText = sample
-        GUI:CreateDescription(opts, defaultText)
-      end
-      GUI:CreateDescription(opts, self.myClassString)
-      
-      GUI:CreateDivider(opts)
-      
-      for i, sample in ipairs(self.sampleRequiredClassesStrings) do
-        local defaultText = sample
-        local formattedText = defaultText
-        local changed
-        if self:GetOption("hide", stat) then
-          formattedText = "|T132320:0|t " .. self:MakeColorCode(self.COLORS.GRAY, strGsub(formattedText, "|c%x%x%x%x%x%x%x%x", ""))
-          changed = true
-        elseif self:GetOption("doRecolor", stat) then
-          formattedText = self:ChainGsub(formattedText, unpack(self.classColorReplacements))
-          changed = true
-        end
-        
-        if i == 1 then
-          GUI:CreateDescription(opts, (changed or self:GetOption("hide", "myClass")) and self.L["Current"] or " ", "small")
-        end
-        GUI:CreateDescription(opts, changed and formattedText or " ")
-        if i == self.sampleRequiredClassesStrings.mine then
-          name = formattedText
-        end
-      end
-      
-      local formattedText = self.myClassString
-      local changed
-      if self:GetOption("hide", stat) or self:GetOption("hide", "myClass") then
-        formattedText = "|T132320:0|t " .. self:MakeColorCode(self.COLORS.GRAY, formattedText)
-        changed = true
-      elseif self:GetOption("doRecolor", stat) then
-        formattedText = self:ChainGsub(formattedText, unpack(self.classColorReplacements))
-        changed = true
-      end
-      GUI:CreateDescription(opts, changed and formattedText or " ")
-    end
-    opts.name = name
-    
-    do
-      local opts = GUI:CreateGroupBox(opts, L["Recolor"])
-      
-      local disabled = not Addon:GetOption("allow", "recolor")
-      GUI:CreateToggle(opts, {"doRecolor", stat}, self.L["Enable"], nil, disabled).width = 0.5
-      CreateReset(opts, {"doRecolor", stat})
-    end
-    
-    do
-      local opts = CreateHide(opts, stat)
-      GUI:CreateNewline(opts)
-      
-      GUI:CreateToggle(opts, {"hide", "myClass"}, self.L["Me"]).width = 0.6
-      CreateReset(opts, {"hide", "myClass"})
-    end
-  end
-  
-  -- Level
-  do
-    local stat = "RequiredLevel"
-    
-    local opts = GUI:CreateGroup(opts, stat, nil)
-    local name
-    local sample1 = self.MY_LEVEL - (self.MY_LEVEL == self.MAX_LEVEL and 1 or 0)
-    
-    do
-      local opts = GUI:CreateGroupBox(opts, self.L["Example Text:"])
-      
-      local sampleLevels = {sample1, self.MAX_LEVEL, self.MAX_LEVEL + 1}
-      
-      GUI:CreateDescription(opts, self.L["Default"], "small")
-      for i, level in ipairs(sampleLevels) do
-        local defaultText = format("|cffff%s%s", level > self.MY_LEVEL and "0000" or "ffff", format(ITEM_MIN_LEVEL, level))
-        GUI:CreateDescription(opts, defaultText)
-      end
-      GUI:CreateDivider(opts)
-      
-      local anyChanged
-      local anyChangedOpt = GUI:CreateDescription(opts, " ", "small")
-      
-      for i, level in ipairs(sampleLevels) do
-        local defaultText = format("|cffff%s%s", level > self.MY_LEVEL and "0000" or "ffff", format(ITEM_MIN_LEVEL, level))
-        local formattedText = defaultText
-        local changed = self:GetOption("hide", stat) or self:GetOption("hide", "requiredLevelMet") and level <= self.MY_LEVEL or self:GetOption("hide", "requiredLevelMax") and level == self.MAX_LEVEL
-        if changed then
-          formattedText = "|T132320:0|t " .. self:MakeColorCode(self.COLORS.GRAY, strGsub(formattedText, "|c%x%x%x%x%x%x%x%x", ""))
-        end
-        
-        if changed then anyChanged = true end
-        GUI:CreateDescription(opts, changed and formattedText or " ")
-        if level > self.MY_LEVEL then
-          name = formattedText
-        end
-      end
-      
-      if anyChanged then
-        anyChangedOpt.name = self.L["Current"]
-      end
-    end
-    opts.name = name
-    
-    do
-      local opts = CreateHide(opts, stat)
-      GUI:CreateNewline(opts)
-      
-      GUI:CreateToggle(opts, {"hide", "requiredLevelMet"}, format(self:ChainGsub(self.L["|cff000000%s (low level)|r"], {"|c%x%x%x%x%x%x%x%x", "|r", ""}), format(self.L["Level %d"], sample1)))
-      CreateReset(opts, {"hide", "requiredLevelMet"})
-      GUI:CreateNewline(opts)
-      
-      GUI:CreateToggle(opts, {"hide", "requiredLevelMax"}, self.L["Max Level"])
-      CreateReset(opts, {"hide", "requiredLevelMax"})
-    end
-  end
-  
-  GUI:CreateGroup(opts, "afterRaces" , " ", nil, true)
   
   -- Prefixes
   for _, data in ipairs{
@@ -1494,11 +1539,57 @@ function Addon:MakeExtraOptions()
     
     CreateHide(opts, stat)
   end
+  GUI:CreateGroup(opts, GUI:Order(), " ", nil, true)
   
-  GUI:CreateGroup(opts, "afterPrefixes" , " ", nil, true)
-  
-  if not self:GetOption("doReorder", "Refundable") then MakeRefundableOption() end
+  if not self:GetOption("doReorder", "Refundable")         then MakeRefundableOption() end
   if not self:GetOption("doReorder", "SoulboundTradeable") then MakeTradeableOption() end
+  
+  -- Made By
+  do
+    local stat = "MadeBy"
+    
+    local samples = {}
+    local secondName = UnitExists"target" and UnitName"target" or nil
+    secondName = secondName and secondName ~= self.MY_NAME and secondName or sampleNames[random(#sampleNames)]
+    for _, name in ipairs{self.MY_NAME, secondName} do
+      for _, pattern in ipairs{self.ITEM_CREATED_BY, self.ITEM_WRAPPED_BY, ITEM_WRITTEN_BY} do
+        local defaultText = format(pattern, name)
+        
+        local formattedText = defaultText
+        local originalColor = self.COLORS.GREEN
+        local color = self:GetOption("color", stat)
+        if self:ShouldHideMadeBy(defaultText, pattern) then
+          formattedText = "|T132320:0|t " .. self:MakeColorCode(self.COLORS.GRAY, formattedText)
+        elseif self:GetOption("allow", "recolor") and self:GetOption("doRecolor", stat) and color ~= originalColor then
+          formattedText = self:MakeColorCode(color, formattedText)
+        else
+          formattedText = self:MakeColorCode(originalColor, formattedText)
+        end
+        defaultText = self:MakeColorCode(originalColor, defaultText)
+        
+        tinsert(samples, {defaultText, formattedText})
+      end
+    end
+    
+    local opts = GUI:CreateGroup(opts, stat, samples[1][2], nil, disabled)
+      
+    CreateSamples(opts, samples)
+    
+    CreateColor(opts, stat)
+    
+    do
+      local opts = CreateHide(opts, stat)
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"hide", "MadeByMe"}, self.L["Me"], nil, disabled).width = 0.6
+      CreateReset(opts, {"hide", "MadeByMe"})
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"hide", "MadeByOther"}, self.L["Other"], nil, disabled).width = 0.6
+      CreateReset(opts, {"hide", "MadeByOther"})
+    end
+  end
+  GUI:CreateGroup(opts, GUI:Order(), " ", nil, true)
   
   -- Socket Hint
   do
@@ -1520,7 +1611,7 @@ function Addon:MakeExtraOptions()
   
   -- Misc locale rewording
   if #self.localeExtraReplacements > 0 then
-    GUI:CreateGroup(opts, "afterSocketHint" , " ", nil, true)
+    GUI:CreateGroup(opts, GUI:Order(), " ", nil, true)
     
     do
       local stat = "Miscellaneous"
@@ -1622,6 +1713,9 @@ function Addon:MakeDebugOptions()
       GUI:CreateNewline(opts)
       
       GUI:CreateToggle(opts, {"debugOutput", "lineRecognitions"}, "Line Recognitions", nil, disabled).width = 2
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"debugOutput", "constructorCreated"}, "Constructor Created", nil, disabled).width = 2
       GUI:CreateNewline(opts)
       
       GUI:CreateToggle(opts, {"debugOutput", "constructorCached"}, "Constructor Cached", nil, disabled).width = 2
