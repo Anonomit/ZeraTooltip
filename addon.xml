@@ -1,6 +1,6 @@
 <Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
   
-  <Include file="libs\embeds.xml"/>
+  <Include file="libs\libs.xml"/>
   
   <Script file="Init.lua"/>
   
