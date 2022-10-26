@@ -1,6 +1,14 @@
-package-as: ZeraTooltip
-enable-nolib-creation: no
+ignore:
+  - LICENSE
 
 manual-changelog:
     filename: CHANGELOG.html
     markup-type: html
+
+optional-dependencies:
+  - ace3
+  - semver
+
+embedded-libraries:
+  - ace3
+  - semver
