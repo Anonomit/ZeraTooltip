@@ -56,7 +56,6 @@ end
 
 
 Addon.AceConfig         = LibStub"AceConfig-3.0"
-Addon.AceConfig         = LibStub"AceConfig-3.0"
 Addon.AceConfigDialog   = LibStub"AceConfigDialog-3.0"
 Addon.AceConfigRegistry = LibStub"AceConfigRegistry-3.0"
 Addon.AceDB             = LibStub"AceDB-3.0"
@@ -286,10 +285,10 @@ end
 
 
 function Addon:GetHexFromColor(r, g, b)
-  return format("%.2x%.2x%.2x", r, g, b)
+  return format("%02x%02x%02x", r, g, b)
 end
 function Addon:ConvertColorFromBlizzard(r, g, b)
-  return self:GetHexFromColor(Addon:Round(r*255, 1), Addon:Round(g*255, 1), Addon:Round(b*255, 1))
+  return self:GetHexFromColor(self:Round(r*255, 1), self:Round(g*255, 1), self:Round(b*255, 1))
 end
 function Addon:GetTextColorAsHex(frame)
   return self:ConvertColorFromBlizzard(frame:GetTextColor())

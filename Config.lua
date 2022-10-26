@@ -488,7 +488,7 @@ local function CreateCombineStatsOption(opts)
 end
 
 
--- ZeraTooltip options
+-- Addon options
 function Addon:MakeAddonOptions(chatCmd)
   local title = format("%s v%s  (/%s)", ADDON_NAME, tostring(self:GetOption"version"), chatCmd)
   local panel = self:CreateOptionsCategory(nil, function()
@@ -773,7 +773,7 @@ local function CreateStatOption(opts, i, stat)
   CreateHide(opts, stat)
 end
 function Addon:MakeStatsOptions(categoryName, chatCmd, arg1, ...)
-  local title = format("%s > %s  (/%s %s)", ADDON_NAME, categoryName, chatCmd, arg1)
+  local title = format("%s v%s > %s  (/%s %s)", ADDON_NAME, tostring(self:GetOption"version"), categoryName, chatCmd, arg1)
   local panel = self:CreateOptionsCategory(categoryName, function()
   
   local GUI = self.GUI:ResetOrder()
@@ -842,7 +842,7 @@ local function CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, samp
   return paddedAfterPrevious
 end
 function Addon:MakePaddingOptions(categoryName, chatCmd, arg1, ...)
-  local title = format("%s > %s  (/%s %s)", ADDON_NAME, categoryName, chatCmd, arg1)
+  local title = format("%s v%s > %s  (/%s %s)", ADDON_NAME, tostring(self:GetOption"version"), categoryName, chatCmd, arg1)
   local panel = self:CreateOptionsCategory(categoryName, function()
   
   local GUI = self.GUI:ResetOrder()
@@ -962,7 +962,7 @@ Addon.SAMPLE_NAMES = {
 }
 -- Misc options
 function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
-  local title = format("%s > %s  (/%s %s)", ADDON_NAME, categoryName, chatCmd, arg1)
+  local title = format("%s v%s > %s  (/%s %s)", ADDON_NAME, tostring(self:GetOption"version"), categoryName, chatCmd, arg1)
   local panel = self:CreateOptionsCategory(categoryName, function()
   
   local GUI = self.GUI:ResetOrder()
@@ -1705,7 +1705,7 @@ end
 
 -- Reset Options
 function Addon:MakeResetOptions(categoryName, chatCmd, arg1, ...)
-  local title = format("%s > %s  (/%s %s)", ADDON_NAME, categoryName, chatCmd, arg1)
+  local title = format("%s v%s > %s  (/%s %s)", ADDON_NAME, tostring(self:GetOption"version"), categoryName, chatCmd, arg1)
   local panel = self:CreateOptionsCategory(categoryName, function()
   
   local GUI = self.GUI:ResetOrder()
@@ -1741,7 +1741,7 @@ end
 
 -- Debug Options
 function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
-  local title = format("%s > %s  (/%s %s)", ADDON_NAME, categoryName, chatCmd, arg1)
+  local title = format("%s v%s > %s  (/%s %s)", ADDON_NAME, tostring(self:GetOption"version"), categoryName, chatCmd, arg1)
   local panel = self:CreateOptionsCategory(categoryName, function()
   
   local GUI = self.GUI:ResetOrder()

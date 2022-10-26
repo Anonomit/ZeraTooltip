@@ -286,11 +286,12 @@ function Addon:CreateOptions()
   self:MakePaddingOptions(L["Spacing"], self.chatCommands[1], "spacing", "space", "spaces", "padding", "pad")
   self:MakeExtraOptions(self.L["Miscellaneous"], self.chatCommands[1], "misc", "miscellaneous", "other")
   
+  -- Profile Options
   do
-    local args = {"profiles", "profile", "prof"}
+    local args = {"profiles", "profile", "prof", "pro", "pr", "p"}
     local profileOptions = self.AceDBOptions:GetOptionsTable(self:GetDB())
     local categoryName = profileOptions.name
-    profileOptions.name = format("%s > %s  (/%s %s)", ADDON_NAME, profileOptions.name, self.chatCommands[1], args[1])
+    profileOptions.name = format("%s v%s > %s  (/%s %s)", ADDON_NAME, tostring(self:GetOption"version"), profileOptions.name, self.chatCommands[1], args[1])
     local panel = self:CreateOptionsCategory(categoryName, profileOptions)
     local function OpenOptions() return self:OpenConfig(panel) end
     for _, arg in ipairs(args) do
@@ -298,10 +299,12 @@ function Addon:CreateOptions()
     end
   end
   
+  -- Reset Options
   self:MakeResetOptions(self.L["Reset"], self.chatCommands[1], "reset", "res")
   
+  -- Debug Options
   if self:IsDebugEnabled() then
-    self:MakeDebugOptions(self.L["Debug"], self.chatCommands[1], "debug", "db")
+    self:MakeDebugOptions(self.L["Debug"], self.chatCommands[1], "debug", "db", "d")
   end
 end
 
