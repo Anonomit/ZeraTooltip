@@ -131,7 +131,9 @@ local function OnTooltipItemMethod(tooltip, methodName, ...)
       
       if constructor then
         local destructor = self:ConstructTooltip(tooltip, constructor)
-        -- self:DestructTooltip(tooltip, destructor)
+        if self:GetOption("constructor", "alwaysDestruct") then
+          self:DestructTooltip(tooltip, destructor)
+        end
       end
     end
   end
@@ -178,7 +180,9 @@ local function OnTooltipSetItem(tooltip)
   end
   if constructor then
     local destructor = self:ConstructTooltip(scannerTooltip.tooltip, constructor)
-    -- self:DestructTooltip(scannerTooltip.tooltip, destructor)
+    if self:GetOption("constructor", "alwaysDestruct") then
+      self:DestructTooltip(scannerTooltip.tooltip, destructor)
+    end
   end
 end
 

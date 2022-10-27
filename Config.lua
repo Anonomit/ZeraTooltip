@@ -300,16 +300,20 @@ function Addon:MakeDefaultOptions()
         constructor = {
           doValidation = true,
           
-          cacheWipeDelay    = 3, -- time in seconds without constructor being requested before it's cleared
-          cacheMinSeenCount = 6, -- minimum number of times constructor must be requested before it can be cached
-          cacheMinSeenTime  = 1, -- minimum time in seconds since constructor was first requested before it can be cached
+          alwaysDestruct = false,
         },
         
         cache = {
-          ["*"] = true,
+          ["*"]   = true,
+          enabled = false,
+          
           -- constructor = false,
           -- text        = false,
           -- stat        = false,
+          
+          constructorWipeDelay    = 3, -- time in seconds without constructor being requested before it's cleared
+          constructorMinSeenCount = 6, -- minimum number of times constructor must be requested before it can be cached
+          constructorMinSeenTime  = 1, -- minimum time in seconds since constructor was first requested before it can be cached
         },
         
         throttle = {
@@ -483,6 +487,12 @@ function Addon:ResetPrecision(stat)
   self:SetDefaultPrecisionByLocale(stat)
 end
 
+local function CreateReset(opts, option, func)
+  local self = Addon
+  local GUI  = self.GUI
+  
+  GUI:CreateExecute(opts, {"reset", unpack(option)}, self.L["Reset"], nil, func or function() self:ResetOption(unpack(option)) end).width = 0.6
+end
 local function CreateCombineStatsOption(opts)
   Addon.GUI:CreateToggle(opts, {"combineStats"}, L["Group Secondary Stats with Base Stats"], nil, not Addon:GetOption("allow", "reorder")).width = 2
 end
@@ -526,10 +536,16 @@ function Addon:MakeAddonOptions(chatCmd)
       local opts = GUI:CreateGroupBox(opts, self.L["Features"])
       
       GUI:CreateToggle(opts, {"allow", "reorder"}, L["Reorder"])
+      CreateReset(opts, {"allow", "reorder"})
       GUI:CreateNewline(opts)
       GUI:CreateToggle(opts, {"allow", "reword"} , self.L["Rename"])
+      CreateReset(opts, {"allow", "reword"})
       GUI:CreateNewline(opts)
       GUI:CreateToggle(opts, {"allow", "recolor"}, L["Recolor"])
+      CreateReset(opts, {"allow", "recolor"})
+      GUI:CreateNewline(opts)
+      GUI:CreateToggle(opts, {"cache", "enabled"}, L["Cache"], L["Speeds up processing, but can sometimes introduce bugs."])
+      CreateReset(opts, {"cache", "enabled"})
     end
   end
   
@@ -631,12 +647,6 @@ local function CreateSamples(opts, samples)
   end
   
   return opts
-end
-local function CreateReset(opts, option, func)
-  local self = Addon
-  local GUI  = self.GUI
-  
-  GUI:CreateExecute(opts, {"reset", unpack(option)}, self.L["Reset"], nil, func or function() self:ResetOption(unpack(option)) end).width = 0.6
 end
 local function CreateColor(opts, stat)
   local self = Addon
@@ -1849,6 +1859,18 @@ function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
     
     local group
     
+    do
+      local opts = GUI:CreateGroupBox(opts, "Cache")
+      group = opts
+      
+      GUI:CreateToggle(opts, {"cache", "enabled"}, self.L["Enable"])
+      CreateReset(opts, {"cache", "enabled"})
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"constructor", "alwaysDestruct"}, "Always Destruct", "Undo tooltip modifications after they're complete.")
+      CreateReset(opts, {"constructor", "alwaysDestruct"})
+    end
+    
     for _, data in ipairs{
       {"Text Rewords"     , {"cache", "text"}       , "WipeTextCache"       , "GetTextCacheSize"},
       {"Stat Recognitions", {"cache", "stat"}       , "WipeStatCache"       , "GetStatCacheSize"},
@@ -1857,32 +1879,37 @@ function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
       local opts = GUI:CreateGroupBox(opts, data[1] .. ": " .. self[data[4]](self))
       group = opts
       
-      GUI:CreateToggle(opts, data[2], self.L["Enable"])
+      local disabled = not self:GetOption("cache", "enabled")
+      GUI:CreateToggle(opts, data[2], self.L["Enable"], nil, disabled)
       CreateReset(opts, data[2])
-      GUI:CreateExecute(opts, {"wipe", unpack(data[2])}, self.L["Delete"], nil, function() self[data[3]](self) end).width = 0.6
+      GUI:CreateExecute(opts, {"wipe", unpack(data[2])}, self.L["Clear Cache"], nil, function() self[data[3]](self) end, disabled).width = 0.6
     end
     
     do
       local opts = group
       GUI:CreateDivider(opts)
       
-      local disabled = not self:GetOption("cache", "constructor")
+      local disabled = not self:GetOption("cache", "enabled") or not self:GetOption("cache", "constructor")
       
-      local option = GUI:CreateRange(opts, {"constructor", "cacheWipeDelay"}, "Wipe Delay", "Time in seconds without constructor being requested before it's cleared.", 0, 1000000, 0.001, disabled)
+      GUI:CreateToggle(opts, {"constructor", "doValidation"}, "Do Validation", "Perform constructor validation checks.", disabled)
+      CreateReset(opts, {"constructor", "doValidation"})
+      GUI:CreateNewline(opts)
+      
+      local option = GUI:CreateRange(opts, {"cache", "constructorWipeDelay"}, "Wipe Delay", "Time in seconds without constructor being requested before it's cleared.", 0, 1000000, 0.001, disabled)
       option.softMax = 60
       option.bigStep = 1
-      CreateReset(opts, {"constructor", "cacheWipeDelay"})
+      CreateReset(opts, {"cache", "constructorWipeDelay"})
       GUI:CreateNewline(opts)
       
-      local option = GUI:CreateRange(opts, {"constructor", "cacheMinSeenCount"}, "Minimum Seen Count", "Minimum number of times constructor must be requested before it can be cached.", 0, 1000000, 1, disabled)
+      local option = GUI:CreateRange(opts, {"cache", "constructorMinSeenCount"}, "Minimum Seen Count", "Minimum number of times constructor must be requested before it can be cached.", 0, 1000000, 1, disabled)
       option.softMax = 50
-      CreateReset(opts, {"constructor", "cacheMinSeenCount"})
+      CreateReset(opts, {"cache", "constructorMinSeenCount"})
       GUI:CreateNewline(opts)
       
-      local option = GUI:CreateRange(opts, {"constructor", "cacheMinSeenTime"}, "Minimum Seen Time", "Minimum time in seconds since constructor was first requested before it can be cached.", 0, 1000000, 0.001, disabled)
+      local option = GUI:CreateRange(opts, {"cache", "constructorMinSeenTime"}, "Minimum Seen Time", "Minimum time in seconds since constructor was first requested before it can be cached.", 0, 1000000, 0.001, disabled)
       option.softMax = 10
       option.bigStep = 0.25
-      CreateReset(opts, {"constructor", "cacheMinSeenTime"})
+      CreateReset(opts, {"cache", "constructorMinSeenTime"})
     end
   end
   

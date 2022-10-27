@@ -11,6 +11,8 @@ if not L then return end
 
 L["Reorder"] = true
 L["Recolor"] = true
+L["Cache"]   = true
+L["Speeds up processing, but can sometimes introduce bugs."] = true
 
 L["Group Secondary Stats with Base Stats"] = true
 L["Add Space Above Bonus Effects"]         = true

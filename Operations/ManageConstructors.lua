@@ -77,7 +77,7 @@ local hashMaps = {
 }
 
 local function GetHash(tooltip, methodName, link, ...)
-  local hash = Addon:GetOption("cache", "constructor") and hashMaps[methodName] and hashMaps[methodName](link, ...) or nil
+  local hash = Addon:GetOption("cache", "enabled") and Addon:GetOption("cache", "constructor") and hashMaps[methodName] and hashMaps[methodName](link, ...) or nil
   if not hash then
     return
   end
@@ -104,7 +104,7 @@ local function StartCleanup(hash)
   if constructorCleanup[hash] then
     constructorCleanup[hash]:Cancel()
   end
-  constructorCleanup[hash] = C_Timer.NewTicker(Addon:GetOption("constructor", "cacheWipeDelay"), function() Cleanup(hash) end, 1)
+  constructorCleanup[hash] = C_Timer.NewTicker(Addon:GetOption("cache", "constructorWipeDelay"), function() Cleanup(hash) end, 1)
 end
 
 
@@ -122,7 +122,7 @@ function Addon:SetConstructor(constructor, tooltip, link, methodName, ...)
   
   StartCleanup(hash)
   
-  if constructorCount[hash] >= self:GetOption("constructor", "cacheMinSeenCount") and GetTime() - constructorClock[hash] >= self:GetOption("constructor", "cacheMinSeenTime") then
+  if constructorCount[hash] >= self:GetOption("cache", "constructorMinSeenCount") and GetTime() - constructorClock[hash] >= self:GetOption("cache", "constructorMinSeenTime") then
     self:DebugfIf({"debugOutput", "constructorCached"}, "Constructor cached: %s", hash)
     if not constructorCache[hash] then
       cacheSize = cacheSize + 1

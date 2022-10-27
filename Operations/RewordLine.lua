@@ -33,13 +33,13 @@ function Addon:RewordLine(tooltip, line, tooltipData)
   local text = line.textLeftText
   
   -- TODO: config options for indenting negative stats
-  if self:GetOption("cache", "text") and textCache[line.type] and textCache[line.type][line.textLeftText] then
+  if self:GetOption("cache", "enabled") and self:GetOption("cache", "text") and textCache[line.type] and textCache[line.type][line.textLeftText] then
     text, line.rewordRight = unpack(textCache[line.type][line.textLeftText], 1, 2)
   else
     
     
     if line.stat then
-      if Addon:GetOption("allow", "reword") and self:GetOption("doReword", line.stat) then
+      if self:GetOption("allow", "reword") and self:GetOption("doReword", line.stat) then
         text = line.normalForm
       end
     elseif line.type == "Title" then
@@ -49,7 +49,7 @@ function Addon:RewordLine(tooltip, line, tooltipData)
     elseif line.type == "Damage" then
       text = self:ModifyWeaponDamage(text, tooltipData.dps, tooltipData.speed)
       if not line.hideRight then
-        local rightText = Addon:ModifyWeaponSpeed(line.textRightText, tooltipData.speed, tooltipData.speedString)
+        local rightText = self:ModifyWeaponSpeed(line.textRightText, tooltipData.speed, tooltipData.speedString)
         if rightText ~= line.textRightText then
           line.rewordRight = rightText
         end
@@ -57,15 +57,15 @@ function Addon:RewordLine(tooltip, line, tooltipData)
     elseif line.type == "DamagePerSecond" then
       text = self:ModifyWeaponDamagePerSecond(text)
       if not line.hideRight then
-        local rightText = Addon:ModifyWeaponSpeedbar(tooltipData.speed, tooltipData.speedString, tooltipData.speedStringFull)
+        local rightText = self:ModifyWeaponSpeedbar(tooltipData.speed, tooltipData.speedString, tooltipData.speedStringFull)
         if rightText then
           line.rewordRight = rightText
         end
       end
     elseif line.type == "Enchant" then
-      text = Addon:ModifyEnchantment(text)
+      text = self:ModifyEnchantment(text)
     elseif line.type == "WeaponEnchant" then
-      text = Addon:ModifyWeaponEnchantment(text)
+      text = self:ModifyWeaponEnchantment(text)
     elseif line.type == "Durability" then
       text = self:ModifyDurability(text)
     elseif line.type == "RequiredClasses" then
@@ -85,7 +85,7 @@ function Addon:RewordLine(tooltip, line, tooltipData)
     end
     if not line.stat and miscRewordLines[line.type] and self:GetOption("doReword", "Miscellaneous") then
       -- localeExtra replacements
-      if Addon:GetOption("allow", "reword") then
+      if self:GetOption("allow", "reword") then
         for _, definition in ipairs(self.localeExtraReplacements) do
           for _, rule in ipairs(definition) do
             local input = rule.INPUT .. "%.$"
@@ -125,7 +125,7 @@ function Addon:RewordLine(tooltip, line, tooltipData)
     end
     
     -- swap in localized nickname, fix prefix
-    if Addon:GetOption("allow", "reword") then
+    if self:GetOption("allow", "reword") then
       if line.stat then
         text = self.statsInfo[line.stat]:Reword(text, line.normalForm)
         if line.newPrefix then
@@ -142,7 +142,7 @@ function Addon:RewordLine(tooltip, line, tooltipData)
       text = self:ModifyPrefix(text, line.prefix)
     end
     
-    if self:GetOption("cache", "text") then
+    if self:GetOption("cache", "enabled") and self:GetOption("cache", "text") then
       if not textCache[line.type] then
         textCache[line.type] = {}
       end

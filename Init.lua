@@ -248,7 +248,8 @@ L["ERROR"] = ERROR_CAPS
 L["Debug"]                        = BINDING_HEADER_DEBUG
 L["Reload UI"]                    = RELOADUI
 L["Hide messages like this one."] = COMBAT_LOG_MENU_SPELL_HIDE
-L["Delete"] = DELETE
+L["Clear Cache"]                  = BROWSER_CLEAR_CACHE
+-- L["Delete"]                       = DELETE
 
 
 -- L["Weapon Damage"] = DAMAGE_TOOLTIP
