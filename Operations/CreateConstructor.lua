@@ -31,6 +31,18 @@ function Addon:CreateConstructor(tooltipData)
     end
   end
   
+  local extraMoves = {}
+  if tooltipData.extraLines then
+    tblSort(tooltipData.extraLines, function(a, b) return a[2] > b[2] end)
+    
+    constructor.addLines = {}
+    
+    for i = #tooltipData.extraLines, 1, -1 do
+      tinsert(constructor.addLines, tooltipData.extraLines[i])
+      extraMoves[tooltipData.extraLines[i][2] + 1] = true
+    end
+  end
+  
   -- hide left (also hides right)
   for i = #tooltipData, 1, -1 do
     local line = tooltipData[i]
@@ -49,7 +61,7 @@ function Addon:CreateConstructor(tooltipData)
     
     -- move
     if i > 1 then
-      if line.pad or tooltipData[i-1].i ~= line.i - 1 then
+      if extraMoves[i] or line.pad or tooltipData[i-1].i ~= line.i - 1 then
         moves[line.i] = tooltipData[i-1].i
         merge[line.i] = true
         pads[line.i]  = line.pad

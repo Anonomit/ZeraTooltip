@@ -238,9 +238,9 @@ function Addon:CreateOptions()
   
   self:MakeAddonOptions(self.chatCommands[1])
   
-  self:MakeStatsOptions(self.L["Stats"], self.chatCommands[1], "stats", "stat")
-  self:MakePaddingOptions(L["Spacing"], self.chatCommands[1], "spacing", "space", "spaces", "padding", "pad")
-  self:MakeExtraOptions(self.L["Miscellaneous"], self.chatCommands[1], "misc", "miscellaneous", "other")
+  self:MakeStatsOptions(self.L["Stats"], self.chatCommands[1], "stats", "stat", "st")
+  self:MakePaddingOptions(L["Spacing"], self.chatCommands[1], "spacing", "space", "spaces", "spa", "sp", "padding", "pad", "pa")
+  self:MakeExtraOptions(self.L["Miscellaneous"], self.chatCommands[1], "misc", "miscellaneous", "other", "m")
   
   -- Profile Options
   do
@@ -256,7 +256,7 @@ function Addon:CreateOptions()
   end
   
   -- Reset Options
-  self:MakeResetOptions(self.L["Reset"], self.chatCommands[1], "reset", "res")
+  self:MakeResetOptions(self.L["Reset"], self.chatCommands[1], "reset", "res", "re", "r")
   
   -- Debug Options
   if self:IsDebugEnabled() then

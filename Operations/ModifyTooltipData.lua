@@ -55,4 +55,20 @@ function Addon:ModifyTooltipData(tooltip, tooltipData)
   self:ReorderLines(tooltipData)
   
   self:CalculatePadding(tooltipData)
+  
+  self:AddHeroicTag(tooltipData)
+end
+
+
+function Addon:AddExtraLine(tooltipData, n, textLeft, hex, wordWrap)
+  if not tooltipData.extraLines then
+    tooltipData.extraLines = {}
+  end
+  tinsert(tooltipData.extraLines, {false, n, textLeft, hex, wordWrap})
+end
+function Addon:AddExtraDoubleLine(tooltipData, n, textLeft, hexLeft, textRight, hexRight)
+  if not tooltipData.extraLines then
+    tooltipData.extraLines = {}
+  end
+  tinsert(tooltipData.extraLines, {true, n, textLeft, hexLeft, textRight, hexRight})
 end

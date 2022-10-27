@@ -1000,6 +1000,28 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
   end
   GUI:CreateGroup(opts, GUI:Order(), " ", nil, true)
   
+  -- Heroic
+  do
+    local stat = "Heroic"
+    
+    local samples = {}
+    local defaultText = ITEM_HEROIC
+    local _, formattedText = GetFormattedText(stat, self.COLORS.GREEN, defaultText, self:RewordHeroic(defaultText))
+    defaultText = "|T132320:0|t " .. Addon:MakeColorCode(Addon.COLORS.GRAY, defaultText)
+    tinsert(samples, {defaultText, formattedText})
+    
+    local opts = GUI:CreateGroup(opts, stat, samples[1][2], nil, disabled)
+      
+    CreateSamples(opts, samples)
+    
+    CreateColor(opts, stat)
+    
+    CreateReword(opts, stat)
+    
+    CreateHide(opts, stat)
+  end
+  GUI:CreateGroup(opts, GUI:Order(), " ", nil, true)
+  
   -- Races
   local function MakeRequiredRacesOption()
     local stat = "RequiredRaces"

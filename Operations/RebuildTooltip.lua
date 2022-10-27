@@ -100,8 +100,9 @@ setmetatable(moneyMap, {
   end
 })
 
-local function MoveLine(fullDestructor, halfDestructor, tooltip, tooltipName, frame, source, dest, pad, lastFrame)
-  local destFrame = _G[tooltipName.."TextLeft"..dest]
+local function MoveLine(fullDestructor, halfDestructor, tooltip, tooltipName, frame, source, dest, pad, lastFrame, extraLinesMap)
+  
+  local destFrame = _G[tooltipName.."TextLeft"..(extraLinesMap[dest] or dest)]
   local padOffset = 0
   if pad then
     -- if this line should be padded, add a new line and put it behind the current last line
@@ -140,12 +141,40 @@ function Addon:ConstructTooltip(tooltip, constructor)
   lastTooltipName   = tooltipName
   local numLines    = tooltip:NumLines()
   local lastLine    = constructor.numLines == numLines and constructor.lastLine or numLines
-  local lastFrame   = _G[tooltip:GetName().."TextLeft"..lastLine]
+  local lastFrame   = _G[tooltipName.."TextLeft"..lastLine]
   
   wipe(textureMap)
   wipe(moneyMap)
   builtTextureMap = false
   builtMoneyMap   = false
+  
+  local extraLinesMap = {}
+  for _, data in ipairs(constructor.addLines or {}) do
+    local double = data[1]
+    if double then
+      local textLeft, hexLeft, textRight, hexRight = unpack(data, 3, 5)
+      local rLeft, gLeft, bLeft, rRight, gRight, bRight
+      if hexLeft then
+        rLeft, gLeft, bLeft = self:ConvertColorToBlizzard(hexLeft)
+      end
+      if hexRight then
+        rRight, gRight, bRight = self:ConvertColorToBlizzard(hexRight)
+      end
+      tooltip:AddDoubleLine(textLeft, textRight, rLeft, gLeft, bLeft, rRight, gRight, bRight)
+    else
+      local textLeft, hex, wordWrap = unpack(data, 3, 4)
+      local r, g, b
+      if hex then
+        r, g, b = self:ConvertColorToBlizzard(hex)
+      end
+      tooltip:AddLine(textLeft, r, g, b, wordWrap)
+    end
+    local source = tooltip:NumLines()
+    local frame = _G[tooltipName.."TextLeft"..source]
+    local dest = data[2]
+    MoveLine(fullDestructor, halfDestructor, tooltip, tooltipName, frame, source, dest, nil, lastFrame, extraLinesMap)
+    extraLinesMap[dest] = source
+  end
   
   -- do rewording first so that recycled padding can be detected
   for _, change in ipairs(constructor) do
@@ -206,7 +235,7 @@ function Addon:ConstructTooltip(tooltip, constructor)
         self:SetTextColorFromHex(rightFrame, recolorRight)
       end
       if dest then
-        if not pcall(function() MoveLine(fullDestructor, halfDestructor, tooltip, tooltipName, frame, source, dest, pad, lastFrame) end) then
+        if not pcall(function() MoveLine(fullDestructor, halfDestructor, tooltip, tooltipName, frame, source, dest, pad, lastFrame, extraLinesMap) end) then
           -- just in case some frame anchoring doesn't work as expected
           table.insert(halfDestructor, 1, function() tooltip:AddDoubleLine(ADDON_NAME, self.L["ERROR"], 1, 0, 0, 1, 0, 0) end)
           self:DestructTooltip(tooltip, halfDestructor)

@@ -240,6 +240,8 @@ L["|cff000000%s (low level)|r"] = TRIVIAL_QUEST_DISPLAY
 
 L["All"] = ALL
 
+L["Heroic"] = ITEM_HEROIC
+
 L["ERROR"] = ERROR_CAPS
 
 
@@ -868,6 +870,8 @@ do
   end
   
   Addon.statsInfo["Title"]              = {color = Addon.COLORS.WHITE}
+  
+  Addon.statsInfo["Heroic"]             = {color = Addon.COLORS.GREEN}
   
   Addon.statsInfo["AlreadyBound"]       = {color = Addon.COLORS.WHITE}
   Addon.statsInfo["CharacterBound"]     = {color = Addon.COLORS.WHITE}
