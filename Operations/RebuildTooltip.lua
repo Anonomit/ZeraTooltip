@@ -171,6 +171,7 @@ function Addon:ConstructTooltip(tooltip, constructor)
     end
     local source = tooltip:NumLines()
     local frame = _G[tooltipName.."TextLeft"..source]
+    table.insert(halfDestructor, function() frame:Hide() end)
     local dest = data[2]
     MoveLine(fullDestructor, halfDestructor, tooltip, tooltipName, frame, source, dest, nil, lastFrame, extraLinesMap)
     extraLinesMap[dest] = source
@@ -194,8 +195,9 @@ function Addon:ConstructTooltip(tooltip, constructor)
     if rewordLeft then
       local frame = _G[tooltipName.."TextLeft"..source]
       if frame and frame:IsShown() then
-        frame:SetText(rewordLeft)
+        local current = frame:GetText()
         table.insert(halfDestructor, function() frame:SetText(current) end)
+        frame:SetText(rewordLeft)
       end
     end
   end
