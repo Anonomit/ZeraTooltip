@@ -37,7 +37,7 @@ function Addon:HideLine(line)
     end
   elseif line.type == "RequiredLevel" then
     local level = tonumber(strMatch(line.textLeftText, self:ReversePattern(ITEM_MIN_LEVEL)))
-    if level <= self.MY_LEVEL and self:GetOption("hide", "requiredLevelMet") or level == self.MAX_LEVEL and self:GetOption("hide", "requiredLevelMax") then
+    if level <= self.MY_LEVEL and self:GetOption("hide", "requiredLevelMet") or UnitLevel"player" == self.MAX_LEVEL and level == self.MAX_LEVEL and self:GetOption("hide", "requiredLevelMax") then
       return HideLeft(line)
     end
   elseif line.type == "MadeBy" then
