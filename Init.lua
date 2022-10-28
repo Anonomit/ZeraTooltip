@@ -631,7 +631,8 @@ Addon.COLORS = {
   GREEN     = rgb(  0, 255,   0),
   BLUE      = rgb(  0,   0, 255),
   SKY_BLUE  = rgb(  0, 204, 255), -- used by BIND_TRADE_TIME_REMAINING
-  DEFAULT   = rgb(255, 215,   6), -- used by BIND_TRADE_TIME_REMAINING
+  DEFAULT   = rgb(255, 215,   6), -- used by default font
+  PURE_RED  = rgb(255,   0,   0), -- used by ITEM_ENCHANT_DISCLAIMER
 
   ARCANE = rgb(255, 127, 255),
   FIRE   = rgb(255, 128,   0),

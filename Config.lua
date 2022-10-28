@@ -220,6 +220,8 @@ function Addon:MakeDefaultOptions()
           RequiredLevel      = false,
           Refundable         = true,
           SoulboundTradeable = true,
+          ProposedEnchant    = true, -- no GUI option
+          EnchantHint        = true, -- no GUI option
         },
         
         damage = {

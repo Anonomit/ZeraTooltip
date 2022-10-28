@@ -80,6 +80,8 @@ local contexts = Addon:MakeLookupTable({
   "WeaponEnchant",
   "Socket",
   "LastSocket",
+  "ProposedEnchant",
+  "EnchantHint",
   "SocketBonus",
   "Durability",
   "RequiredRaces",
@@ -128,6 +130,11 @@ local contextAscensions = Addon:Map({
     if currentContext == contexts.RequiredEnchant then
       local lastLine = tooltipData[line.i-2]
       lastLine.type = "Enchant"
+    end
+    
+    -- mark where the enchant would be if it existed on this item
+    if not tooltipData.Enchant then
+      tooltipData.Enchant = line.i - 1
     end
   end,
   RecipeTitle = function(context, tooltipData, line, currentContext)
@@ -251,6 +258,7 @@ contextActions = Addon:Map({
   end,
   Enchant = function(i, tooltipData, line)
     if tooltipData.hasEnchant and line.colorLeft == Addon.COLORS.GREEN then
+      tooltipData.Enchant = line.i
       return SetContext(i, tooltipData, line)
     end
   end,
@@ -263,6 +271,7 @@ contextActions = Addon:Map({
   WeaponEnchant = function(i, tooltipData, line)
     if tooltipData.isWeapon and line.colorLeft == Addon.COLORS.GREEN then
       for _, alt in ipairs{
+        contexts.ProposedEnchant,
         contexts.LastSecondaryStat,
         contexts.MadeBy,
         contexts.SocketHint,
@@ -279,6 +288,16 @@ contextActions = Addon:Map({
   LastSocket = function(i, tooltipData, line)
     if line.texture then
       return SetContext(i-1, tooltipData, line)
+    end
+  end,
+  ProposedEnchant = function(i, tooltipData, line)
+    if line.colorLeft == Addon.COLORS.GREEN and MatchesAny(line.textLeftTextStripped, ITEM_PROPOSED_ENCHANT) then
+      return SetContext(i, tooltipData, line)
+    end
+  end,
+  EnchantHint = function(i, tooltipData, line)
+    if line.colorLeft == Addon.COLORS.PURE_RED and MatchesAny(line.textLeftTextStripped, ITEM_ENCHANT_DISCLAIMER) then
+      return SetContext(i, tooltipData, line)
     end
   end,
   SocketBonus = function(i, tooltipData, line)

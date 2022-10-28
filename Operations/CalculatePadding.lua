@@ -14,7 +14,7 @@ local padLocations = {
   [-1] = {
     BaseStat      = function(line) return line.type == "BaseStat"      or Addon:GetOption"combineStats" and line.type == "SecondaryStat" end,
     SecondaryStat = function(line) return line.type == "SecondaryStat" and not Addon:GetOption"combineStats" end,
-    Enchant       = function(line) return line.type == "Enchant"       end,
+    Enchant       = function(line) return line.type == "Enchant"       or line.type == "ProposedEnchant" or line.type == "EnchantHint" end,
     WeaponEnchant = function(line) return line.type == "WeaponEnchant" end,
     Socket        = function(line) return line.type == "Socket"        end,
     SetName       = function(line) return line.type == "SetName"       end,
@@ -23,7 +23,7 @@ local padLocations = {
   [1] = {
     BaseStat      = function(line) return line.type == "BaseStat"      or Addon:GetOption"combineStats" and line.type == "SecondaryStat" end,
     SecondaryStat = function(line) return line.type == "SecondaryStat" and not Addon:GetOption"combineStats" end,
-    Enchant       = function(line) return line.type == "Enchant"       or line.type == "RequiredEnchant" end,
+    Enchant       = function(line) return line.type == "Enchant"       or line.type == "RequiredEnchant" or line.type == "ProposedEnchant" or line.type == "EnchantHint" end,
     WeaponEnchant = function(line) return line.type == "WeaponEnchant" end,
     SocketBonus   = function(line) return line.type == "SocketBonus"   end,
     SetPiece      = function(line) return line.type == "SetPiece"      end,
