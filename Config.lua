@@ -1015,13 +1015,13 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
   GUI:CreateGroup(opts, GUI:Order(), " ", nil, true)
   
   -- Heroic
-  do
+  if self.expansionLevel >= self.expansions.wrath then
     local stat = "Heroic"
     
     local samples = {}
     local defaultText = ITEM_HEROIC
     local _, formattedText = GetFormattedText(stat, self.COLORS.GREEN, defaultText, self:RewordHeroic(defaultText))
-    defaultText = "|T132320:0|t " .. Addon:MakeColorCode(Addon.COLORS.GRAY, defaultText)
+    defaultText = "|T132320:0|t " .. self:MakeColorCode(self.COLORS.GRAY, defaultText)
     tinsert(samples, {defaultText, formattedText})
     
     local opts = GUI:CreateGroup(opts, stat, samples[1][2], nil, disabled)
