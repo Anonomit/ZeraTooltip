@@ -149,6 +149,7 @@ function Addon:ConstructTooltip(tooltip, constructor)
   builtMoneyMap   = false
   
   local extraLinesMap = {}
+  local addedExtraLine
   for _, data in ipairs(constructor.addLines or {}) do
     local double = data[1]
     if double then
@@ -175,6 +176,7 @@ function Addon:ConstructTooltip(tooltip, constructor)
     local dest = data[2]
     MoveLine(fullDestructor, halfDestructor, tooltip, tooltipName, frame, source, dest, nil, lastFrame, extraLinesMap)
     extraLinesMap[dest] = source
+    addedExtraLine      = true
   end
   
   -- do rewording first so that recycled padding can be detected
@@ -247,7 +249,7 @@ function Addon:ConstructTooltip(tooltip, constructor)
     end
   end
   
-  if constructor.lastLine ~= numLines and constructor.numLines == tooltip:NumLines() then
+  if addedExtraLine or constructor.lastLine ~= numLines and constructor.numLines == tooltip:NumLines() then
     -- the last tooltip line is not positioned at the end. this should only happen if no lines have been added yet by any addon
     -- in this case, final padding must be abandoned. this causes bad padding only if another addon adds a line after this
     -- TODO: it is probably possible to fix this by hooking AddLine and AddDoubleLine

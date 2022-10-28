@@ -273,10 +273,10 @@ Addon.prefixStats = {
 
 
 function Addon:Round(num, nearest)
-  nearest = nearest or 1;
-  local lower = mathFloor(num / nearest) * nearest;
-  local upper = lower + nearest;
-  return (upper - num < num - lower) and upper or lower;
+  nearest = nearest or 1
+  local lower = math.floor(num / nearest) * nearest
+  local upper = lower + nearest
+  return (upper - num < num - lower) and upper or lower
 end
 
 function Addon:Clamp(min, num, max)
