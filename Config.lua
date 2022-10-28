@@ -186,14 +186,15 @@ function Addon:MakeDefaultOptions()
         },
         doReword = {
           ["*"]              = true,
+          ItemLevel          = false,
+          Refundable         = false,
+          SoulboundTradeable = false,
           Enchant            = false,
           WeaponEnchant      = false,
           Durability         = false,
           Equip              = false,
           ChanceOnHit        = false,
           Use                = false,
-          Refundable         = false,
-          SoulboundTradeable = false,
         },
         reword = {
           ["*"] = "",
@@ -254,6 +255,7 @@ function Addon:MakeDefaultOptions()
         },
         icon = {
           ["*"]          = "Interface\\AddOns\\" .. ADDON_NAME .. "\\Assets\\Textures\\Samwise",
+          ItemLevel      = "Interface\\Transmogrify\\transmog-tooltip-arrow",
           AlreadyBound   = "Interface\\PetBattles\\PetBattle-LockIcon",
           CharacterBound = "Interface\\PetBattles\\PetBattle-LockIcon",
           AccountBound   = "Interface\\PetBattles\\PetBattle-LockIcon",
@@ -697,7 +699,7 @@ local function CreateIcon(opts, stat)
   
   local disabled = not self:GetOption("allow", "reword")
   GUI:CreateToggle(opts, {"doIcon", stat}, self.L["Icon"], nil, disabled).width = 0.6
-  local option = GUI:CreateSelect(opts, {"icon", stat}, self.L["Choose an Icon:"], nil, iconsDropdown, icons, disabled)
+  local option = GUI:CreateSelect(opts, {"icon", stat}, self.L["Choose an Icon:"], nil, iconsDropdown, icons, disabled or not self:GetOption("doIcon", stat))
   option.width = 0.7
   option.set   = function(info, v) self:SetOption(self:UnmakeIcon(v), "icon", stat)   end
   option.get   = function(info)    return self:MakeIcon(self:GetOption("icon", stat)) end
@@ -1027,6 +1029,37 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
     CreateColor(opts, stat)
     
     CreateReword(opts, stat)
+    
+    CreateHide(opts, stat)
+  end
+  
+  -- Item Level
+  do
+    local stat = "ItemLevel"
+    
+    local samples = {}
+    local defaultText = format(GARRISON_FOLLOWER_ITEM_LEVEL, 1)
+    local _, formattedText = GetFormattedText(stat, self.COLORS.GREEN, defaultText, self:RewordItemLevel(defaultText))
+    defaultText = "|T132320:0|t " .. Addon:MakeColorCode(Addon.COLORS.GRAY, defaultText)
+    tinsert(samples, {defaultText, formattedText})
+    
+    local opts = GUI:CreateGroup(opts, stat, samples[1][2], nil, disabled)
+      
+    CreateSamples(opts, samples)
+    
+    CreateColor(opts, stat)
+    
+    do
+      local opts = CreateReword(opts, stat)
+      GUI:CreateNewline(opts)
+      
+      -- Trim Space
+      local disabled = disabled or not self:GetOption("doReword", stat)
+      GUI:CreateToggle(opts, {"trimSpace", stat}, L["Remove Space"], nil, disabled)
+      CreateReset(opts, {"trimSpace", stat}, function() self:ResetOption("trimSpace", stat) end)
+    end
+    
+    CreateIcon(opts, stat)
     
     CreateHide(opts, stat)
   end

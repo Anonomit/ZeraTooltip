@@ -631,6 +631,7 @@ Addon.COLORS = {
   GREEN     = rgb(  0, 255,   0),
   BLUE      = rgb(  0,   0, 255),
   SKY_BLUE  = rgb(  0, 204, 255), -- used by BIND_TRADE_TIME_REMAINING
+  DEFAULT   = rgb(255, 215,   6), -- used by BIND_TRADE_TIME_REMAINING
 
   ARCANE = rgb(255, 127, 255),
   FIRE   = rgb(255, 128,   0),
@@ -873,6 +874,7 @@ do
   Addon.statsInfo["Title"]              = {color = Addon.COLORS.WHITE}
   
   Addon.statsInfo["Heroic"]             = {color = Addon.COLORS.GREEN}
+  Addon.statsInfo["ItemLevel"]          = {color = Addon.COLORS.DEFAULT}
   
   Addon.statsInfo["AlreadyBound"]       = {color = Addon.COLORS.WHITE}
   Addon.statsInfo["CharacterBound"]     = {color = Addon.COLORS.WHITE}

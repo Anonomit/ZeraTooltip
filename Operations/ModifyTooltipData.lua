@@ -57,6 +57,7 @@ function Addon:ModifyTooltipData(tooltip, tooltipData)
   self:CalculatePadding(tooltipData)
   
   self:AddHeroicTag(tooltipData)
+  self:AddItemLevel(tooltipData)
 end
 
 

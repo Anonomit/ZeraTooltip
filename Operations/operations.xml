@@ -1,6 +1,7 @@
 <Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
   
   <Script file="AddHeroicTag.lua"/>
+  <Script file="AddItemLevel.lua"/>
   <Script file="CalculatePadding.lua"/>
   <Script file="CreateConstructor.lua"/>
   <Script file="HideLine.lua"/>

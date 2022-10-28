@@ -37,9 +37,9 @@ function Addon:CreateConstructor(tooltipData)
     
     constructor.addLines = {}
     
-    for i = #tooltipData.extraLines, 1, -1 do
-      tinsert(constructor.addLines, tooltipData.extraLines[i])
-      extraMoves[tooltipData.extraLines[i][2] + 1] = true
+    for i, line in ipairs(tooltipData.extraLines) do
+      tinsert(constructor.addLines, line)
+      extraMoves[line[2] + 1] = true
     end
   end
   
