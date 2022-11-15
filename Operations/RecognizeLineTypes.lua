@@ -352,13 +352,6 @@ contextActions = Addon:Map({
       return SetContext(i-1, tooltipData, line)
     end
   end,
-  MadeBy = function(i, tooltipData, line)
-    local madeType = line.colorLeft == Addon.COLORS.GREEN and MatchesAny(line.textLeftTextStripped, ITEM_CREATED_BY, ITEM_WRAPPED_BY, ITEM_WRITTEN_BY)
-    if madeType then
-      line.madeType = madeType
-      return SetContext(i, tooltipData, line)
-    end
-  end,
   SetName = function(i, tooltipData, line)
     if MatchesAny(line.textLeftTextStripped, ITEM_SET_NAME) then
       return SetContext(i, tooltipData, line)
@@ -374,6 +367,13 @@ contextActions = Addon:Map({
     if prefix then
       line.prefix = prefix
       return SetContext(i-1, tooltipData, line)
+    end
+  end,
+  MadeBy = function(i, tooltipData, line)
+    local madeType = line.colorLeft == Addon.COLORS.GREEN and MatchesAny(line.textLeftTextStripped, ITEM_CREATED_BY, ITEM_WRAPPED_BY, ITEM_WRITTEN_BY)
+    if madeType then
+      line.madeType = madeType
+      return SetContext(i, tooltipData, line)
     end
   end,
   SocketHint = function(i, tooltipData, line)
