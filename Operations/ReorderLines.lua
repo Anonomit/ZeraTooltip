@@ -22,6 +22,8 @@ local function SortStats(tooltipData)
   local stats = {
     BaseStat = {},
     SecondaryStat = {},
+    EnchantOnUse = {},
+    RequiredEnchantOnUse = {},
   }
   for i = #tooltipData, 1, -1 do
     if stats[tooltipData[i].type] then
@@ -34,6 +36,15 @@ local function SortStats(tooltipData)
   end
   if not stats.BaseStat.location then
     stats.BaseStat.location = tooltipData.statStart + 1
+  end
+  if not stats.SecondaryStat.location then
+    stats.SecondaryStat.location = tooltipData.secondaryStatStart + 1
+  end
+  if #stats.EnchantOnUse > 0 then
+    tinsert(stats.SecondaryStat, tblRemove(stats.EnchantOnUse, 1))
+  end
+  if #stats.RequiredEnchantOnUse > 0 then
+    tinsert(stats.SecondaryStat, tblRemove(stats.RequiredEnchantOnUse, 1))
   end
   
   if Addon:GetOption"combineStats" then

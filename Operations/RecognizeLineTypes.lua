@@ -92,6 +92,8 @@ local contexts = Addon:MakeLookupTable({
   "RequiredRep",
   "SecondaryStat",
   "LastSecondaryStat",
+  "EnchantOnUse",
+  "RequiredEnchantOnUse",
   "SetName",
   "setPiece",
   "LastSetPiece",
@@ -135,6 +137,20 @@ local contextAscensions = Addon:Map({
     -- mark where the enchant would be if it existed on this item
     if not tooltipData.Enchant then
       tooltipData.Enchant = line.i - 1
+    end
+  end,
+  SecondaryStat = function(context, tooltipData, line, currentContext)
+    -- mark where the secondary stats would be if they existed on this item
+    if not tooltipData.secondaryStatStart then
+      tooltipData.secondaryStatStart = line.i - 1
+    end
+  end,
+  EnchantOnUse = function(context, tooltipData, line, currentContext)
+    -- mark red enchantment lines if I found an "enchantment disabled" line
+    if currentContext == contexts.RequiredEnchantOnUse then
+      local lastLine = tooltipData[line.i-1]
+      lastLine.type = "EnchantOnUse"
+      lastLine.prefix = ITEM_SPELL_TRIGGER_ONUSE
     end
   end,
   RecipeTitle = function(context, tooltipData, line, currentContext)
@@ -350,6 +366,19 @@ contextActions = Addon:Map({
     end
     if MatchesAny(line.textLeftTextStripped, ITEM_RANDOM_ENCHANT, ITEM_MOD_FERAL_ATTACK_POWER) then
       return SetContext(i-1, tooltipData, line)
+    end
+  end,
+  EnchantOnUse = function(i, tooltipData, line)
+    if tooltipData.hasEnchant and line.colorLeft == Addon.COLORS.GREEN and StartsWithAny(line.textLeftTextStripped, ITEM_SPELL_TRIGGER_ONUSE) then
+      tooltipData.Enchant = line.i
+      line.prefix = ITEM_SPELL_TRIGGER_ONUSE
+      return SetContext(i, tooltipData, line)
+    end
+  end,
+  RequiredEnchantOnUse = function(i, tooltipData, line)
+    if tooltipData.hasEnchant and line.colorLeft == Addon.COLORS.RED and MatchesAny(line.textLeftTextStripped, ENCHANT_ITEM_REQ_SKILL, ENCHANT_ITEM_MIN_SKILL, ENCHANT_ITEM_REQ_LEVEL) then
+      SetContext(i, tooltipData, line)
+      return SetContext(i, tooltipData, line)
     end
   end,
   SetName = function(i, tooltipData, line)
