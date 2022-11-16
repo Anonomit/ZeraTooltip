@@ -210,6 +210,7 @@ function Addon:MakeDefaultOptions()
           ["*"]   = true,
           Title   = false,
           Enchant = false,
+          Use     = false, -- Enchantments that add an on use effect and can be green or red
         },
         color = (function() local colors = {["*"] = "00ff00"} for stat, StatInfo in pairs(self.statsInfo) do colors[stat] = StatInfo.color end return colors end)(),
         
