@@ -24,6 +24,8 @@ Addon.onOptionSetHandlers["WipeTextCache"] = true
 local miscRewordLines = {
   SecondaryStat = true,
   Enchant       = true,
+  EnchantOnUse  = true,
+  Socket        = true,
   SetBonus      = true,
 }
 

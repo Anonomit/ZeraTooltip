@@ -132,6 +132,10 @@ Addon:AddExtraReplacement("Run Speed",
     OUTPUT = "+8%% Run Speed",
   },
   {
+    INPUT  = "Minor Run Speed Increase", -- Meta gems
+    OUTPUT = "+8%% Run Speed",
+  },
+  {
     INPUT  = "Minor Speed ", -- Enchant Boots - Boar's Speed
     OUTPUT = "+8%% Run Speed ",
   },
@@ -146,6 +150,10 @@ Addon:AddExtraReplacement("Run Speed",
   {
     INPUT  = "Run speed increased slightly", -- Highlander's / Defiler's PvP boots
     OUTPUT = "+8%% Run Speed",
+  },
+  {
+    INPUT  = "Greatly increase your run speed", -- Nitro Boosts
+    OUTPUT = "+150%% Run Speed",
   }
 )
 
