@@ -183,6 +183,7 @@ contextActions = Addon:Map({
     end
   end,
   Title = function(i, tooltipData, line)
+    tooltipData.title = line.i
     return SetContext(i, tooltipData, line)
   end,
   Difficulty = function(i, tooltipData, line)

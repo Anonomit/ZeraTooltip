@@ -83,15 +83,15 @@ function Addon:ReorderLines(tooltipData)
         end
       elseif line.type == "Refundable" then
         if self:GetOption("doReorder", line.type) then
-          tinsert(tooltipData, 2 + offset, tblRemove(tooltipData, i))
+          tinsert(tooltipData, (tooltipData.binding or 2) + 1 + offset, tblRemove(tooltipData, i))
         end
       elseif line.type == "SoulboundTradeable" then
         if self:GetOption("doReorder", line.type) then
-          tinsert(tooltipData, (tooltipData.binding or 1) + 1 + offset, tblRemove(tooltipData, i))
+          tinsert(tooltipData, (tooltipData.binding or 2) + 1 + offset, tblRemove(tooltipData, i))
         end
       elseif line.type == "RequiredRaces" or line.type == "RequiredClasses" or line.type == "RequiredLevel" then
         if self:GetOption("doReorder", line.type) then
-          tinsert(tooltipData, 2, tblRemove(tooltipData, i))
+          tinsert(tooltipData, (tooltipData.title or 1) + 1, tblRemove(tooltipData, i))
           offset = offset + 1
         end
       end

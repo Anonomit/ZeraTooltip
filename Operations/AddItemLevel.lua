@@ -64,7 +64,7 @@ function Addon:AddItemLevel(tooltipData)
     if self:GetOption("allow", "recolor") and self:GetOption("doRecolor", stat) then
       color = self:GetOption("color", stat)
     end
-    self:AddExtraLine(tooltipData, 1, self:RewordItemLevel(format(GARRISON_FOLLOWER_ITEM_LEVEL, itemLevel)), color)
+    self:AddExtraLine(tooltipData, tooltipData.title or 1, self:RewordItemLevel(format(GARRISON_FOLLOWER_ITEM_LEVEL, itemLevel)), color)
   end
 end
 
