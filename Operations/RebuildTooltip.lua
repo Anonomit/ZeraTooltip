@@ -7,6 +7,8 @@ local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 local strGsub = string.gsub
 local strSub  = string.sub
 
+local tblConcat = table.concat
+
 
 function Addon:DestructTooltip(tooltip, halfDestructor, noShow)
   for i = #halfDestructor, 1, -1 do
@@ -101,8 +103,8 @@ setmetatable(moneyMap, {
 })
 
 local function MoveLine(fullDestructor, halfDestructor, tooltip, tooltipName, frame, source, dest, pad, lastFrame, extraLinesMap)
-  
-  local destFrame = _G[tooltipName.."TextLeft"..(extraLinesMap[dest] or dest)]
+  dest = extraLinesMap[dest] or dest
+  local destFrame = _G[tooltipName.."TextLeft"..dest]
   local padOffset = 0
   if pad then
     -- if this line should be padded, add a new line and put it behind the current last line
@@ -112,6 +114,8 @@ local function MoveLine(fullDestructor, halfDestructor, tooltip, tooltipName, fr
       padOffset = FakeoutLastLine(fullDestructor, halfDestructor, tooltip, lastFrame)
     end
   end
+  
+  Addon:DebugfIf({"debugOutput", "constructorLineMove"}, "Attaching line %s to line %s", source, dest)
   
   -- attach the source line to the dest line, with padding offset
   local numPoints = frame:GetNumPoints()
@@ -239,10 +243,23 @@ function Addon:ConstructTooltip(tooltip, constructor)
         self:SetTextColorFromHex(rightFrame, recolorRight)
       end
       if dest then
-        if not pcall(function() MoveLine(fullDestructor, halfDestructor, tooltip, tooltipName, frame, source, dest, pad, lastFrame, extraLinesMap) end) then
+        local success, err = pcall(function() MoveLine(fullDestructor, halfDestructor, tooltip, tooltipName, frame, source, dest, pad, lastFrame, extraLinesMap) end)
+        if not success then
           -- just in case some frame anchoring doesn't work as expected
           table.insert(halfDestructor, 1, function() tooltip:AddDoubleLine(ADDON_NAME, self.L["ERROR"], 1, 0, 0, 1, 0, 0) end)
           self:DestructTooltip(tooltip, halfDestructor)
+          if self:GetOption("debugOutput", "constructorError") then
+            self:DebugData{
+              {"tooltip",    tooltipName},
+              {"source",     source},
+              {"dest",       dest},
+              {"actualDest", extraLinesMap[dest]},
+              {"pad",        pad},
+            }
+            if self:IsDebugEnabled() then
+              geterrorhandler()(err)
+            end
+          end
           return fullDestructor
         end
       end

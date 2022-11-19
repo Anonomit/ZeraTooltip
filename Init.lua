@@ -53,6 +53,26 @@ do
   function Addon:DebugfIf(keys, ...)
     return DebugIf(self, "Debugf", keys, ...)
   end
+  
+  local tblConcat = table.concat
+  function Addon:DebugData(t)
+    local texts = {}
+    for _, data in ipairs(t) do
+      if data[2] then
+        if type(data[2]) == "string" then
+          table.insert(texts, data[1] .. ": '" .. data[2] .. "'")
+        else
+          table.insert(texts, data[1] .. ": " .. tostring(data[2]))
+        end
+      end
+    end
+    self:Debug(tblConcat(texts, ", "))
+  end
+  function Addon:DebugDataIf(keys, ...)
+    if self.GetOption and self:GetOption(unpack(keys)) then
+      return self:DebugData(...)
+    end
+  end
 end
 
 

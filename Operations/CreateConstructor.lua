@@ -11,6 +11,37 @@ local tblSort   = table.sort
 local tblConcat = table.concat
 
 
+
+local function OutputConstructorCreation(constructor)
+  if Addon:GetOption("debugOutput", "constructorCreated") then
+    for i, line in ipairs(constructor) do
+      Addon:DebugData{
+        {"instruction",  i},
+        {"validation",   constructor.validation[line[1]]},
+        {"source",       line[1]},
+        {"dest",         line[2]},
+        {"hideLeft",     line[3]},
+        {"rewordLeft",   line[4]},
+        {"rewordRight",  line[5]},
+        {"pad",          line[6]},
+        {"recolorLeft",  line[7]},
+        {"recolorRight", line[8]},
+        {"hideRight",    line[9]},
+      }
+    end
+    for i, line in ipairs(constructor.addLines or {}) do
+      Addon:DebugData{
+        {"addLine",        i},
+        {"souble",         line[1]},
+        {"textLeft",       line[2]},
+        {"hexLeft",        line[3]},
+        {"textRight/wrap", line[4]},
+        {"hexRight",       line[5]},
+      }
+    end
+  end
+end
+
 function Addon:CreateConstructor(tooltipData)
   local constructor = {numLines = tooltipData.numLines}
   
@@ -90,7 +121,8 @@ function Addon:CreateConstructor(tooltipData)
   end
   
   -- if the last line is being moved or padded, reanchor the line after it (should it exist)
-  if tooltipData[#tooltipData].i ~= tooltipData.numLines or tooltipData.padLast then
+  -- don't do this if an extra line is being added
+  if not constructor.addLines and (tooltipData[#tooltipData].i ~= tooltipData.numLines or tooltipData.padLast) then
     pads[tooltipData.numLines+1]  = tooltipData.padLast
     moves[tooltipData.numLines+1] = tooltipData[#tooltipData].i
     merge[tooltipData.numLines+1] = true
@@ -115,53 +147,7 @@ function Addon:CreateConstructor(tooltipData)
   
   tblSort(constructor, function(a, b) return a[1] > b[1] end)
   
-  if self:GetOption("debugOutput", "constructorCreated") then
-    for i, line in ipairs(constructor) do
-      local texts = {}
-      for _, data in ipairs{
-        {"instruction",  i},
-        {"validation",   constructor.validation[line[1]]},
-        {"source",       line[1]},
-        {"dest",         line[2]},
-        {"hideLeft",     line[3]},
-        {"rewordLeft",   line[4]},
-        {"rewordRight",  line[5]},
-        {"pad",          line[6]},
-        {"recolorLeft",  line[7]},
-        {"recolorRight", line[8]},
-        {"hideRight",    line[9]},
-      } do
-        if data[2] then
-          if type(data[2]) == "string" then
-            table.insert(texts, data[1] .. ": '" .. data[2] .. "'")
-          else
-            table.insert(texts, data[1] .. ": " .. tostring(data[2]))
-          end
-        end
-      end
-      self:Debug(tblConcat(texts, ", "))
-    end
-    for i, line in ipairs(constructor.addLines or {}) do
-      local texts = {}
-      for _, data in ipairs{
-        {"addLine",        i},
-        {"souble",         line[1]},
-        {"textLeft",       line[2]},
-        {"hexLeft",        line[3]},
-        {"textRight/wrap", line[4]},
-        {"hexRight",       line[5]},
-      } do
-        if data[2] then
-          if type(data[2]) == "string" then
-            table.insert(texts, data[1] .. ": '" .. data[2] .. "'")
-          else
-            table.insert(texts, data[1] .. ": " .. tostring(data[2]))
-          end
-        end
-      end
-      self:Debug(tblConcat(texts, ", "))
-    end
-  end
+  OutputConstructorCreation(constructor)
   
   return constructor
 end

@@ -1928,6 +1928,12 @@ function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
       GUI:CreateToggle(opts, {"debugOutput", "constructorValidationFail"}, "Constructor Validation Failure", nil, disabled).width = 2
       GUI:CreateNewline(opts)
       
+      GUI:CreateToggle(opts, {"debugOutput", "constructorLineMove"}, "Constructor Moving Line", nil, disabled).width = 2
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"debugOutput", "constructorError"}, "Constructor Error", nil, disabled).width = 2
+      GUI:CreateNewline(opts)
+      
       GUI:CreateToggle(opts, {"debugOutput", "InterfaceOptionsFrameFix"}, "Interface Options Patch", nil, disabled).width = 2
     end
     

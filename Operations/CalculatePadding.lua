@@ -117,7 +117,7 @@ function Addon:CalculatePadding(tooltipData)
     if lastLine.type == "Padding" then
       lastLine.hide = nil
     else
-      tooltipData.padLast = #tooltipData
+      tooltipData.padLast = true
     end
   end
 end

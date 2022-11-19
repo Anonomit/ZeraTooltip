@@ -9,10 +9,7 @@ local tblConcat = table.concat
 
 
 local function OutputLineRecognition(line)
-  local self = Addon
-  
-  local texts = {}
-  for _, data in ipairs{
+  Addon:DebugData{
     {"line",        line.i},
     {"textLeft",    line.textLeftText},
     {"textRight",   line.textRightText},
@@ -27,16 +24,7 @@ local function OutputLineRecognition(line)
     {"rewordRight", line.rewordRight},
     {"hideRight",   line.hideRight},
     {"hide",        line.hide},
-  } do
-    if data[2] then
-      if type(data[2]) == "string" then
-        table.insert(texts, data[1] .. ": '" .. data[2] .. "'")
-      else
-        table.insert(texts, data[1] .. ": " .. tostring(data[2]))
-      end
-    end
-  end
-  self:Debug(tblConcat(texts, ", "))
+  }
 end
 
 
