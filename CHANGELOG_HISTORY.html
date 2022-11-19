@@ -1,0 +1,235 @@
+<h2>2.3.0</h2>
+<p>&nbsp;</p>
+<p><strong>New Features</strong></p>
+<ul>
+<li>Heroic tag now shows on ALL items which originally had the line in Wrath. This is enabled by default.</li>
+<li>Item level can now be shown on equippable items. It also shows on tokens (up to Uluar so far) which reflects the level of items provided. This is enabled by default.</li>
+<li>"Will receive enchantment" lines on items in trade window now appear in the regular enchantment location. Why does Blizzard want to put them in between the gems and the socket bonus?</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Changes</strong></p>
+<ul>
+<li>Level requirement "Max Level" option now checks that both your character is max level, and the item requires max level. Both are necessary for the line to be hidden.</li>
+<li>Cache can now be disabled. This feature increases performance, but can increase the frequency of tooltips loading incorrectly. This is disabled by default.</li>
+<li>Version number is more visible in options, and available with <strong>/zt version</strong>.</li>
+</ul>
+<p>&nbsp;</p>
+<h2>2.2.0</h2>
+<p>&nbsp;</p>
+<p><strong>New Features</strong></p>
+<ul>
+<li>Icons can now be manually resized.</li>
+<li>Titles can now show the item's icon. This defaults to on.</li>
+<li>Durability can now be customized.</li>
+<li>Item 'Binding Type' (Soulbound, BoP, BoE, etc) can now be customized.</li>
+<li>'Refundable Item' text can now be customized.</li>
+<li>'Made By' lines can now be customized.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Changes</strong></p>
+<ul>
+<li>Added new icons to the list of options.</li>
+<li>Soulbound tradeable items are no longer reworded by default, to ensure clarity. This option will be reset for everyone.</li>
+<li>Weapon Damage is now able to display variance as a plain number, instead of as a percentage.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Fixes</strong></p>
+<ul>
+<li>Reduced false positive matches for trainable equipment. Tabards with reputation requirements should not longer be considered to be trainable.</li>
+<li>Improved line recognition in general, especially for green lines.</li>
+<li>Fixed an issue preventing `/zt` from opening options when in combat.</li>
+<li>Increased cache threshold. This will lead to more processing, but few validation failures. Hoping that it fixes a rare bug which I've been unable to reproduce.</li>
+</ul>
+<p>&nbsp;</p>
+<h2>2.1.2</h2>
+<p>&nbsp;</p>
+<p><strong>Fixes</strong></p>
+<ul>
+<li>Grey set bonuses are once again correctly recognized.</li>
+<li>Fixed lua error for Chaotic gems (and other non-weapons where a line ends in 'Damage').</li>
+</ul>
+<p>&nbsp;</p>
+<h2>2.1.1</h2>
+<p>&nbsp;</p>
+<p><strong>Fixes</strong></p>
+<ul>
+<li>Text cache is now smarter, and will not add/remove icons/prefixes to the wrong lines.</li>
+<li>Greatly reduced false positive weapon enchantment detection.</li>
+</ul>
+<p>&nbsp;</p>
+<h2>2.1.0</h2>
+<p>&nbsp;</p>
+<p><strong>Features</strong></p>
+<ul>
+<li>Now recognizes weapon enchantments.</li>
+<li>Now recognizes class restrictions.</li>
+<li>Now recognizes level requirements.</li>
+<li>Now recognizes soulbound tradeable loot.</li>
+<li>Polished options menu.</li>
+<li>Greatly improved performance for tooltips on TradeSkillFrame.</li>
+<li>Settings menu now shows ZeraTooltip version.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Fixes</strong></p>
+<ul>
+<li>Fix missing prefixes on some lines (like Socket Bonus).</li>
+<li>Added a validation system to prevent bad cache data. This should greatly reduce or eliminate instances where the tooltip does not rebuild itself correctly.</li>
+<li>Enchantment coloring is now off by default, since enchantment color can sometimes be red. This option will be reset for everyone.</li>
+<li>The Hide button now works for Races.</li>
+<li>Fixed issue with tooltip update throttling that could cause a tooltip to not appear under specific circumstances.</li>
+<li>Fixed a rare lua error that could happen due to uncached tooltips.</li>
+</ul>
+<p>&nbsp;</p>
+<h2>2.0.0</h2>
+<p>&nbsp;LARGE REWRITE FOR WRATH</p>
+<p>&nbsp;SETTINGS WILL BE RESET</p>
+<p>&nbsp;</p>
+<p><strong>New Features</strong></p>
+<ul>
+<li>Completely new config settings. Previous settings will be lost. Sorry! Back up your colors if you want to keep them.</li>
+<li>Customizable stat order. Because Blizzard can't seem to decide is Stamina or Strength should be first.</li>
+<li>Customizable stat renaming, including custom multipliers. For example, you could convert +5 Mp5 into +1 MpS or +60 MpM.</li>
+<li>Many lines can be hidden from view. More than anyone has ever asked for!</li>
+<li>Optionally move secondary stats up to base stats. Why are they down there anyway?</li>
+<li>Customize vertical padding. That's the empty lines which break up sections of the tooltip.</li>
+<li>Add a customizable prefix to enchantment text.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Regressions</strong></p>
+<ul>
+<li>Support ended for TBC, since it's no longer possible to play on a TBC client.</li>
+<li>Inferior support for classic. Some stats may not currently be recognized correctly. This is due to Blizzard's inconsistency.</li>
+<li>Armor and Block are not currently customizable.</li>
+<li>Elemental weapon damage can no longer be colored separately from regular weapon damage.</li>
+<li>Most of the complicated non-configurable rewording is currently missing. This mainly affects set bonuses.</li>
+</ul>
+<p>&nbsp;</p>
+<h2>1.6.1</h2>
+<p>&nbsp;</p>
+<p><strong>Bug Fixes</strong></p>
+<ul>
+<li>Fixed bonus weapon damage.</li>
+<li>Negative stats on items should once again display correctly.</li>
+</ul>
+<p>&nbsp;</p>
+<h2>1.6.0</h2>
+<p>&nbsp;</p>
+<p><strong>Features</strong></p>
+<ul>
+<li>Average weapon damage is displayed next to low end and top end damage.</li>
+<li>Default color for Spell Hit is now a more vibrant pink, so it will stand out better in WotLK when Spell Damage and Healing are merged into Spellpower.</li>
+<li>TBC version bump: 20503 -> 20504.</li>
+<li>Classic version bump: 11402 -> 11403.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Bug Fixes</strong></p>
+<ul>
+<li>Fixed dual wield detection. Offhand weapons should now be considered unusable for most classes.</li>
+<li>Added support for Beast-tamer's Shoulders pet effects.</li>
+</ul>
+<p>&nbsp;</p>
+<h2>1.5.1</h2>
+<p>&nbsp;</p>
+<p><strong>Bug Fixes</strong></p>
+<ul>
+<li>Healing now shows up ahead of spell hit/crit/haste/etc (as intended).</li>
+<li>Fix food buffs showing 30s duration instead of 30m.</li>
+</ul>
+<p>&nbsp;</p>
+<h2>1.5.0</h2>
+<p>&nbsp;NEW FILES. UPDATING MAY REQUIRE GAME RESTART</p>
+<p><strong>Features</strong></p>
+<ul>
+<li>Added chat command to open config:  /zt</li>
+<li>Improved profession skill recognition.</li>
+<li>Improved mount speed recognition in Classic Era.</li>
+<li>TBC version bump: 20502 -> 20503.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Interface Options</strong></p>
+<ul>
+<li>Color selection is disabled (can't be clicked) for stats that are not being recolored.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Bug Fixes</strong></p>
+<ul>
+<li>Fixed some lines showing up in yellow when recoloring is disabled. This mostly affected gems, and items with random suffixes (of the Owl, etc.).</li>
+<li>Fixed gem reordering. Gems should never be reordered. They can still be reworded and recolored.</li>
+</ul>
+<p>&nbsp;</p>
+<h2>1.4.1</h2>
+<p><strong>Bug Fixes</strong></p>
+<ul>
+<li>Shields have their Block stat recognized once again. It uses the Block Value color.</li>
+<li>Improved detection of effects which increase the range of an ability.</li>
+<li>Fixed Spellfire set bonus.</li>
+<li>Improved detection of base stats when they appear as bonuses elsewhere on items.</li>
+<li>Improved detection of items that increase attack power granted by an ability.</li>
+<li>Now consistently removes trailing periods while rewording. This will be done only when the addon is sure the period is unneeded.</li>
+</ul>
+<p>&nbsp;</p>
+<h2>1.4.0</h2>
+<p><strong>Features</strong></p>
+<ul>
+<li>Classic Era (including Season of Mastery) is now fully supported!</li>
+<li>Added support for food and drink items, as well as bandages and some potions. This is on by default, and can be disabled.</li>
+<li>Skill bonus is now a recognized stat. This includes both weapon and profession skills. Defense continues to have its own separate color.</li>
+<li>Ranged attack speed is now recognized.</li>
+<li>Weapon damage can now be colored. Wands will use (still customizable) elemental damage colors. Physical weapons will use a custom color, which is disabled by default.</li>
+<li>Weapon damage per second is reworded.</li>
+<li>Hp5 and Mp5 extra calculations are now displayed as HpM and MpM instead of HpS and MpS. This should make it easier to estimate the effect of the stat in an encounter.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Interface Options</strong></p>
+<ul>
+<li>New option: Recolor usable effects. This applies to active trinkets, as well as consumable items like food, drinks, potions, and bandages.</li>
+<li>New option: Skill color. Sets the color of weapon and profession skill bonuses.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Bug Fixes</strong></p>
+<ul>
+<li>Fixed some items not reordering or recoloring due to invisible characters. This seems to only affect items that Blizzard made earlier in development, which are mostly low level items.</li>
+</ul>
+<p>&nbsp;</p>
+<h2>1.3.0</h2>
+<p><strong>Features</strong></p>
+<ul>
+<li>Added trainable equipment recoloring.</li>
+<li>Added weapon speedbar. This graphically displays weapon speed.</li>
+<li>Rewords more stats: Run Speed, Swim Speed, Mount Speed.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Interface Options</strong></p>
+<ul>
+<li>Changed default Armor color. It is no longer the same as Stamina.</li>
+<li>Changed color reset buttons to also reset color toggles.</li>
+<li>New option: Trainable Equipment color. Changes the color of unusable equipment text if the item can be equipped after visiting a weapon/class trainer.</li>
+<li>New option: Show Speedbar. Toggles whether the speedbar is displayed in tooltips.</li>
+<li>New option: Speedbar width. A wider bar means more accurate speed readout, but also larger tooltips.</li>
+<li>New option: Speed accuracy. Determines the accuracy of weapon speed in decimals. If set to "1" then a weapon speed of 1.50 will be displayed as 1.5 instead.</li>
+<li>New option: Speed color. Sets the color of the Speed stat and speedbar.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Bug Fixes</strong></p>
+<ul>
+<li>Fixed individual stat color toggles.</li>
+<li>Updated Ace3 library. Fixes possible error in Interface options.</li>
+<li>Enchantment detection now works correctly on items with green colored Armor. See [Cryptfiend Silk Cloak] (from Anub'Rekhan) ingame for an example).</li>
+</ul>
+<p>&nbsp;</p>
+<h2>1.2.0</h2>
+<ul>
+<li>Added customizable stat recoloring.</li>
+<li>Added profile support.</li>
+<li>Changed 'Resilience Rating' to 'Resilience' for better compatibility with other addons which read tooltips.</li>
+</ul>
+<p>&nbsp;</p>
+<h2>1.1.0</h2>
+<ul>
+<li>Added line reordering. Example: if an item has Intellect and Stamina, it should consistently display the +Stamina before the +Intellect.</li>
+</ul>
+<p>&nbsp;</p>
+<h2>1.0.0</h2>
+<ul>
+<li>Initial Commit</li>
+</ul>
