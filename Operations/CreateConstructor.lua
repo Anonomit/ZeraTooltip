@@ -141,6 +141,26 @@ function Addon:CreateConstructor(tooltipData)
       end
       self:Debug(tblConcat(texts, ", "))
     end
+    for i, line in ipairs(constructor.addLines or {}) do
+      local texts = {}
+      for _, data in ipairs{
+        {"addLine",        i},
+        {"souble",         line[1]},
+        {"textLeft",       line[2]},
+        {"hexLeft",        line[3]},
+        {"textRight/wrap", line[4]},
+        {"hexRight",       line[5]},
+      } do
+        if data[2] then
+          if type(data[2]) == "string" then
+            table.insert(texts, data[1] .. ": '" .. data[2] .. "'")
+          else
+            table.insert(texts, data[1] .. ": " .. tostring(data[2]))
+          end
+        end
+      end
+      self:Debug(tblConcat(texts, ", "))
+    end
   end
   
   return constructor

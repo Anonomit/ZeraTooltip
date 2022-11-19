@@ -12,24 +12,23 @@ local lineOffsets = {
 }
 local enchantLines = {
   Enchant         = true,
-  EnchantOnUse    = true,
   ProposedEnchant = true,
   EnchantHint     = true,
 }
 local padLocations = {
   [-1] = {
-    BaseStat      = function(line) return line.type == "BaseStat"      or Addon:GetOption"combineStats" and line.type == "SecondaryStat" end,
-    SecondaryStat = function(line) return line.type == "SecondaryStat" and not Addon:GetOption"combineStats" end,
-    Enchant       = function(line) return enchantLines[line.type]      end,
+    BaseStat      = function(line) return line.type == "BaseStat"      or Addon:GetOption"combineStats" and (line.type == "SecondaryStat" or Addon:GetOption("doReorder", "EnchantOnUse") and line.type == "EnchantOnUse") end,
+    SecondaryStat = function(line) return(line.type == "SecondaryStat" or Addon:GetOption("doReorder", "EnchantOnUse") and (line.type == "EnchantOnUse" or line.type == "RequiredEnchantOnUse")) and not Addon:GetOption"combineStats" end,
+    Enchant       = function(line) return enchantLines[line.type]      or not Addon:GetOption("doReorder", "EnchantOnUse") and line.type == "EnchantOnUse" end,
     WeaponEnchant = function(line) return line.type == "WeaponEnchant" end,
     Socket        = function(line) return line.type == "Socket"        end,
     SetName       = function(line) return line.type == "SetName"       end,
     SetBonus      = function(line) return line.type == "SetBonus"      end,
   },
   [1] = {
-    BaseStat      = function(line) return line.type == "BaseStat"      or Addon:GetOption"combineStats" and line.type == "SecondaryStat" end,
-    SecondaryStat = function(line) return line.type == "SecondaryStat" and not Addon:GetOption"combineStats" end,
-    Enchant       = function(line) return enchantLines[line.type]      or line.type == "RequiredEnchant" or line.type == "RequiredEnchantOnUse" end,
+    BaseStat      = function(line) return line.type == "BaseStat"      or Addon:GetOption"combineStats" and (line.type == "SecondaryStat" or Addon:GetOption("doReorder", "EnchantOnUse") and (line.type == "EnchantOnUse" or line.type == "RequiredEnchantOnUse")) end,
+    SecondaryStat = function(line) return(line.type == "SecondaryStat" or Addon:GetOption("doReorder", "EnchantOnUse") and (line.type == "EnchantOnUse" or line.type == "RequiredEnchantOnUse")) and not Addon:GetOption"combineStats" end,
+    Enchant       = function(line) return enchantLines[line.type]      or line.type == "RequiredEnchant" or not Addon:GetOption("doReorder", "EnchantOnUse") and (line.type == "EnchantOnUse" or line.type == "RequiredEnchantOnUse") end,
     WeaponEnchant = function(line) return line.type == "WeaponEnchant" end,
     SocketBonus   = function(line) return line.type == "SocketBonus"   end,
     SetPiece      = function(line) return line.type == "SetPiece"      end,
@@ -81,12 +80,19 @@ function Addon:CalculatePadding(tooltipData)
   
   local found
   if self:GetOption("pad", "before", "BonusEffect") then
-    for _, line in ipairs(tooltipData) do
-      if line.type == "SecondaryStat" then
+    for i, line in ipairs(tooltipData) do
+      if line.type == "SecondaryStat" or Addon:GetOption("doReorder", "EnchantOnUse") and line.type == "EnchantOnUse" then
         found = true
         if not line.stat then
-          line.pad = true
-          break
+          local lastLine = tooltipData[i-1]
+          if lastLine then
+            if lastLine.type == "Padding" then
+              lastLine.used = true
+            else
+              line.pad = true
+            end
+            break
+          end
         end
       elseif found then
         break

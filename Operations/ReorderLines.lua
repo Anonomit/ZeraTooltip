@@ -18,21 +18,29 @@ local function StatSorter(a, b)
 end
 
 local function SortStats(tooltipData)
-  if not Addon:GetOption("allow", "reorder") then return end
+  local self = Addon
+  if not self:GetOption("allow", "reorder") then return end
   local stats = {
-    BaseStat = {},
-    SecondaryStat = {},
-    EnchantOnUse = {},
+    BaseStat             = {},
+    SecondaryStat        = {},
+    EnchantOnUse         = {},
     RequiredEnchantOnUse = {},
   }
-  for i = #tooltipData, 1, -1 do
-    if stats[tooltipData[i].type] then
-      stats[tooltipData[i].type].location = i
-      tinsert(stats[tooltipData[i].type], 1, tblRemove(tooltipData, i))
+  do
+    local count = 0
+    for i = #tooltipData, 1, -1 do
+      if stats[tooltipData[i].type] then
+        stats[tooltipData[i].type].location = i
+        tinsert(stats[tooltipData[i].type], 1, tblRemove(tooltipData, i))
+        count = count + 1
+      end
     end
-  end
-  if #stats.BaseStat + #stats.SecondaryStat == 0 then
-    return
+    if count == 0 then
+      return
+    end
+    for i = #stats.RequiredEnchantOnUse, 1, -1 do
+      tinsert(stats.EnchantOnUse, tblRemove(stats.RequiredEnchantOnUse, 1))
+    end
   end
   if not stats.BaseStat.location then
     stats.BaseStat.location = tooltipData.statStart + 1
@@ -40,18 +48,26 @@ local function SortStats(tooltipData)
   if not stats.SecondaryStat.location then
     stats.SecondaryStat.location = tooltipData.secondaryStatStart + 1
   end
-  if #stats.EnchantOnUse > 0 then
-    tinsert(stats.SecondaryStat, tblRemove(stats.EnchantOnUse, 1))
-  end
-  if #stats.RequiredEnchantOnUse > 0 then
-    tinsert(stats.SecondaryStat, tblRemove(stats.RequiredEnchantOnUse, 1))
-  end
   
-  if Addon:GetOption"combineStats" then
+  if self:GetOption("doReorder", "EnchantOnUse") then
+    for i = #stats.EnchantOnUse, 1, -1 do
+      tinsert(stats.SecondaryStat, tblRemove(stats.EnchantOnUse, 1))
+    end
+  end
+  if self:GetOption"combineStats" then
     while #stats.SecondaryStat > 0 do
       tinsert(stats.BaseStat, tblRemove(stats.SecondaryStat, 1))
       if tooltipData.Enchant then
         tooltipData.Enchant = tooltipData.Enchant + 1
+      end
+    end
+  end
+  if not self:GetOption("doReorder", "EnchantOnUse") then
+    for i = #stats.EnchantOnUse, 1, -1 do
+      tinsert(stats.BaseStat, tblRemove(stats.EnchantOnUse, 1))
+      
+      if not self:GetOption"combineStats" and stats.SecondaryStat.location then
+        stats.SecondaryStat.location = stats.SecondaryStat.location + 1
       end
     end
   end
@@ -83,11 +99,11 @@ function Addon:ReorderLines(tooltipData)
         end
       elseif line.type == "Refundable" then
         if self:GetOption("doReorder", line.type) then
-          tinsert(tooltipData, (tooltipData.binding or 2) + 1 + offset, tblRemove(tooltipData, i))
+          tinsert(tooltipData, tooltipData.binding + 1 + offset, tblRemove(tooltipData, i))
         end
       elseif line.type == "SoulboundTradeable" then
         if self:GetOption("doReorder", line.type) then
-          tinsert(tooltipData, (tooltipData.binding or 2) + 1 + offset, tblRemove(tooltipData, i))
+          tinsert(tooltipData, tooltipData.binding + 1 + offset, tblRemove(tooltipData, i))
         end
       elseif line.type == "RequiredRaces" or line.type == "RequiredClasses" or line.type == "RequiredLevel" then
         if self:GetOption("doReorder", line.type) then

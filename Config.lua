@@ -191,6 +191,7 @@ function Addon:MakeDefaultOptions()
           SoulboundTradeable = false,
           Enchant            = false,
           WeaponEnchant      = false,
+          EnchantOnUse       = false,
           Durability         = false,
           Equip              = false,
           ChanceOnHit        = false,
@@ -207,10 +208,13 @@ function Addon:MakeDefaultOptions()
           Speed = 1,
         },
         doRecolor = {
-          ["*"]   = true,
-          Title   = false,
-          Enchant = false,
-          Use     = false, -- Enchantments that add an on use effect and can be green or red
+          ["*"]        = true,
+          Title        = false,
+          Enchant      = false,
+          EnchantOnUse = false, -- no GUI option, should not be enabled. inherits from Use
+          Equip        = false, -- just to match Use
+          ChanceOnHit  = false, -- just to match Use
+          Use          = false, -- because of EnchantOnUse
         },
         color = (function() local colors = {["*"] = "00ff00"} for stat, StatInfo in pairs(self.statsInfo) do colors[stat] = StatInfo.color end return colors end)(),
         
@@ -223,6 +227,7 @@ function Addon:MakeDefaultOptions()
           SoulboundTradeable = true,
           ProposedEnchant    = true, -- no GUI option
           EnchantHint        = true, -- no GUI option
+          EnchantOnUse       = false, -- whether it shows up after on use effects
         },
         
         damage = {
@@ -254,6 +259,7 @@ function Addon:MakeDefaultOptions()
           ["*"]         = false,
           Title         = true,
           Enchant       = true,
+          EnchantOnUse  = false,
           WeaponEnchant = true,
         },
         icon = {
@@ -265,6 +271,7 @@ function Addon:MakeDefaultOptions()
           Tradeable      = "Interface\\MINIMAP\\TRACKING\\Auctioneer",
           Enchant        = "Interface\\Buttons\\UI-GroupLoot-DE-Up",
           WeaponEnchant  = "Interface\\CURSOR\\Attack",
+          EnchantOnUse   = "Interface\\Buttons\\UI-GroupLoot-DE-Up",
           Durability     = "Interface\\MINIMAP\\TRACKING\\Repair",
           Equip          = "Interface\\Tooltips\\ReforgeGreenArrow",
           ChanceOnHit    = "Interface\\Buttons\\UI-GroupLoot-Dice-Up",
@@ -357,6 +364,12 @@ end
 function Addon:InitOptionTableHelpers()
   self.GUI = {}
   local GUI = self.GUI
+  
+  local links = setmetatable({}, {__index = function(t, k) return k end})
+  
+  function GUI:SwapLinks(link1, link2)
+    links[link1], links[link2] = links[link2], links[link1]
+  end
   
   local defaultInc   = 1000
   local defaultOrder = 1000
@@ -452,7 +465,7 @@ function Addon:InitOptionTableHelpers()
   end
   
   function GUI:CreateGroup(opts, key, name, groupType, disabled)
-    key = "group_" .. key
+    key = "group_" .. links[key]
     opts.args[key] = {name = name, type = "group", childGroups = groupType, args = {}, order = self:Order(), disabled = disabled}
     return opts.args[key]
   end
@@ -1572,6 +1585,46 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
     CreateHide(opts, stat)
   end
   
+  -- EnchantOnUse
+  local function MakeEnchantOnUseOptions()
+    local stat = "EnchantOnUse"
+    
+    local originalColor = self.COLORS.GREEN
+    local defaultText = self.L["Use:"] .. " " .. self.L["Enchant"]
+    local prefixModifiedText = self:ModifyPrefix(defaultText, ITEM_SPELL_TRIGGER_ONUSE)
+    local _, prefixFormattedText = GetFormattedText("Use", originalColor, defaultText, prefixModifiedText)
+    local formattedText = self:ModifyOnUseEnchantment(prefixModifiedText)
+    
+    local color = self:GetOption("color", "Use")
+    if self:GetOption("hide", stat) or self:GetOption("hide", "Use") then
+      formattedText = "|T132320:0|t " .. self:MakeColorCode(self.COLORS.GRAY, formattedText)
+    elseif self:GetOption("allow", "recolor") and self:GetOption("doRecolor", "Use") and color ~= originalColor then
+      formattedText = self:MakeColorCode(color, formattedText)
+    else
+      formattedText = self:MakeColorCode(originalColor, formattedText)
+    end
+    local defaultText = self:MakeColorCode(originalColor, defaultText)
+    
+    local opts = GUI:CreateGroup(opts, stat, formattedText)
+    
+    CreateSamples(opts, {{defaultText, formattedText}})
+    
+    GUI:CreateNewline(opts)
+    GUI:CreateExecute(opts, {"goto", "Use"}, prefixFormattedText, nil, function() GUI:SwapLinks("EnchantOnUse", "Use") end)
+    GUI:CreateNewline(opts)
+    
+    CreateReorder(opts, stat)
+    
+    CreateReword(opts, stat)
+    
+    CreateIcon(opts, stat)
+    
+    CreateHide(opts, stat)
+  end
+  if not self:GetOption("doReorder", "EnchantOnUse") then
+    MakeEnchantOnUseOptions()
+  end
+  
   -- Weapon Enchant
   do
     local stat = "WeaponEnchant"
@@ -1672,6 +1725,11 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
     CreateHide(opts, stat)
   end
   GUI:CreateGroup(opts, GUI:Order(), " ", nil, true)
+  
+  if self:GetOption("doReorder", "EnchantOnUse") then
+    MakeEnchantOnUseOptions()
+    GUI:CreateGroup(opts, GUI:Order(), " ", nil, true)
+  end
   
   if not self:GetOption("doReorder", "Refundable")         then MakeRefundableOption() end
   if not self:GetOption("doReorder", "SoulboundTradeable") then MakeTradeableOption() end
@@ -1853,7 +1911,10 @@ function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
       GUI:CreateToggle(opts, {"debugOutput", "tooltipHookFail"}, "Tooltip Hook Failure", nil, disabled).width = 2
       GUI:CreateNewline(opts)
       
-      GUI:CreateToggle(opts, {"debugOutput", "lineRecognitions"}, "Line Recognitions", nil, disabled).width = 2
+      GUI:CreateToggle(opts, {"debugOutput", "initialTooltipData"}, "Initial Tooltip Data", nil, disabled).width = 2
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"debugOutput", "finalTooltipData"}, "Final Tooltip Data", nil, disabled).width = 2
       GUI:CreateNewline(opts)
       
       GUI:CreateToggle(opts, {"debugOutput", "constructorCreated"}, "Constructor Created", nil, disabled).width = 2

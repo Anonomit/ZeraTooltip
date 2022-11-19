@@ -37,6 +37,10 @@ function Addon:ModifyEnchantment(text)
   return ModifyEnchant(text, "Enchant")
 end
 
+function Addon:ModifyOnUseEnchantment(text)
+  return ModifyEnchant(text, "EnchantOnUse")
+end
+
 function Addon:ModifyWeaponEnchantment(text)
   return ModifyEnchant(text, "WeaponEnchant")
 end

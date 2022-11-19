@@ -106,6 +106,7 @@ local contexts = Addon:MakeLookupTable({
   "Delta",
   "RecipeMats",
   "RecipeTitle",
+  "Tail",
 }, nil, true)
 
 local contextAscensions = Addon:Map({
@@ -132,6 +133,7 @@ local contextAscensions = Addon:Map({
     if currentContext == contexts.RequiredEnchant then
       local lastLine = tooltipData[line.i-2]
       lastLine.type = "Enchant"
+      tooltipData.foundEnchant = true
     end
     
     -- mark where the enchant would be if it existed on this item
@@ -151,12 +153,35 @@ local contextAscensions = Addon:Map({
       local lastLine = tooltipData[line.i-1]
       lastLine.type = "EnchantOnUse"
       lastLine.prefix = ITEM_SPELL_TRIGGER_ONUSE
+      tooltipData.foundEnchant = true
     end
   end,
   RecipeTitle = function(context, tooltipData, line, currentContext)
   -- reset the base stat location
     tooltipData.statStart = nil
     tooltipData.context = contexts.Title
+  end,
+  Tail = function(context, tooltipData, line, currentContext)
+    -- do everything that needs to be done if the tooltip only has a title
+    
+    -- mark where the binding would be if it existed on this item
+    if not tooltipData.binding then
+      tooltipData.binding = line.i
+    end
+    
+    -- mark where the base stats would be if they existed on this item
+    if not tooltipData.statStart then
+      tooltipData.statStart = line.i
+    end
+    
+    -- mark where the enchant would be if it existed on this item
+    if not tooltipData.Enchant then
+      tooltipData.Enchant = line.i
+    end
+    -- mark where the secondary stats would be if they existed on this item
+    if not tooltipData.secondaryStatStart then
+      tooltipData.secondaryStatStart = line.i
+    end
   end,
 }, nil, contexts)
 
@@ -224,6 +249,7 @@ contextActions = Addon:Map({
         contexts.RequiredRaces,
         contexts.RequiredLevel,
         contexts.RequiredRep,
+        contexts.RequiredEnchantOnUse,
       } do
         local increment = contextActions[alt](alt, tooltipData, line)
         if increment then
@@ -274,14 +300,14 @@ contextActions = Addon:Map({
     end
   end,
   Enchant = function(i, tooltipData, line)
-    if tooltipData.hasEnchant and line.colorLeft == Addon.COLORS.GREEN then
-      tooltipData.Enchant = line.i
+    if tooltipData.hasEnchant and not tooltipData.foundEnchant and line.colorLeft == Addon.COLORS.GREEN then
+      tooltipData.Enchant      = line.i
+      tooltipData.foundEnchant = true
       return SetContext(i, tooltipData, line)
     end
   end,
   RequiredEnchant = function(i, tooltipData, line)
-    if tooltipData.hasEnchant and line.colorLeft == Addon.COLORS.RED and MatchesAny(line.textLeftTextStripped, ENCHANT_ITEM_REQ_SKILL, ENCHANT_ITEM_MIN_SKILL, ENCHANT_ITEM_REQ_LEVEL) then
-      SetContext(i, tooltipData, line)
+    if tooltipData.hasEnchant and not tooltipData.foundEnchant and line.colorLeft == Addon.COLORS.RED and MatchesAny(line.textLeftTextStripped, ENCHANT_ITEM_REQ_SKILL, ENCHANT_ITEM_MIN_SKILL, ENCHANT_ITEM_REQ_LEVEL) then
       return SetContext(i, tooltipData, line)
     end
   end,
@@ -364,21 +390,20 @@ contextActions = Addon:Map({
     if prefix then
       line.prefix = prefix
       return SetContext(i-1, tooltipData, line)
-    end
-    if MatchesAny(line.textLeftTextStripped, ITEM_RANDOM_ENCHANT, ITEM_MOD_FERAL_ATTACK_POWER) then
+    elseif MatchesAny(line.textLeftTextStripped, ITEM_RANDOM_ENCHANT, ITEM_MOD_FERAL_ATTACK_POWER) then
       return SetContext(i-1, tooltipData, line)
     end
   end,
   EnchantOnUse = function(i, tooltipData, line)
-    if tooltipData.hasEnchant and line.colorLeft == Addon.COLORS.GREEN and StartsWithAny(line.textLeftTextStripped, ITEM_SPELL_TRIGGER_ONUSE) then
-      tooltipData.Enchant = line.i
-      line.prefix = ITEM_SPELL_TRIGGER_ONUSE
+    if tooltipData.hasEnchant and not tooltipData.foundEnchant and line.colorLeft == Addon.COLORS.GREEN and StartsWithAny(line.textLeftTextStripped, ITEM_SPELL_TRIGGER_ONUSE) then
+      tooltipData.Enchant      = line.i
+      line.prefix              = ITEM_SPELL_TRIGGER_ONUSE
+      tooltipData.foundEnchant = true
       return SetContext(i, tooltipData, line)
     end
   end,
   RequiredEnchantOnUse = function(i, tooltipData, line)
-    if tooltipData.hasEnchant and line.colorLeft == Addon.COLORS.RED and MatchesAny(line.textLeftTextStripped, ENCHANT_ITEM_REQ_SKILL, ENCHANT_ITEM_MIN_SKILL, ENCHANT_ITEM_REQ_LEVEL) then
-      SetContext(i, tooltipData, line)
+    if tooltipData.hasEnchant and not tooltipData.foundEnchant and line.colorLeft == Addon.COLORS.RED and MatchesAny(line.textLeftTextStripped, ENCHANT_ITEM_REQ_SKILL, ENCHANT_ITEM_MIN_SKILL, ENCHANT_ITEM_REQ_LEVEL) then
       return SetContext(i, tooltipData, line)
     end
   end,
@@ -445,10 +470,9 @@ contextActions = Addon:Map({
 
 function Addon:RecognizeLineTypes(tooltipData)
   tooltipData.context = contexts.Init
-  local line
   local i = 1
   while i <= #tooltipData do
-    line = tooltipData[i]
+    local line = tooltipData[i]
     if line.textLeftTextStripped == "" and not line.texture and not line.moneyFrame then
       line.type = "Padding"
     else
@@ -463,5 +487,26 @@ function Addon:RecognizeLineTypes(tooltipData)
       end
     end
     i = i + 1
+  end
+  
+  -- this might not ever be necessary
+  if #tooltipData > 0 then
+    contextAscensions[contexts.Tail](contexts.Tail, tooltipData, tooltipData[#tooltipData], tooltipData.context)
+  end
+  
+  -- Retroactively find enchant if it was missed.
+  -- Assume that it was an on use enchant which appeared after secondary stats
+  if tooltipData.hasEnchant and not tooltipData.foundEnchant then
+    for i = #tooltipData, 1, -1 do
+      local line = tooltipData[i]
+      if line.type == "SecondaryStat" and line.prefix == ITEM_SPELL_TRIGGER_ONUSE then
+        local lastLine = tooltipData[i-1]
+        if lastLine and lastLine.type == "Padding" then
+          line.type = "EnchantOnUse"
+          tooltipData.foundEnchant = true
+          break
+        end
+      end
+    end
   end
 end

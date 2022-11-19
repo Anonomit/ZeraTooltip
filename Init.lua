@@ -234,6 +234,8 @@ L["Icon"]            = EMBLEM_SYMBOL
 L["Choose an Icon:"] = MACRO_POPUP_CHOOSE_ICON
 L["Manual"]          = TRACKER_SORT_MANUAL
 
+L["Use:"] = ITEM_SPELL_TRIGGER_ONUSE
+
 L["Me"]                         = COMBATLOG_FILTER_STRING_ME
 L["Max Level"]                  = GUILD_RECRUITMENT_MAXLEVEL
 L["Level %d"]                   = UNIT_LEVEL_TEMPLATE
@@ -307,6 +309,11 @@ end
 
 function Addon:MakeColorCode(hex, text)
   return format("|cff%s%s%s", hex, text or "", text and "|r" or "")
+end
+
+function Addon:StripColorCode(text, hex)
+  local pattern = hex and ("|c%x%x" .. hex) or "|c%x%x%x%x%x%x%x%x"
+  return self:ChainGsub(text, {pattern, "|r", ""})
 end
 
 

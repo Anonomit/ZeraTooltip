@@ -13,21 +13,26 @@ local function OutputLineRecognition(line)
   
   local texts = {}
   for _, data in ipairs{
-    {"line",       line.i},
-    {"textLeft",   line.textLeftText},
-    {"textRight",  line.textRightText},
-    {"type",       line.type},
-    {"stat",       line.stat},
-    {"prefix",     line.prefix},
-    {"bindType",   line.bindType},
-    {"colorLeft",  line.colorLeft},
-    {"colorRight", line.colorRight},
+    {"line",        line.i},
+    {"textLeft",    line.textLeftText},
+    {"textRight",   line.textRightText},
+    {"type",        line.type},
+    {"stat",        line.stat},
+    {"prefix",      line.prefix},
+    {"bindType",    line.bindType},
+    {"colorLeft",   line.colorLeft},
+    {"colorRight",  line.colorRight},
+    {"pad",         line.pad},
+    {"rewordLeft",  line.rewordLeft},
+    {"rewordRight", line.rewordRight},
+    {"hideRight",   line.hideRight},
+    {"hide",        line.hide},
   } do
     if data[2] then
       if type(data[2]) == "string" then
         table.insert(texts, data[1] .. ": '" .. data[2] .. "'")
       else
-        table.insert(texts, data[1] .. ": " .. data[2])
+        table.insert(texts, data[1] .. ": " .. tostring(data[2]))
       end
     end
   end
@@ -42,7 +47,7 @@ function Addon:ModifyTooltipData(tooltip, tooltipData)
   for i, line in ipairs(tooltipData) do
     self:RecognizeStat(line)
     
-    if self:GetOption("debugOutput", "lineRecognitions") then
+    if self:GetOption("debugOutput", "initialTooltipData") then
       OutputLineRecognition(line)
     end
     
@@ -58,6 +63,12 @@ function Addon:ModifyTooltipData(tooltip, tooltipData)
   
   self:AddHeroicTag(tooltipData)
   self:AddItemLevel(tooltipData)
+    
+  if self:GetOption("debugOutput", "finalTooltipData") then
+    for i, line in ipairs(tooltipData) do
+      OutputLineRecognition(line)
+    end
+  end
 end
 
 

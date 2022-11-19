@@ -75,7 +75,7 @@ function Addon:RewordLine(tooltip, line, tooltipData)
         text = self:ChainGsub(text, unpack(self.classColorReplacements))
       end
     elseif line.type == "EnchantOnUse" then
-      -- Done after prefix
+      -- Reworded after prefix rewording takes place
     elseif line.type == "Refundable" then
       if self:GetOption("doReword", line.type) then
         text = self:RewordRefundable(text)
@@ -145,7 +145,7 @@ function Addon:RewordLine(tooltip, line, tooltipData)
     if line.prefix and not line.stat then
       text = self:ModifyPrefix(text, line.prefix)
       if line.type == "EnchantOnUse" then
-        text = self:ModifyEnchantment(text)
+        text = self:ModifyOnUseEnchantment(text)
       end
     end
     
