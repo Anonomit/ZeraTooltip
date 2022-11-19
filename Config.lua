@@ -1731,9 +1731,6 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
     GUI:CreateGroup(opts, GUI:Order(), " ", nil, true)
   end
   
-  if not self:GetOption("doReorder", "Refundable")         then MakeRefundableOption() end
-  if not self:GetOption("doReorder", "SoulboundTradeable") then MakeTradeableOption() end
-  
   -- Made By
   do
     local stat = "MadeBy"
@@ -1798,11 +1795,13 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
     
     CreateHide(opts, stat)
   end
+  GUI:CreateGroup(opts, GUI:Order(), " ", nil, true)
+  
+  if not self:GetOption("doReorder", "Refundable")         then MakeRefundableOption() end
+  if not self:GetOption("doReorder", "SoulboundTradeable") then MakeTradeableOption() end
   
   -- Misc locale rewording
   if #self.localeExtraReplacements > 0 then
-    GUI:CreateGroup(opts, GUI:Order(), " ", nil, true)
-    
     do
       local stat = "Miscellaneous"
       local name = Addon:MakeColorCode(self.COLORS.WHITE, self.L["Miscellaneous"])
