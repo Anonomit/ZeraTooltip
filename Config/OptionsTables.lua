@@ -5,355 +5,18 @@ local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 
 
+
 local strGmatch = string.gmatch
 local strGsub   = string.gsub
 local strByte   = string.byte
+
 local tinsert   = table.insert
-local tblRemove = table.remove
-local tblConcat = table.concat
+
 local mathMin   = math.min
 local mathMax   = math.max
 
 
 
--- these are optional table which may be defined in /LocaleExtra
--- they are run when relevant settings are reset or initialized
-local localeDefaultOverrideMethods = {
-  SetDefaultRewordByLocale    = {"reword"   , "defaultRewordLocaleOverrides"},
-  SetDefaultModByLocale       = {"mod"      , "defaultModLocaleOverrides"},
-  SetDefaultPrecisionByLocale = {"precision", "defaultPrecisionLocaleOverrides"},
-}
-for method, data in pairs(localeDefaultOverrideMethods) do
-  local field, overrides = unpack(data, 1, 2)
-  Addon[method] = function(self, stat)
-    if stat then
-      if Addon[overrides][stat] then
-        Addon.SetOption(self, Addon[overrides][stat], field, stat)
-      end
-    else
-      for stat, val in pairs(Addon[overrides]) do
-        Addon.SetOption(self, val, field, stat)
-      end
-    end
-  end
-end
-
-function Addon:OverrideAllLocaleDefaults()
-  for method in pairs(localeDefaultOverrideMethods) do
-    Addon[method](self)
-  end
-end
-
-
---   ██████╗ ██████╗ ███╗   ██╗███████╗██╗ ██████╗ 
---  ██╔════╝██╔═══██╗████╗  ██║██╔════╝██║██╔════╝ 
---  ██║     ██║   ██║██╔██╗ ██║█████╗  ██║██║  ███╗
---  ██║     ██║   ██║██║╚██╗██║██╔══╝  ██║██║   ██║
---  ╚██████╗╚██████╔╝██║ ╚████║██║     ██║╚██████╔╝
---   ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝ 
-
-
-local iconPaths = {
-  "Interface\\AddOns\\" .. ADDON_NAME .. "\\Assets\\Textures\\Samwise",
-  
-  "Interface\\Buttons\\UI-AttributeButton-Encourage-Up",
-  "Interface\\Buttons\\UI-GroupLoot-Coin-Up",
-  "Interface\\Buttons\\UI-GroupLoot-DE-Up",
-  "Interface\\Buttons\\UI-GroupLoot-Dice-Up",
-  
-  "Interface\\Buttons\\UI-PlusButton-Up",
-  "Interface\\Buttons\\UI-PlusButton-Disabled",
-  "Interface\\Buttons\\UI-CheckBox-Check",
-  "Interface\\Buttons\\UI-CheckBox-Check-Disabled",
-  -- "Interface\\Buttons\\UI-SliderBar-Button-Vertical",
-  
-  -- "Interface\\COMMON\\FavoritesIcon",
-  -- "Interface\\COMMON\\friendship-archivistscodex",
-  -- "Interface\\COMMON\\friendship-FistHuman",
-  -- "Interface\\COMMON\\friendship-FistOrc",
-  "Interface\\COMMON\\friendship-heart",
-  "Interface\\COMMON\\friendship-manaorb",
-  -- "Interface\\COMMON\\help-i",
-  -- "Interface\\COMMON\\Indicator-Gray",
-  -- "Interface\\COMMON\\Indicator-Green",
-  -- "Interface\\COMMON\\Indicator-Yellow",
-  -- "Interface\\COMMON\\Indicator-Red",
-  "Interface\\COMMON\\RingBorder",
-  
-  "Interface\\ContainerFrame\\KeyRing-Bag-Icon",
-  "Interface\\ICONS\\INV_Misc_Key_01",
-  "Interface\\ICONS\\INV_Misc_Key_02",
-  "Interface\\ICONS\\INV_Misc_Key_03",
-  "Interface\\ICONS\\INV_Misc_Key_04",
-  "Interface\\ICONS\\INV_Misc_Key_05",
-  "Interface\\ICONS\\INV_Misc_Key_06",
-  "Interface\\ICONS\\INV_Misc_Key_07",
-  "Interface\\ICONS\\INV_Misc_Key_08",
-  "Interface\\ICONS\\INV_Misc_Key_09",
-  "Interface\\ICONS\\INV_Misc_Key_10",
-  "Interface\\ICONS\\INV_Misc_Key_11",
-  "Interface\\ICONS\\INV_Misc_Key_12",
-  "Interface\\ICONS\\INV_Misc_Key_13",
-  "Interface\\ICONS\\INV_Misc_Key_14",
-  "Interface\\ICONS\\INV_Misc_Key_15",
-  
-  
-  -- "Interface\\LFGFRAME\\UI-LFG-ICON-LOCK",
-  "Interface\\PetBattles\\PetBattle-LockIcon",
-  -- "Interface\\Store\\category-icon-key",
-  
-  "Interface\\MINIMAP\\TRACKING\\Auctioneer",
-  
-  "Interface\\CURSOR\\Attack",
-  -- "Interface\\CURSOR\\Missions",
-  "Interface\\CURSOR\\Cast",
-  "Interface\\CURSOR\\Point",
-  "Interface\\CURSOR\\Crosshairs",
-  
-  "Interface\\FriendsFrame\\InformationIcon",
-  -- "Interface\\FriendsFrame\\StatusIcon-Away",
-  -- "Interface\\FriendsFrame\\StatusIcon-DnD",
-  "Interface\\FriendsFrame\\StatusIcon-Offline",
-  "Interface\\FriendsFrame\\StatusIcon-Online",
-  
-  "Interface\\HELPFRAME\\HotIssueIcon",
-  -- "Interface\\HELPFRAME\\HelpIcon-HotIssues",
-  -- "Interface\\HELPFRAME\\HelpIcon-Suggestion",
-  -- "Interface\\HELPFRAME\\ReportLagIcon-Spells",
-  
-  "Interface\\MINIMAP\\TRACKING\\Repair",
-  "Interface\\MINIMAP\\Dungeon",
-  "Interface\\MINIMAP\\Raid",
-  "Interface\\MINIMAP\\TempleofKotmogu_ball_cyan",
-  "Interface\\MINIMAP\\TempleofKotmogu_ball_green",
-  "Interface\\MINIMAP\\TempleofKotmogu_ball_orange",
-  "Interface\\MINIMAP\\TempleofKotmogu_ball_purple",
-  "Interface\\MINIMAP\\Vehicle-AllianceMagePortal",
-  "Interface\\MINIMAP\\Vehicle-HordeMagePortal",
-  
-  "Interface\\MONEYFRAME\\Arrow-Left-Down",
-  -- "Interface\\MONEYFRAME\\Arrow-Left-Up",
-  "Interface\\MONEYFRAME\\Arrow-Right-Down",
-  -- "Interface\\MONEYFRAME\\Arrow-Right-Up",
-  
-  "Interface\\Transmogrify\\transmog-tooltip-arrow",
-  
-  "Interface\\Tooltips\\ReforgeGreenArrow",
-  
-  "Interface\\OPTIONSFRAME\\VoiceChat-Play",
-  "Interface\\OPTIONSFRAME\\VoiceChat-Record",
-  
-  "Interface\\RAIDFRAME\\ReadyCheck-Ready",
-  
-  "Interface\\TARGETINGFRAME\\UI-RaidTargetingIcon_1",
-  "Interface\\TARGETINGFRAME\\UI-RaidTargetingIcon_2",
-  "Interface\\TARGETINGFRAME\\UI-RaidTargetingIcon_3",
-  "Interface\\TARGETINGFRAME\\UI-RaidTargetingIcon_4",
-  "Interface\\TARGETINGFRAME\\UI-RaidTargetingIcon_5",
-  "Interface\\TARGETINGFRAME\\UI-RaidTargetingIcon_6",
-  "Interface\\TARGETINGFRAME\\UI-RaidTargetingIcon_7",
-  "Interface\\TARGETINGFRAME\\UI-RaidTargetingIcon_8",
-}
-local icons         = Addon:Map(iconPaths, function(v) return "|T" .. v .. ":0|t" end)
-local iconsDropdown = Addon:Map(icons, nil, function(v) return v end)
-
-
-function Addon:MakeDefaultOptions()
-  local fakeAddon = {
-    db = {
-      profile = {
-        
-        enabled    = true,
-        invertMode = "none",
-        modKeys = {
-          ["*"] = true,
-        },
-        
-        allow = { -- only applies to stats
-          reorder = true,
-          reword  = true,
-          recolor = true,
-        },
-        
-        order = {
-          [self.expansions.wrath]   = tblConcat(self.statList[self.expansions.wrath]  , ","),
-          [self.expansions.tbc]     = tblConcat(self.statList[self.expansions.tbc]    , ","),
-          [self.expansions.classic] = tblConcat(self.statList[self.expansions.classic], ","),
-        },
-        hide = {
-          ["*"]        = false,
-          uselessRaces = true,
-        },
-        doReword = {
-          ["*"]              = true,
-          ItemLevel          = false,
-          Refundable         = false,
-          SoulboundTradeable = false,
-          Enchant            = false,
-          WeaponEnchant      = false,
-          EnchantOnUse       = false,
-          Durability         = false,
-          Equip              = false,
-          ChanceOnHit        = false,
-          Use                = false,
-        },
-        reword = {
-          ["*"] = "",
-        },
-        mod = {
-          ["*"] = 1,
-        },
-        precision = {
-          ["*"] = 0,
-          Speed = 1,
-        },
-        doRecolor = {
-          ["*"]        = true,
-          Title        = false,
-          Enchant      = false,
-          EnchantOnUse = false, -- no GUI option, should not be enabled. inherits from Use
-          Equip        = false, -- just to match Use
-          ChanceOnHit  = false, -- just to match Use
-          Use          = false, -- because of EnchantOnUse
-        },
-        color = (function() local colors = {["*"] = "00ff00"} for stat, StatInfo in pairs(self.statsInfo) do colors[stat] = StatInfo.color end return colors end)(),
-        
-        doReorder = {
-          ["*"]              = true,
-          RequiredRaces      = true,
-          RequiredClasses    = true,
-          RequiredLevel      = false,
-          Refundable         = true,
-          SoulboundTradeable = true,
-          ProposedEnchant    = true, -- no GUI option
-          EnchantHint        = true, -- no GUI option
-          EnchantOnUse       = false, -- whether it shows up after on use effects
-        },
-        
-        damage = {
-          ["*"]              = true,
-          showVariance       = false,
-          variancePercent    = true,
-          ["variancePrefix"] = "+-",
-        },
-        dps = {
-          ["*"] = true,
-        },
-        speedBar = {
-          min         = 1.2,
-          max         = 4,
-          size        = 15,
-          fillChar    = "I",
-          blankChar   = " ",
-          speedPrefix = false,
-        },
-        durability = {
-          showCur     = true,
-          showMax     = true,
-          showPercent = true,
-        },
-        trimSpace = {
-          ["*"] = true,
-        },
-        doIcon = {
-          ["*"]         = false,
-          Title         = true,
-          Enchant       = true,
-          EnchantOnUse  = false,
-          WeaponEnchant = true,
-        },
-        icon = {
-          ["*"]          = "Interface\\AddOns\\" .. ADDON_NAME .. "\\Assets\\Textures\\Samwise",
-          ItemLevel      = "Interface\\Transmogrify\\transmog-tooltip-arrow",
-          AlreadyBound   = "Interface\\PetBattles\\PetBattle-LockIcon",
-          CharacterBound = "Interface\\PetBattles\\PetBattle-LockIcon",
-          AccountBound   = "Interface\\PetBattles\\PetBattle-LockIcon",
-          Tradeable      = "Interface\\MINIMAP\\TRACKING\\Auctioneer",
-          Enchant        = "Interface\\Buttons\\UI-GroupLoot-DE-Up",
-          WeaponEnchant  = "Interface\\CURSOR\\Attack",
-          EnchantOnUse   = "Interface\\Buttons\\UI-GroupLoot-DE-Up",
-          Durability     = "Interface\\MINIMAP\\TRACKING\\Repair",
-          Equip          = "Interface\\Tooltips\\ReforgeGreenArrow",
-          ChanceOnHit    = "Interface\\Buttons\\UI-GroupLoot-Dice-Up",
-          Use            = "Interface\\CURSOR\\Cast",
-        },
-        iconSizeManual = {
-          ["*"] = false,
-          Title = true,
-        },
-        iconSize = {
-          ["*"] = 16,
-          Title = 24,
-        },
-        iconSpace = {
-          ["*"] = true,
-        },
-        
-        pad = {
-          before = {
-            ["*"]    = true,
-            BaseStat = false,
-          },
-          after = {
-            ["*"] = true,
-          },
-        },
-        padLastLine  = true,
-        combineStats = true,
-        
-        
-        -- Debug options
-        debug = false,
-          
-        debugOutput = {
-          ["*"] = false,
-        },
-        
-        constructor = {
-          doValidation = true,
-          
-          alwaysDestruct = false,
-        },
-        
-        cache = {
-          ["*"]   = true,
-          enabled = false,
-          
-          -- constructor = false,
-          -- text        = false,
-          -- stat        = false,
-          
-          constructorWipeDelay    = 3, -- time in seconds without constructor being requested before it's cleared
-          constructorMinSeenCount = 6, -- minimum number of times constructor must be requested before it can be cached
-          constructorMinSeenTime  = 1, -- minimum time in seconds since constructor was first requested before it can be cached
-        },
-        
-        throttle = {
-          ["*"] = true,
-          -- AuctionFrame    = false,
-          -- InspectFrame    = false,
-          -- MailFrame       = false,
-          -- TradeSkillFrame = false,
-        },
-        
-        fix = {
-          InterfaceOptionsFrameForMe  = true,
-          InterfaceOptionsFrameForAll = false,
-        },
-      },
-    },
-  }
-  Addon.OverrideAllLocaleDefaults(fakeAddon)
-  return fakeAddon.db
-end
-
-
---  ███████╗███╗   ██╗██████╗      ██████╗ ██████╗ ███╗   ██╗███████╗██╗ ██████╗ 
---  ██╔════╝████╗  ██║██╔══██╗    ██╔════╝██╔═══██╗████╗  ██║██╔════╝██║██╔════╝ 
---  █████╗  ██╔██╗ ██║██║  ██║    ██║     ██║   ██║██╔██╗ ██║█████╗  ██║██║  ███╗
---  ██╔══╝  ██║╚██╗██║██║  ██║    ██║     ██║   ██║██║╚██╗██║██╔══╝  ██║██║   ██║
---  ███████╗██║ ╚████║██████╔╝    ╚██████╗╚██████╔╝██║ ╚████║██║     ██║╚██████╔╝
---  ╚══════╝╚═╝  ╚═══╝╚═════╝      ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝ 
 
 
 
@@ -361,219 +24,21 @@ end
 
 
 
-function Addon:InitOptionTableHelpers()
-  self.GUI = {}
-  local GUI = self.GUI
-  
-  local links = setmetatable({}, {__index = function(t, k) return k end})
-  
-  function GUI:SwapLinks(link1, link2)
-    links[link1], links[link2] = links[link2], links[link1]
-  end
-  
-  local defaultInc   = 1000
-  local defaultOrder = 1000
-  local order        = defaultOrder
-  
-  function GUI:GetOrder()
-    return order
-  end
-  function GUI:SetOrder(newOrder)
-    order = newOrder
-    return self
-  end
-  function GUI:ResetOrder()
-    order = defaultOrder
-    return self
-  end
-  function GUI:Order(inc)
-    self:SetOrder(self:GetOrder() + (inc or defaultInc))
-    return self:GetOrder()
-  end
-  
-  function GUI:CreateEntry(opts, keys, name, desc, widgetType, disabled, order)
-    if type(keys) ~= "table" then keys = {keys} end
-    local key = widgetType .. "_" .. (tblConcat(keys, ".") or "")
-    opts.args[key] = {name = name, desc = desc, type = widgetType, order = order or self:Order(), disabled = disabled}
-    opts.args[key].set = function(info, val)        Addon:SetOption(val, unpack(keys)) end
-    opts.args[key].get = function(info)      return Addon:GetOption(unpack(keys))      end
-    return opts.args[key]
-  end
-  
-  function GUI:CreateHeader(opts, name)
-    local option = self:CreateEntry(opts, self:Order(), name, nil, "header", nil, self:Order(0))
-  end
-  
-  function GUI:CreateDescription(opts, desc, fontSize)
-    local option = self:CreateEntry(opts, self:Order(), desc, nil, "description", nil, self:Order(0))
-    option.fontSize = fontSize or "large"
-    return option
-  end
-  function GUI:CreateDivider(opts, count, fontSize)
-    for i = 1, count or 1 do
-      self:CreateDescription(opts, " ", fontSize or "small")
-    end
-  end
-  function GUI:CreateNewline(opts)
-    return self:CreateDivider(opts, 1)
-  end
-  
-  function GUI:CreateToggle(opts, keys, name, desc, disabled)
-    local option = self:CreateEntry(opts, keys, name, desc, "toggle", disabled)
-    return option
-  end
-  
-  function GUI:CreateSelect(opts, keys, name, desc, values, sorting, disabled)
-    local option = self:CreateEntry(opts, keys, name, desc, "select", disabled)
-    option.values  = values
-    option.sorting = sorting
-    option.style   = "dropdown"
-    return option
-  end
-  
-  function GUI:CreateMultiSelect(opts, keys, name, desc, values, disabled)
-    local option = self:CreateEntry(opts, keys, name, desc, "multiselect", disabled)
-    option.values  = values
-    return option
-  end
-  
-  function GUI:CreateRange(opts, keys, name, desc, min, max, step, disabled)
-    local option = self:CreateEntry(opts, keys, name, desc, "range", disabled)
-    option.min   = min
-    option.max   = max
-    option.step  = step
-    return option
-  end
-  
-  function GUI:CreateInput(opts, keys, name, desc, multiline, disabled)
-    local option     = self:CreateEntry(opts, keys, name, desc, "input", disabled)
-    option.multiline = multiline
-    return option
-  end
-  
-  function GUI:CreateColor(opts, keys, name, desc, disabled)
-    local option = self:CreateEntry(opts, keys, name, desc, "color", disabled)
-    option.set   = function(info, r, g, b)        Addon:SetOption(Addon:ConvertColorFromBlizzard(r, g, b), unpack(keys)) end
-    option.get   = function(info)          return Addon:ConvertColorToBlizzard(Addon:GetOption(unpack(keys)))            end
-    return option
-  end
-  
-  function GUI:CreateExecute(opts, key, name, desc, func, disabled)
-    local option = self:CreateEntry(opts, key, name, desc, "execute", disabled)
-    option.func  = func
-    return option
-  end
-  
-  function GUI:CreateGroup(opts, key, name, groupType, disabled)
-    key = "group_" .. links[key]
-    opts.args[key] = {name = name, type = "group", childGroups = groupType, args = {}, order = self:Order(), disabled = disabled}
-    return opts.args[key]
-  end
-  
-  function GUI:CreateGroupBox(opts, name)
-    local key = "group_" .. self:Order(-1)
-    opts.args[key] = {name = name, type = "group", args = {}, order = self:Order(), inline = true}
-    return opts.args[key]
-  end
-  
-  function GUI:CreateGroupTop(name, groupType, disabled)
-    return {name = name, type = "group", childGroups = groupType, args = {}, order = self:Order(), disabled = disabled}
-  end
-end
+--  ██╗  ██╗███████╗██╗     ██████╗ ███████╗██████╗ ███████╗
+--  ██║  ██║██╔════╝██║     ██╔══██╗██╔════╝██╔══██╗██╔════╝
+--  ███████║█████╗  ██║     ██████╔╝█████╗  ██████╔╝███████╗
+--  ██╔══██║██╔══╝  ██║     ██╔═══╝ ██╔══╝  ██╔══██╗╚════██║
+--  ██║  ██║███████╗███████╗██║     ███████╗██║  ██║███████║
+--  ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝╚══════╝
 
-
-
-function Addon:ChangeOrder(from, to)
-  tinsert(self.statList[self.expansionLevel], to, tblRemove(self.statList[self.expansionLevel], from))
-  self:SetOption(tblConcat(self.statList[self.expansionLevel], ","), "order", self.expansionLevel)
-  self:RegenerateStatOrder()
-end
-function Addon:ResetOrder()
-  self:ResetOption("order", self.expansionLevel)
-  self:RegenerateStatOrder()
-end
-function Addon:ResetReword(stat)
-  self:ResetOption("reword", stat)
-  self:SetDefaultRewordByLocale(stat)
-end
-function Addon:ResetMod(stat)
-  self:ResetOption("mod", stat)
-  self:SetDefaultModByLocale(stat)
-end
-function Addon:ResetPrecision(stat)
-  self:ResetOption("precision", stat)
-  self:SetDefaultPrecisionByLocale(stat)
-end
 
 local function CreateReset(opts, option, func)
-  local self = Addon
-  local GUI  = self.GUI
-  
-  GUI:CreateExecute(opts, {"reset", unpack(option)}, self.L["Reset"], nil, func or function() self:ResetOption(unpack(option)) end).width = 0.6
+  Addon.GUI:CreateExecute(opts, {"reset", unpack(option)}, Addon.L["Reset"], nil, func or function() Addon:ResetOption(unpack(option)) end).width = 0.6
 end
 local function CreateCombineStatsOption(opts)
   Addon.GUI:CreateToggle(opts, {"combineStats"}, L["Group Secondary Stats with Base Stats"], nil, not Addon:GetOption("allow", "reorder")).width = 2
 end
 
-
--- Addon options
-function Addon:MakeAddonOptions(chatCmd)
-  local title = format("%s v%s  (/%s)", ADDON_NAME, tostring(self:GetOption"version"), chatCmd)
-  local panel = self:CreateOptionsCategory(nil, function()
-  
-  local GUI = self.GUI:ResetOrder()
-  local opts = GUI:CreateGroupTop(title, "tab")
-  
-  do
-    local opts = GUI:CreateGroup(opts, 1, self.L["Enable"], "tab")
-    
-    do
-      local opts = GUI:CreateGroupBox(opts, ADDON_NAME)
-      
-      GUI:CreateToggle(opts, {"enabled"}, self.L["Enabled"])
-    end
-    
-    do
-      local opts = GUI:CreateGroupBox(opts, self.L["Modifiers:"])
-      
-      local text = self:GetOption"enabled" and self.L["Disable"] or self.L["Enable"]
-      GUI:CreateSelect(opts, {"invertMode"}, text, desc, {none = self.L["never"], any = self.L["any"], all = self.L["all"]}, {"none", "any", "all"}).width = 0.7
-      GUI:CreateNewline(opts)
-      
-      local disabled = self:GetOption"invertMode" == "none"
-      GUI:CreateToggle(opts, {"modKeys", "shift"}, self.L["SHIFT key"], nil, disabled).width = 0.8
-      GUI:CreateToggle(opts, {"modKeys", "ctrl"} , self.L["CTRL key"] , nil, disabled).width = 0.8
-      GUI:CreateToggle(opts, {"modKeys", "alt"}  , self.L["ALT key"]  , nil, disabled).width = 0.8
-    end
-  end
-  
-  do
-    local opts = GUI:CreateGroup(opts, 2, self.L["Features"], "tab")
-    
-    do
-      local opts = GUI:CreateGroupBox(opts, self.L["Features"])
-      
-      GUI:CreateToggle(opts, {"allow", "reorder"}, L["Reorder"])
-      CreateReset(opts, {"allow", "reorder"})
-      GUI:CreateNewline(opts)
-      GUI:CreateToggle(opts, {"allow", "reword"} , self.L["Rename"])
-      CreateReset(opts, {"allow", "reword"})
-      GUI:CreateNewline(opts)
-      GUI:CreateToggle(opts, {"allow", "recolor"}, L["Recolor"])
-      CreateReset(opts, {"allow", "recolor"})
-      GUI:CreateNewline(opts)
-      GUI:CreateToggle(opts, {"cache", "enabled"}, L["Cache"], L["Speeds up processing, but can sometimes introduce bugs."])
-      CreateReset(opts, {"cache", "enabled"})
-    end
-  end
-  
-  return opts
-  end)
-  function self:OpenAddonOptions() return self:OpenConfig(panel) end
-end
-
-
--- Stat options
 local function GetDefaultStatText(number, stat)
   local StatInfo = Addon.statsInfo[stat]
   return Addon:MakeColorCode(StatInfo.tooltipColor, StatInfo:GetDefaultForm(number))
@@ -593,7 +58,7 @@ local function GetFormattedStatText(number, stat)
   elseif Addon:GetOption("allow", "recolor") and Addon:GetOption("doRecolor", stat) then
     color = Addon:GetOption("color", stat)
   end
-  return (hidden and "|T132320:0|t " or "") .. Addon:MakeColorCode(color, text)
+  return (hidden and Addon.stealthIcon or "") .. Addon:MakeColorCode(color, text)
 end
 local function GetFormattedText(stat, originalColor, defaultText, formattedText)
   local changed
@@ -603,7 +68,7 @@ local function GetFormattedText(stat, originalColor, defaultText, formattedText)
   
   local color = Addon:GetOption("color", stat)
   if Addon:GetOption("hide", stat) then
-    formattedText = "|T132320:0|t " .. Addon:MakeColorCode(Addon.COLORS.GRAY, formattedText)
+    formattedText = Addon.stealthIcon .. Addon:MakeColorCode(Addon.COLORS.GRAY, formattedText)
     changed = true
   elseif Addon:GetOption("allow", "recolor") and Addon:GetOption("doRecolor", stat) and color ~= originalColor then
     formattedText = Addon:MakeColorCode(color, formattedText)
@@ -707,6 +172,8 @@ local function CreateHide(opts, stat)
   
   return opts
 end
+local icons         = Addon:Map(Addon.iconPaths, function(v) return Addon:MakeIcon(v) end)
+local iconsDropdown = Addon:Map(icons, nil, function(v) return v end)
 local function CreateIcon(opts, stat)
   local self = Addon
   local GUI  = self.GUI
@@ -749,6 +216,85 @@ local function CreateReorder(opts, stat)
   
   return opts
 end
+
+
+
+
+
+
+
+--   █████╗ ██████╗ ██████╗  ██████╗ ███╗   ██╗     ██████╗ ██████╗ ████████╗██╗ ██████╗ ███╗   ██╗███████╗
+--  ██╔══██╗██╔══██╗██╔══██╗██╔═══██╗████╗  ██║    ██╔═══██╗██╔══██╗╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
+--  ███████║██║  ██║██║  ██║██║   ██║██╔██╗ ██║    ██║   ██║██████╔╝   ██║   ██║██║   ██║██╔██╗ ██║███████╗
+--  ██╔══██║██║  ██║██║  ██║██║   ██║██║╚██╗██║    ██║   ██║██╔═══╝    ██║   ██║██║   ██║██║╚██╗██║╚════██║
+--  ██║  ██║██████╔╝██████╔╝╚██████╔╝██║ ╚████║    ╚██████╔╝██║        ██║   ██║╚██████╔╝██║ ╚████║███████║
+--  ╚═╝  ╚═╝╚═════╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═══╝     ╚═════╝ ╚═╝        ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
+
+function Addon:MakeAddonOptions(chatCmd)
+  local title = format("%s v%s  (/%s)", ADDON_NAME, tostring(self:GetOption"version"), chatCmd)
+  local panel = self:CreateOptionsCategory(nil, function()
+  
+  local GUI = self.GUI:ResetOrder()
+  local opts = GUI:CreateGroupTop(title, "tab")
+  
+  do
+    local opts = GUI:CreateGroup(opts, 1, self.L["Enable"], "tab")
+    
+    do
+      local opts = GUI:CreateGroupBox(opts, ADDON_NAME)
+      
+      GUI:CreateToggle(opts, {"enabled"}, self.L["Enabled"])
+    end
+    
+    do
+      local opts = GUI:CreateGroupBox(opts, self.L["Modifiers:"])
+      
+      local text = self:GetOption"enabled" and self.L["Disable"] or self.L["Enable"]
+      GUI:CreateSelect(opts, {"invertMode"}, text, desc, {none = self.L["never"], any = self.L["any"], all = self.L["all"]}, {"none", "any", "all"}).width = 0.7
+      GUI:CreateNewline(opts)
+      
+      local disabled = self:GetOption"invertMode" == "none"
+      GUI:CreateToggle(opts, {"modKeys", "shift"}, self.L["SHIFT key"], nil, disabled).width = 0.8
+      GUI:CreateToggle(opts, {"modKeys", "ctrl"} , self.L["CTRL key"] , nil, disabled).width = 0.8
+      GUI:CreateToggle(opts, {"modKeys", "alt"}  , self.L["ALT key"]  , nil, disabled).width = 0.8
+    end
+  end
+  
+  do
+    local opts = GUI:CreateGroup(opts, 2, self.L["Features"], "tab")
+    
+    do
+      local opts = GUI:CreateGroupBox(opts, self.L["Features"])
+      
+      GUI:CreateToggle(opts, {"allow", "reorder"}, L["Reorder"])
+      CreateReset(opts, {"allow", "reorder"})
+      GUI:CreateNewline(opts)
+      GUI:CreateToggle(opts, {"allow", "reword"} , self.L["Rename"])
+      CreateReset(opts, {"allow", "reword"})
+      GUI:CreateNewline(opts)
+      GUI:CreateToggle(opts, {"allow", "recolor"}, L["Recolor"])
+      CreateReset(opts, {"allow", "recolor"})
+      GUI:CreateNewline(opts)
+      GUI:CreateToggle(opts, {"cache", "enabled"}, L["Cache"], L["Speeds up processing, but can sometimes introduce bugs."])
+      CreateReset(opts, {"cache", "enabled"})
+    end
+  end
+  
+  return opts
+  end)
+  function self:OpenAddonOptions() return self:OpenConfig(panel) end
+end
+
+
+
+
+--  ███████╗████████╗ █████╗ ████████╗     ██████╗ ██████╗ ████████╗██╗ ██████╗ ███╗   ██╗███████╗
+--  ██╔════╝╚══██╔══╝██╔══██╗╚══██╔══╝    ██╔═══██╗██╔══██╗╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
+--  ███████╗   ██║   ███████║   ██║       ██║   ██║██████╔╝   ██║   ██║██║   ██║██╔██╗ ██║███████╗
+--  ╚════██║   ██║   ██╔══██║   ██║       ██║   ██║██╔═══╝    ██║   ██║██║   ██║██║╚██╗██║╚════██║
+--  ███████║   ██║   ██║  ██║   ██║       ╚██████╔╝██║        ██║   ██║╚██████╔╝██║ ╚████║███████║
+--  ╚══════╝   ╚═╝   ╚═╝  ╚═╝   ╚═╝        ╚═════╝ ╚═╝        ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
+
 local sampleNumber = 10
 local function CreateStatOption(opts, i, stat)
   local self = Addon
@@ -800,6 +346,8 @@ local function CreateStatOption(opts, i, stat)
   
   CreateHide(opts, stat)
 end
+
+
 function Addon:MakeStatsOptions(categoryName, chatCmd, arg1, ...)
   local title = format("%s v%s > %s  (/%s %s)", ADDON_NAME, tostring(self:GetOption"version"), categoryName, chatCmd, arg1)
   local panel = self:CreateOptionsCategory(categoryName, function()
@@ -828,7 +376,17 @@ function Addon:MakeStatsOptions(categoryName, chatCmd, arg1, ...)
 end
 
 
--- Padding options
+
+
+
+
+--  ██████╗  █████╗ ██████╗ ██████╗ ██╗███╗   ██╗ ██████╗      ██████╗ ██████╗ ████████╗██╗ ██████╗ ███╗   ██╗███████╗
+--  ██╔══██╗██╔══██╗██╔══██╗██╔══██╗██║████╗  ██║██╔════╝     ██╔═══██╗██╔══██╗╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
+--  ██████╔╝███████║██║  ██║██║  ██║██║██╔██╗ ██║██║  ███╗    ██║   ██║██████╔╝   ██║   ██║██║   ██║██╔██╗ ██║███████╗
+--  ██╔═══╝ ██╔══██║██║  ██║██║  ██║██║██║╚██╗██║██║   ██║    ██║   ██║██╔═══╝    ██║   ██║██║   ██║██║╚██╗██║╚════██║
+--  ██║     ██║  ██║██████╔╝██████╔╝██║██║ ╚████║╚██████╔╝    ╚██████╔╝██║        ██║   ██║╚██████╔╝██║ ╚████║███████║
+--  ╚═╝     ╚═╝  ╚═╝╚═════╝ ╚═════╝ ╚═╝╚═╝  ╚═══╝ ╚═════╝      ╚═════╝ ╚═╝        ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
+
 local function CreateGroupGap(opts, name, disabled)
   if disabled then return end
   local self = Addon
@@ -869,6 +427,8 @@ local function CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, samp
   if paddedAfterPrevious then CreateGroupGap(opts, "after" .. name) end
   return paddedAfterPrevious
 end
+
+
 function Addon:MakePaddingOptions(categoryName, chatCmd, arg1, ...)
   local title = format("%s v%s > %s  (/%s %s)", ADDON_NAME, tostring(self:GetOption"version"), categoryName, chatCmd, arg1)
   local panel = self:CreateOptionsCategory(categoryName, function()
@@ -936,59 +496,22 @@ function Addon:MakePaddingOptions(categoryName, chatCmd, arg1, ...)
 end
 
 
+
+
+
+--  ███╗   ███╗██╗███████╗ ██████╗     ██████╗ ██████╗ ████████╗██╗ ██████╗ ███╗   ██╗███████╗
+--  ████╗ ████║██║██╔════╝██╔════╝    ██╔═══██╗██╔══██╗╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
+--  ██╔████╔██║██║███████╗██║         ██║   ██║██████╔╝   ██║   ██║██║   ██║██╔██╗ ██║███████╗
+--  ██║╚██╔╝██║██║╚════██║██║         ██║   ██║██╔═══╝    ██║   ██║██║   ██║██║╚██╗██║╚════██║
+--  ██║ ╚═╝ ██║██║███████║╚██████╗    ╚██████╔╝██║        ██║   ██║╚██████╔╝██║ ╚████║███████║
+--  ╚═╝     ╚═╝╚═╝╚══════╝ ╚═════╝     ╚═════╝ ╚═╝        ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
+
 local hearthstoneIcon = select(5, GetItemInfoInstant(Addon.SAMPLE_TITLE_ID))
 local sampleDamage   = 20
 local sampleVariance = 0.5
 local sampleSpeed    = 2.6
-Addon.SAMPLE_NAMES = {
-  "Activision",
-  "Arthas",
-  "Batman",
-  "Blizzard",
-  "Bugs Bunny",
-  "Captain Hook",
-  "Chewbacca",
-  "Deckard Cain",
-  "Diablo",
-  "Doctor Robotnik",
-  "Doctor Who",
-  "Donkey Kong",
-  "Dracula",
-  "Elmer Fudd",
-  "Frankenstein",
-  "Gul'dan",
-  "Harry Potter",
-  "Hello Kitty Island Adventure",
-  "Illidan",
-  "Indiana Jones",
-  "Inspector Gadget",
-  "Jack the Ripper",
-  "Kael'thas",
-  "Kel'Thuzad",
-  "Kil'jaeden",
-  "King Kong",
-  "Kirby",
-  "Mal'Ganis",
-  "Nova",
-  "Princess Peach",
-  "Microsoft",
-  "Mickey Mouse",
-  "Muradin",
-  "Nefarion",
-  "Onyxia",
-  "Rexxar",
-  "Santa",
-  "Scooby Doo",
-  "Sherlock Holmes",
-  "Spongebob Squarepants",
-  "The Lost Vikings",
-  "Tyrande",
-  "Uncle Roman",
-  "Uther",
-  "Winnie the Pooh",
-  "Yoda",
-}
--- Misc options
+
+
 function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
   local title = format("%s v%s > %s  (/%s %s)", ADDON_NAME, tostring(self:GetOption"version"), categoryName, chatCmd, arg1)
   local panel = self:CreateOptionsCategory(categoryName, function()
@@ -1035,7 +558,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
     local samples = {}
     local defaultText = ITEM_HEROIC
     local _, formattedText = GetFormattedText(stat, self.COLORS.GREEN, defaultText, self:RewordHeroic(defaultText))
-    defaultText = "|T132320:0|t " .. self:MakeColorCode(self.COLORS.GRAY, defaultText)
+    defaultText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, defaultText)
     tinsert(samples, {defaultText, formattedText})
     
     local opts = GUI:CreateGroup(opts, stat, samples[1][2], nil, disabled)
@@ -1056,7 +579,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
     local samples = {}
     local defaultText = format(GARRISON_FOLLOWER_ITEM_LEVEL, 1)
     local _, formattedText = GetFormattedText(stat, self.COLORS.GREEN, defaultText, self:RewordItemLevel(defaultText))
-    defaultText = "|T132320:0|t " .. Addon:MakeColorCode(Addon.COLORS.GRAY, defaultText)
+    defaultText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, defaultText)
     tinsert(samples, {defaultText, formattedText})
     
     local opts = GUI:CreateGroup(opts, stat, samples[1][2], nil, disabled)
@@ -1085,11 +608,11 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
   local function MakeRequiredRacesOption()
     local stat = "RequiredRaces"
     
-    local defaultText = format(ITEM_RACES_ALLOWED, Addon.MY_RACE_NAME)
+    local defaultText = format(ITEM_RACES_ALLOWED, self.MY_RACE_NAME)
     local formattedText = defaultText
     local changed
     if self:GetOption("hide", stat) then
-      formattedText = "|T132320:0|t " .. self:MakeColorCode(self.COLORS.GRAY, formattedText)
+      formattedText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, formattedText)
       changed = true
     else
       formattedText = self:MakeColorCode(self.COLORS.WHITE, formattedText)
@@ -1097,7 +620,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
     
     local sampleText = self.uselessRaceStrings[1]
     if self:GetOption("hide", stat) or self:GetOption("hide", "uselessRaces") then
-      sampleText = "|T132320:0|t " .. self:MakeColorCode(self.COLORS.GRAY, sampleText)
+      sampleText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, sampleText)
     else
       self:MakeColorCode(self.COLORS.WHITE, sampleText)
     end
@@ -1146,7 +669,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
         local formattedText = defaultText
         local changed
         if self:GetOption("hide", stat) then
-          formattedText = "|T132320:0|t " .. self:MakeColorCode(self.COLORS.GRAY, strGsub(formattedText, "|c%x%x%x%x%x%x%x%x", ""))
+          formattedText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, strGsub(formattedText, "|c%x%x%x%x%x%x%x%x", ""))
           changed = true
         elseif self:GetOption("doRecolor", stat) then
           formattedText = self:ChainGsub(formattedText, unpack(self.classColorReplacements))
@@ -1165,7 +688,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       local formattedText = self.myClassString
       local changed
       if self:GetOption("hide", stat) or self:GetOption("hide", "myClass") then
-        formattedText = "|T132320:0|t " .. self:MakeColorCode(self.COLORS.GRAY, formattedText)
+        formattedText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, formattedText)
         changed = true
       elseif self:GetOption("doRecolor", stat) then
         formattedText = self:ChainGsub(formattedText, unpack(self.classColorReplacements))
@@ -1180,7 +703,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
     do
       local opts = GUI:CreateGroupBox(opts, L["Recolor"])
       
-      local disabled = not Addon:GetOption("allow", "recolor")
+      local disabled = not self:GetOption("allow", "recolor")
       GUI:CreateToggle(opts, {"doRecolor", stat}, self.L["Enable"], nil, disabled).width = 0.5
       CreateReset(opts, {"doRecolor", stat})
     end
@@ -1221,7 +744,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
         local formattedText = defaultText
         local changed = self:GetOption("hide", stat) or self:GetOption("hide", "requiredLevelMet") and level <= self.MY_LEVEL or self:GetOption("hide", "requiredLevelMax") and UnitLevel"player" == self.MAX_LEVEL and level == self.MAX_LEVEL
         if changed then
-          formattedText = "|T132320:0|t " .. self:MakeColorCode(self.COLORS.GRAY, strGsub(formattedText, "|c%x%x%x%x%x%x%x%x", ""))
+          formattedText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, strGsub(formattedText, "|c%x%x%x%x%x%x%x%x", ""))
         end
         
         if changed then anyChanged = true end
@@ -1430,7 +953,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
     local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.WHITE, defaultText, formattedTextOriginal)
     local disabled
     if self:GetOption("hide", "Damage") then
-      formattedText = "|T132320:0|t " .. formattedTextOriginal
+      formattedText = self.stealthIcon .. formattedTextOriginal
       changed = true
       disabled = true
     end
@@ -1469,7 +992,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
     local stat = "DamagePerSecond"
     
     local defaultText = format(DPS_TEMPLATE, sampleDPS)
-    local formattedText = Addon:ModifyWeaponDamagePerSecond(defaultText)
+    local formattedText = self:ModifyWeaponDamagePerSecond(defaultText)
     -- if self:GetOption("dps", "removeBrackets") then
     --   formattedText = self:ChainGsub(formattedText, {"^%(", "%)$", ""})
     -- end
@@ -1511,7 +1034,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
     local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.WHITE, formattedTextOriginal, formattedTextOriginal)
     local name, disabled
     if self:GetOption("hide", "DamagePerSecond") then
-      name     = "|T132320:0|t " .. self:MakeColorCode(self.COLORS.GRAY, defaultText == "" and L["Speed Bar"] or formattedText)
+      name     = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, defaultText == "" and L["Speed Bar"] or formattedText)
       disabled = true
     end
     
@@ -1597,7 +1120,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
     
     local color = self:GetOption("color", "Use")
     if self:GetOption("hide", stat) or self:GetOption("hide", "Use") then
-      formattedText = "|T132320:0|t " .. self:MakeColorCode(self.COLORS.GRAY, formattedText)
+      formattedText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, formattedText)
     elseif self:GetOption("allow", "recolor") and self:GetOption("doRecolor", "Use") and color ~= originalColor then
       formattedText = self:MakeColorCode(color, formattedText)
     else
@@ -1746,7 +1269,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
         local originalColor = self.COLORS.GREEN
         local color = self:GetOption("color", stat)
         if self:ShouldHideMadeBy(defaultText, pattern) then
-          formattedText = "|T132320:0|t " .. self:MakeColorCode(self.COLORS.GRAY, formattedText)
+          formattedText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, formattedText)
         elseif self:GetOption("allow", "recolor") and self:GetOption("doRecolor", stat) and color ~= originalColor then
           formattedText = self:MakeColorCode(color, formattedText)
         else
@@ -1801,21 +1324,19 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
   if not self:GetOption("doReorder", "SoulboundTradeable") then MakeTradeableOption() end
   
   -- Misc locale rewording
-  if #self.localeExtraReplacements > 0 then
+  if #self:GetExtraReplacements() > 0 then
+    local stat = "Miscellaneous"
+    local name = self:MakeColorCode(self.COLORS.WHITE, self.L["Miscellaneous"])
+    
+    local opts = GUI:CreateGroup(opts, stat, name)
+    
     do
-      local stat = "Miscellaneous"
-      local name = Addon:MakeColorCode(self.COLORS.WHITE, self.L["Miscellaneous"])
+      local opts = GUI:CreateGroupBox(opts, self.L["Miscellaneous"])
       
-      local opts = GUI:CreateGroup(opts, stat, name)
-      
-      do
-        local opts = GUI:CreateGroupBox(opts, self.L["Miscellaneous"])
-        
-        -- Reword
-        local disabled = not self:GetOption("allow", "reword")
-        GUI:CreateToggle(opts, {"doReword", stat}, self.L["Rename"], nil, disabled).width = 0.6
-        CreateReset(opts, {"doReword", stat})
-      end
+      -- Reword
+      local disabled = not self:GetOption("allow", "reword")
+      GUI:CreateToggle(opts, {"doReword", stat}, self.L["Rename"], nil, disabled).width = 0.6
+      CreateReset(opts, {"doReword", stat})
     end
   end
   
@@ -1828,7 +1349,16 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
 end
 
 
--- Reset Options
+
+
+
+--  ██████╗ ███████╗███████╗███████╗████████╗     ██████╗ ██████╗ ████████╗██╗ ██████╗ ███╗   ██╗███████╗
+--  ██╔══██╗██╔════╝██╔════╝██╔════╝╚══██╔══╝    ██╔═══██╗██╔══██╗╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
+--  ██████╔╝█████╗  ███████╗█████╗     ██║       ██║   ██║██████╔╝   ██║   ██║██║   ██║██╔██╗ ██║███████╗
+--  ██╔══██╗██╔══╝  ╚════██║██╔══╝     ██║       ██║   ██║██╔═══╝    ██║   ██║██║   ██║██║╚██╗██║╚════██║
+--  ██║  ██║███████╗███████║███████╗   ██║       ╚██████╔╝██║        ██║   ██║╚██████╔╝██║ ╚████║███████║
+--  ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝   ╚═╝        ╚═════╝ ╚═╝        ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
+
 function Addon:MakeResetOptions(categoryName, chatCmd, arg1, ...)
   local title = format("%s v%s > %s  (/%s %s)", ADDON_NAME, tostring(self:GetOption"version"), categoryName, chatCmd, arg1)
   local panel = self:CreateOptionsCategory(categoryName, function()
@@ -1864,7 +1394,16 @@ function Addon:MakeResetOptions(categoryName, chatCmd, arg1, ...)
 end
 
 
--- Debug Options
+
+
+
+--  ██████╗ ███████╗██████╗ ██╗   ██╗ ██████╗      ██████╗ ██████╗ ████████╗██╗ ██████╗ ███╗   ██╗███████╗
+--  ██╔══██╗██╔════╝██╔══██╗██║   ██║██╔════╝     ██╔═══██╗██╔══██╗╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
+--  ██║  ██║█████╗  ██████╔╝██║   ██║██║  ███╗    ██║   ██║██████╔╝   ██║   ██║██║   ██║██╔██╗ ██║███████╗
+--  ██║  ██║██╔══╝  ██╔══██╗██║   ██║██║   ██║    ██║   ██║██╔═══╝    ██║   ██║██║   ██║██║╚██╗██║╚════██║
+--  ██████╔╝███████╗██████╔╝╚██████╔╝╚██████╔╝    ╚██████╔╝██║        ██║   ██║╚██████╔╝██║ ╚████║███████║
+--  ╚═════╝ ╚══════╝╚═════╝  ╚═════╝  ╚═════╝      ╚═════╝ ╚═╝        ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
+
 function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
   local title = format("%s v%s > %s  (/%s %s)", ADDON_NAME, tostring(self:GetOption"version"), categoryName, chatCmd, arg1)
   local panel = self:CreateOptionsCategory(categoryName, function()
@@ -2052,4 +1591,5 @@ function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
     self.chatArgs[arg] = OpenOptions
   end
 end
+
 

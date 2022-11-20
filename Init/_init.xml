@@ -1,0 +1,7 @@
+<Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+  
+  <Script file="Init.lua"/>
+  <Script file="Functions.lua"/>
+  <Script file="Constants.lua"/>
+  <Script file="LocaleAutomatic.lua"/>
+</Ui>

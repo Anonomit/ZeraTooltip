@@ -6,8 +6,38 @@ local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 
 
 local strGsub   = string.gsub
+
 local tinsert   = table.insert
 local tblConcat = table.concat
+
+
+
+function Addon:IsHookEnabled()
+  local invertMode = self:GetOption"invertMode"
+  if invertMode == "none" then
+    return self:GetOption"enabled"
+  elseif invertMode == "any" then
+    if     IsShiftKeyDown()   and self:GetOption("modKeys", "shift")
+        or IsControlKeyDown() and self:GetOption("modKeys", "ctrl")
+        or IsAltKeyDown()     and self:GetOption("modKeys", "alt")
+    then
+      return not self:GetOption"enabled"
+    else
+      return self:GetOption"enabled"
+    end
+  elseif invertMode == "all" then
+    if      (IsShiftKeyDown()   or not self:GetOption("modKeys", "shift"))
+        and (IsControlKeyDown() or not self:GetOption("modKeys", "ctrl"))
+        and (IsAltKeyDown()     or not self:GetOption("modKeys", "alt"))
+    then
+      return not self:GetOption"enabled"
+    else
+      return self:GetOption"enabled"
+    end
+  end
+end
+
+
 
 
 local tooltipScanners = {}
@@ -69,7 +99,7 @@ local recursion      = false -- used for shopping tooltips
 local alreadyPrepped = false -- used for shopping tooltips
 local function OnTooltipItemMethod(tooltip, methodName, ...)
   local self = Addon
-  if not self:IsEnabled() then return end
+  if not self:IsHookEnabled() then return end
   
   if not tooltip.GetItem then
     if Addon:GetOption("debugOutput", "tooltipHookFail") then
@@ -149,7 +179,7 @@ end
 
 local function OnTooltipSetItem(tooltip)
   local self = Addon
-  if not self:IsEnabled() then return end
+  if not self:IsHookEnabled() then return end
   local scannerTooltip = CreateScanner(tooltip)
   if not tooltip.GetItem then return end
   local name, link = tooltip:GetItem()

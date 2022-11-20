@@ -16,5 +16,5 @@
 ## X-Embeds: Ace3
 
 
-addon.xml
+_addon.xml
 

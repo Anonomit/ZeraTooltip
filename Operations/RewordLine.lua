@@ -90,7 +90,7 @@ function Addon:RewordLine(tooltip, line, tooltipData)
     if not line.stat and miscRewordLines[line.type] and self:GetOption("doReword", "Miscellaneous") then
       -- localeExtra replacements
       if self:GetOption("allow", "reword") then
-        for _, definition in ipairs(self.localeExtraReplacements) do
+        for _, definition in ipairs(self:GetExtraReplacements()) do
           for _, rule in ipairs(definition) do
             local input = rule.INPUT .. "%.$"
             local matches = {strMatch(text, input)}
