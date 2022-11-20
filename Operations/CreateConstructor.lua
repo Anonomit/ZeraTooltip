@@ -27,16 +27,18 @@ local function OutputConstructorCreation(constructor)
         {"recolorLeft",  line[7]},
         {"recolorRight", line[8]},
         {"hideRight",    line[9]},
+        {"fakeout",      line[10]},
       }
     end
     for i, line in ipairs(constructor.addLines or {}) do
       Addon:DebugData{
         {"addLine",        i},
-        {"souble",         line[1]},
-        {"textLeft",       line[2]},
-        {"hexLeft",        line[3]},
-        {"textRight/wrap", line[4]},
-        {"hexRight",       line[5]},
+        {"double",         line[1]},
+        {"dest",           line[2]},
+        {"textLeft",       line[3]},
+        {"hexLeft",        line[4]},
+        {"textRight/wrap", line[5]},
+        {"hexRight",       line[6]},
       }
     end
   end
@@ -54,6 +56,7 @@ function Addon:CreateConstructor(tooltipData)
   local rewordRights  = {}
   local hideLefts     = {}
   local hideRights    = {}
+  local fakeouts      = {}
   
   if self:GetOption("constructor", "doValidation") then
     constructor.validation = {}
@@ -67,7 +70,6 @@ function Addon:CreateConstructor(tooltipData)
     tblSort(tooltipData.extraLines, function(a, b) return a[2] > b[2] end)
     
     constructor.addLines = {}
-    
     for i, line in ipairs(tooltipData.extraLines) do
       tinsert(constructor.addLines, line)
       extraMoves[line[2] + 1] = true
@@ -120,12 +122,12 @@ function Addon:CreateConstructor(tooltipData)
     end
   end
   
-  -- if the last line is being moved or padded, reanchor the line after it (should it exist)
-  -- don't do this if an extra line is being added
-  if not constructor.addLines and (tooltipData[#tooltipData].i ~= tooltipData.numLines or tooltipData.padLast) then
-    pads[tooltipData.numLines+1]  = tooltipData.padLast
-    moves[tooltipData.numLines+1] = tooltipData[#tooltipData].i
-    merge[tooltipData.numLines+1] = true
+  -- if the last line is being moved or padded, reanchor the line after it (should it exist and is not an extraLine)
+  if tooltipData[#tooltipData].i ~= tooltipData.numLines or tooltipData.padLast then
+    pads[tooltipData.numLines+1]     = tooltipData.padLast
+    moves[tooltipData.numLines+1]    = tooltipData[#tooltipData].i
+    fakeouts[tooltipData.numLines+1] = true
+    merge[tooltipData.numLines+1]    = true
   end
   
   for i in pairs(merge) do
@@ -138,10 +140,11 @@ function Addon:CreateConstructor(tooltipData)
     local recolorRight = recolorRights[i]
     local rewordLeft   = rewordLefts[i]
     local rewordRight  = rewordRights[i]
+    local fakeout      = fakeouts[i]
     if hideLeft then
       tinsert(constructor, {source, nil, hideLeft})
     elseif dest or recolorLeft or rewordLeft or hideRight or recolorRight or rewordRight then
-      tinsert(constructor, {source, dest, nil, rewordLeft, rewordRight, pad, recolorLeft, recolorRight, hideRight})
+      tinsert(constructor, {source, dest, nil, rewordLeft, rewordRight, pad, recolorLeft, recolorRight, hideRight, fakeout})
     end
   end
   

@@ -153,8 +153,9 @@ function Addon:ConstructTooltip(tooltip, constructor)
   builtMoneyMap   = false
   
   local extraLinesMap = {}
+  local extraLines    = {}
   local addedExtraLine
-  for _, data in ipairs(constructor.addLines or {}) do
+  for i, data in ipairs(constructor.addLines or {}) do
     local double = data[1]
     if double then
       local textLeft, hexLeft, textRight, hexRight = unpack(data, 3, 5)
@@ -178,8 +179,12 @@ function Addon:ConstructTooltip(tooltip, constructor)
     local frame = _G[tooltipName.."TextLeft"..source]
     table.insert(halfDestructor, function() frame:Hide() end)
     local dest = data[2]
-    MoveLine(fullDestructor, halfDestructor, tooltip, tooltipName, frame, source, dest, nil, lastFrame, extraLinesMap)
+    local lastExtraLine = constructor.addLines[i-1]
+    if not lastExtraLine or lastExtraLine[2] ~= dest then
+      MoveLine(fullDestructor, halfDestructor, tooltip, tooltipName, frame, source, dest, nil, lastFrame, extraLinesMap)
+    end
     extraLinesMap[dest] = source
+    extraLines[source]  = true
     addedExtraLine      = true
   end
   
@@ -209,11 +214,11 @@ function Addon:ConstructTooltip(tooltip, constructor)
   end
   
   for _, change in ipairs(constructor) do
-    local source, dest, hideLeft, _, _, pad, recolorLeft, recolorRight, hideRight = unpack(change, 1, 9)
+    local source, dest, hideLeft, _, _, pad, recolorLeft, recolorRight, hideRight, fakeout = unpack(change, 1, 10)
     local frame = _G[tooltipName.."TextLeft"..source]
     local rightFrame = _G[tooltipName.."TextRight"..source]
     
-    if hideLeft and frame then
+    if hideLeft and frame and not (fakeout and extraLines[source]) then
       frame:Hide()
       for _, frame in pairs{frame, rightFrame, textureMap[frame], moneyMap[frame]} do
         if frame and frame:IsShown() then
@@ -225,7 +230,7 @@ function Addon:ConstructTooltip(tooltip, constructor)
       frame = nil
     end
     
-    if frame and frame:IsShown() then
+    if frame and frame:IsShown() and not (fakeout and extraLines[source]) then
       if hideRight and rightFrame and rightFrame:IsShown() then
         local closureFrame = rightFrame
         table.insert(halfDestructor, function() closureFrame:Show() end)
