@@ -69,11 +69,9 @@ Addon:AddExtraStatCapture("Block Rating",
 
 Addon:AddExtraStatCapture("Hit Rating",
   {INPUT = "^Increases your hit rating by (%d+)%.$"} -- Maexxna's Fang
-    -- INPUT = "I[mn][pc]r[oe][va]s?es ?y?o?u?r? hit rating by (%d+)",
 )
 Addon:AddExtraStatCapture("Critical Strike Rating",
   {INPUT = "^Increases your critical strike rating by (%d+)%.$"} -- Staff of Balzaphon
-  --   -- INPUT = "i[mn][pc]r[oe][va]s?es ?y?o?u?r? critical strike rating by (%d+)",
 )
 Addon:AddExtraStatCapture("Armor Penetration Rating",
   {INPUT = "^Increases armor penetration rating by (%d+)%.$"} -- Maexxna's Femur
@@ -81,7 +79,6 @@ Addon:AddExtraStatCapture("Armor Penetration Rating",
 
 Addon:AddExtraStatCapture("Spell Penetration",
   {INPUT = "^Increases your spell penetration by (%d+)%.$"} -- Hatefury Mantle
-    -- INPUT  = "I[mn][pc]r[oe][va]s?es ?y?o?u?r? spell penetration by (%d+)",
 )
 
 if Addon.isClassic then

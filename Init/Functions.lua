@@ -489,7 +489,7 @@ do
   local defaultRewordLocaleOverrides    = {}
   local defaultModLocaleOverrides       = {}
   local defaultPrecisionLocaleOverrides = {}
-  local localeExtraStatCaptures         = setmetatable({}, {__index = function() return {} end})
+  local localeExtraStatCaptures         = {}
   local localeExtraReplacements         = {}
   
   function Addon:AddDefaultRewordByLocale(stat, val)
