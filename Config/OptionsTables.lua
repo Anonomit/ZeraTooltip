@@ -670,7 +670,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
         if self:GetOption("hide", stat) then
           formattedText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, strGsub(formattedText, "|c%x%x%x%x%x%x%x%x", ""))
           changed = true
-        elseif self:GetOption("doRecolor", stat) then
+        elseif self:GetOption("allow", "recolor") and self:GetOption("doRecolor", stat) then
           formattedText = self:ChainGsub(formattedText, unpack(self.classColorReplacements))
           changed = true
         end

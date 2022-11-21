@@ -71,7 +71,7 @@ function Addon:RewordLine(tooltip, line, tooltipData)
     elseif line.type == "Durability" then
       text = self:ModifyDurability(text)
     elseif line.type == "RequiredClasses" then
-      if self:GetOption("doRecolor", line.type) then
+      if self:GetOption("allow", "recolor") and self:GetOption("doRecolor", line.type) then
         text = self:ChainGsub(text, unpack(self.classColorReplacements))
       end
     elseif line.type == "EnchantOnUse" then
