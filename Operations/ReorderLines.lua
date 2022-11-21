@@ -57,8 +57,8 @@ local function SortStats(tooltipData)
   if self:GetOption"combineStats" then
     while #stats.SecondaryStat > 0 do
       tinsert(stats.BaseStat, tblRemove(stats.SecondaryStat, 1))
-      if tooltipData.Enchant then
-        tooltipData.Enchant = tooltipData.Enchant + 1
+      if tooltipData.enchant then
+        tooltipData.enchant = tooltipData.enchant + 1
       end
     end
   end
@@ -92,10 +92,14 @@ function Addon:ReorderLines(tooltipData)
     local line = tooltipData[i]
     
     if not line.hide then
-      if (line.type == "ProposedEnchant" or line.type == "EnchantHint") and tooltipData.Enchant then
+      if (line.type == "ProposedEnchant" or line.type == "EnchantHint") and tooltipData.enchant then
         if self:GetOption("doReorder", line.type) then
-          tinsert(tooltipData, tooltipData.Enchant + enchantOffset, tblRemove(tooltipData, i))
+          tinsert(tooltipData, tooltipData.enchant + enchantOffset, tblRemove(tooltipData, i))
           enchantOffset = enchantOffset + 1
+        end
+      elseif line.type == "SocketHint" then
+        if self:GetOption("doReorder", line.type) then
+          tinsert(tooltipData, tooltipData.socketBonus + enchantOffset, tblRemove(tooltipData, i))
         end
       elseif line.type == "Refundable" then
         if self:GetOption("doReorder", line.type) then

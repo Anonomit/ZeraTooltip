@@ -137,8 +137,14 @@ local contextAscensions = Addon:Map({
     end
     
     -- mark where the enchant would be if it existed on this item
-    if not tooltipData.Enchant then
-      tooltipData.Enchant = line.i - 1
+    if not tooltipData.enchant then
+      tooltipData.enchant = line.i - 1
+    end
+  end,
+  SocketBonus = function(context, tooltipData, line, currentContext)
+    -- mark where the socket bonus would be if it existed on this item
+    if not tooltipData.socketBonus then
+      tooltipData.socketBonus = line.i - 1
     end
   end,
   SecondaryStat = function(context, tooltipData, line, currentContext)
@@ -175,9 +181,15 @@ local contextAscensions = Addon:Map({
     end
     
     -- mark where the enchant would be if it existed on this item
-    if not tooltipData.Enchant then
-      tooltipData.Enchant = line.i
+    if not tooltipData.enchant then
+      tooltipData.enchant = line.i
     end
+    
+    -- mark where the socket bonus would be if it existed on this item
+    if not tooltipData.socketBonus then
+      tooltipData.socketBonus = line.i
+    end
+    
     -- mark where the secondary stats would be if they existed on this item
     if not tooltipData.secondaryStatStart then
       tooltipData.secondaryStatStart = line.i
@@ -301,7 +313,7 @@ contextActions = Addon:Map({
   end,
   Enchant = function(i, tooltipData, line)
     if tooltipData.hasEnchant and not tooltipData.foundEnchant and line.colorLeft == Addon.COLORS.GREEN then
-      tooltipData.Enchant      = line.i
+      tooltipData.enchant      = line.i
       tooltipData.foundEnchant = true
       return SetContext(i, tooltipData, line)
     end
@@ -346,7 +358,8 @@ contextActions = Addon:Map({
   SocketBonus = function(i, tooltipData, line)
   local prefix = MatchesAny(line.textLeftTextStripped, ITEM_SOCKET_BONUS)
     if prefix then
-      line.prefix = prefix
+      line.prefix             = prefix
+      tooltipData.socketBonus = line.i
       return SetContext(i, tooltipData, line)
     end
   end,
@@ -396,7 +409,7 @@ contextActions = Addon:Map({
   end,
   EnchantOnUse = function(i, tooltipData, line)
     if tooltipData.hasEnchant and not tooltipData.foundEnchant and line.colorLeft == Addon.COLORS.GREEN and StartsWithAny(line.textLeftTextStripped, ITEM_SPELL_TRIGGER_ONUSE) then
-      tooltipData.Enchant      = line.i
+      tooltipData.enchant      = line.i
       line.prefix              = ITEM_SPELL_TRIGGER_ONUSE
       tooltipData.foundEnchant = true
       return SetContext(i, tooltipData, line)

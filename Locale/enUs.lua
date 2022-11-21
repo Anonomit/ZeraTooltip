@@ -8,17 +8,29 @@ if not L then return end
 
 
 
+L["Whether to modify tooltips."]                   = true
+L["Reverse behavior when modifier keys are held."] = true
 
 L["Reorder"] = true
 L["Recolor"] = true
 L["Cache"]   = true
-L["Speeds up processing, but can sometimes introduce bugs."] = true
+
+L["Allow or prohibit all reordering."]                       = true
+L["Allow or prohibit all rewording."]                        = true
+L["Allow or prohibit all recoloring."]                       = true
+L["Speeds up processing, but may introduce tooltip issues."] = true
+
+
+L["Multiply"]   = true
+L["Multiplier"] = true
+
 
 L["Group Secondary Stats with Base Stats"] = true
 L["Add Space Above Bonus Effects"]         = true
 
-L["Multiply"]   = true
-L["Multiplier"] = true
+L["Move secondary effects (such as Attack Power and Spell Power), up to where the base stats (such as Stamina) are located."] = true
+L["Bonus effects are secondary effects that aren't just adding a stat (example: Hearthstone)."] = true
+
 
 -- padding locations
 L["Spacing"]            = true
@@ -29,6 +41,11 @@ L["Secondary Stats"]    = true
 L["Sockets"]            = true
 L["Set List"]           = true
 L["Set Bonus"]          = true
+L["Place an empty line above this line."] = true
+L["Place an empty line below this line."] = true
+L["Place an empty line at the end of the tooltip, when possible."] = true
+
+
 
 -- title
 L["Hearthstone"] = true
@@ -37,7 +54,8 @@ L["Hearthstone"] = true
 L["Refund"] = true
 
 -- trainable
-L["Trainable Equipment"] = true
+L["Trainable Equipment"]                             = true
+L["Equipment that a trainer can teach you to wear."] = true
 
 -- weapon damage
 L["Show Minimum and Maximum"] = true
@@ -60,16 +78,49 @@ L["Show Speed"]      = true
 L["Fill Character"]  = true
 L["Blank Character"] = true
 
+L["Character to use for filled section of the speed bar."] = true
+L["Character to use for empty section of the speed bar."]  = true
+L["Fastest speed on the speed bar."]                       = true
+L["Slowest speed on the speed bar."]                       = true
+L["Width of the speed bar."]                               = true
+
+-- enchant
+L["This applies to most enchantments."]                                  = true
+L["This applies to enchantments that add an On Use effect to the item."] = true
+L["This applies to temporary weapon enchantments."]                      = true
+L["Whether to position this line with other On Use effects rather than the normal enchantment location."] = true
+
 -- durability
 L["Show Current"] = true
 
+-- requirements
+L["Whether to show this line much higher up on the tooltip rather than its usual location."] = true
+
 -- races
-L["Hide Pointless Lines"] = true
+L["Hide Pointless Lines"]              = true
+L["Hide lines which list every race."] = true
+
+-- classes
+L["Hide lines that contain only my class."] = true
+
+-- level
+L["Hide white level requirements."]                                  = true
+L["Hide maximum level requirements when you are the maximum level."] = true
 
 -- prefixes
 L["Remove Space"] = true
 L["Icon Size"]    = true
 L["Icon Space"]   = true
+
+-- made by
+L["Made by myself."] = true
+L["Made by others."] = true
+
+-- socket hint
+L["Move this line to the socket bonus."] = true
+
+-- misc rewording
+L["Reword some various small things, such as mana potions and speed enchantments. This option is different for each locale."] = true
 
 -- reset
 L["Order"] = true

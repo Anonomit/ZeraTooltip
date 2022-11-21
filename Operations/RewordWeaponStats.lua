@@ -103,7 +103,13 @@ function Addon:ModifyWeaponSpeedbar(speed, speedString, speedStringFull)
     
     local fill = self:Clamp(0, self:Round((speed - min) / delta * size, 1), size)
     local bar = ("[%s%s]"):format(strRep(fillChar, fill), strRep(blankChar, size - fill))
+    if self:GetOption("allow", "recolor") and self:GetOption("doRecolor", stat) then
+      bar = self:MakeColorCode(self:GetOption("color", stat), bar)
+    end
     if showSpeed then
+      if self:GetOption("allow", "recolor") and self:GetOption("doRecolor", "Speed") then
+        showSpeed = self:MakeColorCode(self:GetOption("color", "Speed"), showSpeed)
+      end
       bar = showSpeed .. " " .. bar
     end
     return bar

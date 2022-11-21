@@ -608,7 +608,7 @@ do
           if not HasNumber(match1, match2) then return end
           return format(normalFormPattern, match1, match2)
         end
-        for _, rule in ipairs(Addon:GetExtraStatCapture(stat)) do
+        for _, rule in ipairs(Addon:GetExtraStatCapture(stat) or {}) do
           local matches = rule.OUTPUT and {rule.OUTPUT(strMatch(text, rule.INPUT))} or {strMatch(text, rule.INPUT)}
           if #matches > 0 then
             if not HasNumber(matches[1], matches[2]) then return end
@@ -624,6 +624,10 @@ do
           strNumber = strGsub(strNumber, "%.", DECIMAL_SEPERATOR)
         end
         return format(tooltipPattern2, isBaseStat and (number < 0 and "" or "+") or strNumber, isBaseStat and strNumber or nil)
+      end
+      
+      function StatInfo:GetNormalName()
+        return normalName
       end
     end
   end
@@ -670,6 +674,7 @@ end
 
 do
   Addon.stealthIcon = Addon:MakeIcon"132320"
+  Addon.socketIcon  = Addon:MakeIcon"Interface\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-META"
   
   Addon.iconPaths = {
     "Interface\\AddOns\\" .. ADDON_NAME .. "\\Assets\\Textures\\Samwise",

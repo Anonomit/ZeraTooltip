@@ -111,9 +111,9 @@ do
     return option
   end
   
-  function GUI:CreateGroup(opts, key, name, groupType, disabled)
+  function GUI:CreateGroup(opts, key, name, desc, groupType, disabled)
     key = "group_" .. links[key]
-    opts.args[key] = {name = name, type = "group", childGroups = groupType, args = {}, order = self:Order(), disabled = disabled}
+    opts.args[key] = {name = name, desc = desc, type = "group", childGroups = groupType, args = {}, order = self:Order(), disabled = disabled}
     return opts.args[key]
   end
   

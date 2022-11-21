@@ -69,14 +69,15 @@ function Addon:MakeDefaultOptions()
         
         doReorder = {
           ["*"]              = true,
-          RequiredRaces      = true,
-          RequiredClasses    = true,
-          RequiredLevel      = false,
-          Refundable         = true,
-          SoulboundTradeable = true,
+          RequiredRaces      = true, -- whether it shows up after title
+          RequiredClasses    = true, -- whether it shows up after title
+          RequiredLevel      = false, -- whether it shows up after title
+          Refundable         = true, -- whether it shows up after binding
+          SoulboundTradeable = true, -- whether it shows up after binding
           ProposedEnchant    = true, -- no GUI option
           EnchantHint        = true, -- no GUI option
           EnchantOnUse       = false, -- whether it shows up after on use effects
+          SocketHint         = false, -- whether it shows up after socket bonus
         },
         
         damage = {

@@ -62,8 +62,12 @@ L["Hide"]   = HIDE
 L["Base Stats"]         = PLAYERSTAT_BASE_STATS
 L["Enchant"]            = ENSCRIBE
 L["Weapon Enchantment"] = WEAPON_ENCHANTMENT
+L["Meta Socket"]        = EMPTY_SOCKET_META
 L["End"]                = KEY_END
 
+L["Weapon Damage"]     = DAMAGE_TOOLTIP
+L["Speed"]             = SPEED
+L["Damage Per Second"] = ITEM_MOD_DAMAGE_PER_SECOND_SHORT
 L["Trade"]         = TRADE
 L["Settings"]      = SETTINGS
 -- L["Other Options"] = UNIT_FRAME_DROPDOWN_SUBSECTION_TITLE_OTHER
@@ -78,7 +82,10 @@ L["Icon"]            = EMBLEM_SYMBOL
 L["Choose an Icon:"] = MACRO_POPUP_CHOOSE_ICON
 L["Manual"]          = TRACKER_SORT_MANUAL
 
-L["Use:"] = ITEM_SPELL_TRIGGER_ONUSE
+L["Effects"]        = EFFECTS_SUBHEADER
+L["Equip:"]         = ITEM_SPELL_TRIGGER_ONEQUIP
+L["Chance on Hit:"] = ITEM_SPELL_TRIGGER_ONPROC
+L["Use:"]           = ITEM_SPELL_TRIGGER_ONUSE
 
 L["Me"]                         = COMBATLOG_FILTER_STRING_ME
 L["Max Level"]                  = GUILD_RECRUITMENT_MAXLEVEL
@@ -99,8 +106,6 @@ L["Clear Cache"]                  = BROWSER_CLEAR_CACHE
 -- L["Delete"]                       = DELETE
 
 
--- L["Weapon Damage"] = DAMAGE_TOOLTIP
--- L["Damage Per Second"] = ITEM_MOD_DAMAGE_PER_SECOND_SHORT
 
 -- missing?
 -- L["Test"]        = TEST_BUILD
