@@ -1368,6 +1368,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       local opts = CreateHide(opts, stat)
       GUI:CreateNewline(opts)
       
+      local disabled = self:GetOption("hide", stat)
       GUI:CreateToggle(opts, {"hide", "MadeByMe"}, self.L["Me"], L["Made by myself."], disabled).width = 0.6
       CreateReset(opts, {"hide", "MadeByMe"})
       GUI:CreateNewline(opts)

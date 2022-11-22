@@ -87,10 +87,10 @@ function Addon:MakeDefaultOptions()
           useShortName = true,
         },
         damage = {
-          ["*"]              = true,
-          showVariance       = false,
-          variancePercent    = true,
-          ["variancePrefix"] = "+-",
+          ["*"]           = true,
+          showVariance    = false,
+          variancePercent = true,
+          variancePrefix  = "+-",
         },
         dps = {
           ["*"] = true,
