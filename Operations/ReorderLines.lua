@@ -20,6 +20,7 @@ end
 local function SortStats(tooltipData)
   local self = Addon
   if not self:GetOption("allow", "reorder") then return end
+  
   local stats = {
     BaseStat             = {},
     SecondaryStat        = {},
@@ -60,12 +61,14 @@ local function SortStats(tooltipData)
       if tooltipData.enchant then
         tooltipData.enchant = tooltipData.enchant + 1
       end
+      tooltipData.socketBonus = tooltipData.socketBonus + 1
     end
   end
   if not self:GetOption("doReorder", "EnchantOnUse") then
     for i = #stats.EnchantOnUse, 1, -1 do
       tinsert(stats.BaseStat, tblRemove(stats.EnchantOnUse, 1))
       
+      tooltipData.socketBonus = tooltipData.socketBonus + 1
       if not self:GetOption"combineStats" and stats.SecondaryStat.location then
         stats.SecondaryStat.location = stats.SecondaryStat.location + 1
       end
@@ -85,8 +88,8 @@ function Addon:ReorderLines(tooltipData)
   
   SortStats(tooltipData)
   
-  local offset = 0
-  local enchantOffset = 1
+  local offset        = 0
+  local enchantOffset = 0
   local i = 1
   while i <= #tooltipData do
     local line = tooltipData[i]
@@ -94,12 +97,12 @@ function Addon:ReorderLines(tooltipData)
     if not line.hide then
       if (line.type == "ProposedEnchant" or line.type == "EnchantHint") and tooltipData.enchant then
         if self:GetOption("doReorder", line.type) then
-          tinsert(tooltipData, tooltipData.enchant + enchantOffset, tblRemove(tooltipData, i))
           enchantOffset = enchantOffset + 1
+          tinsert(tooltipData, tooltipData.enchant + enchantOffset, tblRemove(tooltipData, i))
         end
       elseif line.type == "SocketHint" then
         if self:GetOption("doReorder", line.type) then
-          tinsert(tooltipData, tooltipData.socketBonus + enchantOffset, tblRemove(tooltipData, i))
+          tinsert(tooltipData, tooltipData.socketBonus + 1 + offset + enchantOffset, tblRemove(tooltipData, i))
         end
       elseif line.type == "Refundable" then
         if self:GetOption("doReorder", line.type) then

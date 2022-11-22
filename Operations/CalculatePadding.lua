@@ -30,7 +30,7 @@ local padLocations = {
     SecondaryStat = function(line) return(line.type == "SecondaryStat" or Addon:GetOption("doReorder", "EnchantOnUse") and (line.type == "EnchantOnUse" or line.type == "RequiredEnchantOnUse")) and not Addon:GetOption"combineStats" end,
     Enchant       = function(line) return enchantLines[line.type]      or line.type == "RequiredEnchant" or not Addon:GetOption("doReorder", "EnchantOnUse") and (line.type == "EnchantOnUse" or line.type == "RequiredEnchantOnUse") end,
     WeaponEnchant = function(line) return line.type == "WeaponEnchant" end,
-    SocketBonus   = function(line) return line.type == "SocketBonus"   end,
+    SocketBonus   = function(line) return line.type == "SocketBonus"   or Addon:GetOption("doReorder", "SocketHint") and line.type == "SocketHint" end,
     SetPiece      = function(line) return line.type == "SetPiece"      end,
     SetBonus      = function(line) return line.type == "SetBonus"      end,
   }
