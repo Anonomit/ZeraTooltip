@@ -42,7 +42,7 @@ function Addon:ModifyDurability(text)
     if alias then -- empty alias is allowed
       if self:GetOption("trimSpace", stat) then
         text = strGsub(text, emptyText, alias)
-      elseif alias ~= prefix then
+      elseif alias ~= coveredText then
         text = strGsub(text, coveredText, alias)
       end
     end

@@ -576,7 +576,7 @@ do
       
       local function ConvertToAliasForm(text)
         local alias = Addon:GetOption("reword", stat)
-        if alias and alias ~= "" and alias ~= normalName then
+        if alias and alias ~= "" and alias ~= normalNameReplacePattern then
           text = strGsub(text, normalNameReplacePattern, alias)
         end
         return text

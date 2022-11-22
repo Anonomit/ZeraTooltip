@@ -87,6 +87,7 @@ local contexts = Addon:MakeLookupTable({
   "RequiredRaces",
   "RequiredClasses",
   "RequiredLevel",
+  "ItemLevel",
   "RequiredSkill",
   "AlreadyKnown",
   "RequiredRep",
@@ -147,6 +148,12 @@ local contextAscensions = Addon:Map({
       tooltipData.socketBonus = line.i - 1
     end
   end,
+  ItemLevel = function(context, tooltipData, line, currentContext)
+    -- mark where the item level would be if it existed on this item
+    if not tooltipData.itemLevel then
+      tooltipData.itemLevel = line.i - 1
+    end
+  end,
   SecondaryStat = function(context, tooltipData, line, currentContext)
     -- mark where the secondary stats would be if they existed on this item
     if not tooltipData.secondaryStatStart then
@@ -188,6 +195,11 @@ local contextAscensions = Addon:Map({
     -- mark where the socket bonus would be if it existed on this item
     if not tooltipData.socketBonus then
       tooltipData.socketBonus = line.i
+    end
+    
+    -- mark where the item level would be if it existed on this item
+    if not tooltipData.itemLevel then
+      tooltipData.itemLevel = line.i - 1
     end
     
     -- mark where the secondary stats would be if they existed on this item

@@ -176,6 +176,17 @@ local function CreateHide(opts, stat, disabled)
   
   return opts
 end
+local function CreateShow(opts, stat)
+  local self = Addon
+  local GUI  = self.GUI
+  
+  local opts = GUI:CreateGroupBox(opts, self.L["Show"])
+  
+  GUI:CreateReverseToggle(opts, {"hide", stat}, self.L["Show"], nil, disabled).width = 0.6
+  CreateReset(opts, {"hide", stat})
+  
+  return opts
+end
 local icons         = Addon:Map(Addon.iconPaths, function(v) return Addon:MakeIcon(v) end)
 local iconsDropdown = Addon:Map(icons, nil, function(v) return v end)
 local function CreateIcon(opts, stat)
@@ -518,6 +529,8 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
   local GUI = self.GUI:ResetOrder()
   local opts = GUI:CreateGroupTop(title)
   
+  local disabled -- just in case some other addon clobbers _G.disabled
+  
   -- Title
   do
     local stat = "Title"
@@ -572,12 +585,12 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
   end
   
   -- Item Level
-  do
+  local function MakeItemLevelOptions()
     local stat = "ItemLevel"
     
     local samples = {}
-    local defaultText = format(GARRISON_FOLLOWER_ITEM_LEVEL, 1)
-    local _, formattedText = GetFormattedText(stat, self.COLORS.GREEN, defaultText, self:RewordItemLevel(defaultText))
+    local defaultText = format(self:GetOption("itemLevel", "useShortName") and GARRISON_FOLLOWER_ITEM_LEVEL or ITEM_LEVEL, random(1, 100))
+    local _, formattedText = GetFormattedText(stat, self.COLORS.DEFAULT, defaultText, self:RewordItemLevel(defaultText))
     defaultText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, defaultText)
     tinsert(samples, {defaultText, formattedText})
     
@@ -585,10 +598,26 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       
     CreateSamples(opts, samples)
     
+    CreateReorder(opts, stat)
+    
     CreateColor(opts, stat)
     
     do
-      local opts = CreateReword(opts, stat)
+      local opts = GUI:CreateGroupBox(opts, self.L["Rename"])
+      
+      GUI:CreateToggle(opts, {"itemLevel", "useShortName"}, self.L["Short Name"], nil, disabled)
+      CreateReset(opts, {"itemLevel", "useShortName"})
+      GUI:CreateNewline(opts)
+      
+      local disabled = disabled or not Addon:GetOption("allow", "reword")
+      GUI:CreateToggle(opts, {"doReword", stat}, self.L["Enable"], nil, disabled).width = 0.6
+      local disabled = disabled or not self:GetOption("doReword", stat)
+      local option = GUI:CreateInput(opts, {"reword", stat}, self.L["Custom"], nil, nil, disabled)
+      option.width = 0.9
+      option.set = function(info, val)        self:SetOption(self:CoverSpecialCharacters(val), "reword", stat) end
+      option.get = function(info)      return Addon:UncoverSpecialCharacters(self:GetOption("reword", stat))   end
+      CreateReset(opts, {"reword", stat}, function() self:ResetReword(stat) end)
+      
       GUI:CreateNewline(opts)
       
       -- Trim Space
@@ -599,8 +628,19 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
     
     CreateIcon(opts, stat)
     
-    CreateHide(opts, stat)
+    do
+      local opts = GUI:CreateGroupBox(opts, self.L["Show"])
+      
+      GUI:CreateReverseToggle(opts, {"hide", stat}, self.L["Show Item Level"], nil, disabled)
+      CreateReset(opts, {"hide", stat})
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateReverseToggle(opts, {"hide", "nonEquipment"}, L["Show Non Equipment"], L["Show item level on items that cannot be equipped by anyone."])
+      CreateReset(opts, {"hide", "nonEquipment"})
+    end
   end
+  if not self:GetOption("doReorder", "ItemLevel") then MakeItemLevelOptions() end
+  
   GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
   
   -- Races
@@ -703,7 +743,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       local opts = GUI:CreateGroupBox(opts, L["Recolor"])
       
       local disabled = not self:GetOption("allow", "recolor")
-      GUI:CreateToggle(opts, {"doRecolor", stat}, self.L["Enable"], nil, disabled).width = 0.5
+      GUI:CreateToggle(opts, {"doRecolor", stat}, self.L["Show Class Color"], nil, disabled).width = 1
       CreateReset(opts, {"doRecolor", stat})
     end
     
@@ -1252,6 +1292,8 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
     GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
   end
   
+  if self:GetOption("doReorder", "ItemLevel") then MakeItemLevelOptions() GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true) end
+  
   -- Prefixes
   for _, data in ipairs{
     {"Equip",       ITEM_SPELL_TRIGGER_ONEQUIP},
@@ -1286,10 +1328,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
   end
   GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
   
-  if self:GetOption("doReorder", "EnchantOnUse") then
-    MakeEnchantOnUseOptions()
-    GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
-  end
+  if self:GetOption("doReorder", "EnchantOnUse") then MakeEnchantOnUseOptions() GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true) end
   
   -- Made By
   do

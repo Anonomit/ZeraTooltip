@@ -48,7 +48,7 @@ do
   end
   
   function GUI:CreateHeader(opts, name)
-    local option = self:CreateEntry(opts, self:Order(), name, nil, "header", nil, self:Order(0))
+    return self:CreateEntry(opts, self:Order(), name, nil, "header", nil, self:Order(0))
   end
   
   function GUI:CreateDescription(opts, desc, fontSize)
@@ -62,11 +62,18 @@ do
     end
   end
   function GUI:CreateNewline(opts)
-    return self:CreateDivider(opts, 1)
+    return self:CreateDescription(opts, " ", fontSize or "small")
   end
   
   function GUI:CreateToggle(opts, keys, name, desc, disabled)
+    return self:CreateEntry(opts, keys, name, desc, "toggle", disabled)
+  end
+  
+  function GUI:CreateReverseToggle(opts, keys, name, desc, disabled)
     local option = self:CreateEntry(opts, keys, name, desc, "toggle", disabled)
+    local set, get = option.set, option.get
+    option.set = function(info, val)        set(info, not val) end
+    option.get = function(info)      return not get()          end
     return option
   end
   

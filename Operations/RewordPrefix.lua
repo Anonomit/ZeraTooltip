@@ -22,7 +22,7 @@ function Addon:ModifyPrefix(text, prefix)
     if alias then -- empty alias is allowed
       if self:GetOption("trimSpace", stat) then
         text = strGsub(text, emptyPrefixes[stat], alias)
-      elseif alias ~= prefix then
+      elseif alias ~= coveredPrefixes[stat] then
         text = strGsub(text, coveredPrefixes[stat], alias)
       end
     end

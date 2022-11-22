@@ -54,7 +54,7 @@ function Addon:ModifyWeaponSpeed(text, speed, speedString)
   if self:GetOption("allow", "reword") then
     if self:GetOption("doReword", stat) then -- whether to add a prefix
       local alias = self:GetOption("reword", stat)
-      if alias and alias ~= "" and alias ~= SPEED then
+      if alias and alias ~= "" and alias ~= coveredSpeed then
         text = strGsub(text, coveredSpeed, alias)
       end
     else

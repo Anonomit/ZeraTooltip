@@ -46,12 +46,12 @@ L["Place an empty line below this line."] = true
 L["Place an empty line at the end of the tooltip, when possible."] = true
 
 
-
 -- title
 L["Hearthstone"] = true
 
--- refundable
-L["Refund"] = true
+-- item level
+L["Show item level on items that cannot be equipped by anyone."] = true
+L["Show Non Equipment"]                                          = true
 
 -- trainable
 L["Trainable Equipment"]                             = true
@@ -118,6 +118,9 @@ L["Made by others."] = true
 
 -- socket hint
 L["Move this line to the socket bonus."] = true
+
+-- refundable
+L["Refund"] = true
 
 -- misc rewording
 L["Reword some various small things, such as mana potions and speed enchantments. This option is different for each locale."] = true

@@ -32,6 +32,7 @@ function Addon:MakeDefaultOptions()
         hide = {
           ["*"]        = false,
           uselessRaces = true,
+          nonEquipment = true,
         },
         doReword = {
           ["*"]              = true,
@@ -69,6 +70,7 @@ function Addon:MakeDefaultOptions()
         
         doReorder = {
           ["*"]              = true,
+          ItemLevel          = false, -- whether it shows up in the original wrath location
           RequiredRaces      = true, -- whether it shows up after title
           RequiredClasses    = true, -- whether it shows up after title
           RequiredLevel      = false, -- whether it shows up after title
@@ -80,6 +82,10 @@ function Addon:MakeDefaultOptions()
           SocketHint         = false, -- whether it shows up after socket bonus
         },
         
+        itemLevel = {
+          ["*"]        = true,
+          useShortName = true,
+        },
         damage = {
           ["*"]              = true,
           showVariance       = false,

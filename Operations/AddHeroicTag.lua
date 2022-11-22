@@ -107,7 +107,7 @@ local coveredDefaultText = Addon:CoverSpecialCharacters(ITEM_HEROIC)
 function Addon:RewordHeroic(text)
   if self:GetOption("allow", "reword") and self:GetOption("doReword", stat) then
     local alias = self:GetOption("reword", stat)
-    if alias and alias ~= "" and alias ~= defaultText then
+    if alias and alias ~= "" and alias ~= coveredDefaultText then
       text = strGsub(text, coveredDefaultText, alias)
     end
   end

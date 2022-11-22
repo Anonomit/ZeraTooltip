@@ -21,7 +21,7 @@ local function ModifyEnchant(text, stat)
   if self:GetOption("doReword", stat) then -- whether to add a prefix
     local prefix = ENCHANTED_TOOLTIP_LINE
     local alias = self:GetOption("reword", stat)
-    if alias and alias ~= "" and alias ~= defaultPrefix then
+    if alias and alias ~= "" and alias ~= coveredDefaultPrefix then
       prefix = strGsub(prefix, coveredDefaultPrefix, alias)
     end
     text = format(prefix, text)
