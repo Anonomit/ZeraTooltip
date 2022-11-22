@@ -30,7 +30,12 @@ local miscRewordLines = {
 }
 
 function Addon:RewordLine(tooltip, line, tooltipData)
-  if not line.type or line.type == "Padding" then return end
+  if not line.type or line.type == "Padding" then
+    if Addon:GetDebugView"tooltipLineNumbers" then
+      line.rewordLeft = format("[%d] ", line.i) .. line.textLeftText
+    end
+    return
+  end
   
   local text = line.textLeftText
   
@@ -156,6 +161,10 @@ function Addon:RewordLine(tooltip, line, tooltipData)
       textCache[line.type][line.textLeftText] = {text, line.rewordRight}
       cacheSize = cacheSize + 1
     end
+  end
+  
+  if Addon:GetDebugView"tooltipLineNumbers" then
+    text = format("[%d] ", line.i) .. text
   end
   
   if text ~= line.realTextLeft and text ~= line.textLeftText then

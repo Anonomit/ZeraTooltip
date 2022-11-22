@@ -103,7 +103,12 @@ function Addon:CalculatePadding(tooltipData)
   -- hide unused padding
   for i, line in ipairs(tooltipData) do
     if line.type == "Padding" and not line.used then
-      line.hide = true
+      if Addon:GetDebugView"paddingConversionFailures" then
+        local pre = Addon:GetDebugView"tooltipLineNumbers" and format("[%d] ", line.i) or ""
+        line.rewordLeft = pre .. "[Padding Failure] " .. line.textLeftText
+      else
+        line.hide = true
+      end
     end
   end
   
@@ -114,9 +119,7 @@ function Addon:CalculatePadding(tooltipData)
   -- TODO: investigate this
   if self:GetOption"padLastLine" then
     local lastLine = tooltipData[#tooltipData]
-    if lastLine.type == "Padding" then
-      lastLine.hide = nil
-    else
+    if lastLine.type ~= "Padding" or not lastLine.used then
       tooltipData.padLast = true
     end
   end

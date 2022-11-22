@@ -94,29 +94,27 @@ function Addon:ReorderLines(tooltipData)
   while i <= #tooltipData do
     local line = tooltipData[i]
     
-    if not line.hide then
-      if (line.type == "ProposedEnchant" or line.type == "EnchantHint") and tooltipData.enchant then
-        if self:GetOption("doReorder", line.type) then
-          enchantOffset = enchantOffset + 1
-          tinsert(tooltipData, tooltipData.enchant + enchantOffset, tblRemove(tooltipData, i))
-        end
-      elseif line.type == "SocketHint" then
-        if self:GetOption("doReorder", line.type) then
-          tinsert(tooltipData, tooltipData.socketBonus + 1 + offset + enchantOffset, tblRemove(tooltipData, i))
-        end
-      elseif line.type == "Refundable" then
-        if self:GetOption("doReorder", line.type) then
-          tinsert(tooltipData, tooltipData.binding + 1 + offset, tblRemove(tooltipData, i))
-        end
-      elseif line.type == "SoulboundTradeable" then
-        if self:GetOption("doReorder", line.type) then
-          tinsert(tooltipData, tooltipData.binding + 1 + offset, tblRemove(tooltipData, i))
-        end
-      elseif line.type == "RequiredRaces" or line.type == "RequiredClasses" or line.type == "RequiredLevel" then
-        if self:GetOption("doReorder", line.type) then
-          tinsert(tooltipData, (tooltipData.title or 1) + 1, tblRemove(tooltipData, i))
-          offset = offset + 1
-        end
+    if (line.type == "ProposedEnchant" or line.type == "EnchantHint") and tooltipData.enchant then
+      if self:GetOption("doReorder", line.type) then
+        enchantOffset = enchantOffset + 1
+        tinsert(tooltipData, tooltipData.enchant + enchantOffset, tblRemove(tooltipData, i))
+      end
+    elseif line.type == "SocketHint" then
+      if self:GetOption("doReorder", line.type) then
+        tinsert(tooltipData, tooltipData.socketBonus + 1 + offset + enchantOffset, tblRemove(tooltipData, i))
+      end
+    elseif line.type == "Refundable" then
+      if self:GetOption("doReorder", line.type) then
+        tinsert(tooltipData, tooltipData.binding + 1 + offset, tblRemove(tooltipData, i))
+      end
+    elseif line.type == "SoulboundTradeable" then
+      if self:GetOption("doReorder", line.type) then
+        tinsert(tooltipData, tooltipData.binding + 1 + offset, tblRemove(tooltipData, i))
+      end
+    elseif line.type == "RequiredRaces" or line.type == "RequiredClasses" or line.type == "RequiredLevel" then
+      if self:GetOption("doReorder", line.type) then
+        tinsert(tooltipData, (tooltipData.title or 1) + 1, tblRemove(tooltipData, i))
+        offset = offset + 1
       end
     end
     

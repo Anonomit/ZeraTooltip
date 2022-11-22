@@ -156,24 +156,24 @@ function Addon:ConstructTooltip(tooltip, constructor)
   local extraLines    = {}
   local addedExtraLine
   for i, data in ipairs(constructor.addLines or {}) do
-    local double = data[1]
+    local double, _, textLeft, hexLeft = unpack(data, 1, 4)
+    if Addon:GetDebugView"tooltipLineNumbers" then
+      textLeft = format("[%d] ", numLines + i) .. textLeft
+    end
+    local rLeft, gLeft, bLeft
+    if hexLeft then
+      rLeft, gLeft, bLeft = self:ConvertColorToBlizzard(hexLeft)
+    end
     if double then
-      local textLeft, hexLeft, textRight, hexRight = unpack(data, 3, 5)
-      local rLeft, gLeft, bLeft, rRight, gRight, bRight
-      if hexLeft then
-        rLeft, gLeft, bLeft = self:ConvertColorToBlizzard(hexLeft)
-      end
+      local textRight, hexRight = unpack(data, 5, 6)
+      local rRight, gRight, bRight
       if hexRight then
         rRight, gRight, bRight = self:ConvertColorToBlizzard(hexRight)
       end
       tooltip:AddDoubleLine(textLeft, textRight, rLeft, gLeft, bLeft, rRight, gRight, bRight)
     else
-      local textLeft, hex, wordWrap = unpack(data, 3, 4)
-      local r, g, b
-      if hex then
-        r, g, b = self:ConvertColorToBlizzard(hex)
-      end
-      tooltip:AddLine(textLeft, r, g, b, wordWrap)
+      local wordWrap = unpack(data, 3, 5)
+      tooltip:AddLine(textLeft, rLeft, gLeft, bLeft, data[5])
     end
     local source = tooltip:NumLines()
     local frame = _G[tooltipName.."TextLeft"..source]

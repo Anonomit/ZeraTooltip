@@ -161,6 +161,10 @@ function Addon:MakeDefaultOptions()
         -- Debug options
         debug = false,
           
+        debugView = {
+          ["*"] = false,
+        },
+          
         debugOutput = {
           ["*"] = false,
         },

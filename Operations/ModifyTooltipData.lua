@@ -20,6 +20,7 @@ local function OutputLineRecognition(line)
     {"colorLeft",   line.colorLeft},
     {"colorRight",  line.colorRight},
     {"pad",         line.pad},
+    {"used",        line.used},
     {"rewordLeft",  line.rewordLeft},
     {"rewordRight", line.rewordRight},
     {"hideRight",   line.hideRight},

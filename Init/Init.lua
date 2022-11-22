@@ -90,4 +90,8 @@ function Addon:DebugDataIf(keys, ...)
 end
 
 
+function Addon:GetDebugView(key)
+  return self:IsDebugEnabled() and not self:GetOption("debugView", "suppressAll") and self:GetOption("debugView", key)
+end
+
 

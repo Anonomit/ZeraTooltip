@@ -10,7 +10,11 @@ local strMatch = string.match
 
 local function HideLeft(line)
   line.type       = "Padding"
-  line.rewordLeft = " "
+  
+  local pre  = Addon:GetDebugView"tooltipLineNumbers" and format("[%d] ", line.i) or ""
+  local text = Addon:GetDebugView"paddingConversionSuccesses" and ("[Padding Success] " .. line.textLeftText) or " "
+  line.rewordLeft = pre .. text
+  
   return true
 end
 

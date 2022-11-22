@@ -1484,6 +1484,33 @@ function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
     end
   end
   
+  -- Debug View
+  do
+    local opts = GUI:CreateGroup(opts, GUI:Order(), "View")
+    
+    local disabled = not self:GetOption"debug"
+    
+    do
+      local opts = GUI:CreateGroupBox(opts, "Suppress All")
+      
+      GUI:CreateToggle(opts, {"debugView", "suppressAll"}, self.L["Hide"], nil, disabled).width = 2
+    end
+    
+    do
+      local opts = GUI:CreateGroupBox(opts, "Tooltips")
+      
+      local disabled = disabled or self:GetOption("debugView", "suppressAll")
+      
+      GUI:CreateToggle(opts, {"debugView", "tooltipLineNumbers"}, "Tooltip Line Numbers", nil, disabled).width = 2
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"debugView", "paddingConversionSuccesses"}, "Padding Conversion Successes", nil, disabled).width = 2
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"debugView", "paddingConversionFailures"}, "Padding Conversion Failures", nil, disabled).width = 2
+    end
+  end
+  
   -- Debug Output
   do
     local opts = GUI:CreateGroup(opts, GUI:Order(), "Output")
