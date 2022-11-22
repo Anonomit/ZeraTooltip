@@ -54,7 +54,7 @@ function Addon:HideLine(line)
       return HideLeft(line)
     end
   end
-  if line.type and self:GetOption("hide", line.type) or line.stat and self:GetOption("hide", line.stat) then
+  if line.type and self:GetOption("hide", line.type) or (line.type == "BaseStat" or line.type == "SecondaryStat") and line.stat and self:GetOption("hide", line.stat) then
     return HideLeft(line)
   end
   
