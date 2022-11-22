@@ -31,7 +31,7 @@ end
 
 local stat = "ItemLevel"
 
-local texts = {
+Addon.itemLevelTexts = {
   [true] = {
     iLvlFormat = GARRISON_FOLLOWER_ITEM_LEVEL,
   },
@@ -39,7 +39,7 @@ local texts = {
     iLvlFormat = ITEM_LEVEL,
   },
 }
-for bool, t in pairs(texts) do
+for bool, t in pairs(Addon.itemLevelTexts) do
   t.iLvlText    = strMatch(t.iLvlFormat, "(.-) *%%")
   t.coveredText = Addon:CoverSpecialCharacters(t.iLvlText)
   t.emptyText   = t.iLvlText .. " *"
@@ -51,7 +51,7 @@ function Addon:RewordItemLevel(text)
   if self:GetOption("doReword", stat) then
     local alias = self:GetOption("reword", stat)
     if alias then -- empty alias is allowed
-      local t = texts[self:GetOption("itemLevel", "useShortName")]
+      local t = self.itemLevelTexts[self:GetOption("itemLevel", "useShortName")]
       if self:GetOption("trimSpace", stat) then
         text = strGsub(text, t.emptyText, alias)
       elseif alias ~= t.coveredText then
@@ -76,7 +76,7 @@ function Addon:AddItemLevel(tooltipData)
     if self:GetOption("allow", "recolor") and self:GetOption("doRecolor", stat) then
       color = self:GetOption("color", stat)
     end
-    self:AddExtraLine(tooltipData, self:GetOption("doReorder", stat) and tooltipData.itemLevel or tooltipData.title, self:RewordItemLevel(format(texts[self:GetOption("itemLevel", "useShortName")].iLvlFormat, itemLevel)), color)
+    self:AddExtraLine(tooltipData, self:GetOption("doReorder", stat) and tooltipData.itemLevel or tooltipData.title, self:RewordItemLevel(format(self.itemLevelTexts[self:GetOption("itemLevel", "useShortName")].iLvlFormat, itemLevel)), color)
   end
 end
 

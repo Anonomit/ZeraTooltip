@@ -598,14 +598,14 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       
     CreateSamples(opts, samples)
     
-    CreateReorder(opts, stat)
+    CreateReorder(opts, stat, L["Show this line where it was originally positioned in Wrath of The Lich King."])
     
     CreateColor(opts, stat)
     
     do
       local opts = GUI:CreateGroupBox(opts, self.L["Rename"])
       
-      GUI:CreateToggle(opts, {"itemLevel", "useShortName"}, self.L["Short Name"], nil, disabled)
+      GUI:CreateToggle(opts, {"itemLevel", "useShortName"}, self.L["Short Name"], format(L["Show %s instead of %s."], self:MakeColorCode(self.COLORS.DEFAULT, self.itemLevelTexts[true].iLvlText), self:MakeColorCode(self.COLORS.DEFAULT, self.itemLevelTexts[false].iLvlText)), disabled)
       CreateReset(opts, {"itemLevel", "useShortName"})
       GUI:CreateNewline(opts)
       
@@ -635,7 +635,8 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       CreateReset(opts, {"hide", stat})
       GUI:CreateNewline(opts)
       
-      GUI:CreateReverseToggle(opts, {"hide", "nonEquipment"}, L["Show Non Equipment"], L["Show item level on items that cannot be equipped by anyone."])
+      local disabled = self:GetOption("hide", stat)
+      GUI:CreateReverseToggle(opts, {"hide", "nonEquipment"}, L["Show Non Equipment"], L["Show item level on items that cannot be equipped by anyone."], disabled)
       CreateReset(opts, {"hide", "nonEquipment"})
     end
   end

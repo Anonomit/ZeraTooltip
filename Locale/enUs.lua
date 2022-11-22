@@ -50,8 +50,10 @@ L["Place an empty line at the end of the tooltip, when possible."] = true
 L["Hearthstone"] = true
 
 -- item level
-L["Show item level on items that cannot be equipped by anyone."] = true
-L["Show Non Equipment"]                                          = true
+L["Show %s instead of %s."]                                                       = true
+L["Show Non Equipment"]                                                           = true
+L["Show item level on items that cannot be equipped by anyone."]                  = true
+L["Show this line where it was originally positioned in Wrath of The Lich King."] = true
 
 -- trainable
 L["Trainable Equipment"]                             = true
