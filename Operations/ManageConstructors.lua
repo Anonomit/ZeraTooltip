@@ -5,10 +5,6 @@ local ADDON_NAME, Data = ...
 local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 
 
--- TODO: check for more ways of setting tooltip
--- TODO: wipe only certain hashmap sections on relevant events? probably not necessary since the link is in the hash
-
-
 local constructorCleanup = {}
 local constructorCount   = {}
 local constructorClock   = {}

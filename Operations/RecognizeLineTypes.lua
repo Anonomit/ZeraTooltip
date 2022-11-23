@@ -56,7 +56,6 @@ local function StartsWithAny(text, ...)
   return nil
 end
 
--- TODO: recognize charges. requires dealing with UI escape sequences
 local contexts = Addon:MakeLookupTable({
   "Init",
   "PreTitle",
@@ -259,7 +258,7 @@ contextActions = Addon:Map({
     end
   end,
   Embed = function(i, tooltipData, line)
-    if StartsWithAny(line.textLeftTextStripped, "\n") then -- TODO: get recipes working better... if I really need to?
+    if StartsWithAny(line.textLeftTextStripped, "\n") then
       return SetContext(i, tooltipData, line)
     end
   end,
@@ -318,7 +317,6 @@ contextActions = Addon:Map({
     if not line.texture and line.colorLeft == Addon.COLORS.WHITE then
       local stat = MatchesAny(line.textLeftTextStripped, ITEM_MOD_STAMINA, ITEM_MOD_STRENGTH, ITEM_MOD_AGILITY, ITEM_MOD_INTELLECT, ITEM_MOD_SPIRIT, ITEM_RESIST_SINGLE, ITEM_RESIST_ALL)
       if stat then
-        -- tooltipData.statHint = stat
         return SetContext(i-1, tooltipData, line)
       end
     end

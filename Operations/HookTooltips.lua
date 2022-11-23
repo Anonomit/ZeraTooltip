@@ -73,7 +73,7 @@ local function ResetScanner(scannerTooltip, link, methodName, ...)
   
   scannerTooltip.lastTime = GetTime()
   scannerTooltip.lastLink = link
-  scannerTooltip.lastCall = {link, methodName, ...} -- TODO: if same frame, same item, last call different, then the destructor would be needed to undo OnTooltipSetItem. pray that this never happens
+  scannerTooltip.lastCall = {link, methodName, ...}
   scannerTooltip.lastCall.n = select("#", ...) + 2
   
   local _, _, _, _, _, itemType = GetItemInfoInstant(link)
@@ -151,7 +151,7 @@ local function OnTooltipItemMethod(tooltip, methodName, ...)
           if not self:PrepareTooltip(scannerTooltip, methodName, unpack(args, 1, args.n)) then return end
           alreadyPrepped = true
         end
-        local tooltipData = self:ReadTooltip(scannerTooltip, name, link, scannerTooltip.isRecipe and scannerTooltip.lengths[1] or nil) -- TODO: could theoretically do better than this if I search the main tooltip for matching lines; however, it would be unreliable
+        local tooltipData = self:ReadTooltip(scannerTooltip, name, link, scannerTooltip.isRecipe and scannerTooltip.lengths[1] or nil)
         if #tooltipData > 0 then
           self:ModifyTooltipData(tooltip, tooltipData)
           constructor = self:CreateConstructor(tooltipData)
@@ -184,7 +184,7 @@ local function OnTooltipSetItem(tooltip)
   if not tooltip.GetItem then return end
   local name, link = tooltip:GetItem()
   if not name or not link then return end
-  if scannerTooltip.lastTime ~= GetTime() or scannerTooltip.lastLink ~= link then return end -- TODO: also use a frame counter
+  if scannerTooltip.lastTime ~= GetTime() or scannerTooltip.lastLink ~= link then return end
   
   scannerTooltip.updates = scannerTooltip.updates + 1
   if scannerTooltip.isRecipe and scannerTooltip.updates % 2 == 1 then return end

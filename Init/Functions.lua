@@ -366,8 +366,6 @@ do
   
   
   function Addon:CoverSpecialCharacters(text)
-    -- TODO: handle UI escape sequences here? or bypass and handle elsewhere?
-    -- return self:ChainGsub(text, {"|3%-%d+%(%%s%)", "%%s"}, {"%p", "%%%0"})
     return self:ChainGsub(text, {"%p", "%%%0"})
   end
   function Addon:UncoverSpecialCharacters(text)

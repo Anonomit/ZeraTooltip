@@ -39,7 +39,6 @@ function Addon:RewordLine(tooltip, line, tooltipData)
   
   local text = line.textLeftText
   
-  -- TODO: config options for indenting negative stats
   if self:GetOption("cache", "enabled") and self:GetOption("cache", "text") and textCache[line.type] and textCache[line.type][line.textLeftText] then
     text, line.rewordRight = unpack(textCache[line.type][line.textLeftText], 1, 2)
   else
@@ -110,7 +109,6 @@ function Addon:RewordLine(tooltip, line, tooltipData)
               end
               text = strGsub(text, input, output)
               break
-              -- TODO: break again possibly? decide if I want to allow chain matching
             end
           end
         end
@@ -122,15 +120,9 @@ function Addon:RewordLine(tooltip, line, tooltipData)
       -- some other addon is modifying tooltip text
       
       -- RatingBuster compatibility
-      -- TODO: make sure to hook after RatingBuster? optional dependency would work. or I could do the same as with InspectFrame
-      -- TODO: ensure compatibility with old versions of ratingbuster?
       if RatingBuster and RatingBuster.ProcessLine then
-        -- TODO: warning in case ratingbuster isn't updated?
         text = RatingBuster:ProcessLine(text) or text
       end
-      
-      -- TODO: LittleBuster compatibility? will have to download and look at it
-      
     end
     
     -- swap in localized nickname, fix prefix

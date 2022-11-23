@@ -272,9 +272,8 @@ function Addon:ConstructTooltip(tooltip, constructor)
   end
   
   if addedExtraLine or constructor.lastLine ~= numLines and constructor.numLines == tooltip:NumLines() then
-    -- the last tooltip line is not positioned at the end. this should only happen if no lines have been added yet by any addon
-    -- in this case, final padding must be abandoned. this causes bad padding only if another addon adds a line after this
-    -- TODO: it is probably possible to fix this by hooking AddLine and AddDoubleLine
+    -- the last tooltip line is not positioned at the end
+    -- create another line and hide it behind the second to last line by appearance
     FakeoutLastLine(fullDestructor, halfDestructor, tooltip, lastFrame, true)
   end
   

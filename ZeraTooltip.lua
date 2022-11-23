@@ -127,7 +127,7 @@ function Addon:OnEnable()
   end
   self:CreateOptions()
   
-  self:HookTooltips() -- TODO: delay hooking to make sure I'm last?
+  self:HookTooltips()
   
   -- fix some blizzard addons not respecting tooltip.updateTooltip
   self.addonLoadHooks = {}

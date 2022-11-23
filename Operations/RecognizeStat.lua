@@ -68,16 +68,12 @@ function Addon:RecognizeStat(line)
     end
   end
   
-  if line.statHint and false then
-    -- TODO: could this be reimplemented to save a bit of pattern matching?
-  else
-    for stat, StatInfo in pairs(self.statsInfo) do
-      local normalForm = StatInfo.ConvertToNormalForm and StatInfo:ConvertToNormalForm(text)
-      if normalForm then
-        line.stat       = stat
-        line.normalForm = normalForm
-        break
-      end
+  for stat, StatInfo in pairs(self.statsInfo) do
+    local normalForm = StatInfo.ConvertToNormalForm and StatInfo:ConvertToNormalForm(text)
+    if normalForm then
+      line.stat       = stat
+      line.normalForm = normalForm
+      break
     end
   end
   

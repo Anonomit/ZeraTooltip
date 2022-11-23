@@ -74,7 +74,7 @@ local TooltipList = {
 		"GameTooltip",
 		"ItemRefTooltip",
 		"ShoppingTooltip",
-    -- "ItemSocketingDescription", -- TODO: make this work
+    -- "ItemSocketingDescription",
 		-- -- EquipCompare support
 		-- "ComparisonTooltip",
 		-- -- EQCompare support

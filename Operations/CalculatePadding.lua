@@ -113,10 +113,6 @@ function Addon:CalculatePadding(tooltipData)
   end
   
   -- pad last line
-  -- note that there are some cases where this will not work
-  -- I could maybe fix those by hooking AddLine and AddDoubleLine
-  -- I would need to add the padding after some other addon adds a line
-  -- TODO: investigate this
   if self:GetOption"padLastLine" then
     local lastLine = tooltipData[#tooltipData]
     if lastLine.type ~= "Padding" or not lastLine.used then
