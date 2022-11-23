@@ -1,7 +1,7 @@
 ## Interface: 30400
 ## Interface-Wrath: 30400
 ## Interface-Classic: 11403
-## Version: 2.3.0
+## Version: 2.4.0
 
 ## X-Curse-Project-ID: 533049
 ## X-Wago-ID: Qb6mJ1KP
@@ -12,8 +12,8 @@
 
 ## SavedVariables: ZeraTooltipDB
 
-## OptionalDeps: Ace3
-## X-Embeds: Ace3
+## OptionalDeps: Ace3, SemVer, RatingBuster
+## X-Embeds: Ace3, SemVer
 
 
 _addon.xml

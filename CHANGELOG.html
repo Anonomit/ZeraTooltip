@@ -1,15 +1,30 @@
-<h2>2.3.0</h2>
+<h2>2.4.0</h2>
 <p>&nbsp;</p>
 <p><strong>New Features</strong></p>
 <ul>
-<li>Heroic tag now shows on ALL items which originally had the line in Wrath. This is enabled by default.</li>
-<li>Item level can now be shown on equippable items. It also shows on tokens (up to Uluar so far) which reflects the level of items provided. This is enabled by default.</li>
-<li>"Will receive enchantment" lines on items in trade window now appear in the regular enchantment location. Why does Blizzard want to put them in between the gems and the socket bonus?</li>
+<li>Enchantments that add a usable effect (such as engineering tinkers) are now fully supported, and can be customized separately from regular enchantments.</li>
+<li>Item Level can now be shown on all items. It can also be reordered to appear lower in the tooltip and use the full 'Item Level' text (like in original Wrath).</li>
+<li>The Chance on Hit prefix (as seen on many weapons from Onyxia) may now be customized.</li>
+<li>Socket Hint (the line that tells you what buttons to press to socket an item) can now be reordered to appear immediately after the socket lines.</li>
 </ul>
 <p>&nbsp;</p>
 <p><strong>Changes</strong></p>
 <ul>
-<li>Level requirement "Max Level" option now checks that both your character is max level, and the item requires max level. Both are necessary for the line to be hidden.</li>
-<li>Cache can now be disabled. This feature increases performance, but can increase the frequency of tooltips loading incorrectly. This is disabled by default.</li>
-<li>Version number is more visible in options, and available with <strong>/zt version</strong>.</li>
+<li>Options menu now has more tooltips to explain the different settings.</li>
+<li>Bonus Effects (Secondary stats that aren't actual stats, such as custom Equip or Use lines) have had their recoloring disabled by default.</li>
+<li>Modified token item levels for the Ulduar changes.</li>
+<li>Added a couple more miscellaneous rewords.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Fixes</strong></p>
+<ul>
+<li>Hiding a stat no longer hides socket or set bonuses containing only that stat.</li>
+<li>Fixed socket padding for items without a socket bonus (due to Eternal Belt Buckle).</li>
+<li>Required Classes line now respects the global recoloring option.</li>
+<li>Heroic and Item Level lines should now appear in the correct spot when comparing items.</li>
+<li>Fixed an error related to Heroic and Item Level lines when no other addons were adding lines to the tooltip.</li>
+<li>Set bonuses on crafted items should now be recognized.</li>
+<li>Fixed negative stats appearing to be positive ...again.</li>
+<li>Refundable and Tradeable options are now situated at the very bottom of the config panel, similar to how they are positioned on a tooltip.</li>
+<li>Padding at the end of the tooltip should hopefully be more consistent.</li>
 </ul>
