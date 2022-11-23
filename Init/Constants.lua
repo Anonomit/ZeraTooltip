@@ -522,16 +522,13 @@ do
       end
     end
     if expacs[Addon.expansionLevel] then
-      local normalName     = data[5]
-      -- local function ReorderByLocale() return GetLocaleStatFormat(reorderLocaleMode, normalName) end
-      -- local normalPattern  = GetLocaleStatFormat(normalName)
+      local normalName = data[5]
       
-      local tooltipPattern = data[6]
-      local tooltipPattern2 = strGsub(strGsub(tooltipPattern, "%%c", "%%s"), "%%d", "%%s")
+      local tooltipPattern  = data[6]
+      local tooltipPattern2 = Addon:ChainGsub(tooltipPattern, {"%%c", "%%d", "%%s"})
       
-      local tooltipColor   = data[7]
-      
-      local color   = data[8]
+      local tooltipColor = data[7]
+      local color        = data[8]
       
       Addon.statsInfo[stat] = {}
       local StatInfo = Addon.statsInfo[stat]
@@ -543,23 +540,17 @@ do
       local reorderLocaleMode = isBaseStat and "%s%s" or "+%s"
       
       
-      
-      
-      
-      
       local normalNameReplacePattern = Addon:CoverSpecialCharacters(normalName)
       
       local normalFormPattern  = GetLocaleStatFormat(isBaseStat and "%1$s%2$s" or "+%1$s", normalName)
       local normalFormCapture  = strGsub(Addon:ReversePattern(GetLocaleStatFormat(isBaseStat and "%c%s" or "+%s", normalName)), "%$", "%%.?%0")
       local normalFormPattern2 = GetLocaleStatFormat(isBaseStat and "%s%s" or "+%s", normalName)
-      -- local aliasPattern = 
-      
       
       
       local function ApplyMod(text, normalForm)
         local match1, match2 = strMatch(normalForm, normalFormCapture)
         local origStrNumber = match1 .. (match2 or "")
-        local strNumber, percent = strMatch(origStrNumber, "(%d+)(%%?)")
+        local strNumber, percent = strMatch(origStrNumber, "(%-?%d+)(%%?)")
         if DECIMAL_SEPERATOR ~= "." then
           strNumber = strGsub(strNumber, "%"..DECIMAL_SEPERATOR, ".")
         end
