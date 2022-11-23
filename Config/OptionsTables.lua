@@ -1298,7 +1298,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
   -- Prefixes
   for _, data in ipairs{
     {"Equip",       ITEM_SPELL_TRIGGER_ONEQUIP},
-    -- {"ChanceOnHit", ITEM_SPELL_TRIGGER_ONPROC},
+    {"ChanceOnHit", ITEM_SPELL_TRIGGER_ONPROC},
     {"Use",         ITEM_SPELL_TRIGGER_ONUSE},
   } do
     local stat   = data[1]
