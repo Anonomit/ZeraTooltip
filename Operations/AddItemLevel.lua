@@ -15,6 +15,85 @@ local invTypeBlacklist = Addon:MakeLookupTable{"", "INVTYPE_BAG", "INVTYPE_TABAR
 local tokenOverrides = {}
 
 for ids, ilvl in pairs({
+  [{18665, 18646}] = 75, -- Benediction / Anathema
+  [{18703, 18704, 18705}] = 75, -- Lok'delar, Rhok'delar, Lamina
+  [{17204}] = 80, -- Sulfuras
+  [{18563, 18564}] = 80, -- Thunderfury
+  
+  [{18422, 18423}] = 74, -- Head of Onyxia
+  
+  [{19002, 19003}] = 83, -- Head of Nefarian
+  
+  [{19721}] = 61, -- Primal Hakkari Shawl
+  [{19724}] = ({
+    [3] = 68,
+    [4] = 65,
+    [5] = 68,
+  })[Addon.MY_CLASS], -- Primal Hakkari Aegis
+  [{19723}] = 65, -- Primal Hakkari Kossack
+  [{19722}] = 65, -- Primal Hakkari Tabard
+  [{19717}] = 61, -- Primal Hakkari Armsplint
+  [{19716}] = 61, -- Primal Hakkari Bindings
+  [{19718}] = 61, -- Primal Hakkari Stanchion
+  [{19719}] = 61, -- Primal Hakkari Girdle
+  [{19720}] = 61, -- Primal Hakkari Sash
+  
+  [{19939, 19940, 19941, 19942, 19819, 19820, 19818, 19814, 19821, 19816, 19817, 19813, 19815}] = 65, -- ZG Trinkets
+  
+  [{19802}] = 68, -- Heart of Hakkar
+  
+  [{20888}] = 65, -- Qiraji Ceremonial Ring
+  [{20884}] = 65, -- Qiraji Magisterial Ring
+  [{20885}] = 67, -- Qiraji Martial Drape
+  [{20889}] = 67, -- Qiraji Regal Drape
+  [{20890}] = 70, -- Qiraji Ornate Hilt
+  [{20886}] = 70, -- Qiraji Spiked Hilt
+  
+  [{20220}] = 70, -- Head of Ossirian the Unscarred
+  
+  [{21237}] = 79, -- Imperial Qiraji Regalia
+  [{21232}] = 79, -- Imperial Qiraji Armaments
+  [{21232}] = ({
+    [1] = 78,
+    [4] = 78,
+    [5] = 78,
+  })[Addon.MY_CLASS], -- Qiraji Bindings of Command
+  [{21232}] = 78, -- Qiraji Bindings of Dominance
+  
+  [{20930, 20926}] = 81, -- Vek'lor's Diadem, Vek'nilash's Circlet
+  [{20927, 20931}] = 81, -- Ouro's Intact Hide, Skin of the Great Sandworm
+  [{20929, 20933}] = 88, -- Carapace of the Old God, Husk of the Old God
+  
+  [{21221}] = 88, -- Eye of C'Thun
+  
+  [{22726, 22727, 22724, 22733}] = 90, -- Atiesh
+  
+  [{22369, 22362, 22355}] = 88, -- T3 Bracers
+  [{22371, 22364, 22357}] = 88, -- T3 Gloves
+  [{22370, 22363, 22356}] = 88, -- T3 Belts
+  [{22366, 22359, 22352}] = 88, -- T3 Legs
+  [{22372, 22365, 22358}] = 86, -- T3 Shoes
+  [{22351, 22350, 22349}] = 92, -- T3 Chests
+  [{22368, 22361, 22354}] = 86, -- T3 Shoulders
+  [{22367, 22360, 22353}] = 88, -- T3 Heads
+  
+  [{22520}] = 90, -- The Phylactery of Kel'Thuzad
+  
+  
+  
+  [{29757, 29758, 29756, 29760, 29761, 29759, 29763, 29764, 29762, 29766, 29767, 29765, 29754, 29753, 29755}] = 120, -- T4
+  
+  [{32385, 32386}] = 125, -- Magtheridon's Head
+  
+  [{30239, 30240, 30241, 30245, 30246, 30247, 30242, 30243, 30244, 30248, 30249, 30250, 30236, 30237, 30238}] = 133, -- T5
+  
+  [{32405}] = 138, -- Verdant Sphere
+  
+  [{31092, 31094, 31093, 31097, 31095, 31096, 31101, 31103, 31102, 31098, 31100, 31099, 31089, 31091, 31090}] = 146, -- T6 BT/Hyjal
+  [{34848, 34851, 34852, 34853, 34854, 34855, 34856, 34857, 34858}] = 154, -- T6 SWP
+  
+  
+  
   [{40610, 40611, 40612, 40613, 40614, 40615, 40616, 40617, 40618, 40619, 40620, 40621, 40622, 40623, 40624}] = 200, -- T7 10
   [{40625, 40626, 40627, 40628, 40629, 40630, 40631, 40632, 40633, 40634, 40635, 40636, 40637, 40638, 40639}] = 213, -- T7 25
   [{44569}] = 213, -- Key to the Focusing Iris 10
