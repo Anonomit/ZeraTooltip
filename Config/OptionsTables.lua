@@ -1117,14 +1117,6 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
         
         GUI:CreateToggle(opts, {"speedBar", "speedPrefix"}, L["Show Speed"], nil, disabled)
         CreateReset(opts, {"speedBar", "speedPrefix"})
-        GUI:CreateNewline(opts)
-        
-        local option = GUI:CreateInput(opts, {"speedBar", "fillChar"} , L["Fill Character"], L["Character to use for filled section of the speed bar."], nil, disabled)
-        CreateReset(opts, {"speedBar", "fillChar"})
-        GUI:CreateNewline(opts)
-        
-        local option = GUI:CreateInput(opts, {"speedBar", "blankChar"}, L["Blank Character"], L["Character to use for empty section of the speed bar."], nil, disabled)
-        CreateReset(opts, {"speedBar", "blankChar"})
       end
       
       do
@@ -1135,7 +1127,9 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
         local option = GUI:CreateRange(opts, {"speedBar", "max"}, self.L["Maximum"], L["Slowest speed on the speed bar."], self:GetDefaultOption("speedBar", "min"), self:GetDefaultOption("speedBar", "max"), 0.1, disabled)
         option.set = function(info, val) self:SetOption(val, "speedBar", "max") self:SetOption(mathMin(val, self:GetOption("speedBar", "min")), "speedBar", "min") end
         GUI:CreateNewline(opts)
-        GUI:CreateRange(opts, {"speedBar", "size"}, self.L["Frame Width"], L["Width of the speed bar."], 0, 30, 1, disabled)
+        local option = GUI:CreateRange(opts, {"speedBar", "size"}, self.L["Frame Width"], L["Width of the speed bar."], 1, 1000, 1, disabled)
+        option.softMin = 10
+        option.softMax = 50
         CreateReset(opts, {"speedBar", "size"}, func)
       end
       

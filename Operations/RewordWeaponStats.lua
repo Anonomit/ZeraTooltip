@@ -96,15 +96,16 @@ function Addon:ModifyWeaponSpeedbar(speed, speedString, speedStringFull)
     local min       = self:GetOption("speedBar", "min")
     local max       = self:GetOption("speedBar", "max")
     local size      = self:GetOption("speedBar", "size")
-    local fillChar  = self:GetOption("speedBar", "fillChar")
-    local blankChar = self:GetOption("speedBar", "blankChar")
+    local fillChar  = self:MakeIcon(self.speedbarFillIconPath, nil, 0.25, color)
+    local blankChar = self.speedbarEmptyIcon
     local showSpeed = self:GetOption("speedBar", "speedPrefix") and self:ModifyWeaponSpeed(speedStringFull, speed, speedString) or nil
     local delta     = max - min
+    local color     = self:GetOption("allow", "recolor") and self:GetOption("doRecolor", stat) and self:GetOption("color", stat) or nil
     
     local fill = self:Clamp(0, self:Round((speed - min) / delta * size, 1), size)
     local bar = ("[%s%s]"):format(strRep(fillChar, fill), strRep(blankChar, size - fill))
-    if self:GetOption("allow", "recolor") and self:GetOption("doRecolor", stat) then
-      bar = self:MakeColorCode(self:GetOption("color", stat), bar)
+    if color then
+      bar = self:MakeColorCode(color, bar)
     end
     if showSpeed then
       if self:GetOption("allow", "recolor") and self:GetOption("doRecolor", "Speed") then

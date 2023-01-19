@@ -98,9 +98,7 @@ function Addon:MakeDefaultOptions()
         speedBar = {
           min         = 1.2,
           max         = 4,
-          size        = 15,
-          fillChar    = "I",
-          blankChar   = " ",
+          size        = 20,
           speedPrefix = false,
         },
         durability = {

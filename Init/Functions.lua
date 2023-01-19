@@ -374,11 +374,18 @@ do
   
   
   
-  function Addon:MakeIcon(texture, size)
-    return "|T" .. texture .. ":" .. tostring(size or "0") .. "|t"
+  function Addon:MakeIcon(texture, height, width, hex)
+    local tex = "|T" .. texture .. ":" .. tostring(height or "0") .. ":"
+    if width then
+      tex = tex .. width
+    end
+    if hex then
+      tex = tex .. format(":::1:1:0:1:0:1:%d:%d:%d", self:ConvertHexToRGB(hex))
+    end
+    return tex .. "|t"
   end
   function Addon:UnmakeIcon(texture)
-    return self:ChainGsub(texture, {"^|T", ":%d+|t$", ""})
+    return self:ChainGsub(texture, {"^|T", ":[%d%.]+|t$", ""})
   end
   
   function Addon:InsertIcon(text, stat, customTexture)
@@ -413,6 +420,9 @@ do
     return self:ConvertColorFromBlizzard(frame:GetTextColor())
   end
   
+  function Addon:ConvertHexToRGB(hex)
+    return tonumber(strSub(hex, 1, 2), 16), tonumber(strSub(hex, 3, 4), 16), tonumber(strSub(hex, 5, 6), 16), 1
+  end
   function Addon:ConvertColorToBlizzard(hex)
     return tonumber(strSub(hex, 1, 2), 16) / 255, tonumber(strSub(hex, 3, 4), 16) / 255, tonumber(strSub(hex, 5, 6), 16) / 255, 1
   end

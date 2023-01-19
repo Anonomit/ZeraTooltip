@@ -139,13 +139,13 @@ do
     "King Kong",
     "Kirby",
     "Mal'Ganis",
-    "Nova",
-    "Princess Peach",
     -- "Microsoft",
     "Mickey Mouse",
     "Muradin",
     "Nefarion",
+    "Nova",
     "Onyxia",
+    "Princess Peach",
     "Rexxar",
     "Santa",
     "Scooby Doo",
@@ -664,8 +664,10 @@ end
 --  ╚═╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
 
 do
-  Addon.stealthIcon = Addon:MakeIcon"132320"
-  Addon.socketIcon  = Addon:MakeIcon"Interface\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-META"
+  Addon.stealthIcon          = Addon:MakeIcon"132320"
+  Addon.socketIcon           = Addon:MakeIcon"Interface\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-META"
+  Addon.speedbarEmptyIcon    = Addon:MakeIcon("Interface\\AddOns\\" .. ADDON_NAME .. "\\Assets\\Textures\\Speedbar_transparent", nil, 0.25)
+  Addon.speedbarFillIconPath = "Interface\\AddOns\\" .. ADDON_NAME .. "\\Assets\\Textures\\Speedbar"
   
   Addon.iconPaths = {
     "Interface\\AddOns\\" .. ADDON_NAME .. "\\Assets\\Textures\\Samwise",
