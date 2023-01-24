@@ -8,6 +8,7 @@ local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 
 
 local strLower  = string.lower
+local strMatch  = string.match
 local strSub    = string.sub
 local strGsub   = string.gsub
 local strGmatch = string.gmatch
@@ -374,6 +375,14 @@ do
   
   
   
+  function Addon:MakeAtlas(atlas, height, width, hex)
+    height = tostring(height or "0")
+    local tex = "|A:" .. atlas .. ":" .. height .. ":" .. tostring(width or height)
+    if hex then
+      tex = tex .. format(":::%d:%d:%d", self:ConvertHexToRGB(hex))
+    end
+    return tex .. "|a"
+  end
   function Addon:MakeIcon(texture, height, width, hex)
     local tex = "|T" .. texture .. ":" .. tostring(height or "0") .. ":"
     if width then
@@ -393,7 +402,16 @@ do
       if self:GetOption("iconSpace", stat) then
         text = " " .. text
       end
-      text = self:MakeIcon(customTexture or self:GetOption("icon", stat), self:GetOption("iconSizeManual", stat) and self:GetOption("iconSize", stat) or 0) .. text
+      text = self:MakeIcon(customTexture or self:GetOption("icon", stat), self:GetOption("iconSizeManual", stat) and self:GetOption("iconSize", stat) or nil) .. text
+    end
+    return text
+  end
+  function Addon:InsertAtlas(text, stat, customTexture)
+    if self:GetOption("doIcon", stat) then
+      if self:GetOption("iconSpace", stat) then
+        text = " " .. text
+      end
+      text = self:MakeAtlas(customTexture or self:GetOption("icon", stat), self:GetOption("iconSizeManual", stat) and self:GetOption("iconSize", stat) or nil) .. text
     end
     return text
   end
@@ -430,6 +448,9 @@ do
     frame:SetTextColor(self:ConvertColorToBlizzard(hex))
   end
   
+  function Addon:TrimAlpha(hex)
+    return strMatch(hex, "%x?%x?(%x%x%x%x%x%x)") or hex
+  end
   function Addon:MakeColorCode(hex, text)
     return format("|cff%s%s%s", hex, text or "", text and "|r" or "")
   end

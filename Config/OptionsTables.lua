@@ -32,8 +32,8 @@ local mathMax   = math.max
 --  ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝╚══════╝
 
 
-local function CreateReset(opts, option, func)
-  Addon.GUI:CreateExecute(opts, {"reset", unpack(option)}, Addon.L["Reset"], nil, func or function() Addon:ResetOption(unpack(option)) end).width = 0.6
+local function CreateReset(opts, option, func, disabled)
+  Addon.GUI:CreateExecute(opts, {"reset", unpack(option)}, Addon.L["Reset"], nil, func or function() Addon:ResetOption(unpack(option)) end, disabled).width = 0.6
 end
 local function CreateCombineStatsOption(opts)
   Addon.GUI:CreateToggle(opts, {"combineStats"}, L["Group Secondary Stats with Base Stats"], L["Move secondary effects (such as Attack Power and Spell Power), up to where the base stats (such as Stamina) are located."], not Addon:GetOption("allow", "reorder")).width = 2
@@ -542,24 +542,26 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
     
     CreateTitle(opts, defaultText, formattedText, changed)
     
-    local opts = GUI:CreateGroupBox(opts, self.L["Icon"])
-    
-    local disabled = not self:GetOption("allow", "reword")
-    GUI:CreateToggle(opts, {"doIcon", stat}, self.L["Icon"], nil, disabled).width = 0.6
-    CreateReset(opts, {"doIcon", stat}, function() self:ResetOption("doIcon", stat) end)
-    GUI:CreateNewline(opts)
-    
-    local disabled = disabled or not self:GetOption("doIcon", stat)
-    GUI:CreateToggle(opts, {"iconSizeManual", stat}, self.L["Manual"], nil, disabled).width = 0.6
-    local option = GUI:CreateRange(opts, {"iconSize", stat}, L["Icon Size"], nil, 0, 96, 1, disabled or not self:GetOption("iconSizeManual", stat))
-    option.width = 0.7
-    option.softMin = 8
-    option.softMax = 32
-    CreateReset(opts, {"iconSize", stat}, function() self:ResetOption("iconSize", stat) end)
-    GUI:CreateNewline(opts)
-    
-    GUI:CreateToggle(opts, {"iconSpace", stat}, L["Icon Space"], nil, disabled).width = 0.7
-    CreateReset(opts, {"iconSpace", stat}, function() self:ResetOption("iconSpace", stat) end)
+    do
+      local opts = GUI:CreateGroupBox(opts, self.L["Icon"])
+      
+      local disabled = not self:GetOption("allow", "reword")
+      GUI:CreateToggle(opts, {"doIcon", stat}, self.L["Icon"], nil, disabled).width = 0.6
+      CreateReset(opts, {"doIcon", stat}, function() self:ResetOption("doIcon", stat) end)
+      GUI:CreateNewline(opts)
+      
+      local disabled = disabled or not self:GetOption("doIcon", stat)
+      GUI:CreateToggle(opts, {"iconSizeManual", stat}, self.L["Manual"], nil, disabled).width = 0.6
+      local option = GUI:CreateRange(opts, {"iconSize", stat}, L["Icon Size"], nil, 0, 96, 1, disabled or not self:GetOption("iconSizeManual", stat))
+      option.width = 0.7
+      option.softMin = 8
+      option.softMax = 32
+      CreateReset(opts, {"iconSize", stat}, function() self:ResetOption("iconSize", stat) end)
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"iconSpace", stat}, L["Icon Space"], nil, disabled).width = 0.7
+      CreateReset(opts, {"iconSpace", stat}, function() self:ResetOption("iconSpace", stat) end)
+    end
   end
   GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
   
@@ -706,15 +708,12 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       
       for i, sample in ipairs(self.sampleRequiredClassesStrings) do
         local defaultText = sample
-        local formattedText = defaultText
+        local formattedText = self:ModifyRequiredClasses(defaultText)
         local changed
         if self:GetOption("hide", stat) then
-          formattedText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, strGsub(formattedText, "|c%x%x%x%x%x%x%x%x", ""))
-          changed = true
-        elseif self:GetOption("allow", "recolor") and self:GetOption("doRecolor", stat) then
-          formattedText = self:ChainGsub(formattedText, unpack(self.classColorReplacements))
-          changed = true
+          formattedText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, self:StripColorCode(formattedText))
         end
+        changed = formattedText ~= defaultText
         
         if i == 1 then
           GUI:CreateDescription(opts, (changed or self:GetOption("hide", "myClass")) and self.L["Current"] or " ", "small")
@@ -725,15 +724,13 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
         end
       end
       
-      local formattedText = self.myClassString
+      local defaultText = self.myClassString
+      local formattedText = self:ModifyRequiredClasses(defaultText)
       local changed
       if self:GetOption("hide", stat) or self:GetOption("hide", "myClass") then
-        formattedText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, formattedText)
-        changed = true
-      elseif self:GetOption("doRecolor", stat) then
-        formattedText = self:ChainGsub(formattedText, unpack(self.classColorReplacements))
-        changed = true
+        formattedText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, self:StripColorCode(formattedText))
       end
+      changed = formattedText ~= defaultText
       GUI:CreateDescription(opts, changed and formattedText or " ")
     end
     opts.name = name
@@ -745,7 +742,40 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       
       local disabled = not self:GetOption("allow", "recolor")
       GUI:CreateToggle(opts, {"doRecolor", stat}, self.L["Show Class Color"], nil, disabled).width = 1
-      CreateReset(opts, {"doRecolor", stat})
+      CreateReset(opts, {"doRecolor", stat}, disabled)
+    end
+    
+    do
+      local opts = GUI:CreateGroupBox(opts, self.L["Rename"])
+      
+      local disabled = disabled or not self:GetOption("allow", "reword")
+      GUI:CreateToggle(opts, {"doReword", stat}, self.L["Enable"], nil, disabled or not self:GetOption("doIcon", stat)).width = 0.6
+      CreateReset(opts, {"reword", stat}, function() self:ResetOption("doReword", stat) end, disabled or not self:GetOption("doIcon", stat))
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"trimPunctuation", stat}, self.L["Minimize"], nil, disabled).width = 0.6
+      CreateReset(opts, {"trimPunctuation", stat}, function() self:ResetOption("trimPunctuation", stat) end, disabled)
+    end
+    
+    do
+      local opts = GUI:CreateGroupBox(opts, self.L["Icon"])
+      
+      local disabled = not self:GetOption("allow", "reword")
+      GUI:CreateToggle(opts, {"doIcon", stat}, self.L["Icon"], nil, disabled or self:GetOption("doReword", stat)).width = 0.6
+      CreateReset(opts, {"doIcon", stat}, function() self:ResetOption("doIcon", stat) end, disabled or self:GetOption("doReword", stat))
+      GUI:CreateNewline(opts)
+      
+      local disabled = disabled or not self:GetOption("doIcon", stat)
+      GUI:CreateToggle(opts, {"iconSizeManual", stat}, self.L["Manual"], nil, disabled).width = 0.6
+      local option = GUI:CreateRange(opts, {"iconSize", stat}, L["Icon Size"], nil, 0, 96, 1, disabled or not self:GetOption("iconSizeManual", stat))
+      option.width = 0.7
+      option.softMin = 8
+      option.softMax = 32
+      CreateReset(opts, {"iconSize", stat}, function() self:ResetOption("iconSize", stat) end)
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"iconSpace", stat}, L["Icon Space"], nil, disabled).width = 0.7
+      CreateReset(opts, {"iconSpace", stat}, function() self:ResetOption("iconSpace", stat) end)
     end
     
     do

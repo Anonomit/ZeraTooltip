@@ -37,15 +37,16 @@ function Addon:MakeDefaultOptions()
         doReword = {
           ["*"]              = true,
           ItemLevel          = false,
-          Refundable         = false,
-          SoulboundTradeable = false,
           Enchant            = false,
           WeaponEnchant      = false,
           EnchantOnUse       = false,
           Durability         = false,
+          RequiredClasses    = false,
           Equip              = false,
           ChanceOnHit        = false,
           Use                = false,
+          Refundable         = false,
+          SoulboundTradeable = false,
         },
         reword = {
           ["*"] = "",
@@ -109,12 +110,16 @@ function Addon:MakeDefaultOptions()
         trimSpace = {
           ["*"] = true,
         },
+        trimPunctuation = {
+          ["*"] = false,
+        },
         doIcon = {
-          ["*"]         = false,
-          Title         = true,
-          Enchant       = true,
-          EnchantOnUse  = false,
-          WeaponEnchant = true,
+          ["*"]           = false,
+          Title           = true,
+          Enchant         = true,
+          EnchantOnUse    = false,
+          WeaponEnchant   = true,
+          RequiredClasses = true,
         },
         icon = {
           ["*"]          = "Interface\\AddOns\\" .. ADDON_NAME .. "\\Assets\\Textures\\Samwise",
@@ -140,7 +145,8 @@ function Addon:MakeDefaultOptions()
           Title = 24,
         },
         iconSpace = {
-          ["*"] = true,
+          ["*"]           = true,
+          RequiredClasses = false,
         },
         
         pad = {

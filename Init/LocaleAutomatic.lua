@@ -81,6 +81,7 @@ L["Minimum"]           = MINIMUM
 L["Maximum"]           = MAXIMUM
 L["Frame Width"]       = COMPACT_UNIT_FRAME_PROFILE_FRAMEWIDTH
 L["Show Class Color"]  = SHOW_CLASS_COLOR
+L["Minimize"]          = MINIMIZE
 
 L["Icon"]            = EMBLEM_SYMBOL
 L["Choose an Icon:"] = MACRO_POPUP_CHOOSE_ICON

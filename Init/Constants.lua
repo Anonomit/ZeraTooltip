@@ -240,7 +240,9 @@ do
   
   Addon.sampleRequiredClassesString = format("%s" .. ITEM_CLASSES_ALLOWED, "", table.concat({C_CreatureInfo.GetClassInfo(5).className, C_CreatureInfo.GetClassInfo(9).className, C_CreatureInfo.GetClassInfo(2).className}, ", "))
   
-  Addon.classColorReplacements = {}
+  Addon.classNames        = {}
+  Addon.classNamesColored = {}
+  Addon.classIconAtlases  = {}
   
   -- WARRIOR, PALADIN, HUNTER, ROGUE, PRIEST, DEATHKNIGHT, SHAMAN, MAGE, WARLOCK, MONK, DRUID, DEMONHUNTER
   local ID = {}
@@ -249,7 +251,10 @@ do
     if classInfo then
       ID[classInfo.classFile] = classInfo.classID
       
-      table.insert(Addon.classColorReplacements, {" " .. classInfo.className, "|c" .. select(4, GetClassColor(classInfo.classFile)) .. "%0|r"})
+      local matcher = "%f[%w%s] " .. classInfo.className
+      Addon.classNames[matcher]        = classInfo.className
+      Addon.classNamesColored[matcher] = Addon:MakeColorCode(Addon:TrimAlpha(select(4, GetClassColor(classInfo.classFile))), classInfo.className)
+      Addon.classIconAtlases[matcher]  = "groupfinder-icon-class-" .. classInfo.classFile:lower()
     end
   end
   
@@ -668,6 +673,8 @@ do
   Addon.socketIcon           = Addon:MakeIcon"Interface\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-META"
   Addon.speedbarEmptyIcon    = Addon:MakeIcon("Interface\\AddOns\\" .. ADDON_NAME .. "\\Assets\\Textures\\Speedbar_transparent", nil, 0.25)
   Addon.speedbarFillIconPath = "Interface\\AddOns\\" .. ADDON_NAME .. "\\Assets\\Textures\\Speedbar"
+  
+  Addon.classIconsPath = "Interface\\GLUES\\CHARACTERCREATE\\UI-CHARACTERCREATE-CLASSES"
   
   Addon.iconPaths = {
     "Interface\\AddOns\\" .. ADDON_NAME .. "\\Assets\\Textures\\Samwise",
