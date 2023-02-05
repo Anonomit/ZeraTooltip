@@ -5,6 +5,7 @@ local ADDON_NAME, Data = ...
 local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 
 
+local strMatch  = string.match
 local strGsub   = string.gsub
 
 local tinsert   = table.insert
@@ -177,6 +178,13 @@ local function OnTooltipItemMethod(tooltip, methodName, ...)
   end
 end
 
+ -- works on uncached itemlinks
+local function DoLinksMatch(link1, link2)
+  if link1 == link2 then return true end
+  if not link1 or not link2 then return false end
+  return strMatch(link1, "|Hitem:([:%-%w]+)|h") == strMatch(link2, "|Hitem:([:%-%w]+)|h")
+end
+
 local function OnTooltipSetItem(tooltip)
   local self = Addon
   if not self:IsHookEnabled() then return end
@@ -184,7 +192,7 @@ local function OnTooltipSetItem(tooltip)
   if not tooltip.GetItem then return end
   local name, link = tooltip:GetItem()
   if not name or not link then return end
-  if scannerTooltip.lastTime ~= GetTime() or scannerTooltip.lastLink ~= link then return end
+  if scannerTooltip.lastTime ~= GetTime() or not DoLinksMatch(scannerTooltip.lastLink, link) then return end
   
   scannerTooltip.updates = scannerTooltip.updates + 1
   if scannerTooltip.isRecipe and scannerTooltip.updates % 2 == 1 then return end
@@ -193,7 +201,6 @@ local function OnTooltipSetItem(tooltip)
     local methodName = scannerTooltip.lastCall[2]
     local args = ConvertArgs(unpack(scannerTooltip.lastCall, 3, scannerTooltip.lastCall.n))
     Addon:Debugf("OnTooltipSetItem: %s:%s(%s) - %s", tooltip:GetName(), methodName, tblConcat({unpack(args, 1, args.n)}, ", "), link)
-    -- Addon:Debug("OnTooltipSetItem", link, tooltip:GetName(), unpack(args, 1, n))
   end
   
   local constructor = self:GetConstructor(tooltip, unpack(scannerTooltip.lastCall, 1, scannerTooltip.lastCall.n))
