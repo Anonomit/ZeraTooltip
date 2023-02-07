@@ -94,4 +94,21 @@ function Addon:GetDebugView(key)
   return self:IsDebugEnabled() and not self:GetOption("debugView", "suppressAll") and self:GetOption("debugView", key)
 end
 
+do
+  local function GetErrorHandler(errFunc)
+    if Addon:IsDebugEnabled() and Addon:GetOption("debugOutput", "luaError") then
+      return function(...)
+        geterrorhandler()(...)
+        if errFunc then
+          Addon:xpcall(errFunc)
+        end
+      end
+    end
+    return nop
+  end
+  function Addon:xpcall(func, errFunc)
+    return xpcall(func, GetErrorHandler(errFunc))
+  end
+end
+
 

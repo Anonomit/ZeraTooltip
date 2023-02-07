@@ -248,23 +248,18 @@ function Addon:ConstructTooltip(tooltip, constructor)
         self:SetTextColorFromHex(rightFrame, recolorRight)
       end
       if dest then
-        local success, err = pcall(function() MoveLine(fullDestructor, halfDestructor, tooltip, tooltipName, frame, source, dest, pad, lastFrame, extraLinesMap) end)
-        if not success then
+        if not self:xpcall(function() MoveLine(fullDestructor, halfDestructor, tooltip, tooltipName, frame, source, dest, pad, lastFrame, extraLinesMap) end, function()
           -- just in case some frame anchoring doesn't work as expected
+          self:DebugData{
+            {"tooltip",    tooltipName},
+            {"source",     source},
+            {"dest",       dest},
+            {"actualDest", extraLinesMap[dest]},
+            {"pad",        pad},
+          }
+        end) then
           table.insert(halfDestructor, 1, function() tooltip:AddDoubleLine(ADDON_NAME, self.L["ERROR"], 1, 0, 0, 1, 0, 0) end)
           self:DestructTooltip(tooltip, halfDestructor)
-          if self:GetOption("debugOutput", "constructorError") then
-            self:DebugData{
-              {"tooltip",    tooltipName},
-              {"source",     source},
-              {"dest",       dest},
-              {"actualDest", extraLinesMap[dest]},
-              {"pad",        pad},
-            }
-            if self:IsDebugEnabled() then
-              geterrorhandler()(err)
-            end
-          end
           return fullDestructor
         end
       end

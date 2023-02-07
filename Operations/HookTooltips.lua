@@ -83,6 +83,20 @@ local function ResetScanner(scannerTooltip, link, methodName, ...)
   scannerTooltip.lengths  = {}
 end
 
+local function GenerateConstructor(tooltip, scannerTooltip, name, link, maxLines)
+  local tooltipData, constructor
+  
+  if Addon:xpcall(function() tooltipData = Addon:ReadTooltip(scannerTooltip, name, link, maxLines) end) then
+    if #tooltipData > 0 then
+      if Addon:xpcall(function() Addon:ModifyTooltipData(tooltip, tooltipData) end) then
+        Addon:xpcall(function() constructor = Addon:CreateConstructor(tooltipData) end)
+      end
+    end
+  end
+  
+  return constructor
+end
+
 local function ConvertArgs(...)
   local args = {n = select("#", ...), ...}
   for i = 1, args.n do
@@ -152,10 +166,9 @@ local function OnTooltipItemMethod(tooltip, methodName, ...)
           if not self:PrepareTooltip(scannerTooltip, methodName, unpack(args, 1, args.n)) then return end
           alreadyPrepped = true
         end
-        local tooltipData = self:ReadTooltip(scannerTooltip, name, link, scannerTooltip.isRecipe and scannerTooltip.lengths[1] or nil)
-        if #tooltipData > 0 then
-          self:ModifyTooltipData(tooltip, tooltipData)
-          constructor = self:CreateConstructor(tooltipData)
+        
+        constructor = GenerateConstructor(tooltip, scannerTooltip, name, link, scannerTooltip.isRecipe and scannerTooltip.lengths[1] or nil)
+        if constructor then
           self:SetConstructor(constructor, tooltip, link, methodName, ...)
         end
       end
@@ -208,10 +221,9 @@ local function OnTooltipSetItem(tooltip)
     if constructor then -- failed validation
       constructor = self:WipeConstructor(tooltip, unpack(scannerTooltip.lastCall, 1, scannerTooltip.lastCall.n))
     end
-    local tooltipData = self:ReadTooltip(scannerTooltip, name, link, scannerTooltip.isRecipe and scannerTooltip.lengths[1] or nil)
-    if #tooltipData > 0 then
-      self:ModifyTooltipData(scannerTooltip.tooltip, tooltipData)
-      constructor = self:CreateConstructor(tooltipData)
+    
+    constructor = GenerateConstructor(scannerTooltip.tooltip, scannerTooltip, name, link, scannerTooltip.isRecipe and scannerTooltip.lengths[1] or nil)
+    if constructor then
       self:SetConstructor(constructor, tooltip, unpack(scannerTooltip.lastCall, 1, scannerTooltip.lastCall.n))
     end
   end

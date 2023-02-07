@@ -1552,6 +1552,9 @@ function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
       
       local disabled = disabled or self:GetOption("debugOutput", "suppressAll")
       
+      GUI:CreateToggle(opts, {"debugOutput", "luaError"}, "Lua Error", nil, disabled).width = 2
+      GUI:CreateNewline(opts)
+      
       GUI:CreateToggle(opts, {"debugOutput", "tooltipMethodHook"}, "Tooltip Method Hook", nil, disabled).width = 2
       GUI:CreateNewline(opts)
       
@@ -1580,9 +1583,6 @@ function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
       GUI:CreateNewline(opts)
       
       GUI:CreateToggle(opts, {"debugOutput", "constructorLineMove"}, "Constructor Moving Line", nil, disabled).width = 2
-      GUI:CreateNewline(opts)
-      
-      GUI:CreateToggle(opts, {"debugOutput", "constructorError"}, "Constructor Error", nil, disabled).width = 2
       GUI:CreateNewline(opts)
       
       GUI:CreateToggle(opts, {"debugOutput", "InterfaceOptionsFrameFix"}, "Interface Options Patch", nil, disabled).width = 2
