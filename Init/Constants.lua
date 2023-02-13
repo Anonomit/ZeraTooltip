@@ -99,6 +99,65 @@ end
 
 
 
+--  ██╗      ██████╗  ██████╗ █████╗ ██╗     ███████╗
+--  ██║     ██╔═══██╗██╔════╝██╔══██╗██║     ██╔════╝
+--  ██║     ██║   ██║██║     ███████║██║     █████╗  
+--  ██║     ██║   ██║██║     ██╔══██║██║     ██╔══╝  
+--  ███████╗╚██████╔╝╚██████╗██║  ██║███████╗███████╗
+--  ╚══════╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝╚══════╝╚══════╝
+
+do
+  Addon.DAMAGE_SCHOOL7 = DAMAGE_SCHOOL7
+  Addon.DAMAGE_SCHOOL3 = DAMAGE_SCHOOL3
+  Addon.DAMAGE_SCHOOL4 = DAMAGE_SCHOOL4
+  Addon.DAMAGE_SCHOOL5 = DAMAGE_SCHOOL5
+  Addon.DAMAGE_SCHOOL6 = DAMAGE_SCHOOL6
+  
+  Addon.ITEM_MOD_STAMINA   = ITEM_MOD_STAMINA
+  Addon.ITEM_MOD_STRENGTH  = ITEM_MOD_STRENGTH
+  Addon.ITEM_MOD_AGILITY   = ITEM_MOD_AGILITY
+  Addon.ITEM_MOD_INTELLECT = ITEM_MOD_INTELLECT
+  Addon.ITEM_MOD_SPIRIT    = ITEM_MOD_SPIRIT
+  
+  local locale = GetLocale()
+  if locale == "esES" then
+    Addon.ITEM_MOD_STAMINA   = ITEM_MOD_STAMINA  :lower()
+    Addon.ITEM_MOD_STRENGTH  = ITEM_MOD_STRENGTH :lower()
+    Addon.ITEM_MOD_AGILITY   = ITEM_MOD_AGILITY  :lower()
+    Addon.ITEM_MOD_INTELLECT = ITEM_MOD_INTELLECT:lower()
+    Addon.ITEM_MOD_SPIRIT    = ITEM_MOD_SPIRIT   :lower()
+  elseif locale == "esMX" then
+    Addon.ITEM_MOD_STAMINA   = Addon:ChainGsub(ITEM_MOD_STAMINA,   {SPELL_STAT3_NAME:lower(), SPELL_STAT3_NAME})
+    Addon.ITEM_MOD_STRENGTH  = Addon:ChainGsub(ITEM_MOD_STRENGTH,  {SPELL_STAT1_NAME:lower(), SPELL_STAT1_NAME})
+    Addon.ITEM_MOD_AGILITY   = Addon:ChainGsub(ITEM_MOD_AGILITY,   {SPELL_STAT2_NAME:lower(), SPELL_STAT2_NAME})
+    Addon.ITEM_MOD_INTELLECT = Addon:ChainGsub(ITEM_MOD_INTELLECT, {SPELL_STAT4_NAME:lower(), SPELL_STAT4_NAME})
+    Addon.ITEM_MOD_SPIRIT    = Addon:ChainGsub(ITEM_MOD_SPIRIT,    {SPELL_STAT5_NAME:lower(), SPELL_STAT5_NAME})
+  elseif locale == "ruRU" then
+    if Addon.isClassic then
+      Addon.DAMAGE_SCHOOL7 = SPELL_SCHOOL6_CAP
+      Addon.DAMAGE_SCHOOL3 = SPELL_SCHOOL2_CAP
+      Addon.DAMAGE_SCHOOL4 = SPELL_SCHOOL3_CAP
+      Addon.DAMAGE_SCHOOL5 = SPELL_SCHOOL4_CAP
+      Addon.DAMAGE_SCHOOL6 = SPELL_SCHOOL5_CAP
+    else
+      Addon.DAMAGE_SCHOOL7 = "тайной магии"
+      Addon.DAMAGE_SCHOOL3 = "огню"
+      Addon.DAMAGE_SCHOOL4 = "силам природы"
+      Addon.DAMAGE_SCHOOL5 = "магии льда"
+      Addon.DAMAGE_SCHOOL6 = "темной магии"
+    end
+  elseif locale == "zhTW" then
+    if Addon.isClassic then
+      Addon.ITEM_MOD_STAMINA   = strGsub(ITEM_MOD_STAMINA  , " ", "", 1)
+      Addon.ITEM_MOD_STRENGTH  = strGsub(ITEM_MOD_STRENGTH , " ", "", 1)
+      Addon.ITEM_MOD_AGILITY   = strGsub(ITEM_MOD_AGILITY  , " ", "", 1)
+      Addon.ITEM_MOD_INTELLECT = strGsub(ITEM_MOD_INTELLECT, " ", "", 1)
+      Addon.ITEM_MOD_SPIRIT    = strGsub(ITEM_MOD_SPIRIT   , " ", "", 1)
+    end
+  end
+end
+
+
 
 --  ███╗   ██╗ █████╗ ███╗   ███╗███████╗███████╗
 --  ████╗  ██║██╔══██╗████╗ ████║██╔════╝██╔════╝
@@ -451,27 +510,19 @@ do
   local ITEM_MOD_HASTE_SPELL_RATING_SHORT = ITEM_MOD_HASTE_SPELL_RATING_SHORT or strGsub(ITEM_MOD_CRIT_SPELL_RATING_SHORT, Addon:CoverSpecialCharacters(ITEM_MOD_CRIT_RATING_SHORT), Addon:CoverSpecialCharacters(ITEM_MOD_HASTE_RATING_SHORT))
   local ITEM_MOD_HASTE_SPELL_RATING       = ITEM_MOD_HASTE_SPELL_RATING       or strGsub(ITEM_MOD_CRIT_SPELL_RATING,       Addon:CoverSpecialCharacters(ITEM_MOD_CRIT_RATING),       Addon:CoverSpecialCharacters(ITEM_MOD_HASTE_RATING))
   
-  
   local statsData = {
-    {true, true, true, "Stamina"   , SPELL_STAT3_NAME , ITEM_MOD_STAMINA   , Addon.COLORS.WHITE, Addon.COLORS.PALE_LIGHT_GREEN},
-    {true, true, true, "Strength"  , SPELL_STAT1_NAME , ITEM_MOD_STRENGTH  , Addon.COLORS.WHITE, Addon.COLORS.TUMBLEWEED},
-    {true, true, true, "Agility"   , SPELL_STAT2_NAME , ITEM_MOD_AGILITY   , Addon.COLORS.WHITE, Addon.COLORS.PUMPKIN_ORANGE},
-    {true, true, true, "Intellect" , SPELL_STAT4_NAME , ITEM_MOD_INTELLECT , Addon.COLORS.WHITE, Addon.COLORS.JORDY_BLUE},
-    {true, true, true, "Spirit"    , SPELL_STAT5_NAME , ITEM_MOD_SPIRIT    , Addon.COLORS.WHITE, Addon.COLORS.LIGHT_AQUA},
+    {true, true, true, "Stamina",   SPELL_STAT3_NAME, Addon.ITEM_MOD_STAMINA,   Addon.COLORS.WHITE, Addon.COLORS.PALE_LIGHT_GREEN},
+    {true, true, true, "Strength",  SPELL_STAT1_NAME, Addon.ITEM_MOD_STRENGTH,  Addon.COLORS.WHITE, Addon.COLORS.TUMBLEWEED},
+    {true, true, true, "Agility",   SPELL_STAT2_NAME, Addon.ITEM_MOD_AGILITY,   Addon.COLORS.WHITE, Addon.COLORS.PUMPKIN_ORANGE},
+    {true, true, true, "Intellect", SPELL_STAT4_NAME, Addon.ITEM_MOD_INTELLECT, Addon.COLORS.WHITE, Addon.COLORS.JORDY_BLUE},
+    {true, true, true, "Spirit",    SPELL_STAT5_NAME, Addon.ITEM_MOD_SPIRIT,    Addon.COLORS.WHITE, Addon.COLORS.LIGHT_AQUA},
     
-    -- {true, true, true, "Arcane Resistance", RESISTANCE6_NAME, format(strGsub(Addon:CoverSpecialCharacters(ITEM_RESIST_SINGLE), "%%%%s", "%%s"), STRING_SCHOOL_ARCANE), Addon.COLORS.WHITE, Addon.COLORS.ARCANE},
-    -- {true, true, true, "Fire Resistance"  , RESISTANCE2_NAME, format(strGsub(Addon:CoverSpecialCharacters(ITEM_RESIST_SINGLE), "%%%%s", "%%s"), STRING_SCHOOL_FIRE  ), Addon.COLORS.WHITE, Addon.COLORS.FIRE},
-    -- {true, true, true, "Nature Resistance", RESISTANCE3_NAME, format(strGsub(Addon:CoverSpecialCharacters(ITEM_RESIST_SINGLE), "%%%%s", "%%s"), STRING_SCHOOL_NATURE), Addon.COLORS.WHITE, Addon.COLORS.NATURE},
-    -- {true, true, true, "Frost Resistance" , RESISTANCE4_NAME, format(strGsub(Addon:CoverSpecialCharacters(ITEM_RESIST_SINGLE), "%%%%s", "%%s"), STRING_SCHOOL_FROST ), Addon.COLORS.WHITE, Addon.COLORS.FROST},
-    -- {true, true, true, "Shadow Resistance", RESISTANCE5_NAME, format(strGsub(Addon:CoverSpecialCharacters(ITEM_RESIST_SINGLE), "%%%%s", "%%s"), STRING_SCHOOL_SHADOW), Addon.COLORS.WHITE, Addon.COLORS.SHADOW},
-    -- -- {true, true, true, "Holy Resistance"  , RESISTANCE1_NAME, format(strGsub(Addon:CoverSpecialCharacters(ITEM_RESIST_SINGLE), "%%%%s", "%%s"), STRING_SCHOOL_HOLY  ), Addon.COLORS.WHITE, Addon.COLORS.HOLY},
-    
-    {true, true, true, "Arcane Resistance", RESISTANCE6_NAME, format(Addon:ChainGsub(ITEM_RESIST_SINGLE, {"%%[^s]", "%%%0"}), STRING_SCHOOL_ARCANE), Addon.COLORS.WHITE, Addon.COLORS.ARCANE},
-    {true, true, true, "Fire Resistance"  , RESISTANCE2_NAME, format(Addon:ChainGsub(ITEM_RESIST_SINGLE, {"%%[^s]", "%%%0"}), STRING_SCHOOL_FIRE  ), Addon.COLORS.WHITE, Addon.COLORS.FIRE},
-    {true, true, true, "Nature Resistance", RESISTANCE3_NAME, format(Addon:ChainGsub(ITEM_RESIST_SINGLE, {"%%[^s]", "%%%0"}), STRING_SCHOOL_NATURE), Addon.COLORS.WHITE, Addon.COLORS.NATURE},
-    {true, true, true, "Frost Resistance" , RESISTANCE4_NAME, format(Addon:ChainGsub(ITEM_RESIST_SINGLE, {"%%[^s]", "%%%0"}), STRING_SCHOOL_FROST ), Addon.COLORS.WHITE, Addon.COLORS.FROST},
-    {true, true, true, "Shadow Resistance", RESISTANCE5_NAME, format(Addon:ChainGsub(ITEM_RESIST_SINGLE, {"%%[^s]", "%%%0"}), STRING_SCHOOL_SHADOW), Addon.COLORS.WHITE, Addon.COLORS.SHADOW},
-    -- {true, true, true, "Holy Resistance"  , RESISTANCE1_NAME, format(strGsub(Addon:ChainGsub(ITEM_RESIST_SINGLE), {"%%[^s]", "%%0"}), STRING_SCHOOL_HOLY  ), Addon.COLORS.WHITE, Addon.COLORS.HOLY},
+    {true, true, true, "Arcane Resistance", RESISTANCE6_NAME, format(Addon:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), Addon.DAMAGE_SCHOOL7), Addon.COLORS.WHITE, Addon.COLORS.ARCANE},
+    {true, true, true, "Fire Resistance"  , RESISTANCE2_NAME, format(Addon:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), Addon.DAMAGE_SCHOOL3), Addon.COLORS.WHITE, Addon.COLORS.FIRE},
+    {true, true, true, "Nature Resistance", RESISTANCE3_NAME, format(Addon:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), Addon.DAMAGE_SCHOOL4), Addon.COLORS.WHITE, Addon.COLORS.NATURE},
+    {true, true, true, "Frost Resistance" , RESISTANCE4_NAME, format(Addon:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), Addon.DAMAGE_SCHOOL5), Addon.COLORS.WHITE, Addon.COLORS.FROST},
+    {true, true, true, "Shadow Resistance", RESISTANCE5_NAME, format(Addon:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), Addon.DAMAGE_SCHOOL6), Addon.COLORS.WHITE, Addon.COLORS.SHADOW},
+    -- {true, true, true, "Holy Resistance"  , RESISTANCE1_NAME, format(Addon:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), Addon.DAMAGE_SCHOOL2), Addon.COLORS.WHITE, Addon.COLORS.HOLY},
     
     {true, true, true, "Defense Rating"   , ITEM_MOD_DEFENSE_SKILL_RATING_SHORT, ITEM_MOD_DEFENSE_SKILL_RATING, Addon.COLORS.GREEN, Addon.COLORS.YELLOW},
     {true, true, true, "Dodge Rating"     , ITEM_MOD_DODGE_RATING_SHORT        , ITEM_MOD_DODGE_RATING        , Addon.COLORS.GREEN, Addon.COLORS.YELLOW},
@@ -482,12 +533,13 @@ do
     
     {true, true, true, "Expertise Rating"        , ITEM_MOD_EXPERTISE_RATING_SHORT        , ITEM_MOD_EXPERTISE_RATING        , Addon.COLORS.GREEN, Addon.COLORS.TUMBLEWEED},
     {true, true, true, "Attack Power"            , ITEM_MOD_ATTACK_POWER_SHORT            , ITEM_MOD_ATTACK_POWER            , Addon.COLORS.GREEN, Addon.COLORS.TUMBLEWEED},
+    {true, true, true, "Ranged Attack Power"     , ITEM_MOD_RANGED_ATTACK_POWER_SHORT     , ITEM_MOD_RANGED_ATTACK_POWER     , Addon.COLORS.GREEN, Addon.COLORS.TUMBLEWEED},
     {true, true, true, "Attack Power In Forms"   , ITEM_MOD_FERAL_ATTACK_POWER_SHORT      , ITEM_MOD_FERAL_ATTACK_POWER      , Addon.COLORS.GREEN, Addon.COLORS.TUMBLEWEED},
     {true, true, true, "Armor Penetration Rating", ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT, ITEM_MOD_ARMOR_PENETRATION_RATING, Addon.COLORS.GREEN, Addon.COLORS.TUMBLEWEED},
     
-    {nil , nil , true, "Spell Power" , ITEM_MOD_SPELL_POWER_SHORT       , ITEM_MOD_SPELL_POWER       , Addon.COLORS.GREEN, Addon.COLORS.PERIWINKLE},
+    {true, true, true, "Spell Power" , ITEM_MOD_SPELL_POWER_SHORT       , ITEM_MOD_SPELL_POWER       , Addon.COLORS.GREEN, Addon.COLORS.PERIWINKLE},
+    -- {nil , nil , nil , "Spell Damage", ITEM_MOD_SPELL_DAMAGE_DONE_SHORT , ITEM_MOD_SPELL_DAMAGE_DONE , Addon.COLORS.GREEN, Addon.COLORS.PERIWINKLE},
     {true, true, nil , "Healing"     , ITEM_MOD_SPELL_HEALING_DONE_SHORT, ITEM_MOD_SPELL_HEALING_DONE, Addon.COLORS.GREEN, Addon.COLORS.LIGHT_CYAN},
-    {true, true, nil , "Spell Damage", ITEM_MOD_SPELL_DAMAGE_DONE_SHORT , ITEM_MOD_SPELL_DAMAGE_DONE , Addon.COLORS.GREEN, Addon.COLORS.PERIWINKLE},
     
     {true, true, true, "Spell Penetration", ITEM_MOD_SPELL_PENETRATION_SHORT, ITEM_MOD_SPELL_PENETRATION, Addon.COLORS.GREEN, Addon.COLORS.VENUS_SLIPPER_ORCHID},
     
@@ -503,14 +555,11 @@ do
     
     {true, true, true, "Health Regeneration", ITEM_MOD_HEALTH_REGENERATION_SHORT, ITEM_MOD_HEALTH_REGEN     , Addon.COLORS.GREEN, Addon.COLORS.PALE_LIGHT_GREEN},
     {true, true, true, "Mana Regeneration"  , ITEM_MOD_MANA_REGENERATION_SHORT  , ITEM_MOD_MANA_REGENERATION, Addon.COLORS.GREEN, Addon.COLORS.JORDY_BLUE},
-    
-    
-    -- {"Ranged Attack Power", ITEM_MOD_RANGED_ATTACK_POWER_SHORT     , ITEM_MOD_RANGED_ATTACK_POWER},
   }
   
   
   local isReversedLocale = not ITEM_MOD_STAMINA:find"^%%"
-  local GetLocaleStatFormat = ITEM_MOD_STAMINA:find"^%%" and function(pre, suf) return format("%s %s", pre, suf) end or function(pre, suf) return format("%s %s", suf, pre) end
+  local GetLocaleStatFormat = ITEM_MOD_STAMINA:find"^%%" and function(pre, suf, capture) return format("%s %s%s", pre, capture and "?" or "", suf) end or function(pre, suf, capture) return format("%s %s%s", suf, capture and "?" or "", pre) end
   -- instead of flipping them, mess with the normal form pattern instead. format("%s %s", isBaseStat and sign or "+", normalName) vs format("%2$s %1$s", isBaseStat and sign or "+", normalName)
   
   for i, data in ipairs(statsData) do
@@ -530,7 +579,7 @@ do
       local normalName = data[5]
       
       local tooltipPattern  = data[6]
-      local tooltipPattern2 = Addon:ChainGsub(tooltipPattern, {"%%c", "%%d", "%%s"})
+      local tooltipPattern2 = Addon:ChainGsub(tooltipPattern, {"%%%d%$", "%%"}, {"%%c", "%%d", "%%s"})
       
       local tooltipColor = data[7]
       local color        = data[8]
@@ -547,10 +596,10 @@ do
       
       local normalNameReplacePattern = Addon:CoverSpecialCharacters(normalName)
       
-      local normalFormPattern  = GetLocaleStatFormat(isBaseStat and "%1$s%2$s" or "+%1$s", normalName)
-      local normalFormCapture  = strGsub(Addon:ReversePattern(GetLocaleStatFormat(isBaseStat and "%c%s" or "+%s", normalName)), "%$", "%%.?%0")
-      local normalFormPattern2 = GetLocaleStatFormat(isBaseStat and "%s%s" or "+%s", normalName)
-      
+      local normalFormPattern      = GetLocaleStatFormat(isBaseStat and "%1$s%2$s" or "+%1$s", normalName)
+      local normalFormCapture      = strGsub(Addon:ReversePattern(GetLocaleStatFormat(isBaseStat and "%c%s%%?" or "+%s%%?", normalName,  nil)), "%$", "[。%.]*%0")
+      local normalFormLooseCapture = strGsub(Addon:ReversePattern(GetLocaleStatFormat(isBaseStat and "%c%s%%?" or "+%s%%?", normalName, true)), "%$", "[。%.]*%0")
+      local normalFormPattern2     = GetLocaleStatFormat(isBaseStat and "%s%s" or "+%s", normalName)
       
       local function ApplyMod(text, normalForm)
         local match1, match2 = strMatch(normalForm, normalFormCapture)
@@ -596,19 +645,16 @@ do
       function StatInfo:ConvertToNormalForm(text)
         local match1, match2 = strMatch(text, Addon:ReversePattern(tooltipPattern))
         if match1 then
-          if not HasNumber(match1, match2) then return end
-          return format(normalFormPattern, match1, match2)
+          if HasNumber(match1, match2) then return format(normalFormPattern, match1, match2) end
         end
-        local match1, match2 = strMatch(strLower(text), strLower(normalFormCapture))
+        local match1, match2 = strMatch(strLower(text), strLower(normalFormLooseCapture))
         if match1 then
-          if not HasNumber(match1, match2) then return end
-          return format(normalFormPattern, match1, match2)
+          if HasNumber(match1, match2) then return format(normalFormPattern, match1, match2) end
         end
         for _, rule in ipairs(Addon:GetExtraStatCapture(stat) or {}) do
           local matches = rule.OUTPUT and {rule.OUTPUT(strMatch(text, rule.INPUT))} or {strMatch(text, rule.INPUT)}
           if #matches > 0 then
-            if not HasNumber(matches[1], matches[2]) then return end
-            return format(normalFormPattern, matches[1], matches[2])
+            if HasNumber(matches[1], matches[2]) then return format(normalFormPattern, matches[1], matches[2]) end
           end
         end
         return nil

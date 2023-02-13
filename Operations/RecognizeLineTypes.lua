@@ -315,7 +315,7 @@ contextActions = Addon:Map({
   end,
   LastBaseStat = function(i, tooltipData, line)
     if not line.texture and line.colorLeft == Addon.COLORS.WHITE then
-      local stat = MatchesAny(line.textLeftTextStripped, ITEM_MOD_STAMINA, ITEM_MOD_STRENGTH, ITEM_MOD_AGILITY, ITEM_MOD_INTELLECT, ITEM_MOD_SPIRIT, ITEM_RESIST_SINGLE, ITEM_RESIST_ALL)
+      local stat = MatchesAny(line.textLeftTextStripped, Addon.ITEM_MOD_STAMINA, Addon.ITEM_MOD_STRENGTH, Addon.ITEM_MOD_AGILITY, Addon.ITEM_MOD_INTELLECT, Addon.ITEM_MOD_SPIRIT, ITEM_RESIST_SINGLE, ITEM_RESIST_ALL)
       if stat then
         return SetContext(i-1, tooltipData, line)
       end
@@ -415,6 +415,12 @@ contextActions = Addon:Map({
       return SetContext(i-1, tooltipData, line)
     elseif MatchesAny(line.textLeftTextStripped, ITEM_RANDOM_ENCHANT, ITEM_MOD_FERAL_ATTACK_POWER) then
       return SetContext(i-1, tooltipData, line)
+    else -- check for extra stat captures
+      for _, rule in ipairs(Addon:GetExtraStatCapture"Attack Power In Forms" or {}) do
+        if strMatch(line.textLeftTextStripped, rule.INPUT) then
+          SetContext(i-1, tooltipData, line)
+        end
+      end
     end
   end,
   EnchantOnUse = function(i, tooltipData, line)

@@ -62,7 +62,7 @@ function Addon:RewordLine(tooltip, line, tooltipData)
       end
     elseif line.type == "DamagePerSecond" then
       text = self:ModifyWeaponDamagePerSecond(text)
-      if not line.hideRight then
+      if not line.hideRight and tooltipData.speed then
         local rightText = self:ModifyWeaponSpeedbar(tooltipData.speed, tooltipData.speedString, tooltipData.speedStringFull)
         if rightText then
           line.rewordRight = rightText
@@ -94,7 +94,7 @@ function Addon:RewordLine(tooltip, line, tooltipData)
       if self:GetOption("allow", "reword") then
         for _, definition in ipairs(self:GetExtraReplacements()) do
           for _, rule in ipairs(definition) do
-            local input = rule.INPUT .. "%.$"
+            local input = rule.INPUT .. "%[.。]$"
             local matches = {strMatch(text, input)}
             if #matches == 0 then
               input = rule.INPUT

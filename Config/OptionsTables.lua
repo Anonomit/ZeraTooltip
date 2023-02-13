@@ -457,7 +457,7 @@ function Addon:MakePaddingOptions(categoryName, chatCmd, arg1, ...)
   GUI:CreateGroup(opts, GUI:Order(), "------------------", nil, nil, true)
   
   -- Base Stats
-  local name, beforeStat, afterStat, sample = self.L["Base Stats"], {"pad", "before", "BaseStat"}, {"pad", "after", "BaseStat"}, format(ITEM_MOD_STAMINA, strByte"+", 10)
+  local name, beforeStat, afterStat, sample = self.L["Base Stats"], {"pad", "before", "BaseStat"}, {"pad", "after", "BaseStat"}, format(self.ITEM_MOD_STAMINA, strByte"+", 10)
   if beforeStat and self:GetOption(unpack(beforeStat)) and not paddedAfterPrevious then CreateGroupGap(opts, "before" .. name) end
   CreatePaddingOption(opts, name, beforeStat, afterStat, sample)
   if combineStats then

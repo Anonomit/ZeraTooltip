@@ -356,7 +356,16 @@ do
     return text
   end
   
-  local chainGsubPattern = {{"%%%d%$", "%%"}, {"[+-]", "%%%1"}, {"[%(%)%.]", "%%%0"}, {"%%c", "([+-])"}, {"%%d", "(%%d+)"}, {"%%s", "(.*)"}, {"|4[^:]-:[^:]-:[^:]-;", ".-"}, {"|4[^:]-:[^:]-;", ".-"}}
+  local chainGsubPattern = {
+    {"%%%d%$", "%%"},               -- koKR ITEM_RESIST_SINGLE: "%3$s 저항력 %1$c%2$d" -> "%s 저항력 %c%d"
+    {"|3%-%d+%((.+)%)", "%1"},      -- ruRU ITEM_RESIST_SINGLE: "%c%d к сопротивлению |3-7(%s)" -> %c%d к сопротивлению %s
+    {"[().+-]", "%%%0"},            -- cover special characters with escape codes
+    {"%%c", "([+-])"},              -- "%c" -> "([+-])"
+    {"%%d", "(%%d+)"},              -- "%d" -> "(%d+)"
+    {"%%s", "(.*)"},                -- "%s" -> "(.*)"
+    {"|4[^:]-:[^:]-:[^:]-;", ".-"}, -- removes |4singular:plural;
+    {"|4[^:]-:[^:]-;", ".-"},       -- removes ruRU |4singular:plural1:plural2;
+  }
   local reversedPatternsCache = {}
   function Addon:ReversePattern(text)
     if not reversedPatternsCache[text] then
