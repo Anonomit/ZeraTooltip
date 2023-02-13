@@ -57,29 +57,13 @@ end
 
 
 
--- These tables define additional pattern captures that can be used to recognize a stat in this locale.
+-- These functions define additional pattern captures that can be used to recognize a stat in this locale.
 -- A line of text is matched against INPUT. If the match is successful, the line is recognized as that stat.
 -- The results of the match as then used to reword the line.
 -- OUTPUT can also be defined (in the same table as INPUT). It must be a function.
 -- OUTPUT accepts the results of matching INPUT, and returns them. They could be returned in a different order.
 
-  
-Addon:AddExtraStatCapture("Block Rating",
-  {INPUT = "^Increases your block rating by (%d+)%.$"})
 
-Addon:AddExtraStatCapture("Hit Rating",
-  {INPUT = "^Increases your hit rating by (%d+)%.$"} -- Maexxna's Fang
-)
-Addon:AddExtraStatCapture("Critical Strike Rating",
-  {INPUT = "^Increases your critical strike rating by (%d+)%.$"} -- Staff of Balzaphon
-)
-Addon:AddExtraStatCapture("Armor Penetration Rating",
-  {INPUT = "^Increases armor penetration rating by (%d+)%.$"} -- Maexxna's Femur
-)
-
-Addon:AddExtraStatCapture("Spell Penetration",
-  {INPUT = "^Increases your spell penetration by (%d+)%.$"} -- Hatefury Mantle
-)
 
 if Addon.isClassic then
   Addon:AddExtraStatCapture("Defense Rating",
@@ -88,14 +72,20 @@ if Addon.isClassic then
   Addon:AddExtraStatCapture("Dodge Rating",
     {INPUT = "^Increases your chance to dodge an attack by (%d+%%)%.$"})
   
-  Addon:AddExtraStatCapture("Dodge Rating",
+  Addon:AddExtraStatCapture("Parry Rating",
+    {INPUT = "^Increases your chance to parry an attack by (%d+%%)%.$"})
+  
+  Addon:AddExtraStatCapture("Block Rating",
     {INPUT = "^Increases your chance to block attacks with a shield by (%d+%%)%.$"})
+  
+  Addon:AddExtraStatCapture("Attack Power In Forms",
+    {INPUT = "^%+(%d+) Attack Power in Cat, Bear, and Dire Bear forms only%.$"})
+  
+  Addon:AddExtraStatCapture("Spell Power",
+    {INPUT = "^Increases damage and healing done by magical spells and effects by up to (%d+)%.$"})
   
   Addon:AddExtraStatCapture("Healing",
     {INPUT = "^Increases healing done by spells and effects by up to (%d+)%.$"})
-  
-  Addon:AddExtraStatCapture("Spell Damage",
-    {INPUT = "^Increases damage and healing done by magical spells and effects by up to (%d+)%.$"})
   
   Addon:AddExtraStatCapture("Spell Penetration",
     {INPUT = "^Decreases the magical resistances of your spell targets by (%d+)%.$"})
@@ -111,6 +101,29 @@ if Addon.isClassic then
   
   Addon:AddExtraStatCapture("Spell Critical Strike Rating",
     {INPUT = "^Improves your chance to get a critical strike with spells by (%d+%%)%.$"})
+else
+  Addon:AddExtraStatCapture("Block Rating",
+    {INPUT = "^Increases your block rating by (%d+)%.$"})
+  
+  Addon:AddExtraStatCapture("Spell Power",
+    {INPUT = "^Increases your spell power by (%d+)%.$"} -- Atiesh 22631
+  )
+  
+  Addon:AddExtraStatCapture("Hit Rating",
+    {INPUT = "^Increases your hit rating by (%d+)%.$"} -- Maexxna's Fang 22804
+  )
+  
+  Addon:AddExtraStatCapture("Critical Strike Rating",
+    {INPUT = "^Increases your critical strike rating by (%d+)%.$"} -- Staff of Balzaphon 23124
+  )
+  
+  Addon:AddExtraStatCapture("Armor Penetration Rating",
+    {INPUT = "^Increases armor penetration rating by (%d+)%.$"} -- Maexxna's Femur 39226
+  )
+  
+  Addon:AddExtraStatCapture("Spell Penetration",
+    {INPUT = "^Increases your spell penetration by (%d+)%.$"} -- Hatefury Mantle 30884
+  )
 end
 
 
@@ -121,7 +134,7 @@ end
 
 
 -- These tables define additional text replacements that can take place in certain lines.
--- Martial matches are found and replaced with gsub().
+-- Partial matches are found and replaced with gsub().
 
 Addon:AddExtraReplacement("Run Speed",
   {
