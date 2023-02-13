@@ -138,6 +138,10 @@ end
 
 Addon:AddExtraReplacement("Run Speed",
   {
+    INPUT  = "Engage the rocket boots to greatly increase your speed%.", -- Rocket Boots Xtreme Lite 35581
+    OUTPUT = "+300%% Run Speed for 3 sec",
+  },
+  {
     INPUT  = "Minor Speed Increase", -- Enchant Boots - Minor Speed
     OUTPUT = "+8%% Run Speed",
   },
