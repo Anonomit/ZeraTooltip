@@ -36,7 +36,7 @@ do
   
   -- tbc & classic
   Addon:AddDefaultRewordByLocale("Healing"     , "Healing")
-  Addon:AddDefaultRewordByLocale("Spell Damage", "Spell Damage")
+  -- Addon:AddDefaultRewordByLocale("Spell Damage", "Spell Damage")
   
   Addon:AddDefaultRewordByLocale("Physical Hit Rating"            , "Physical Hit")
   Addon:AddDefaultRewordByLocale("Physical Critical Strike Rating", "Physical Crit")
