@@ -317,6 +317,15 @@ contextActions = Addon:Map({
     if not line.texture and line.colorLeft == Addon.COLORS.WHITE then
       local stat = MatchesAny(line.textLeftTextStripped, Addon.ITEM_MOD_STAMINA, Addon.ITEM_MOD_STRENGTH, Addon.ITEM_MOD_AGILITY, Addon.ITEM_MOD_INTELLECT, Addon.ITEM_MOD_SPIRIT, ITEM_RESIST_SINGLE, ITEM_RESIST_ALL)
       if stat then
+        if stat == ITEM_RESIST_SINGLE then
+          local n = strMatch(line.textLeftTextStripped, "(%d+)")
+          if not tooltipData.resistN then
+            tooltipData.resistN = n
+          end
+          if tooltipData.resistN == n then
+            tooltipData.resists = tooltipData.resists + 1
+          end
+        end
         return SetContext(i-1, tooltipData, line)
       end
     end

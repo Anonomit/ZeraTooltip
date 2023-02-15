@@ -79,8 +79,11 @@ do
     [Addon.expansions.tbc]     = {},
     [Addon.expansions.wrath]   = {},
   }
-  Addon.statsInfo = setmetatable({}, {__index = function() return {} end})
-  Addon.statOrder = {}
+  Addon.statsInfo        = setmetatable({}, {__index = function() return {} end})
+  Addon.statOrder        = {}
+  Addon.statDefaultList  = {}
+  Addon.statDefaultOrder = {}
+  Addon.statPrefOrder    = {}
   
   
   
@@ -507,85 +510,96 @@ end
 
 
 do
-  local ITEM_MOD_HASTE_SPELL_RATING_SHORT = ITEM_MOD_HASTE_SPELL_RATING_SHORT or strGsub(ITEM_MOD_CRIT_SPELL_RATING_SHORT, Addon:CoverSpecialCharacters(ITEM_MOD_CRIT_RATING_SHORT), Addon:CoverSpecialCharacters(ITEM_MOD_HASTE_RATING_SHORT))
-  local ITEM_MOD_HASTE_SPELL_RATING       = ITEM_MOD_HASTE_SPELL_RATING       or strGsub(ITEM_MOD_CRIT_SPELL_RATING,       Addon:CoverSpecialCharacters(ITEM_MOD_CRIT_RATING),       Addon:CoverSpecialCharacters(ITEM_MOD_HASTE_RATING))
+  local self = Addon
+  
+  local ITEM_MOD_HASTE_SPELL_RATING_SHORT = ITEM_MOD_HASTE_SPELL_RATING_SHORT or strGsub(ITEM_MOD_CRIT_SPELL_RATING_SHORT, self:CoverSpecialCharacters(ITEM_MOD_CRIT_RATING_SHORT), self:CoverSpecialCharacters(ITEM_MOD_HASTE_RATING_SHORT))
+  local ITEM_MOD_HASTE_SPELL_RATING       = ITEM_MOD_HASTE_SPELL_RATING       or strGsub(ITEM_MOD_CRIT_SPELL_RATING,       self:CoverSpecialCharacters(ITEM_MOD_CRIT_RATING),       self:CoverSpecialCharacters(ITEM_MOD_HASTE_RATING))
   
   local statsData = {
-    {true, true, true, "Stamina",   SPELL_STAT3_NAME, Addon.ITEM_MOD_STAMINA,   Addon.COLORS.WHITE, Addon.COLORS.PALE_LIGHT_GREEN},
-    {true, true, true, "Strength",  SPELL_STAT1_NAME, Addon.ITEM_MOD_STRENGTH,  Addon.COLORS.WHITE, Addon.COLORS.TUMBLEWEED},
-    {true, true, true, "Agility",   SPELL_STAT2_NAME, Addon.ITEM_MOD_AGILITY,   Addon.COLORS.WHITE, Addon.COLORS.PUMPKIN_ORANGE},
-    {true, true, true, "Intellect", SPELL_STAT4_NAME, Addon.ITEM_MOD_INTELLECT, Addon.COLORS.WHITE, Addon.COLORS.JORDY_BLUE},
-    {true, true, true, "Spirit",    SPELL_STAT5_NAME, Addon.ITEM_MOD_SPIRIT,    Addon.COLORS.WHITE, Addon.COLORS.LIGHT_AQUA},
+    {1, {true, true, true}, "Stamina",   SPELL_STAT3_NAME, self.ITEM_MOD_STAMINA,   self.COLORS.WHITE, self.COLORS.PALE_LIGHT_GREEN},
+    {1, {true, true, true}, "Strength",  SPELL_STAT1_NAME, self.ITEM_MOD_STRENGTH,  self.COLORS.WHITE, self.COLORS.TUMBLEWEED},
+    {0, {true, true, true}, "Agility",   SPELL_STAT2_NAME, self.ITEM_MOD_AGILITY,   self.COLORS.WHITE, self.COLORS.PUMPKIN_ORANGE},
+    {1, {true, true, true}, "Intellect", SPELL_STAT4_NAME, self.ITEM_MOD_INTELLECT, self.COLORS.WHITE, self.COLORS.JORDY_BLUE},
+    {0, {true, true, true}, "Spirit",    SPELL_STAT5_NAME, self.ITEM_MOD_SPIRIT,    self.COLORS.WHITE, self.COLORS.LIGHT_AQUA},
     
-    {true, true, true, "Arcane Resistance", RESISTANCE6_NAME, format(Addon:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), Addon.DAMAGE_SCHOOL7), Addon.COLORS.WHITE, Addon.COLORS.ARCANE},
-    {true, true, true, "Fire Resistance"  , RESISTANCE2_NAME, format(Addon:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), Addon.DAMAGE_SCHOOL3), Addon.COLORS.WHITE, Addon.COLORS.FIRE},
-    {true, true, true, "Nature Resistance", RESISTANCE3_NAME, format(Addon:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), Addon.DAMAGE_SCHOOL4), Addon.COLORS.WHITE, Addon.COLORS.NATURE},
-    {true, true, true, "Frost Resistance" , RESISTANCE4_NAME, format(Addon:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), Addon.DAMAGE_SCHOOL5), Addon.COLORS.WHITE, Addon.COLORS.FROST},
-    {true, true, true, "Shadow Resistance", RESISTANCE5_NAME, format(Addon:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), Addon.DAMAGE_SCHOOL6), Addon.COLORS.WHITE, Addon.COLORS.SHADOW},
-    -- {true, true, true, "Holy Resistance"  , RESISTANCE1_NAME, format(Addon:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), Addon.DAMAGE_SCHOOL2), Addon.COLORS.WHITE, Addon.COLORS.HOLY},
+    {1, {true, true, true}, "All Resistance", self:ChainGsub(ITEM_RESIST_ALL, {"%%.", "^ *", ""}), self:ChainGsub(ITEM_RESIST_ALL, {"%%%d+%$", "%%"}), self.COLORS.WHITE, self.COLORS.YELLOW},
     
-    {true, true, true, "Defense Rating"   , ITEM_MOD_DEFENSE_SKILL_RATING_SHORT, ITEM_MOD_DEFENSE_SKILL_RATING, Addon.COLORS.GREEN, Addon.COLORS.YELLOW},
-    {true, true, true, "Dodge Rating"     , ITEM_MOD_DODGE_RATING_SHORT        , ITEM_MOD_DODGE_RATING        , Addon.COLORS.GREEN, Addon.COLORS.YELLOW},
-    {true, true, true, "Parry Rating"     , ITEM_MOD_PARRY_RATING_SHORT        , ITEM_MOD_PARRY_RATING        , Addon.COLORS.GREEN, Addon.COLORS.YELLOW},
-    {true, true, true, "Block Rating"     , ITEM_MOD_BLOCK_RATING_SHORT        , ITEM_MOD_BLOCK_RATING        , Addon.COLORS.GREEN, Addon.COLORS.YELLOW},
-    {true, true, true, "Block Value"      , ITEM_MOD_BLOCK_VALUE_SHORT         , ITEM_MOD_BLOCK_VALUE         , Addon.COLORS.GREEN, Addon.COLORS.YELLOW},
-    {true, true, true, "Resilience Rating", ITEM_MOD_RESILIENCE_RATING_SHORT   , ITEM_MOD_RESILIENCE_RATING   , Addon.COLORS.GREEN, Addon.COLORS.YELLOW},
+    {1, {true, true, true}, "Arcane Resistance", RESISTANCE6_NAME, format(self:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), self.DAMAGE_SCHOOL7), self.COLORS.WHITE, self.COLORS.ARCANE},
+    {0, {true, true, true}, "Fire Resistance"  , RESISTANCE2_NAME, format(self:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), self.DAMAGE_SCHOOL3), self.COLORS.WHITE, self.COLORS.FIRE},
+    {0, {true, true, true}, "Nature Resistance", RESISTANCE3_NAME, format(self:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), self.DAMAGE_SCHOOL4), self.COLORS.WHITE, self.COLORS.NATURE},
+    {0, {true, true, true}, "Frost Resistance" , RESISTANCE4_NAME, format(self:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), self.DAMAGE_SCHOOL5), self.COLORS.WHITE, self.COLORS.FROST},
+    {0, {true, true, true}, "Shadow Resistance", RESISTANCE5_NAME, format(self:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), self.DAMAGE_SCHOOL6), self.COLORS.WHITE, self.COLORS.SHADOW},
+    -- {true, true, true, "Holy Resistance"  , RESISTANCE1_NAME, format(self:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), self.DAMAGE_SCHOOL2), self.COLORS.WHITE, self.COLORS.HOLY},
     
-    {true, true, true, "Expertise Rating"        , ITEM_MOD_EXPERTISE_RATING_SHORT        , ITEM_MOD_EXPERTISE_RATING        , Addon.COLORS.GREEN, Addon.COLORS.TUMBLEWEED},
-    {true, true, true, "Attack Power"            , ITEM_MOD_ATTACK_POWER_SHORT            , ITEM_MOD_ATTACK_POWER            , Addon.COLORS.GREEN, Addon.COLORS.TUMBLEWEED},
-    {true, true, true, "Ranged Attack Power"     , ITEM_MOD_RANGED_ATTACK_POWER_SHORT     , ITEM_MOD_RANGED_ATTACK_POWER     , Addon.COLORS.GREEN, Addon.COLORS.TUMBLEWEED},
-    {true, true, true, "Attack Power In Forms"   , ITEM_MOD_FERAL_ATTACK_POWER_SHORT      , ITEM_MOD_FERAL_ATTACK_POWER      , Addon.COLORS.GREEN, Addon.COLORS.TUMBLEWEED},
-    {true, true, true, "Armor Penetration Rating", ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT, ITEM_MOD_ARMOR_PENETRATION_RATING, Addon.COLORS.GREEN, Addon.COLORS.TUMBLEWEED},
+    {1, {true, true, true}, "Defense Rating"   , ITEM_MOD_DEFENSE_SKILL_RATING_SHORT, ITEM_MOD_DEFENSE_SKILL_RATING, self.COLORS.GREEN, self.COLORS.YELLOW},
+    {1, {true, true, true}, "Dodge Rating"     , ITEM_MOD_DODGE_RATING_SHORT        , ITEM_MOD_DODGE_RATING        , self.COLORS.GREEN, self.COLORS.YELLOW},
+    {0, {true, true, true}, "Parry Rating"     , ITEM_MOD_PARRY_RATING_SHORT        , ITEM_MOD_PARRY_RATING        , self.COLORS.GREEN, self.COLORS.YELLOW},
+    {1, {true, true, true}, "Block Rating"     , ITEM_MOD_BLOCK_RATING_SHORT        , ITEM_MOD_BLOCK_RATING        , self.COLORS.GREEN, self.COLORS.YELLOW},
+    {0, {true, true, true}, "Block Value"      , ITEM_MOD_BLOCK_VALUE_SHORT         , ITEM_MOD_BLOCK_VALUE         , self.COLORS.GREEN, self.COLORS.YELLOW},
+    {0, {true, true, true}, "Resilience Rating", ITEM_MOD_RESILIENCE_RATING_SHORT   , ITEM_MOD_RESILIENCE_RATING   , self.COLORS.GREEN, self.COLORS.YELLOW},
     
-    {true, true, true, "Spell Power" , ITEM_MOD_SPELL_POWER_SHORT       , ITEM_MOD_SPELL_POWER       , Addon.COLORS.GREEN, Addon.COLORS.PERIWINKLE},
-    -- {nil , nil , nil , "Spell Damage", ITEM_MOD_SPELL_DAMAGE_DONE_SHORT , ITEM_MOD_SPELL_DAMAGE_DONE , Addon.COLORS.GREEN, Addon.COLORS.PERIWINKLE},
-    {true, true, nil , "Healing"     , ITEM_MOD_SPELL_HEALING_DONE_SHORT, ITEM_MOD_SPELL_HEALING_DONE, Addon.COLORS.GREEN, Addon.COLORS.LIGHT_CYAN},
+    {1, {true, true, true}, "Expertise Rating"        , ITEM_MOD_EXPERTISE_RATING_SHORT        , ITEM_MOD_EXPERTISE_RATING        , self.COLORS.GREEN, self.COLORS.TUMBLEWEED},
+    {1, {true, true, true}, "Attack Power"            , ITEM_MOD_ATTACK_POWER_SHORT            , ITEM_MOD_ATTACK_POWER            , self.COLORS.GREEN, self.COLORS.TUMBLEWEED},
+    {0, {true, true, true}, "Ranged Attack Power"     , ITEM_MOD_RANGED_ATTACK_POWER_SHORT     , ITEM_MOD_RANGED_ATTACK_POWER     , self.COLORS.GREEN, self.COLORS.TUMBLEWEED},
+    {0, {true, true, true}, "Attack Power In Forms"   , ITEM_MOD_FERAL_ATTACK_POWER_SHORT      , ITEM_MOD_FERAL_ATTACK_POWER      , self.COLORS.GREEN, self.COLORS.TUMBLEWEED},
+    {0, {true, true, true}, "Armor Penetration Rating", ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT, ITEM_MOD_ARMOR_PENETRATION_RATING, self.COLORS.GREEN, self.COLORS.TUMBLEWEED},
     
-    {true, true, true, "Spell Penetration", ITEM_MOD_SPELL_PENETRATION_SHORT, ITEM_MOD_SPELL_PENETRATION, Addon.COLORS.GREEN, Addon.COLORS.VENUS_SLIPPER_ORCHID},
+    {1, {true, true, true}, "Spell Power" , ITEM_MOD_SPELL_POWER_SHORT       , ITEM_MOD_SPELL_POWER       , self.COLORS.GREEN, self.COLORS.PERIWINKLE},
+    -- {nil , nil , nil , "Spell Damage", ITEM_MOD_SPELL_DAMAGE_DONE_SHORT , ITEM_MOD_SPELL_DAMAGE_DONE , self.COLORS.GREEN, self.COLORS.PERIWINKLE},
+    {0, {true, true, nil }, "Healing"     , ITEM_MOD_SPELL_HEALING_DONE_SHORT, ITEM_MOD_SPELL_HEALING_DONE, self.COLORS.GREEN, self.COLORS.LIGHT_CYAN},
     
-    {nil , nil , true, "Hit Rating"                     , ITEM_MOD_HIT_RATING_SHORT        , ITEM_MOD_HIT_RATING        , Addon.COLORS.GREEN, Addon.COLORS.PINK_SHERBET},
-    {nil , nil , true, "Critical Strike Rating"         , ITEM_MOD_CRIT_RATING_SHORT       , ITEM_MOD_CRIT_RATING       , Addon.COLORS.GREEN, Addon.COLORS.PARIS_GREEN} ,
-    {nil , nil , true, "Haste Rating"                   , ITEM_MOD_HASTE_RATING_SHORT      , ITEM_MOD_HASTE_RATING      , Addon.COLORS.GREEN, Addon.COLORS.LEMON_LIME}  ,
-    {true, true, nil , "Physical Hit Rating"            , ITEM_MOD_HIT_RATING_SHORT        , ITEM_MOD_HIT_RATING        , Addon.COLORS.GREEN, Addon.COLORS.PINK_SHERBET},
-    {true, true, nil , "Physical Critical Strike Rating", ITEM_MOD_CRIT_RATING_SHORT       , ITEM_MOD_CRIT_RATING       , Addon.COLORS.GREEN, Addon.COLORS.PARIS_GREEN},
-    {nil , true, nil , "Physical Haste Rating"          , ITEM_MOD_HASTE_RATING_SHORT      , ITEM_MOD_HASTE_RATING      , Addon.COLORS.GREEN, Addon.COLORS.LEMON_LIME},
-    {true, true, nil , "Spell Hit Rating"               , ITEM_MOD_HIT_SPELL_RATING_SHORT  , ITEM_MOD_HIT_SPELL_RATING  , Addon.COLORS.GREEN, Addon.COLORS.PINK_SHERBET},
-    {true, true, nil , "Spell Critical Strike Rating"   , ITEM_MOD_CRIT_SPELL_RATING_SHORT , ITEM_MOD_CRIT_SPELL_RATING , Addon.COLORS.GREEN, Addon.COLORS.PARIS_GREEN},
-    {nil , true, nil , "Spell Haste Rating"             , ITEM_MOD_HASTE_SPELL_RATING_SHORT, ITEM_MOD_HASTE_SPELL_RATING, Addon.COLORS.GREEN, Addon.COLORS.LEMON_LIME},
+    {0, {true, true, true}, "Spell Penetration", ITEM_MOD_SPELL_PENETRATION_SHORT, ITEM_MOD_SPELL_PENETRATION, self.COLORS.GREEN, self.COLORS.VENUS_SLIPPER_ORCHID},
     
-    {true, true, true, "Health Regeneration", ITEM_MOD_HEALTH_REGENERATION_SHORT, ITEM_MOD_HEALTH_REGEN     , Addon.COLORS.GREEN, Addon.COLORS.PALE_LIGHT_GREEN},
-    {true, true, true, "Mana Regeneration"  , ITEM_MOD_MANA_REGENERATION_SHORT  , ITEM_MOD_MANA_REGENERATION, Addon.COLORS.GREEN, Addon.COLORS.JORDY_BLUE},
+    {1, {nil , nil , true}, "Hit Rating"                     , ITEM_MOD_HIT_RATING_SHORT        , ITEM_MOD_HIT_RATING        , self.COLORS.GREEN, self.COLORS.PINK_SHERBET},
+    {0, {nil , nil , true}, "Critical Strike Rating"         , ITEM_MOD_CRIT_RATING_SHORT       , ITEM_MOD_CRIT_RATING       , self.COLORS.GREEN, self.COLORS.PARIS_GREEN} ,
+    {0, {nil , nil , true}, "Haste Rating"                   , ITEM_MOD_HASTE_RATING_SHORT      , ITEM_MOD_HASTE_RATING      , self.COLORS.GREEN, self.COLORS.LEMON_LIME}  ,
+    {1, {true, true, nil }, "Physical Hit Rating"            , ITEM_MOD_HIT_RATING_SHORT        , ITEM_MOD_HIT_RATING        , self.COLORS.GREEN, self.COLORS.PINK_SHERBET},
+    {0, {true, true, nil }, "Physical Critical Strike Rating", ITEM_MOD_CRIT_RATING_SHORT       , ITEM_MOD_CRIT_RATING       , self.COLORS.GREEN, self.COLORS.PARIS_GREEN},
+    {0, {nil , true, nil }, "Physical Haste Rating"          , ITEM_MOD_HASTE_RATING_SHORT      , ITEM_MOD_HASTE_RATING      , self.COLORS.GREEN, self.COLORS.LEMON_LIME},
+    {1, {true, true, nil }, "Spell Hit Rating"               , ITEM_MOD_HIT_SPELL_RATING_SHORT  , ITEM_MOD_HIT_SPELL_RATING  , self.COLORS.GREEN, self.COLORS.PINK_SHERBET},
+    {0, {true, true, nil }, "Spell Critical Strike Rating"   , ITEM_MOD_CRIT_SPELL_RATING_SHORT , ITEM_MOD_CRIT_SPELL_RATING , self.COLORS.GREEN, self.COLORS.PARIS_GREEN},
+    {0, {nil , true, nil }, "Spell Haste Rating"             , ITEM_MOD_HASTE_SPELL_RATING_SHORT, ITEM_MOD_HASTE_SPELL_RATING, self.COLORS.GREEN, self.COLORS.LEMON_LIME},
+    
+    {1, {true, true, true}, "Health Regeneration", ITEM_MOD_HEALTH_REGENERATION_SHORT, ITEM_MOD_HEALTH_REGEN     , self.COLORS.GREEN, self.COLORS.PALE_LIGHT_GREEN},
+    {0, {true, true, true}, "Mana Regeneration"  , ITEM_MOD_MANA_REGENERATION_SHORT  , ITEM_MOD_MANA_REGENERATION, self.COLORS.GREEN, self.COLORS.JORDY_BLUE},
   }
   
   
   local isReversedLocale = not ITEM_MOD_STAMINA:find"^%%"
-  local GetLocaleStatFormat = ITEM_MOD_STAMINA:find"^%%" and function(pre, suf, capture) return format("%s %s%s", pre, capture and "?" or "", suf) end or function(pre, suf, capture) return format("%s %s%s", suf, capture and "?" or "", pre) end
+  local GetLocaleStatFormat = isReversedLocale and function(pre, suf, capture) return format("%s %s%s", suf, capture and "?" or "", pre) end or function(pre, suf, capture) return format("%s %s%s", pre, capture and "?" or "", suf) end
   -- instead of flipping them, mess with the normal form pattern instead. format("%s %s", isBaseStat and sign or "+", normalName) vs format("%2$s %1$s", isBaseStat and sign or "+", normalName)
   
   for i, data in ipairs(statsData) do
-    local expacs = {}
-    expacs[Addon.expansions.classic] = data[1]
-    expacs[Addon.expansions.tbc]     = data[2]
-    expacs[Addon.expansions.wrath]   = data[3]
-    local stat                       = data[4]
+    tinsert(self.statPrefOrder, data[1])
+    
+    local expacs    = {}
+    local isInExpac = data[2]
+    expacs[self.expansions.classic] = isInExpac[1]
+    expacs[self.expansions.tbc]     = isInExpac[2]
+    expacs[self.expansions.wrath]   = isInExpac[3]
+    
+    local stat = data[3]
     
     
-    for expac, list in pairs(Addon.statList) do
+    for expac, list in pairs(self.statList) do
       if expacs[expac] then
         tinsert(list, stat)
       end
     end
-    if expacs[Addon.expansionLevel] then
-      local normalName = data[5]
+    if expacs[self.expansionLevel] then
+      tinsert(self.statDefaultList, stat)
+      self.statDefaultOrder[stat] = #self.statDefaultList
       
-      local tooltipPattern  = data[6]
-      local tooltipPattern2 = Addon:ChainGsub(tooltipPattern, {"%%%d%$", "%%"}, {"%%c", "%%d", "%%s"})
+      local normalName = data[4]
       
-      local tooltipColor = data[7]
-      local color        = data[8]
+      local tooltipPattern  = data[5]
+      local tooltipPattern2 = self:ChainGsub(tooltipPattern, {"%%%d%$", "%%"}, {"%%c", "%%d", "%%s"})
       
-      Addon.statsInfo[stat] = {}
-      local StatInfo = Addon.statsInfo[stat]
+      local tooltipColor = data[6]
+      local color        = data[7]
+      
+      self.statsInfo[stat] = {}
+      local StatInfo = self.statsInfo[stat]
       
       StatInfo.tooltipColor = tooltipColor
       StatInfo.color = color
@@ -594,11 +608,11 @@ do
       local reorderLocaleMode = isBaseStat and "%s%s" or "+%s"
       
       
-      local normalNameReplacePattern = Addon:CoverSpecialCharacters(normalName)
+      local normalNameReplacePattern = self:CoverSpecialCharacters(normalName)
       
       local normalFormPattern      = GetLocaleStatFormat(isBaseStat and "%1$s%2$s" or "+%1$s", normalName)
-      local normalFormCapture      = strGsub(Addon:ReversePattern(GetLocaleStatFormat(isBaseStat and "%c%s%%?" or "+%s%%?", normalName,  nil)), "%$", "[。%.]*%0")
-      local normalFormLooseCapture = strGsub(Addon:ReversePattern(GetLocaleStatFormat(isBaseStat and "%c%s%%?" or "+%s%%?", normalName, true)), "%$", "[。%.]*%0")
+      local normalFormCapture      = strGsub(self:ReversePattern(GetLocaleStatFormat(isBaseStat and "%c%s%%?" or "+%s%%?", normalName,  nil)), "%$", "[。%.]*%0")
+      local normalFormLooseCapture = strGsub(self:ReversePattern(GetLocaleStatFormat(isBaseStat and "%c%s%%?" or "+%s%%?", normalName, true)), "%$", "[。%.]*%0")
       local normalFormPattern2     = GetLocaleStatFormat(isBaseStat and "%s%s" or "+%s", normalName)
       
       local function ApplyMod(text, normalForm)
@@ -608,7 +622,7 @@ do
         if DECIMAL_SEPERATOR ~= "." then
           strNumber = strGsub(strNumber, "%"..DECIMAL_SEPERATOR, ".")
         end
-        local number = Addon:Round(tonumber(strNumber) * Addon:GetOption("mod", stat), 1 / 10^Addon:GetOption("precision", stat))
+        local number = self:Round(tonumber(strNumber) * self:GetOption("mod", stat), 1 / 10^self:GetOption("precision", stat))
         strNumber = tostring(number)
         if DECIMAL_SEPERATOR ~= "." then
           strNumber = strGsub(strNumber, "%.", DECIMAL_SEPERATOR)
@@ -616,11 +630,11 @@ do
         if isBaseStat and number > 0 then
           strNumber = "+" .. strNumber
         end
-        return strGsub(text, Addon:CoverSpecialCharacters(origStrNumber), Addon:CoverSpecialCharacters(strNumber .. percent))
+        return strGsub(text, self:CoverSpecialCharacters(origStrNumber), self:CoverSpecialCharacters(strNumber .. percent))
       end
       
       local function ConvertToAliasForm(text)
-        local alias = Addon:GetOption("reword", stat)
+        local alias = self:GetOption("reword", stat)
         if alias and alias ~= "" and alias ~= normalNameReplacePattern then
           text = strGsub(text, normalNameReplacePattern, alias)
         end
@@ -674,35 +688,35 @@ do
     end
   end
   
-  Addon.statsInfo["Title"]              = {color = Addon.COLORS.WHITE}
+  self.statsInfo["Title"]              = {color = self.COLORS.WHITE}
   
-  Addon.statsInfo["Heroic"]             = {color = Addon.COLORS.GREEN}
-  Addon.statsInfo["ItemLevel"]          = {color = Addon.COLORS.DEFAULT}
+  self.statsInfo["Heroic"]             = {color = self.COLORS.GREEN}
+  self.statsInfo["ItemLevel"]          = {color = self.COLORS.DEFAULT}
   
-  Addon.statsInfo["AlreadyBound"]       = {color = Addon.COLORS.WHITE}
-  Addon.statsInfo["CharacterBound"]     = {color = Addon.COLORS.WHITE}
-  Addon.statsInfo["AccountBound"]       = {color = Addon.COLORS.WHITE}
-  Addon.statsInfo["Tradeable"]          = {color = Addon.COLORS.WHITE}
+  self.statsInfo["AlreadyBound"]       = {color = self.COLORS.WHITE}
+  self.statsInfo["CharacterBound"]     = {color = self.COLORS.WHITE}
+  self.statsInfo["AccountBound"]       = {color = self.COLORS.WHITE}
+  self.statsInfo["Tradeable"]          = {color = self.COLORS.WHITE}
   
-  Addon.statsInfo["Trainable"]          = {color = Addon.COLORS.ORANGE}
+  self.statsInfo["Trainable"]          = {color = self.COLORS.ORANGE}
   
-  Addon.statsInfo["Damage"]             = {color = Addon.COLORS.WHITE}
-  Addon.statsInfo["Speed"]              = {color = Addon.COLORS.WHITE}
+  self.statsInfo["Damage"]             = {color = self.COLORS.WHITE}
+  self.statsInfo["Speed"]              = {color = self.COLORS.WHITE}
   
-  Addon.statsInfo["DamagePerSecond"]    = {color = Addon.COLORS.WHITE}
-  Addon.statsInfo["Speedbar"]           = {color = Addon.COLORS.WHITE}
+  self.statsInfo["DamagePerSecond"]    = {color = self.COLORS.WHITE}
+  self.statsInfo["Speedbar"]           = {color = self.COLORS.WHITE}
   
-  Addon.statsInfo["Enchant"]            = {color = Addon.COLORS.GREEN}
-  Addon.statsInfo["WeaponEnchant"]      = {color = Addon.COLORS.GREEN}
+  self.statsInfo["Enchant"]            = {color = self.COLORS.GREEN}
+  self.statsInfo["WeaponEnchant"]      = {color = self.COLORS.GREEN}
   
-  Addon.statsInfo["Durability"]         = {color = Addon.COLORS.WHITE}
+  self.statsInfo["Durability"]         = {color = self.COLORS.WHITE}
   
-  Addon.statsInfo["MadeBy"]             = {color = Addon.COLORS.GREEN}
+  self.statsInfo["MadeBy"]             = {color = self.COLORS.GREEN}
   
-  Addon.statsInfo["SocketHint"]         = {color = Addon.COLORS.GREEN}
+  self.statsInfo["SocketHint"]         = {color = self.COLORS.GREEN}
   
-  Addon.statsInfo["Refundable"]         = {color = Addon.COLORS.SKY_BLUE}
-  Addon.statsInfo["SoulboundTradeable"] = {color = Addon.COLORS.SKY_BLUE}
+  self.statsInfo["Refundable"]         = {color = self.COLORS.SKY_BLUE}
+  self.statsInfo["SoulboundTradeable"] = {color = self.COLORS.SKY_BLUE}
 end
 
 

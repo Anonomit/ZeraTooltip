@@ -8,8 +8,10 @@ local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 local strMatch = string.match
 
 
+local hiddenResists = Addon:MakeLookupTable{"Fire Resistance", "Nature Resistance", "Frost Resistance", "Shadow Resistance"}
+
 local function HideLeft(line)
-  line.type       = "Padding"
+  line.type = "Padding"
   
   local pre  = Addon:GetDebugView"tooltipLineNumbers" and format("[%d] ", line.i) or ""
   local text = Addon:GetDebugView"paddingConversionSuccesses" and ("[Padding Success] " .. line.textLeftText) or " "
@@ -18,7 +20,7 @@ local function HideLeft(line)
   return true
 end
 
-function Addon:HideLine(line)
+function Addon:HideLine(line, allResist)
   if line.type == "Binding" then
     if self:GetOption("hide", line.bindType) then
       return HideLeft(line)
@@ -31,6 +33,8 @@ function Addon:HideLine(line)
     if self:GetOption("hide", "Speedbar") then
       line.hideRight = true
     end
+  elseif allResist and line.stat and hiddenResists[line.stat] then
+    return HideLeft(line)
   elseif line.type == "RequiredRaces" then
     if line.colorLeft == self.COLORS.WHITE and self:GetOption("hide", "uselessRaces") and self.uselessRaceStrings[line.textLeftText] then
       return HideLeft(line)

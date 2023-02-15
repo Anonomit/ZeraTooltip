@@ -109,6 +109,8 @@ function Addon:ReadTooltip(tooltip, name, link, maxLines)
   tooltipData.isWeapon = weaponInvTypes[itemEquipLoc]
   tooltipData.icon     = icon
   
+  tooltipData.resists = 0
+  
   return tooltipData
 end
 

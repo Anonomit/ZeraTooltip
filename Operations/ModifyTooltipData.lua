@@ -32,15 +32,16 @@ end
 function Addon:ModifyTooltipData(tooltip, tooltipData)
   if #tooltipData == 0 then return tooltipData end
   self:RecognizeLineTypes(tooltipData)
+  local allResist = tooltipData.resists == 5 and not self:GetOption("hide", "All Resistance")
   
   for i, line in ipairs(tooltipData) do
-    self:RecognizeStat(line)
+    self:RecognizeStat(line, allResist)
     
     if self:GetOption("debugOutput", "initialTooltipData") then
       OutputLineRecognition(line)
     end
     
-    if not self:HideLine(line) then
+    if not self:HideLine(line, allResist) then
       self:RecolorLine(tooltip, line, tooltipData)
       self:RewordLine(tooltip, line, tooltipData)
     end

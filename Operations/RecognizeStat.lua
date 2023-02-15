@@ -8,7 +8,7 @@ local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 local strFind  = string.find
 local strMatch = string.match
 local strGsub  = string.gsub
-
+local strByte  = string.byte
 
 local typesToSearch = {
   BaseStat      = true,
@@ -30,8 +30,8 @@ function Addon:GetStatCacheSize()
 end
 Addon.onOptionSetHandlers["WipeStatCache"] = true
 
-
-function Addon:RecognizeStat(line)
+local function RecognizeStatHelper(line)
+  local self = Addon
   if not line.type or not typesToSearch[line.type] then return end
   
   -- check cache, skip processing if this line has already been recognized
@@ -80,5 +80,19 @@ function Addon:RecognizeStat(line)
   if self:GetOption("cache", "enabled") and self:GetOption("cache", "stat") then
     statCache[line.textLeftText] = {stat = line.stat, normalForm = line.normalForm, prefix = line.prefix, newPrefix = line.newPrefix}
     cacheSize = cacheSize + 1
+  end
+end
+
+do
+  function Addon:RecognizeStat(line, allResist)
+    RecognizeStatHelper(line)
+    
+    if allResist then
+      if line.stat == "Arcane Resistance" then
+        local n         = strMatch(line.normalForm, "(%d+)")
+        line.stat       = "All Resistance"
+        line.normalForm = format(ITEM_RESIST_ALL, strByte"+", n)
+      end
+    end
   end
 end
