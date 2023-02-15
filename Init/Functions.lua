@@ -9,6 +9,7 @@ local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 
 local strGsub   = string.gsub
 local strGmatch = string.gmatch
+local strMatch  = string.match
 
 local tinsert   = table.insert
 local tblConcat = table.concat
@@ -101,7 +102,7 @@ do
     return tex .. "|t"
   end
   function Addon:UnmakeIcon(texture)
-    return self:ChainGsub(texture, {"^|T", ":[%d%.]+|t$", ""})
+    return strMatch(texture, "|T([^:]+):")
   end
   
   function Addon:InsertIcon(text, stat, customTexture)
