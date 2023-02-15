@@ -35,7 +35,12 @@ do
   Addon:AddDefaultRewordByLocale("Block Rating"            , "к блокированию")
   Addon:AddDefaultRewordByLocale("Block Value"             , "к показателю блокирования")
   
-  Addon:AddDefaultRewordByLocale("Spell Power", "к силе заклинаний")
+  Addon:AddDefaultRewordByLocale("Spell Power"  , "к силе заклинаний")
+  Addon:AddDefaultRewordByLocale("Arcane Damage", "к силе заклинаний тайной магии")
+  Addon:AddDefaultRewordByLocale("Fire Damage"  , "к силе заклинаний огня")
+  Addon:AddDefaultRewordByLocale("Nature Damage", "к силе заклинаний природы")
+  Addon:AddDefaultRewordByLocale("Frost Damage" , "к силе заклинаний магии льда")
+  Addon:AddDefaultRewordByLocale("Shadow Damage", "к силе заклинаний темной магии")
   
   Addon:AddDefaultRewordByLocale("Hit Rating"            , "к меткости")
   Addon:AddDefaultRewordByLocale("Critical Strike Rating", "к критическому удару")
@@ -57,6 +62,10 @@ do
   Addon:AddDefaultRewordByLocale("Spell Critical Strike Rating"   , "к критическому эффекту заклинаний")
   Addon:AddDefaultRewordByLocale("Spell Haste Rating"             , "к скорости заклинаний")
 end
+
+
+
+
 
 
 -- override the default stat mods for this locale
@@ -94,6 +103,21 @@ if Addon.isClassic then
   
   Addon:AddExtraStatCapture("Spell Power",
     {INPUT = "^Увеличение урона и целительного действия магических заклинаний и эффектов не более чем на (%d+) ед%.$"})
+  
+  Addon:AddExtraStatCapture("Arcane Damage",
+    {INPUT = "^Увеличение урона, наносимого заклинаниями и эффектами тайной магии, на (%d+) ед%.$"})
+  
+  Addon:AddExtraStatCapture("Fire Damage",
+    {INPUT = "^Увеличение наносимого урона от заклинаний и эффектов огня не более чем на (%d+) ед%.$"})
+  
+  Addon:AddExtraStatCapture("Nature Damage",
+    {INPUT = "^Увеличение урона, наносимого заклинаниями и эффектами сил природы, на (%d+) ед%.$"})
+  
+  Addon:AddExtraStatCapture("Frost Damage",
+    {INPUT = "^Увеличение урона, наносимого заклинаниями и эффектами льда, на (%d+) ед%.$"})
+  
+  Addon:AddExtraStatCapture("Shadow Damage",
+    {INPUT = "^Увеличение урона, наносимого заклинаниями и эффектами темной магии, на (%d+) ед%.$"})
   
   Addon:AddExtraStatCapture("Healing",
     {INPUT = "^Усиливает исцеление от заклинаний и эффектов максимум на (%d+) ед%.$"})

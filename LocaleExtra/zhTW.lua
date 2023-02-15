@@ -31,6 +31,21 @@ if Addon.isClassic then
   Addon:AddExtraStatCapture("Spell Power",
     {INPUT = "^提高法術和魔法效果所造成的傷害和治療效果，最多(%d+)點。$"})
   
+  Addon:AddExtraStatCapture("Arcane Damage",
+    {INPUT = "^祕法法術和效果造成的傷害提高最多(%d+)點。$"})
+  
+  Addon:AddExtraStatCapture("Fire Damage",
+    {INPUT = "^提高火焰法術和效果所造成的傷害，最多(%d+)點。$"})
+  
+  Addon:AddExtraStatCapture("Nature Damage",
+    {INPUT = "^提高自然法術和效果所造成的傷害，最多(%d+)點。$"})
+  
+  Addon:AddExtraStatCapture("Frost Damage",
+    {INPUT = "^提高冰霜法術和效果所造成的傷害，最多(%d+)點。$"})
+  
+  Addon:AddExtraStatCapture("Shadow Damage",
+    {INPUT = "^提高暗影法術和效果所造成的傷害，最多(%d+)點。$"})
+  
   Addon:AddExtraStatCapture("Healing",
     {INPUT = "^提高法術和魔法效果所造成的治療效果，最多(%d+)點。$"})
   

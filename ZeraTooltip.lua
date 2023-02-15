@@ -60,7 +60,7 @@ function Addon:CreateOptions()
 end
 
 function Addon:InitDB()
-  local configVersion = self.SemVer(self:GetOption"version" or tostring(self.Version))
+  local configVersion = self.SemVer(self:GetOption"version" or tostring(self.version))
   
   
   if not self:GetOption"version" then -- first run
@@ -155,7 +155,7 @@ function Addon:InitDB()
   -- load stat order
   self:RegenerateStatOrder()
   
-  self:SetOption(tostring(self.Version), "version")
+  self:SetOption(tostring(self.version), "version")
 end
 
 
@@ -172,7 +172,7 @@ function Addon:OnInitialize()
 end
 
 function Addon:OnEnable()
-  self.Version = self.SemVer(GetAddOnMetadata(ADDON_NAME, "Version"))
+  self.version = self.SemVer(GetAddOnMetadata(ADDON_NAME, "Version"))
   self:InitDB()
   self:GetDB().RegisterCallback(self, "OnProfileChanged", "InitDB")
   self:GetDB().RegisterCallback(self, "OnProfileCopied" , "InitDB")

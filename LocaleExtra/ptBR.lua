@@ -34,6 +34,21 @@ if Addon.isClassic then
   Addon:AddExtraStatCapture("Spell Power",
     {INPUT = "^Aumenta em até (%d+) o dano causado e a cura realizada por feitiços e efeitos mágicos%.$"})
   
+  Addon:AddExtraStatCapture("Arcane Damage",
+    {INPUT = "^Aumenta em até (%d+) o dano causado por feitiços e efeitos Arcanos%.$"})
+  
+  Addon:AddExtraStatCapture("Fire Damage",
+    {INPUT = "^Aumenta em até (%d+) o dano causado por feitiços e efeitos de Fogo%.$"})
+  
+  Addon:AddExtraStatCapture("Nature Damage",
+    {INPUT = "^Aumenta em até (%d+) o dano causado por feitiços e efeitos de Natureza%.$"})
+  
+  Addon:AddExtraStatCapture("Frost Damage",
+    {INPUT = "^Aumenta em até (%d+) o dano causado por feitiços e efeitos de Gelo%.$"})
+  
+  Addon:AddExtraStatCapture("Shadow Damage",
+    {INPUT = "^Aumenta em até (%d+) o dano causado por feitiços e efeitos de Sombra%.$"})
+  
   Addon:AddExtraStatCapture("Healing",
     {INPUT = "^Aumenta em até (%d+) a cura realizada por feitiços e efeitos mágicos%.$"})
   

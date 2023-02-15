@@ -21,42 +21,6 @@ local tostring = tostring
 
 
 
-
-
---  ███████╗██╗  ██╗██████╗  █████╗ ███╗   ██╗███████╗██╗ ██████╗ ███╗   ██╗███████╗
---  ██╔════╝╚██╗██╔╝██╔══██╗██╔══██╗████╗  ██║██╔════╝██║██╔═══██╗████╗  ██║██╔════╝
---  █████╗   ╚███╔╝ ██████╔╝███████║██╔██╗ ██║███████╗██║██║   ██║██╔██╗ ██║███████╗
---  ██╔══╝   ██╔██╗ ██╔═══╝ ██╔══██║██║╚██╗██║╚════██║██║██║   ██║██║╚██╗██║╚════██║
---  ███████╗██╔╝ ██╗██║     ██║  ██║██║ ╚████║███████║██║╚██████╔╝██║ ╚████║███████║
---  ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
-
-do
-  Addon.expansions = {
-    retail  = 9,
-    wrath   = 3,
-    wotlk   = 3,
-    tbc     = 2,
-    bcc     = 2,
-    classic = 1,
-  }
-  Addon.expansionLevel = tonumber(GetBuildInfo():match"^(%d+)%.")
-  if Addon.expansionLevel >= Addon.expansions.retail then
-    Addon.expansionName = "retail"
-  elseif Addon.expansionLevel >= Addon.expansions.wrath then
-    Addon.expansionName = "wrath"
-  elseif Addon.expansionLevel == Addon.expansions.tbc then
-    Addon.expansionName = "tbc"
-  elseif Addon.expansionLevel == Addon.expansions.classic then
-    Addon.expansionName = "classic"
-  end
-  Addon.isRetail  = Addon.expansionName == "retail"
-  Addon.isWrath   = Addon.expansionName == "wrath"
-  Addon.isTBC     = Addon.expansionName == "tbc"
-  Addon.isClassic = Addon.expansionName == "classic"
-end
-
-
-
 --  ███╗   ███╗██╗███████╗ ██████╗
 --  ████╗ ████║██║██╔════╝██╔════╝
 --  ██╔████╔██║██║███████╗██║     
@@ -156,6 +120,14 @@ do
       Addon.ITEM_MOD_AGILITY   = strGsub(ITEM_MOD_AGILITY  , " ", "", 1)
       Addon.ITEM_MOD_INTELLECT = strGsub(ITEM_MOD_INTELLECT, " ", "", 1)
       Addon.ITEM_MOD_SPIRIT    = strGsub(ITEM_MOD_SPIRIT   , " ", "", 1)
+    end
+  end
+  
+  Addon.SPELL_DAMAGE_STATS = {}
+  for _, stat in ipairs{"Arcane Damage", "Fire Damage", "Nature Damage", "Frost Damage", "Shadow Damage"} do
+    local rules = Addon:GetExtraStatCapture(stat)
+    if rules then
+      Addon.SPELL_DAMAGE_STATS[stat] = Addon:ChainGsub(rules[1].INPUT, {"%(%%d%+%)", "%%s"}, {"^%^", "%$$", ""}, {"%%([^s])", "%1"})
     end
   end
 end
@@ -512,57 +484,84 @@ end
 do
   local self = Addon
   
+  local elementResistances = {
+    RESISTANCE6_NAME,
+    RESISTANCE2_NAME,
+    RESISTANCE3_NAME,
+    RESISTANCE4_NAME,
+    RESISTANCE5_NAME,
+  }
+  local elementNames = {
+    self.DAMAGE_SCHOOL7,
+    self.DAMAGE_SCHOOL3,
+    self.DAMAGE_SCHOOL4,
+    self.DAMAGE_SCHOOL5,
+    self.DAMAGE_SCHOOL6,
+  }
+  local elementColors = {
+    self.COLORS.ARCANE,
+    self.COLORS.FIRE,
+    self.COLORS.NATURE,
+    self.COLORS.FROST,
+    self.COLORS.SHADOW,
+  }
+  
   local ITEM_MOD_HASTE_SPELL_RATING_SHORT = ITEM_MOD_HASTE_SPELL_RATING_SHORT or strGsub(ITEM_MOD_CRIT_SPELL_RATING_SHORT, self:CoverSpecialCharacters(ITEM_MOD_CRIT_RATING_SHORT), self:CoverSpecialCharacters(ITEM_MOD_HASTE_RATING_SHORT))
   local ITEM_MOD_HASTE_SPELL_RATING       = ITEM_MOD_HASTE_SPELL_RATING       or strGsub(ITEM_MOD_CRIT_SPELL_RATING,       self:CoverSpecialCharacters(ITEM_MOD_CRIT_RATING),       self:CoverSpecialCharacters(ITEM_MOD_HASTE_RATING))
   
-  local statsData = {
-    {1, {true, true, true}, "Stamina",   SPELL_STAT3_NAME, self.ITEM_MOD_STAMINA,   self.COLORS.WHITE, self.COLORS.PALE_LIGHT_GREEN},
-    {1, {true, true, true}, "Strength",  SPELL_STAT1_NAME, self.ITEM_MOD_STRENGTH,  self.COLORS.WHITE, self.COLORS.TUMBLEWEED},
-    {0, {true, true, true}, "Agility",   SPELL_STAT2_NAME, self.ITEM_MOD_AGILITY,   self.COLORS.WHITE, self.COLORS.PUMPKIN_ORANGE},
-    {1, {true, true, true}, "Intellect", SPELL_STAT4_NAME, self.ITEM_MOD_INTELLECT, self.COLORS.WHITE, self.COLORS.JORDY_BLUE},
-    {0, {true, true, true}, "Spirit",    SPELL_STAT5_NAME, self.ITEM_MOD_SPIRIT,    self.COLORS.WHITE, self.COLORS.LIGHT_AQUA},
+  local statsData = {}
+  tinsert(statsData, {1, {true, true, true}, "Stamina",   SPELL_STAT3_NAME, self.ITEM_MOD_STAMINA,   self.COLORS.WHITE, self.COLORS.PALE_LIGHT_GREEN})
+  tinsert(statsData, {1, {true, true, true}, "Strength",  SPELL_STAT1_NAME, self.ITEM_MOD_STRENGTH,  self.COLORS.WHITE, self.COLORS.TUMBLEWEED})
+  tinsert(statsData, {0, {true, true, true}, "Agility",   SPELL_STAT2_NAME, self.ITEM_MOD_AGILITY,   self.COLORS.WHITE, self.COLORS.PUMPKIN_ORANGE})
+  tinsert(statsData, {1, {true, true, true}, "Intellect", SPELL_STAT4_NAME, self.ITEM_MOD_INTELLECT, self.COLORS.WHITE, self.COLORS.JORDY_BLUE})
+  tinsert(statsData, {0, {true, true, true}, "Spirit",    SPELL_STAT5_NAME, self.ITEM_MOD_SPIRIT,    self.COLORS.WHITE, self.COLORS.LIGHT_AQUA})
     
-    {1, {true, true, true}, "All Resistance", self:ChainGsub(ITEM_RESIST_ALL, {"%%.", "^ *", ""}), self:ChainGsub(ITEM_RESIST_ALL, {"%%%d+%$", "%%"}), self.COLORS.WHITE, self.COLORS.YELLOW},
+  tinsert(statsData, {1, {true, true, true}, "All Resistance", self:ChainGsub(ITEM_RESIST_ALL, {"%%.", "^ *", ""}), self:ChainGsub(ITEM_RESIST_ALL, {"%%%d+%$", "%%"}), self.COLORS.WHITE, self.COLORS.YELLOW})
+  
+  for i, stat in ipairs{"Arcane Resistance", "Fire Resistance", "Nature Resistance", "Frost Resistance", "Shadow Resistance"} do
+    tinsert(statsData, {(i == 1 and 1 or 0), {true, true, true}, stat, elementResistances[i], format(self:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), elementNames[i]), self.COLORS.WHITE, elementColors[i]})
+  end
+  -- {true, true, true, "Holy Resistance"  , RESISTANCE1_NAME, format(self:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), self.DAMAGE_SCHOOL2), self.COLORS.WHITE, self.COLORS.HOLY},
     
-    {1, {true, true, true}, "Arcane Resistance", RESISTANCE6_NAME, format(self:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), self.DAMAGE_SCHOOL7), self.COLORS.WHITE, self.COLORS.ARCANE},
-    {0, {true, true, true}, "Fire Resistance"  , RESISTANCE2_NAME, format(self:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), self.DAMAGE_SCHOOL3), self.COLORS.WHITE, self.COLORS.FIRE},
-    {0, {true, true, true}, "Nature Resistance", RESISTANCE3_NAME, format(self:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), self.DAMAGE_SCHOOL4), self.COLORS.WHITE, self.COLORS.NATURE},
-    {0, {true, true, true}, "Frost Resistance" , RESISTANCE4_NAME, format(self:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), self.DAMAGE_SCHOOL5), self.COLORS.WHITE, self.COLORS.FROST},
-    {0, {true, true, true}, "Shadow Resistance", RESISTANCE5_NAME, format(self:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), self.DAMAGE_SCHOOL6), self.COLORS.WHITE, self.COLORS.SHADOW},
-    -- {true, true, true, "Holy Resistance"  , RESISTANCE1_NAME, format(self:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), self.DAMAGE_SCHOOL2), self.COLORS.WHITE, self.COLORS.HOLY},
+  tinsert(statsData, {1, {true, true, true}, "Defense Rating"   , ITEM_MOD_DEFENSE_SKILL_RATING_SHORT, ITEM_MOD_DEFENSE_SKILL_RATING, self.COLORS.GREEN, self.COLORS.YELLOW})
+  tinsert(statsData, {1, {true, true, true}, "Dodge Rating"     , ITEM_MOD_DODGE_RATING_SHORT        , ITEM_MOD_DODGE_RATING        , self.COLORS.GREEN, self.COLORS.YELLOW})
+  tinsert(statsData, {0, {true, true, true}, "Parry Rating"     , ITEM_MOD_PARRY_RATING_SHORT        , ITEM_MOD_PARRY_RATING        , self.COLORS.GREEN, self.COLORS.YELLOW})
+  tinsert(statsData, {1, {true, true, true}, "Block Rating"     , ITEM_MOD_BLOCK_RATING_SHORT        , ITEM_MOD_BLOCK_RATING        , self.COLORS.GREEN, self.COLORS.YELLOW})
+  tinsert(statsData, {0, {true, true, true}, "Block Value"      , ITEM_MOD_BLOCK_VALUE_SHORT         , ITEM_MOD_BLOCK_VALUE         , self.COLORS.GREEN, self.COLORS.YELLOW})
+  tinsert(statsData, {0, {true, true, true}, "Resilience Rating", ITEM_MOD_RESILIENCE_RATING_SHORT   , ITEM_MOD_RESILIENCE_RATING   , self.COLORS.GREEN, self.COLORS.YELLOW})
     
-    {1, {true, true, true}, "Defense Rating"   , ITEM_MOD_DEFENSE_SKILL_RATING_SHORT, ITEM_MOD_DEFENSE_SKILL_RATING, self.COLORS.GREEN, self.COLORS.YELLOW},
-    {1, {true, true, true}, "Dodge Rating"     , ITEM_MOD_DODGE_RATING_SHORT        , ITEM_MOD_DODGE_RATING        , self.COLORS.GREEN, self.COLORS.YELLOW},
-    {0, {true, true, true}, "Parry Rating"     , ITEM_MOD_PARRY_RATING_SHORT        , ITEM_MOD_PARRY_RATING        , self.COLORS.GREEN, self.COLORS.YELLOW},
-    {1, {true, true, true}, "Block Rating"     , ITEM_MOD_BLOCK_RATING_SHORT        , ITEM_MOD_BLOCK_RATING        , self.COLORS.GREEN, self.COLORS.YELLOW},
-    {0, {true, true, true}, "Block Value"      , ITEM_MOD_BLOCK_VALUE_SHORT         , ITEM_MOD_BLOCK_VALUE         , self.COLORS.GREEN, self.COLORS.YELLOW},
-    {0, {true, true, true}, "Resilience Rating", ITEM_MOD_RESILIENCE_RATING_SHORT   , ITEM_MOD_RESILIENCE_RATING   , self.COLORS.GREEN, self.COLORS.YELLOW},
+  tinsert(statsData, {1, {true, true, true}, "Expertise Rating"        , ITEM_MOD_EXPERTISE_RATING_SHORT        , ITEM_MOD_EXPERTISE_RATING        , self.COLORS.GREEN, self.COLORS.TUMBLEWEED})
+  tinsert(statsData, {1, {true, true, true}, "Attack Power"            , ITEM_MOD_ATTACK_POWER_SHORT            , ITEM_MOD_ATTACK_POWER            , self.COLORS.GREEN, self.COLORS.TUMBLEWEED})
+  tinsert(statsData, {0, {true, true, true}, "Ranged Attack Power"     , ITEM_MOD_RANGED_ATTACK_POWER_SHORT     , ITEM_MOD_RANGED_ATTACK_POWER     , self.COLORS.GREEN, self.COLORS.TUMBLEWEED})
+  tinsert(statsData, {0, {true, true, true}, "Attack Power In Forms"   , ITEM_MOD_FERAL_ATTACK_POWER_SHORT      , ITEM_MOD_FERAL_ATTACK_POWER      , self.COLORS.GREEN, self.COLORS.TUMBLEWEED})
+  tinsert(statsData, {0, {true, true, true}, "Armor Penetration Rating", ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT, ITEM_MOD_ARMOR_PENETRATION_RATING, self.COLORS.GREEN, self.COLORS.TUMBLEWEED})
     
-    {1, {true, true, true}, "Expertise Rating"        , ITEM_MOD_EXPERTISE_RATING_SHORT        , ITEM_MOD_EXPERTISE_RATING        , self.COLORS.GREEN, self.COLORS.TUMBLEWEED},
-    {1, {true, true, true}, "Attack Power"            , ITEM_MOD_ATTACK_POWER_SHORT            , ITEM_MOD_ATTACK_POWER            , self.COLORS.GREEN, self.COLORS.TUMBLEWEED},
-    {0, {true, true, true}, "Ranged Attack Power"     , ITEM_MOD_RANGED_ATTACK_POWER_SHORT     , ITEM_MOD_RANGED_ATTACK_POWER     , self.COLORS.GREEN, self.COLORS.TUMBLEWEED},
-    {0, {true, true, true}, "Attack Power In Forms"   , ITEM_MOD_FERAL_ATTACK_POWER_SHORT      , ITEM_MOD_FERAL_ATTACK_POWER      , self.COLORS.GREEN, self.COLORS.TUMBLEWEED},
-    {0, {true, true, true}, "Armor Penetration Rating", ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT, ITEM_MOD_ARMOR_PENETRATION_RATING, self.COLORS.GREEN, self.COLORS.TUMBLEWEED},
+  tinsert(statsData, {1, {true, true, true}, "Spell Power", ITEM_MOD_SPELL_POWER_SHORT, ITEM_MOD_SPELL_POWER, self.COLORS.GREEN, self.COLORS.PERIWINKLE})
     
-    {1, {true, true, true}, "Spell Power" , ITEM_MOD_SPELL_POWER_SHORT       , ITEM_MOD_SPELL_POWER       , self.COLORS.GREEN, self.COLORS.PERIWINKLE},
-    -- {nil , nil , nil , "Spell Damage", ITEM_MOD_SPELL_DAMAGE_DONE_SHORT , ITEM_MOD_SPELL_DAMAGE_DONE , self.COLORS.GREEN, self.COLORS.PERIWINKLE},
-    {0, {true, true, nil }, "Healing"     , ITEM_MOD_SPELL_HEALING_DONE_SHORT, ITEM_MOD_SPELL_HEALING_DONE, self.COLORS.GREEN, self.COLORS.LIGHT_CYAN},
+  -- tinsert(statsData, {1, {true, true, true}, "Spell Damage" , ITEM_MOD_SPELL_DAMAGE_DONE_SHORT, ITEM_MOD_SPELL_DAMAGE_DONE, self.COLORS.GREEN, self.COLORS.PERIWINKLE})
+  for i, stat in ipairs{"Arcane Damage", "Fire Damage", "Nature Damage", "Frost Damage", "Shadow Damage"} do
+    if Addon.SPELL_DAMAGE_STATS[stat] then
+      tinsert(statsData, {(i == 1 and 1 or 0), {true, true, nil} , stat, format(SINGLE_DAMAGE_TEMPLATE, elementNames[i]), Addon.SPELL_DAMAGE_STATS[stat], self.COLORS.GREEN, elementColors[i]})
+    end
+  end
+  
+  tinsert(statsData, {0, {true, true, nil }, "Healing", ITEM_MOD_SPELL_HEALING_DONE_SHORT, ITEM_MOD_SPELL_HEALING_DONE, self.COLORS.GREEN, self.COLORS.LIGHT_CYAN})
     
-    {0, {true, true, true}, "Spell Penetration", ITEM_MOD_SPELL_PENETRATION_SHORT, ITEM_MOD_SPELL_PENETRATION, self.COLORS.GREEN, self.COLORS.VENUS_SLIPPER_ORCHID},
+  tinsert(statsData, {0, {true, true, true}, "Spell Penetration", ITEM_MOD_SPELL_PENETRATION_SHORT, ITEM_MOD_SPELL_PENETRATION, self.COLORS.GREEN, self.COLORS.VENUS_SLIPPER_ORCHID})
     
-    {1, {nil , nil , true}, "Hit Rating"                     , ITEM_MOD_HIT_RATING_SHORT        , ITEM_MOD_HIT_RATING        , self.COLORS.GREEN, self.COLORS.PINK_SHERBET},
-    {0, {nil , nil , true}, "Critical Strike Rating"         , ITEM_MOD_CRIT_RATING_SHORT       , ITEM_MOD_CRIT_RATING       , self.COLORS.GREEN, self.COLORS.PARIS_GREEN} ,
-    {0, {nil , nil , true}, "Haste Rating"                   , ITEM_MOD_HASTE_RATING_SHORT      , ITEM_MOD_HASTE_RATING      , self.COLORS.GREEN, self.COLORS.LEMON_LIME}  ,
-    {1, {true, true, nil }, "Physical Hit Rating"            , ITEM_MOD_HIT_RATING_SHORT        , ITEM_MOD_HIT_RATING        , self.COLORS.GREEN, self.COLORS.PINK_SHERBET},
-    {0, {true, true, nil }, "Physical Critical Strike Rating", ITEM_MOD_CRIT_RATING_SHORT       , ITEM_MOD_CRIT_RATING       , self.COLORS.GREEN, self.COLORS.PARIS_GREEN},
-    {0, {nil , true, nil }, "Physical Haste Rating"          , ITEM_MOD_HASTE_RATING_SHORT      , ITEM_MOD_HASTE_RATING      , self.COLORS.GREEN, self.COLORS.LEMON_LIME},
-    {1, {true, true, nil }, "Spell Hit Rating"               , ITEM_MOD_HIT_SPELL_RATING_SHORT  , ITEM_MOD_HIT_SPELL_RATING  , self.COLORS.GREEN, self.COLORS.PINK_SHERBET},
-    {0, {true, true, nil }, "Spell Critical Strike Rating"   , ITEM_MOD_CRIT_SPELL_RATING_SHORT , ITEM_MOD_CRIT_SPELL_RATING , self.COLORS.GREEN, self.COLORS.PARIS_GREEN},
-    {0, {nil , true, nil }, "Spell Haste Rating"             , ITEM_MOD_HASTE_SPELL_RATING_SHORT, ITEM_MOD_HASTE_SPELL_RATING, self.COLORS.GREEN, self.COLORS.LEMON_LIME},
+  tinsert(statsData, {1, {nil , nil , true}, "Hit Rating"                     , ITEM_MOD_HIT_RATING_SHORT        , ITEM_MOD_HIT_RATING        , self.COLORS.GREEN, self.COLORS.PINK_SHERBET})
+  tinsert(statsData, {0, {nil , nil , true}, "Critical Strike Rating"         , ITEM_MOD_CRIT_RATING_SHORT       , ITEM_MOD_CRIT_RATING       , self.COLORS.GREEN, self.COLORS.PARIS_GREEN} )
+  tinsert(statsData, {0, {nil , nil , true}, "Haste Rating"                   , ITEM_MOD_HASTE_RATING_SHORT      , ITEM_MOD_HASTE_RATING      , self.COLORS.GREEN, self.COLORS.LEMON_LIME}  )
+  tinsert(statsData, {1, {true, true, nil }, "Physical Hit Rating"            , ITEM_MOD_HIT_RATING_SHORT        , ITEM_MOD_HIT_RATING        , self.COLORS.GREEN, self.COLORS.PINK_SHERBET})
+  tinsert(statsData, {0, {true, true, nil }, "Physical Critical Strike Rating", ITEM_MOD_CRIT_RATING_SHORT       , ITEM_MOD_CRIT_RATING       , self.COLORS.GREEN, self.COLORS.PARIS_GREEN})
+  tinsert(statsData, {0, {nil , true, nil }, "Physical Haste Rating"          , ITEM_MOD_HASTE_RATING_SHORT      , ITEM_MOD_HASTE_RATING      , self.COLORS.GREEN, self.COLORS.LEMON_LIME})
+  tinsert(statsData, {1, {true, true, nil }, "Spell Hit Rating"               , ITEM_MOD_HIT_SPELL_RATING_SHORT  , ITEM_MOD_HIT_SPELL_RATING  , self.COLORS.GREEN, self.COLORS.PINK_SHERBET})
+  tinsert(statsData, {0, {true, true, nil }, "Spell Critical Strike Rating"   , ITEM_MOD_CRIT_SPELL_RATING_SHORT , ITEM_MOD_CRIT_SPELL_RATING , self.COLORS.GREEN, self.COLORS.PARIS_GREEN})
+  tinsert(statsData, {0, {nil , true, nil }, "Spell Haste Rating"             , ITEM_MOD_HASTE_SPELL_RATING_SHORT, ITEM_MOD_HASTE_SPELL_RATING, self.COLORS.GREEN, self.COLORS.LEMON_LIME})
     
-    {1, {true, true, true}, "Health Regeneration", ITEM_MOD_HEALTH_REGENERATION_SHORT, ITEM_MOD_HEALTH_REGEN     , self.COLORS.GREEN, self.COLORS.PALE_LIGHT_GREEN},
-    {0, {true, true, true}, "Mana Regeneration"  , ITEM_MOD_MANA_REGENERATION_SHORT  , ITEM_MOD_MANA_REGENERATION, self.COLORS.GREEN, self.COLORS.JORDY_BLUE},
-  }
+  tinsert(statsData, {1, {true, true, true}, "Health Regeneration", ITEM_MOD_HEALTH_REGENERATION_SHORT, ITEM_MOD_HEALTH_REGEN     , self.COLORS.GREEN, self.COLORS.PALE_LIGHT_GREEN})
+  tinsert(statsData, {0, {true, true, true}, "Mana Regeneration"  , ITEM_MOD_MANA_REGENERATION_SHORT  , ITEM_MOD_MANA_REGENERATION, self.COLORS.GREEN, self.COLORS.JORDY_BLUE})
+  
   
   
   local isReversedLocale = not ITEM_MOD_STAMINA:find"^%%"

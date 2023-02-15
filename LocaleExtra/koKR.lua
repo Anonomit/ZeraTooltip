@@ -25,6 +25,21 @@ if Addon.isClassic then
   Addon:AddExtraStatCapture("Spell Power",
     {INPUT = "^모든 주문 및 효과에 의한 피해와 치유량이 최대 (%d+)만큼 증가합니다%.$"})
   
+  Addon:AddExtraStatCapture("Arcane Damage",
+    {INPUT = "^비전 계열의 주문과 효과의 공격력이 최대 (%d+)만큼 증가합니다%.$"})
+  
+  Addon:AddExtraStatCapture("Fire Damage",
+    {INPUT = "^화염 계열의 주문과 효과의 공격력이 최대 (%d+)만큼 증가합니다%.$"})
+  
+  Addon:AddExtraStatCapture("Nature Damage",
+    {INPUT = "^자연 계열의 주문과 효과의 공격력이 최대 (%d+)만큼 증가합니다%.$"})
+  
+  Addon:AddExtraStatCapture("Frost Damage",
+    {INPUT = "^냉기 계열의 주문과 효과의 공격력이 최대 (%d+)만큼 증가합니다%.$"})
+  
+  Addon:AddExtraStatCapture("Shadow Damage",
+    {INPUT = "^암흑 계열의 주문과 효과의 공격력이 최대 (%d+)만큼 증가합니다%.$"})
+  
   Addon:AddExtraStatCapture("Healing",
     {INPUT = "^모든 주문 및 효과에 의한 치유량이 최대 (%d+)만큼 증가합니다%.$"})
   

@@ -46,7 +46,6 @@ do
   Addon:AddDefaultRewordByLocale("Spell Haste Rating"             , "Spell Haste")
 end
 
-
 -- override the default stat mods for this locale
 do
   -- Addon:AddDefaultModByLocale(stat, val)
@@ -89,6 +88,21 @@ if Addon.isClassic then
   
   Addon:AddExtraStatCapture("Spell Power",
     {INPUT = "^Increases damage and healing done by magical spells and effects by up to (%d+)%.$"})
+  
+  Addon:AddExtraStatCapture("Arcane Damage",
+    {INPUT = "^Increases damage done by Arcane spells and effects by up to (%d+)%.$"})
+  
+  Addon:AddExtraStatCapture("Fire Damage",
+    {INPUT = "^Increases damage done by Fire spells and effects by up to (%d+)%.$"})
+  
+  Addon:AddExtraStatCapture("Nature Damage",
+    {INPUT = "^Increases damage done by Nature spells and effects by up to (%d+)%.$"})
+  
+  Addon:AddExtraStatCapture("Frost Damage",
+    {INPUT = "^Increases damage done by Frost spells and effects by up to (%d+)%.$"})
+  
+  Addon:AddExtraStatCapture("Shadow Damage",
+    {INPUT = "^Increases damage done by Shadow spells and effects by up to (%d+)%.$"})
   
   Addon:AddExtraStatCapture("Healing",
     {INPUT = "^Increases healing done by spells and effects by up to (%d+)%.$"})
