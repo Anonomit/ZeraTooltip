@@ -12,6 +12,12 @@ local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 -- override the default stat rewords for this locale
 do
   -- Addon:AddDefaultRewordByLocale(stat, val)
+  Addon:AddDefaultRewordByLocale("All Resistance"   , "All Resist")
+  Addon:AddDefaultRewordByLocale("Arcane Resistance", "Arcane Resist")
+  Addon:AddDefaultRewordByLocale("Fire Resistance"  , "Fire Resist")
+  Addon:AddDefaultRewordByLocale("Nature Resistance", "Nature Resist")
+  Addon:AddDefaultRewordByLocale("Frost Resistance" , "Frost Resist")
+  Addon:AddDefaultRewordByLocale("Shadow Resistance", "Shadow Resist")
   
   Addon:AddDefaultRewordByLocale("Attack Power In Forms"   , "Feral Attack Power")
   Addon:AddDefaultRewordByLocale("Defense Rating"          , "Defense")
