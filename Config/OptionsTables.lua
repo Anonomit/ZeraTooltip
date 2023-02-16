@@ -187,7 +187,7 @@ local function CreateShow(opts, stat)
   
   return opts
 end
-local icons         = Addon:Map(Addon.iconPaths, function(v) return Addon:MakeIcon(v) end)
+local icons         = Addon:Map(Addon.iconPaths, function(v) return Addon:MakeIcon(v, 16) end)
 local iconsDropdown = Addon:Map(icons, nil, function(v) return v end)
 local function CreateIcon(opts, stat)
   local self = Addon
@@ -200,7 +200,7 @@ local function CreateIcon(opts, stat)
   local option = GUI:CreateSelect(opts, {"icon", stat}, self.L["Choose an Icon:"], nil, iconsDropdown, icons, disabled or not self:GetOption("doIcon", stat))
   option.width = 0.7
   option.set   = function(info, v) self:SetOption(self:UnmakeIcon(v), "icon", stat)   end
-  option.get   = function(info)    return self:MakeIcon(self:GetOption("icon", stat)) end
+  option.get   = function(info)    return self:MakeIcon(self:GetOption("icon", stat), 16) end
   CreateReset(opts, {"icon", stat}, function() self:ResetOption("icon", stat) end)
   GUI:CreateNewline(opts)
   
