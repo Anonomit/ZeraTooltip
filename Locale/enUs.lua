@@ -43,7 +43,7 @@ L["Set List"]           = true
 L["Set Bonus"]          = true
 L["Place an empty line above this line."] = true
 L["Place an empty line below this line."] = true
-L["Place an empty line at the end of the tooltip, when possible."] = true
+L["Place an empty line at the end of the tooltip, before other addons add lines."] = true
 
 
 -- title

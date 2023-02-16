@@ -417,7 +417,7 @@ local function CreatePaddingOption(opts, name, beforeStat, afterStat, samples, d
   if beforeStat then
     GUI:CreateToggle(opts, beforeStat, L["Space Above"], L["Place an empty line above this line."], disabled)
   else -- only happens at the end
-    return GUI:CreateToggle(opts, afterStat, L["Space Below"], L["Place an empty line at the end of the tooltip, when possible."], disabled)
+    return GUI:CreateToggle(opts, afterStat, L["Space Below"], L["Place an empty line at the end of the tooltip, before other addons add lines."], disabled)
   end
   
   GUI:CreateNewline(opts)

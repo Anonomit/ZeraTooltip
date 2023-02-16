@@ -65,8 +65,8 @@ function Addon:CalculatePadding(tooltipData)
                   line.pad = true
                 end
               end
-            elseif offset == 1 then
-              tooltipData.padLast = true
+            -- elseif offset == 1 then
+              -- tooltipData.padLast = true
             end
             padded[padType] = true
           end
@@ -113,10 +113,20 @@ function Addon:CalculatePadding(tooltipData)
   end
   
   -- pad last line
-  if self:GetOption"padLastLine" then
+  do
     local lastLine = tooltipData[#tooltipData]
-    if lastLine.type ~= "Padding" or not lastLine.used then
-      tooltipData.padLast = true
+    if self:GetOption"padLastLine" then
+      if lastLine.type == "Padding" then
+        if lastLine.hide then
+          lastLine.hide = nil
+        end
+      else
+        tooltipData.padLast = true
+      end
+    else
+      if lastLine.type == "Padding" then
+        lastLine.hide = true
+      end
     end
   end
 end
