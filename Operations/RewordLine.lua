@@ -72,6 +72,8 @@ function Addon:RewordLine(tooltip, line, tooltipData)
       text = self:RewordArmor(text)
     elseif line.type == "BonusArmor" then
       text = self:RewordBonusArmor(text)
+    elseif line.type == "Block" then
+      text = self:RewordBlock(text)
     elseif line.type == "Enchant" then
       text = self:ModifyEnchantment(text)
     elseif line.type == "WeaponEnchant" then

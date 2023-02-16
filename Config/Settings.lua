@@ -39,6 +39,7 @@ function Addon:MakeDefaultOptions()
           ItemLevel          = false,
           Armor              = false,
           BonusArmor         = false,
+          Block              = false,
           Enchant            = false,
           WeaponEnchant      = false,
           EnchantOnUse       = false,
@@ -65,6 +66,7 @@ function Addon:MakeDefaultOptions()
           Title        = false,
           Armor        = false,
           BonusArmor   = false,
+          Block        = false,
           Enchant      = false,
           EnchantOnUse = false, -- no GUI option, should not be enabled. inherits from Use
           Equip        = false, -- just to match Use
@@ -134,6 +136,7 @@ function Addon:MakeDefaultOptions()
           Tradeable      = "Interface\\MINIMAP\\TRACKING\\Auctioneer",
           Armor          = Addon.retailTexturesPath .. "ICONS\\Garrison_BlueArmor",
           BonusArmor     = Addon.retailTexturesPath .. "ICONS\\Garrison_GreenArmorUpgrade",
+          Block          = "Interface\\ICONS\\INV_Shield_09",
           Enchant        = "Interface\\Buttons\\UI-GroupLoot-DE-Up",
           WeaponEnchant  = "Interface\\CURSOR\\Attack",
           EnchantOnUse   = "Interface\\Buttons\\UI-GroupLoot-DE-Up",

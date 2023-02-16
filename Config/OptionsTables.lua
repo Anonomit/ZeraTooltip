@@ -1234,6 +1234,37 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
     CreateHide(opts, stat)
   end
   
+  -- Block
+  do
+    local stat = "Block"
+    
+    local sample = 10
+    local defaultText = format(SHIELD_BLOCK_TEMPLATE, sample)
+    local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.WHITE, defaultText, self:RewordBlock(defaultText))
+    
+    local opts = GUI:CreateGroup(opts, stat, formattedText, nil, nil, disabled)
+      
+    CreateTitle(opts, defaultText, formattedText, changed)
+    
+    CreateColor(opts, stat)
+    
+    do
+      local opts = CreateReword(opts, stat)
+      GUI:CreateNewline(opts)
+      
+      -- Trim Space
+      local disabled = disabled or not self:GetOption("doReword", stat)
+      GUI:CreateToggle(opts, {"trimSpace", stat}, L["Remove Space"], nil, disabled)
+      CreateReset(opts, {"trimSpace", stat}, function() self:ResetOption("trimSpace", stat) end)
+      GUI:CreateNewline(opts)
+    end
+    
+    CreateIcon(opts, stat)
+    
+    CreateHide(opts, stat)
+  end
+  GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
+  
   -- Enchant
   do
     local stat = "Enchant"
