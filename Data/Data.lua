@@ -728,15 +728,18 @@ end
 --  ╚═╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
 
 do
+  Addon.texturesPath       = "Interface\\AddOns\\" .. ADDON_NAME .. "\\Assets\\Textures\\"
+  Addon.retailTexturesPath = Addon.texturesPath .. "Retail\\"
+  
   Addon.stealthIcon          = Addon:MakeIcon"132320"
   Addon.socketIcon           = Addon:MakeIcon"Interface\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-META"
-  Addon.speedbarEmptyIcon    = Addon:MakeIcon("Interface\\AddOns\\" .. ADDON_NAME .. "\\Assets\\Textures\\Speedbar_transparent", nil, 0.25)
-  Addon.speedbarFillIconPath = "Interface\\AddOns\\" .. ADDON_NAME .. "\\Assets\\Textures\\Speedbar"
+  Addon.speedbarEmptyIcon    = Addon:MakeIcon(Addon.texturesPath .. "Speedbar_transparent", nil, 0.25)
+  Addon.speedbarFillIconPath = Addon.texturesPath .. "Speedbar"
   
   Addon.classIconsPath = "Interface\\GLUES\\CHARACTERCREATE\\UI-CHARACTERCREATE-CLASSES"
   
   Addon.iconPaths = {
-    "Interface\\AddOns\\" .. ADDON_NAME .. "\\Assets\\Textures\\Samwise",
+    Addon.texturesPath .. "Samwise",
     
     "Interface\\Buttons\\UI-AttributeButton-Encourage-Up",
     "Interface\\Buttons\\UI-GroupLoot-Coin-Up",
@@ -786,6 +789,8 @@ do
     
     "Interface\\MINIMAP\\TRACKING\\Auctioneer",
     
+    "Interface\\MINIMAP\\TRACKING\\Poisons",
+    -- "Interface\\MINIMAP\\TRACKING\\UpgradeItem-32x32",
     "Interface\\CURSOR\\Attack",
     -- "Interface\\CURSOR\\Missions",
     "Interface\\CURSOR\\Cast",
@@ -803,7 +808,121 @@ do
     -- "Interface\\HELPFRAME\\HelpIcon-Suggestion",
     -- "Interface\\HELPFRAME\\ReportLagIcon-Spells",
     
+    
+    
+    -- "Interface\\ICONS\\ABILITY_Rogue_PlunderArmor",
+    -- "Interface\\ICONS\\Garrison_ArmorUpgrade",
+    -- "Interface\\ICONS\\Garrison_BlueArmor",
+    -- "Interface\\ICONS\\Garrison_BlueArmorUpgrade",
+    -- "Interface\\ICONS\\Garrison_GreenArmor",
+    -- "Interface\\ICONS\\Garrison_GreenArmorUpgrade",
+    -- "Interface\\ICONS\\Garrison_PurpleArmor",
+    -- "Interface\\ICONS\\Garrison_PurpleArmorUpgrade",
+    Addon.retailTexturesPath .. "ICONS\\ABILITY_Rogue_PlunderArmor",
+    Addon.retailTexturesPath .. "ICONS\\Garrison_ArmorUpgrade",
+    Addon.retailTexturesPath .. "ICONS\\Garrison_BlueArmor",
+    Addon.retailTexturesPath .. "ICONS\\Garrison_BlueArmorUpgrade",
+    Addon.retailTexturesPath .. "ICONS\\Garrison_GreenArmor",
+    Addon.retailTexturesPath .. "ICONS\\Garrison_GreenArmorUpgrade",
+    Addon.retailTexturesPath .. "ICONS\\Garrison_PurpleArmor",
+    Addon.retailTexturesPath .. "ICONS\\Garrison_PurpleArmorUpgrade",
+    
+    
+    -- "Interface\\ICONS\\INV_Armor_Chest_LightforgedDraenei_D_01",
+    -- "Interface\\ICONS\\INV_Armor_MaldraxxusCosmetic_D_01_Chest",
+    -- "Interface\\ICONS\\INV_Armor_RevendrethCosmetic_D_01_Chest",
+    -- "Interface\\ICONS\\INV_Armor_RevendrethCosmetic_D_02_Chest",
+    -- "Interface\\ICONS\\INV_Armor_Tauren_D_01Chest",
+    -- "Interface\\ICONS\\INV_Chest_Armor_ArdenwealdCosmetic_D_01",
+    -- "Interface\\ICONS\\INV_Chest_Armor_BastionCosmetic_D_01",
+    -- "Interface\\ICONS\\INV_Chest_Armor_BloodElf_D_01",
+    -- "Interface\\ICONS\\INV_Chest_Armor_BrawlersGuild_D_01",
+    -- "Interface\\ICONS\\INV_Chest_Armor_DarkIronDwarf_D_01",
+    -- "Interface\\ICONS\\INV_Chest_Armor_Dwarf_D_01",
+    -- "Interface\\ICONS\\INV_Chest_Armor_Gnome_D_01",
+    -- "Interface\\ICONS\\INV_Chest_Armor_Goblin_D_01",
+    -- "Interface\\ICONS\\INV_Chest_Armor_KultiranHuman_D_01",
+    -- "Interface\\ICONS\\INV_Chest_Armor_Nightborne_D_01",
+    -- "Interface\\ICONS\\INV_Chest_Armor_Worgen_D_01",
+    
+    "Interface\\ICONS\\INV_Misc_ArmorKit_01",
+    "Interface\\ICONS\\INV_Misc_ArmorKit_02",
+    "Interface\\ICONS\\INV_Misc_ArmorKit_03",
+    "Interface\\ICONS\\INV_Misc_ArmorKit_04",
+    "Interface\\ICONS\\INV_Misc_ArmorKit_05",
+    "Interface\\ICONS\\INV_Misc_ArmorKit_06",
+    "Interface\\ICONS\\INV_Misc_ArmorKit_07",
+    "Interface\\ICONS\\INV_Misc_ArmorKit_08",
+    "Interface\\ICONS\\INV_Misc_ArmorKit_09",
+    "Interface\\ICONS\\INV_Misc_ArmorKit_10",
+    "Interface\\ICONS\\INV_Misc_ArmorKit_11",
+    "Interface\\ICONS\\INV_Misc_ArmorKit_12",
+    "Interface\\ICONS\\INV_Misc_ArmorKit_14",
+    "Interface\\ICONS\\INV_Misc_ArmorKit_15",
+    "Interface\\ICONS\\INV_Misc_ArmorKit_16",
+    "Interface\\ICONS\\INV_Misc_ArmorKit_17",
+    "Interface\\ICONS\\INV_Misc_ArmorKit_18",
+    "Interface\\ICONS\\INV_Misc_ArmorKit_19",
+    "Interface\\ICONS\\INV_Misc_ArmorKit_20",
+    -- "Interface\\ICONS\\INV_Misc_ArmorKit_21",
+    -- "Interface\\ICONS\\INV_Misc_ArmorKit_22",
+    -- "Interface\\ICONS\\INV_Misc_ArmorKit_23",
+    -- "Interface\\ICONS\\INV_Misc_ArmorKit_24",
+    -- "Interface\\ICONS\\INV_Misc_ArmorKit_25",
+    -- "Interface\\ICONS\\INV_Misc_ArmorKit_26",
+    -- "Interface\\ICONS\\INV_Misc_ArmorKit_27",
+    -- "Interface\\ICONS\\INV_Misc_ArmorKit_28",
+    -- "Interface\\ICONS\\INV_Misc_ArmorKit_29",
+    -- "Interface\\ICONS\\INV_Misc_ArmorKit_30",
+    -- "Interface\\ICONS\\INV_Misc_ArmorKit_31",
+    -- "Interface\\ICONS\\INV_Misc_ArmorKit_32",
+    -- "Interface\\ICONS\\INV_Misc_ArmorKit_33",
+    
+    -- "Interface\\Store\\category-icon-armor",
+    "Interface\\MINIMAP\\Minimap_shield_elite",
+    "Interface\\MINIMAP\\Minimap_shield_normal",
+    
+    
     "Interface\\MINIMAP\\TRACKING\\Repair",
+    
+    
+    "Interface\\MINIMAP\\Vehicle-HammerGold-1",
+    "Interface\\MINIMAP\\Vehicle-HammerGold-2",
+    "Interface\\MINIMAP\\Vehicle-HammerGold-3",
+    "Interface\\MINIMAP\\Vehicle-HammerGold",
+    
+    
+    
+    -- "Interface\\ICONS\\Ability_Paladin_ShieldofVengeance",
+    -- "Interface\\ICONS\\Ability_Priest_ReflectiveShield",
+    "Interface\\ICONS\\Ability_Mage_ShatterShield",
+    "Interface\\ICONS\\Ability_Shaman_WaterShield",
+    -- "Interface\\ICONS\\Ability_Warrior_ShieldBash",
+    -- "Interface\\ICONS\\Ability_Warrior_ShieldBreak",
+    -- "Interface\\ICONS\\Ability_Warrior_ShieldGuard",
+    "Interface\\ICONS\\Ability_Warrior_ShieldMastery",
+    "Interface\\ICONS\\Ability_Paladin_ShieldoftheTemplar",
+    "Interface\\ICONS\\Ability_Warrior_ShieldReflection",
+    "Interface\\ICONS\\Ability_Warrior_ShieldWall",
+    -- "Interface\\ICONS\\INV_Shield_1H_Hyrja_D_01",
+    -- "Interface\\ICONS\\INV_Shield_02",
+    -- "Interface\\ICONS\\INV_Shield_03",
+    "Interface\\ICONS\\INV_Shield_04",
+    -- "Interface\\ICONS\\INV_Shield_05",
+    "Interface\\ICONS\\INV_Shield_06",
+    -- "Interface\\ICONS\\INV_Shield_08",
+    "Interface\\ICONS\\INV_Shield_09",
+    "Interface\\ICONS\\INV_Shield_10",
+    "Interface\\ICONS\\_________",
+    "Interface\\ICONS\\_________",
+    "Interface\\ICONS\\_________",
+    "Interface\\ICONS\\_________",
+    "Interface\\ICONS\\_________",
+    "Interface\\ICONS\\_________",
+    "Interface\\ICONS\\_________",
+    "Interface\\ICONS\\_________",
+    
+    
     "Interface\\MINIMAP\\Dungeon",
     "Interface\\MINIMAP\\Raid",
     "Interface\\MINIMAP\\TempleofKotmogu_ball_cyan",
@@ -812,6 +931,8 @@ do
     "Interface\\MINIMAP\\TempleofKotmogu_ball_purple",
     "Interface\\MINIMAP\\Vehicle-AllianceMagePortal",
     "Interface\\MINIMAP\\Vehicle-HordeMagePortal",
+    -- "Interface\\MINIMAP\\Minimap-Waypoint-MapPin-Tracked",
+    -- "Interface\\MINIMAP\\Minimap-Waypoint-MapPin-Untracked",
     
     "Interface\\MONEYFRAME\\Arrow-Left-Down",
     -- "Interface\\MONEYFRAME\\Arrow-Left-Up",
