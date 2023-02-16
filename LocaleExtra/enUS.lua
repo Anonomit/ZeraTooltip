@@ -12,6 +12,8 @@ local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 -- override the default stat rewords for this locale
 do
   -- Addon:AddDefaultRewordByLocale(stat, val)
+  Addon:AddDefaultRewordByLocale("BonusArmor", "Bonus Armor")
+  
   Addon:AddDefaultRewordByLocale("All Resistance"   , "All Resist")
   Addon:AddDefaultRewordByLocale("Arcane Resistance", "Arcane Resist")
   Addon:AddDefaultRewordByLocale("Fire Resistance"  , "Fire Resist")

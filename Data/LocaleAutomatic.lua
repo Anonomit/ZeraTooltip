@@ -87,6 +87,8 @@ L["Icon"]            = EMBLEM_SYMBOL
 L["Choose an Icon:"] = MACRO_POPUP_CHOOSE_ICON
 L["Manual"]          = TRACKER_SORT_MANUAL
 
+L["Bonus Armor"] = BONUS_ARMOR
+
 L["Effects"]        = EFFECTS_SUBHEADER
 L["Equip:"]         = ITEM_SPELL_TRIGGER_ONEQUIP
 L["Chance on Hit:"] = ITEM_SPELL_TRIGGER_ONPROC

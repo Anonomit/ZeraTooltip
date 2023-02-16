@@ -1168,6 +1168,72 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
   end
   GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
   
+  -- Armor
+  do
+    local stat = "Armor"
+    
+    local sample = 10
+    
+    local samples = {}
+    local defaultText = format(ARMOR_TEMPLATE, sample)
+    local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.WHITE, defaultText, self:RewordArmor(defaultText))
+    tinsert(samples, {defaultText, formattedText})
+    
+    local opts = GUI:CreateGroup(opts, stat, samples[1][2], nil, nil, disabled)
+      
+    CreateSamples(opts, samples)
+    
+    CreateColor(opts, stat)
+    
+    do
+      local opts = CreateReword(opts, stat)
+      GUI:CreateNewline(opts)
+      
+      -- Trim Space
+      local disabled = disabled or not self:GetOption("allow", "reword") or not self:GetOption("doReword", stat)
+      GUI:CreateToggle(opts, {"trimSpace", stat}, L["Remove Space"], nil, disabled)
+      CreateReset(opts, {"trimSpace", stat}, function() self:ResetOption("trimSpace", stat) end)
+      GUI:CreateNewline(opts)
+    end
+    
+    CreateIcon(opts, stat)
+    
+    CreateHide(opts, stat)
+  end
+  
+  -- Bonus Armor
+  do
+    local stat = "BonusArmor"
+    
+    local sample = 20
+    
+    local samples = {}
+    local defaultText = format(ARMOR_TEMPLATE, sample)
+    local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.GREEN, defaultText, self:RewordBonusArmor(defaultText))
+    tinsert(samples, {defaultText, formattedText})
+    
+    local opts = GUI:CreateGroup(opts, stat, samples[1][2], nil, nil, disabled)
+      
+    CreateSamples(opts, samples)
+    
+    CreateColor(opts, stat)
+    
+    do
+      local opts = CreateReword(opts, stat)
+      GUI:CreateNewline(opts)
+      
+      -- Trim Space
+      local disabled = disabled or not self:GetOption("allow", "reword") or not self:GetOption("doReword", stat)
+      GUI:CreateToggle(opts, {"trimSpace", stat}, L["Remove Space"], nil, disabled)
+      CreateReset(opts, {"trimSpace", stat}, function() self:ResetOption("trimSpace", stat) end)
+      GUI:CreateNewline(opts)
+    end
+    
+    CreateIcon(opts, stat)
+    
+    CreateHide(opts, stat)
+  end
+  
   -- Enchant
   do
     local stat = "Enchant"

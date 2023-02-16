@@ -37,6 +37,8 @@ function Addon:MakeDefaultOptions()
         doReword = {
           ["*"]              = true,
           ItemLevel          = false,
+          Armor              = false,
+          BonusArmor         = false,
           Enchant            = false,
           WeaponEnchant      = false,
           EnchantOnUse       = false,
@@ -61,6 +63,8 @@ function Addon:MakeDefaultOptions()
         doRecolor = {
           ["*"]        = true,
           Title        = false,
+          Armor        = false,
+          BonusArmor   = false,
           Enchant      = false,
           EnchantOnUse = false, -- no GUI option, should not be enabled. inherits from Use
           Equip        = false, -- just to match Use
@@ -128,6 +132,8 @@ function Addon:MakeDefaultOptions()
           CharacterBound = "Interface\\PetBattles\\PetBattle-LockIcon",
           AccountBound   = "Interface\\PetBattles\\PetBattle-LockIcon",
           Tradeable      = "Interface\\MINIMAP\\TRACKING\\Auctioneer",
+          Armor          = Addon.retailTexturesPath .. "ICONS\\Garrison_BlueArmor",
+          BonusArmor     = Addon.retailTexturesPath .. "ICONS\\Garrison_GreenArmorUpgrade",
           Enchant        = "Interface\\Buttons\\UI-GroupLoot-DE-Up",
           WeaponEnchant  = "Interface\\CURSOR\\Attack",
           EnchantOnUse   = "Interface\\Buttons\\UI-GroupLoot-DE-Up",

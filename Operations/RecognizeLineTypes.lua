@@ -71,6 +71,7 @@ local contexts = Addon:MakeLookupTable({
   "Damage",
   "DamagePerSecond",
   "Armor",
+  "BonusArmor",
   "Block",
   "BaseStat",
   "LastBaseStat",
@@ -305,7 +306,11 @@ contextActions = Addon:Map({
   end,
   Armor = function(i, tooltipData, line)
     if MatchesAny(line.textLeftTextStripped, ARMOR_TEMPLATE) then
-      return SetContext(i, tooltipData, line)
+      if line.colorLeft == Addon.COLORS.GREEN then
+        return SetContext(contexts.BonusArmor, tooltipData, line)
+      else
+        return SetContext(i, tooltipData, line)
+      end
     end
   end,
   Block = function(i, tooltipData, line)

@@ -705,6 +705,9 @@ do
   self.statsInfo["DamagePerSecond"]    = {color = self.COLORS.WHITE}
   self.statsInfo["Speedbar"]           = {color = self.COLORS.WHITE}
   
+  self.statsInfo["Armor"]              = {color = self.COLORS.WHITE}
+  self.statsInfo["BonusArmor"]         = {color = self.COLORS.GREEN}
+  
   self.statsInfo["Enchant"]            = {color = self.COLORS.GREEN}
   self.statsInfo["WeaponEnchant"]      = {color = self.COLORS.GREEN}
   
