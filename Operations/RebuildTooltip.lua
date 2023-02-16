@@ -258,7 +258,7 @@ function Addon:ConstructTooltip(tooltip, constructor)
             {"pad",        pad},
           }
         end) then
-          table.insert(halfDestructor, 1, function() tooltip:AddDoubleLine(ADDON_NAME, self.L["ERROR"], 1, 0, 0, 1, 0, 0) end)
+          -- table.insert(halfDestructor, 1, function() tooltip:AddDoubleLine(ADDON_NAME, self.L["ERROR"], 1, 0, 0, 1, 0, 0) end)
           self:DestructTooltip(tooltip, halfDestructor)
           return fullDestructor
         end
