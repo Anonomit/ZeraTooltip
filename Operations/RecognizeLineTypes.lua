@@ -11,9 +11,18 @@ local strMatch = string.match
 
 
 
--- stripped text recoloring
-local ITEM_CREATED_BY = Addon.ITEM_CREATED_BY
-local ITEM_WRAPPED_BY = Addon.ITEM_WRAPPED_BY
+
+local ITEM_CREATED_BY    = Addon.ITEM_CREATED_BY
+local ITEM_WRAPPED_BY    = Addon.ITEM_WRAPPED_BY
+local ITEM_MOD_STAMINA   = Addon.ITEM_MOD_STAMINA
+local ITEM_MOD_STRENGTH  = Addon.ITEM_MOD_STRENGTH
+local ITEM_MOD_AGILITY   = Addon.ITEM_MOD_AGILITY
+local ITEM_MOD_INTELLECT = Addon.ITEM_MOD_INTELLECT
+local ITEM_MOD_SPIRIT    = Addon.ITEM_MOD_SPIRIT
+
+
+
+
 
 
 local numberPattern = "[%d%"..DECIMAL_SEPERATOR.."]+"
@@ -93,6 +102,7 @@ local contexts = Addon:MakeLookupTable({
   "RequiredRep",
   "SecondaryStat",
   "LastSecondaryStat",
+  "Charges",
   "EnchantOnUse",
   "RequiredEnchantOnUse",
   "SetName",
@@ -320,7 +330,7 @@ contextActions = Addon:Map({
   end,
   LastBaseStat = function(i, tooltipData, line)
     if not line.texture and line.colorLeft == Addon.COLORS.WHITE then
-      local stat = MatchesAny(line.textLeftTextStripped, Addon.ITEM_MOD_STAMINA, Addon.ITEM_MOD_STRENGTH, Addon.ITEM_MOD_AGILITY, Addon.ITEM_MOD_INTELLECT, Addon.ITEM_MOD_SPIRIT, ITEM_RESIST_SINGLE, ITEM_RESIST_ALL)
+      local stat = MatchesAny(line.textLeftTextStripped, ITEM_MOD_STAMINA, ITEM_MOD_STRENGTH, ITEM_MOD_AGILITY, ITEM_MOD_INTELLECT, ITEM_MOD_SPIRIT, ITEM_RESIST_SINGLE, ITEM_RESIST_ALL)
       if stat then
         if stat == ITEM_RESIST_SINGLE then
           local n = strMatch(line.textLeftTextStripped, "(%d+)")
@@ -435,6 +445,11 @@ contextActions = Addon:Map({
           SetContext(i-1, tooltipData, line)
         end
       end
+    end
+  end,
+  Charges = function(i, tooltipData, line)
+    if MatchesAny(line.textLeftTextStripped, Addon.ITEM_SPELL_CHARGES1, ITEM_SPELL_CHARGES_NONE) or Addon.ITEM_SPELL_CHARGES2 and MatchesAny(line.textLeftTextStripped, Addon.ITEM_SPELL_CHARGES2) then
+      return SetContext(i, tooltipData, line)
     end
   end,
   EnchantOnUse = function(i, tooltipData, line)

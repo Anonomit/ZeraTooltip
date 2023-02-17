@@ -24,6 +24,7 @@ local function SortStats(tooltipData)
   local stats = {
     BaseStat             = {},
     SecondaryStat        = {},
+    Charges              = {},
     EnchantOnUse         = {},
     RequiredEnchantOnUse = {},
   }
@@ -48,6 +49,10 @@ local function SortStats(tooltipData)
   end
   if not stats.SecondaryStat.location then
     stats.SecondaryStat.location = tooltipData.secondaryStatStart + 1
+  end
+  
+  for i = #stats.Charges, 1, -1 do
+    tinsert(stats.SecondaryStat, tblRemove(stats.Charges, 1))
   end
   
   if self:GetOption("doReorder", "EnchantOnUse") then

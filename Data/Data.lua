@@ -86,6 +86,16 @@ do
   Addon.ITEM_MOD_INTELLECT = ITEM_MOD_INTELLECT
   Addon.ITEM_MOD_SPIRIT    = ITEM_MOD_SPIRIT
   
+  do
+    local head, single, plural, tail = strMatch(ITEM_SPELL_CHARGES, "(.*)|4([^:]+):([^;]+);(.*)")
+    if single then
+      Addon.ITEM_SPELL_CHARGES1 = head .. single .. tail
+      Addon.ITEM_SPELL_CHARGES2 = head .. plural .. tail
+    else
+      Addon.ITEM_SPELL_CHARGES1 = ITEM_SPELL_CHARGES
+    end
+  end
+  
   local locale = GetLocale()
   if locale == "esES" then
     Addon.ITEM_MOD_STAMINA   = ITEM_MOD_STAMINA  :lower()
@@ -711,6 +721,9 @@ do
   
   self.statsInfo["Enchant"]            = {color = self.COLORS.GREEN}
   self.statsInfo["WeaponEnchant"]      = {color = self.COLORS.GREEN}
+  
+  self.statsInfo["Charges"]            = {color = self.COLORS.WHITE}
+  self.statsInfo["NoCharges"]          = {color = self.COLORS.RED}
   
   self.statsInfo["Durability"]         = {color = self.COLORS.WHITE}
   

@@ -1452,6 +1452,59 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
   
   if self:GetOption("doReorder", "EnchantOnUse") then MakeEnchantOnUseOptions() GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true) end
   
+  
+  -- Charges
+  do
+    local stat = "Charges"
+    
+    local sampleCharges = 10
+    local someCharges   = format(ITEM_SPELL_CHARGES, sampleCharges)
+    local noCharges     = ITEM_SPELL_CHARGES_NONE
+    
+    local samples = {}
+    do
+      local defaultText = someCharges
+      local defaultText, formattedText = GetFormattedText(stat, self.COLORS.WHITE, defaultText, defaultText)
+      tinsert(samples, {defaultText, formattedText})
+    end
+    do
+      local defaultText = noCharges
+      local formattedText = defaultText
+      local originalColor = self.COLORS.WHITE
+      local color = Addon:GetOption("color", "NoCharges")
+      
+      if Addon:GetOption("hide", stat) then
+        formattedText = Addon.stealthIcon .. Addon:MakeColorCode(Addon.COLORS.GRAY, Addon:StripColorCode(formattedText))
+      elseif Addon:GetOption("allow", "recolor") and Addon:GetOption("doRecolor", "NoCharges") and color ~= originalColor then
+        formattedText = Addon:MakeColorCode(color, formattedText)
+      else
+        formattedText = Addon:MakeColorCode(originalColor, formattedText)
+      end
+      tinsert(samples, {Addon:MakeColorCode(originalColor, defaultText), formattedText})
+    end
+    
+    local opts = GUI:CreateGroup(opts, stat, samples[1][2], nil, nil, disabled)
+    
+    CreateSamples(opts, samples)
+    
+    do
+      local opts = GUI:CreateGroupBox(opts, L["Recolor"])
+      
+      local disabled = disabled or not Addon:GetOption("allow", "recolor")
+      GUI:CreateToggle(opts, {"doRecolor", "Charges"}, someCharges, nil, disabled).width = 1
+      GUI:CreateColor(opts, {"color", "Charges"}, self.L["Color"], nil, disabled or not Addon:GetOption("doRecolor", "Charges")).width = 0.5
+      CreateReset(opts, {"color", "Charges"})
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"doRecolor", "NoCharges"}, noCharges, nil, disabled).width = 1
+      GUI:CreateColor(opts, {"color", "NoCharges"}, self.L["Color"], nil, disabled or not Addon:GetOption("doRecolor", "NoCharges")).width = 0.5
+      CreateReset(opts, {"color", "NoCharges"})
+    end
+    
+    CreateHide(opts, stat)
+  end
+  GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
+  
   -- Made By
   do
     local stat = "MadeBy"

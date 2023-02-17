@@ -17,8 +17,8 @@ local enchantLines = {
 }
 local padLocations = {
   [-1] = {
-    BaseStat      = function(line) return line.type == "BaseStat"      or Addon:GetOption"combineStats" and (line.type == "SecondaryStat" or Addon:GetOption("doReorder", "EnchantOnUse") and line.type == "EnchantOnUse") end,
-    SecondaryStat = function(line) return(line.type == "SecondaryStat" or Addon:GetOption("doReorder", "EnchantOnUse") and (line.type == "EnchantOnUse" or line.type == "RequiredEnchantOnUse")) and not Addon:GetOption"combineStats" end,
+    BaseStat      = function(line) return line.type == "BaseStat"      or Addon:GetOption"combineStats" and (line.type == "SecondaryStat" or line.type == "Charges" or Addon:GetOption("doReorder", "EnchantOnUse") and line.type == "EnchantOnUse") end,
+    SecondaryStat = function(line) return(line.type == "SecondaryStat" or line.type == "Charges" or Addon:GetOption("doReorder", "EnchantOnUse") and (line.type == "EnchantOnUse" or line.type == "RequiredEnchantOnUse")) and not Addon:GetOption"combineStats" end,
     Enchant       = function(line) return enchantLines[line.type]      or not Addon:GetOption("doReorder", "EnchantOnUse") and line.type == "EnchantOnUse" end,
     WeaponEnchant = function(line) return line.type == "WeaponEnchant" end,
     Socket        = function(line) return line.type == "Socket"        end,
@@ -26,8 +26,8 @@ local padLocations = {
     SetBonus      = function(line) return line.type == "SetBonus"      end,
   },
   [1] = {
-    BaseStat      = function(line) return line.type == "BaseStat"      or Addon:GetOption"combineStats" and (line.type == "SecondaryStat" or Addon:GetOption("doReorder", "EnchantOnUse") and (line.type == "EnchantOnUse" or line.type == "RequiredEnchantOnUse")) end,
-    SecondaryStat = function(line) return(line.type == "SecondaryStat" or Addon:GetOption("doReorder", "EnchantOnUse") and (line.type == "EnchantOnUse" or line.type == "RequiredEnchantOnUse")) and not Addon:GetOption"combineStats" end,
+    BaseStat      = function(line) return line.type == "BaseStat"      or Addon:GetOption"combineStats" and (line.type == "SecondaryStat" or line.type == "Charges" or Addon:GetOption("doReorder", "EnchantOnUse") and (line.type == "EnchantOnUse" or line.type == "RequiredEnchantOnUse")) end,
+    SecondaryStat = function(line) return(line.type == "SecondaryStat" or line.type == "Charges" or Addon:GetOption("doReorder", "EnchantOnUse") and (line.type == "EnchantOnUse" or line.type == "RequiredEnchantOnUse")) and not Addon:GetOption"combineStats" end,
     Enchant       = function(line) return enchantLines[line.type]      or line.type == "RequiredEnchant" or not Addon:GetOption("doReorder", "EnchantOnUse") and (line.type == "EnchantOnUse" or line.type == "RequiredEnchantOnUse") end,
     WeaponEnchant = function(line) return line.type == "WeaponEnchant" end,
     SocketBonus   = function(line) return line.type == "SocketBonus"   or line.type == "Socket" or Addon:GetOption("doReorder", "SocketHint") and line.type == "SocketHint" end,

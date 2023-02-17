@@ -5,6 +5,11 @@ local ADDON_NAME, Data = ...
 local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 
 
+
+local strFind = string.find
+
+
+local noChargesPattern = Addon:ReversePattern(ITEM_SPELL_CHARGES_NONE)
 local sides
 
 local function Recolor(side, stat)
@@ -45,13 +50,15 @@ function Addon:RecolorLine(tooltip, line, tooltipData)
       if stat then
         Recolor("left", stat)
       end
+    elseif line.type == "RequiredClasses" then
+      -- Handled as a reword instead
+    elseif line.type == "Charges" then
+      Recolor("left", strFind(line.textLeftTextStripped, noChargesPattern) and "NoCharges" or "Charges")
     elseif self.statsInfo[line.type].color then
       Recolor("left", line.type)
     end
   elseif line.type == "DamagePerSecond" and line.rewordRight then
     line.recolorRight = self.COLORS.WHITE -- the speedbar default tooltip color is yellow but let's pretend it's white
-  elseif line.type == "RequiredClasses" then
-    -- Handled as a reword instead
   end
   
   if sides.left ~= line.realColor then
