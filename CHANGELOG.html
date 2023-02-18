@@ -1,24 +1,11 @@
-<h1>2.6.0</h1>
+<h1>2.7.0</h1>
 <h3>New Features</h3>
 <ul>
-  <li>Every locale is now supported. Most translations are still missing, but every tooltip line should be correctly identified.</li>
-  <li>Classic Era / SoM now recognizes Elemental (Arcane, Fire, Nature, Frost, Shadow) Spell Power.</li>
-  <li>Added Armor customization. Items with 'Bonus Armor' (armor text is green) can be customized separately.</li>
-  <li>Added Block customization.</li>
-  <li>Added All Resist customization.</li>
-  <li>&nbsp;&nbsp; - Items with all 5 resistances of the same amount will be summarized into one line.</li>
-  <li>&nbsp;&nbsp; - Hide the 'All Resist' line to prevent this.</li>
-  <li>Added Ranged Attack Power customization.</li>
-</ul>
-<h3>Changes</h3>
-<ul>
-  <li>Removed Spell Damage from Classic Era / SoM. Spell Power is now used instead.</li>
-  <li>Resistances are now being reworded by default in enUS locale.</li>
-  <li>Icons appear slightly larger in the selection dropdown.</li>
-  <li>More icons have been added, mostly related to Armor and Shield.</li>
+  <li>Added Charges customization. Charges on an item will now appear after the item 'Use' line.</li>
+  <li>Added Cooldown customization. Cooldown on an item will now appear after the item 'Use' line, behind Charges (if it exists).</li>
 </ul>
 <h3>Fixes</h3>
 <ul>
-  <li>Fixed icons showing extra characters next to them after using the icon selection dropdown.</li>
-  <li>Better error handling. If something unexpected occurs, most resulting lua errors will be suppressed.</li>
+  <li>Fixed Speedbar recoloring.</li>
+  <li>Padding (and not padding) the last line no longer depends on other addons and should be more consistent.</li>
 </ul>
