@@ -697,6 +697,9 @@ do
     end
   end
   
+  
+  -- Default color settings
+  
   self.statsInfo["Title"]              = {color = self.COLORS.WHITE}
   
   self.statsInfo["Heroic"]             = {color = self.COLORS.GREEN}
@@ -724,6 +727,7 @@ do
   
   self.statsInfo["Charges"]            = {color = self.COLORS.WHITE}
   self.statsInfo["NoCharges"]          = {color = self.COLORS.RED}
+  self.statsInfo["Cooldown"]           = {color = self.COLORS.RED}
   
   self.statsInfo["Durability"]         = {color = self.COLORS.WHITE}
   

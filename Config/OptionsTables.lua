@@ -1503,6 +1503,26 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
     
     CreateHide(opts, stat)
   end
+  
+  -- Cooldown
+  do
+    local stat = "Cooldown"
+    
+    local sampleCooldown = 10
+    local defaultText = format(ITEM_COOLDOWN_TIME_MIN, sampleCooldown)
+    
+    local samples = {}
+    local defaultText, formattedText = GetFormattedText(stat, self.COLORS.WHITE, defaultText, defaultText)
+    tinsert(samples, {defaultText, formattedText})
+    
+    local opts = GUI:CreateGroup(opts, stat, samples[1][2], nil, nil, disabled)
+    
+    CreateSamples(opts, samples)
+    
+    CreateColor(opts, stat)
+    
+    CreateHide(opts, stat)
+  end
   GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
   
   -- Made By

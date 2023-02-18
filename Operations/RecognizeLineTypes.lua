@@ -110,6 +110,7 @@ local contexts = Addon:MakeLookupTable({
   "LastSetPiece",
   "SetBonus",
   "LastSetBonus",
+  "Cooldown",
   "MadeBy",
   "SocketHint",
   "Refundable",
@@ -480,6 +481,11 @@ contextActions = Addon:Map({
     if prefix then
       line.prefix = prefix
       return SetContext(i-1, tooltipData, line)
+    end
+  end,
+  Cooldown = function(i, tooltipData, line)
+    if MatchesAny(line.textLeftTextStripped, ITEM_COOLDOWN_TIME) then
+      return SetContext(i, tooltipData, line)
     end
   end,
   MadeBy = function(i, tooltipData, line)
