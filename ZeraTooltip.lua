@@ -180,7 +180,7 @@ function Addon:OnEnable()
   
   self.chatArgs = {}
   do
-    local function PrintVersion() self:Printf("Version: %s", tostring(self.Version)) end
+    local function PrintVersion() self:Printf("Version: %s", tostring(self.version)) end
     for _, arg in ipairs{"version", "vers", "ver", "v"} do self.chatArgs[arg] = PrintVersion end
   end
   self:CreateOptions()
