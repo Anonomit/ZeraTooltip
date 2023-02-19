@@ -742,7 +742,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       
       local disabled = not self:GetOption("allow", "recolor")
       GUI:CreateToggle(opts, {"doRecolor", stat}, self.L["Show Class Color"], nil, disabled).width = 1
-      CreateReset(opts, {"doRecolor", stat}, disabled)
+      CreateReset(opts, {"doRecolor", stat})
     end
     
     do
