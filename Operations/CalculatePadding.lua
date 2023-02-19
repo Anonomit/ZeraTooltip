@@ -6,6 +6,8 @@ local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 
 
 
+local lastUse
+
 local lineOffsets = {
   before = -1,
   after  =  1,
@@ -17,8 +19,8 @@ local enchantLines = {
 }
 local padLocations = {
   [-1] = {
-    BaseStat      = function(line) return line.type == "BaseStat"      or Addon:GetOption"combineStats" and (line.type == "SecondaryStat" or line.type == "Charges" or line.type == "Cooldown" or Addon:GetOption("doReorder", "EnchantOnUse") and line.type == "EnchantOnUse") end,
-    SecondaryStat = function(line) return(line.type == "SecondaryStat" or line.type == "Charges" or line.type == "Cooldown" or Addon:GetOption("doReorder", "EnchantOnUse") and (line.type == "EnchantOnUse" or line.type == "RequiredEnchantOnUse")) and not Addon:GetOption"combineStats" end,
+    BaseStat      = function(line) return line.type == "BaseStat"      or Addon:GetOption"combineStats" and (line.type == "SecondaryStat" or Addon:GetOption("doReorder", "EnchantOnUse") and line.type == "EnchantOnUse") end,
+    SecondaryStat = function(line) return(line.type == "SecondaryStat" or Addon:GetOption("doReorder", "EnchantOnUse") and (line.type == "EnchantOnUse" or line.type == "RequiredEnchantOnUse")) and not Addon:GetOption"combineStats" end,
     Enchant       = function(line) return enchantLines[line.type]      or not Addon:GetOption("doReorder", "EnchantOnUse") and line.type == "EnchantOnUse" end,
     WeaponEnchant = function(line) return line.type == "WeaponEnchant" end,
     Socket        = function(line) return line.type == "Socket"        end,
@@ -26,9 +28,9 @@ local padLocations = {
     SetBonus      = function(line) return line.type == "SetBonus"      end,
   },
   [1] = {
-    BaseStat      = function(line) return line.type == "BaseStat"      or Addon:GetOption"combineStats" and (line.type == "SecondaryStat" or line.type == "Charges" or line.type == "Cooldown" or Addon:GetOption("doReorder", "EnchantOnUse") and (line.type == "EnchantOnUse" or line.type == "RequiredEnchantOnUse")) end,
-    SecondaryStat = function(line) return(line.type == "SecondaryStat" or line.type == "Charges" or line.type == "Cooldown" or Addon:GetOption("doReorder", "EnchantOnUse") and (line.type == "EnchantOnUse" or line.type == "RequiredEnchantOnUse")) and not Addon:GetOption"combineStats" end,
-    Enchant       = function(line) return enchantLines[line.type]      or line.type == "RequiredEnchant" or not Addon:GetOption("doReorder", "EnchantOnUse") and (line.type == "EnchantOnUse" or line.type == "RequiredEnchantOnUse") end,
+    BaseStat      = function(line) return line.type == "BaseStat"      or Addon:GetOption"combineStats" and (line.type == "SecondaryStat" or lastUse == "SecondaryStat" and (line.type == "Charges" or line.type == "Cooldown") or Addon:GetOption("doReorder", "EnchantOnUse") and (line.type == "EnchantOnUse" or line.type == "RequiredEnchantOnUse")) end,
+    SecondaryStat = function(line) return(line.type == "SecondaryStat" or lastUse == "SecondaryStat" and (line.type == "Charges" or line.type == "Cooldown") or Addon:GetOption("doReorder", "EnchantOnUse") and (line.type == "EnchantOnUse" or line.type == "RequiredEnchantOnUse")) and not Addon:GetOption"combineStats" end,
+    Enchant       = function(line) return enchantLines[line.type]      or lastUse == "EnchantOnUse" and (line.type == "Charges" or line.type == "Cooldown") or line.type == "RequiredEnchant" or not Addon:GetOption("doReorder", "EnchantOnUse") and (line.type == "EnchantOnUse" or line.type == "RequiredEnchantOnUse") end,
     WeaponEnchant = function(line) return line.type == "WeaponEnchant" end,
     SocketBonus   = function(line) return line.type == "SocketBonus"   or line.type == "Socket" or Addon:GetOption("doReorder", "SocketHint") and line.type == "SocketHint" end,
     SetPiece      = function(line) return line.type == "SetPiece"      end,
@@ -37,7 +39,8 @@ local padLocations = {
 }
 
 function Addon:CalculatePadding(tooltipData)
-  local padded = {}
+  lastUse = tooltipData.lastUse
+  local padded  = {}
   
   for cat, offset in pairs(lineOffsets) do
     local padLocation = padLocations[offset]

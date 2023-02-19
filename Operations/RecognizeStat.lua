@@ -84,8 +84,12 @@ local function RecognizeStatHelper(line)
 end
 
 do
-  function Addon:RecognizeStat(line, allResist)
+  function Addon:RecognizeStat(line, tooltipData, allResist)
     RecognizeStatHelper(line)
+    
+    if line.prefix == ITEM_SPELL_TRIGGER_ONUSE then
+      tooltipData.lastUse = line.type
+    end
     
     if allResist then
       if line.stat == "Arcane Resistance" then

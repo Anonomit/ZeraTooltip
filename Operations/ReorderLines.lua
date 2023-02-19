@@ -53,10 +53,10 @@ local function SortStats(tooltipData)
   end
   
   for i = #stats.Charges, 1, -1 do
-    tinsert(stats.SecondaryStat, tblRemove(stats.Charges, 1))
+    tinsert(stats[tooltipData.lastUse], tblRemove(stats.Charges, 1))
   end
   for i = #stats.Cooldown, 1, -1 do
-    tinsert(stats.SecondaryStat, tblRemove(stats.Cooldown, 1))
+    tinsert(stats[tooltipData.lastUse], tblRemove(stats.Cooldown, 1))
   end
   
   if self:GetOption("doReorder", "EnchantOnUse") then

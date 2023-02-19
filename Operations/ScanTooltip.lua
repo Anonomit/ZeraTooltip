@@ -110,6 +110,7 @@ function Addon:ReadTooltip(tooltip, name, link, maxLines)
   tooltipData.icon     = icon
   
   tooltipData.resists = 0
+  tooltipData.lastUse = "SecondaryStat"
   
   return tooltipData
 end

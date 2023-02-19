@@ -35,7 +35,7 @@ function Addon:ModifyTooltipData(tooltip, tooltipData)
   local allResist = tooltipData.resists == 5 and not self:GetOption("hide", "All Resistance")
   
   for i, line in ipairs(tooltipData) do
-    self:RecognizeStat(line, allResist)
+    self:RecognizeStat(line, tooltipData, allResist)
     
     if self:GetOption("debugOutput", "initialTooltipData") then
       OutputLineRecognition(line)
