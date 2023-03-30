@@ -22,13 +22,16 @@ function Addon:PrepareTooltip(tooltip, methodName, ...)
   local args = {n = select("#", ...), ...}
   return pcall(function()
     tooltip:Hide()
-    if self:GetOption("debugOutput", tooltip.tooltip:GetName()) then
+    local tooltipName = tooltip.tooltip:GetName()
+    local opt = "tooltip_" .. tooltipName
+    if self:GetOption("debugView", opt) then
       tooltip:SetOwner(UIParent, "ANCHOR_TOP")
     else
       tooltip:SetOwner(UIParent, "ANCHOR_NONE")
     end
     if methodName then
       tooltip[methodName](tooltip, unpack(args, 1, args.n))
+      self:DebugfIf({"debugOutput", opt}, "Refreshing scanner tooltip: %s", tooltipName)
     end
   end)
 end

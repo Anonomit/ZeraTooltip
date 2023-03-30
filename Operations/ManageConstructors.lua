@@ -78,7 +78,7 @@ local function GetHash(tooltip, methodName, link, ...)
     return
   end
   
-  return format("%s-%s-%s", tooltip:GetName(), methodName, hash)
+  return format("%s-%d-%s-%s", tooltip:GetName(), tooltip:NumLines(), methodName, hash)
 end
 
 local function Cleanup(hash)
