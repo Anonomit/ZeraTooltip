@@ -151,15 +151,19 @@ end
 
 function Addon:AddItemLevel(tooltipData)
   if self:GetOption("hide", stat) then return end
-  local equipLoc = select(4, GetItemInfoInstant(tooltipData.id))
-  if not (self:GetOption("hide", "nonEquipment") and invTypeBlacklist[equipLoc]) or tokenOverrides[tooltipData.id] then
-    local itemLevel = tokenOverrides[tooltipData.id] or select(4, GetItemInfo(tooltipData.id))
-    if not itemLevel then return end
-    local color = self:GetDefaultOption("color", stat)
-    if self:GetOption("allow", "recolor") and self:GetOption("doRecolor", stat) then
-      color = self:GetOption("color", stat)
+  
+  if self:GetOption("hide", "nonEquipment") and not tokenOverrides[tooltipData.id] then
+    local equipLoc = select(4, GetItemInfoInstant(tooltipData.id))
+    if invTypeBlacklist[equipLoc] then
+      return
     end
-    self:AddExtraLine(tooltipData, self:GetOption("doReorder", stat) and tooltipData.itemLevel or tooltipData.title, self:RewordItemLevel(format(self.itemLevelTexts[self:GetOption("itemLevel", "useShortName")].iLvlFormat, itemLevel)), color)
   end
+  
+  local itemLevel = tokenOverrides[tooltipData.id] or select(4, GetItemInfo(tooltipData.id))
+  if not itemLevel then return end
+  
+  local color = self:GetOption("allow", "recolor") and self:GetOption("doRecolor", stat) and self:GetOption("color", stat) or self:GetDefaultOption("color", stat)
+  
+  self:AddExtraLine(tooltipData, self:GetOption("doReorder", stat) and tooltipData.itemLevel or tooltipData.title, self:RewordItemLevel(format(self.itemLevelTexts[self:GetOption("itemLevel", "useShortName")].iLvlFormat, itemLevel)), color)
 end
 

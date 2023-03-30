@@ -30,9 +30,11 @@ function Addon:MakeDefaultOptions()
           [self.expansions.classic] = tblConcat(self.statList[self.expansions.classic], ","),
         },
         hide = {
-          ["*"]        = false,
-          uselessRaces = true,
-          nonEquipment = true,
+          ["*"]               = false,
+          uselessRaces        = true,
+          nonEquipment        = true,
+          StackSize_single    = true,
+          StackSize_equipment = true,
         },
         doReword = {
           ["*"]              = true,
@@ -87,6 +89,7 @@ function Addon:MakeDefaultOptions()
           EnchantHint        = true, -- no GUI option
           EnchantOnUse       = false, -- whether it shows up after on use effects
           SocketHint         = false, -- whether it shows up after socket bonus
+          StackSize          = false, -- whether it shows up after title
         },
         
         itemLevel = {

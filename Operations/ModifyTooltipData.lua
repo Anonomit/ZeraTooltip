@@ -49,10 +49,11 @@ function Addon:ModifyTooltipData(tooltip, tooltipData)
   
   self:ReorderLines(tooltipData)
   
-  self:CalculatePadding(tooltipData)
-  
   self:AddHeroicTag(tooltipData)
   self:AddItemLevel(tooltipData)
+  self:AddStackSize(tooltipData)
+  
+  self:CalculatePadding(tooltipData)
     
   if self:GetOption("debugOutput", "finalTooltipData") then
     for i, line in ipairs(tooltipData) do

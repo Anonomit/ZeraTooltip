@@ -591,7 +591,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
     local stat = "ItemLevel"
     
     local samples = {}
-    local defaultText = format(self:GetOption("itemLevel", "useShortName") and GARRISON_FOLLOWER_ITEM_LEVEL or ITEM_LEVEL, random(1, 100))
+    local defaultText = format(self:GetOption("itemLevel", "useShortName") and GARRISON_FOLLOWER_ITEM_LEVEL or ITEM_LEVEL, random(1, self.MAX_ITEMLEVEL))
     local _, formattedText = GetFormattedText(stat, self.COLORS.DEFAULT, defaultText, self:RewordItemLevel(defaultText))
     defaultText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, defaultText)
     tinsert(samples, {defaultText, formattedText})
@@ -611,13 +611,13 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       CreateReset(opts, {"itemLevel", "useShortName"})
       GUI:CreateNewline(opts)
       
-      local disabled = disabled or not Addon:GetOption("allow", "reword")
+      local disabled = disabled or not self:GetOption("allow", "reword")
       GUI:CreateToggle(opts, {"doReword", stat}, self.L["Enable"], nil, disabled).width = 0.6
       local disabled = disabled or not self:GetOption("doReword", stat)
       local option = GUI:CreateInput(opts, {"reword", stat}, self.L["Custom"], nil, nil, disabled)
       option.width = 0.9
       option.set = function(info, val)        self:SetOption(self:CoverSpecialCharacters(val), "reword", stat) end
-      option.get = function(info)      return Addon:UncoverSpecialCharacters(self:GetOption("reword", stat))   end
+      option.get = function(info)      return self:UncoverSpecialCharacters(self:GetOption("reword", stat))    end
       CreateReset(opts, {"reword", stat}, function() self:ResetReword(stat) end)
       
       GUI:CreateNewline(opts)
@@ -643,6 +643,42 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
     end
   end
   if not self:GetOption("doReorder", "ItemLevel") then MakeItemLevelOptions() end
+  
+  -- Stack Size
+  local function MakeStackSizeOptions()
+    local stat = "StackSize"
+    
+    local samples = {}
+    local defaultText = format(AUCTION_STACK_SIZE .. ": %d", self:Random{5, 20, 80, 200, 1000})
+    
+    local _, formattedText = GetFormattedText(stat, self.COLORS.DEFAULT, defaultText, self:RewordStackSize(defaultText))
+    defaultText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, defaultText)
+    tinsert(samples, {defaultText, formattedText})
+    
+    local opts = GUI:CreateGroup(opts, stat, samples[1][2], nil, nil, disabled)
+      
+    CreateSamples(opts, samples)
+    
+    CreateReorder(opts, stat, L["Whether to show this line much higher up on the tooltip rather than its usual location."])
+    
+    CreateColor(opts, stat)
+    
+    CreateReword(opts, stat)
+    
+    do
+      local opts = CreateHide(opts, stat)
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"hide", "StackSize_single"}, L["Hide Single Stacks"], L["Hide stack size on items that do not stack."], disabled)
+      CreateReset(opts, {"hide", "StackSize_single"})
+      GUI:CreateNewline(opts)
+      
+      local disabled = self:GetOption("hide", stat)
+      GUI:CreateToggle(opts, {"hide", "StackSize_equipment"}, L["Hide Equipment"], L["Hide stack size on items that can be equipped on a character."], disabled)
+      CreateReset(opts, {"hide", "StackSize_equipment"})
+    end
+  end
+  if self:GetOption("doReorder", "StackSize") then MakeStackSizeOptions() end
   
   GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
   
@@ -886,7 +922,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
     
     do
       local defaultText = format(REFUND_TIME_REMAINING, format(INT_SPELL_DURATION_HOURS, 2))
-      local formattedText = Addon:RewordRefundable(defaultText)
+      local formattedText = self:RewordRefundable(defaultText)
       local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.SKY_BLUE, defaultText, formattedText)
       
       local opts = GUI:CreateGroup(opts, stat, formattedText)
@@ -901,7 +937,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       do
         local opts = GUI:CreateGroupBox(opts, self.L["Rename"])
         
-        local disabled = not Addon:GetOption("allow", "reword")
+        local disabled = not self:GetOption("allow", "reword")
         GUI:CreateToggle(opts, {"doReword", stat}, self.L["Enable"], nil, disabled).width = 0.6
         CreateReset(opts, {"doReword", stat}, function() self:ResetOption("doReword", stat) end)
       end
@@ -919,7 +955,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
     
     do
       local defaultText = format(BIND_TRADE_TIME_REMAINING, format(INT_SPELL_DURATION_HOURS, 2))
-      local formattedText = Addon:RewordTradeable(defaultText)
+      local formattedText = self:RewordTradeable(defaultText)
       local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.SKY_BLUE, defaultText, formattedText)
       
       local opts = GUI:CreateGroup(opts, stat, formattedText)
@@ -934,7 +970,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       do
         local opts = GUI:CreateGroupBox(opts, self.L["Rename"])
         
-        local disabled = not Addon:GetOption("allow", "reword")
+        local disabled = not self:GetOption("allow", "reword")
         GUI:CreateToggle(opts, {"doReword", stat}, self.L["Enable"], nil, disabled).width = 0.6
         CreateReset(opts, {"doReword", stat}, function() self:ResetOption("doReword", stat) end)
       end
@@ -1471,16 +1507,16 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       local defaultText = noCharges
       local formattedText = defaultText
       local originalColor = self.COLORS.WHITE
-      local color = Addon:GetOption("color", "NoCharges")
+      local color = self:GetOption("color", "NoCharges")
       
-      if Addon:GetOption("hide", stat) then
-        formattedText = Addon.stealthIcon .. Addon:MakeColorCode(Addon.COLORS.GRAY, Addon:StripColorCode(formattedText))
-      elseif Addon:GetOption("allow", "recolor") and Addon:GetOption("doRecolor", "NoCharges") and color ~= originalColor then
-        formattedText = Addon:MakeColorCode(color, formattedText)
+      if self:GetOption("hide", stat) then
+        formattedText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, self:StripColorCode(formattedText))
+      elseif self:GetOption("allow", "recolor") and self:GetOption("doRecolor", "NoCharges") and color ~= originalColor then
+        formattedText = self:MakeColorCode(color, formattedText)
       else
-        formattedText = Addon:MakeColorCode(originalColor, formattedText)
+        formattedText = self:MakeColorCode(originalColor, formattedText)
       end
-      tinsert(samples, {Addon:MakeColorCode(originalColor, defaultText), formattedText})
+      tinsert(samples, {self:MakeColorCode(originalColor, defaultText), formattedText})
     end
     
     local opts = GUI:CreateGroup(opts, stat, samples[1][2], nil, nil, disabled)
@@ -1490,14 +1526,14 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
     do
       local opts = GUI:CreateGroupBox(opts, L["Recolor"])
       
-      local disabled = disabled or not Addon:GetOption("allow", "recolor")
+      local disabled = disabled or not self:GetOption("allow", "recolor")
       GUI:CreateToggle(opts, {"doRecolor", "Charges"}, someCharges, nil, disabled).width = 1
-      GUI:CreateColor(opts, {"color", "Charges"}, self.L["Color"], nil, disabled or not Addon:GetOption("doRecolor", "Charges")).width = 0.5
+      GUI:CreateColor(opts, {"color", "Charges"}, self.L["Color"], nil, disabled or not self:GetOption("doRecolor", "Charges")).width = 0.5
       CreateReset(opts, {"color", "Charges"})
       GUI:CreateNewline(opts)
       
       GUI:CreateToggle(opts, {"doRecolor", "NoCharges"}, noCharges, nil, disabled).width = 1
-      GUI:CreateColor(opts, {"color", "NoCharges"}, self.L["Color"], nil, disabled or not Addon:GetOption("doRecolor", "NoCharges")).width = 0.5
+      GUI:CreateColor(opts, {"color", "NoCharges"}, self.L["Color"], nil, disabled or not self:GetOption("doRecolor", "NoCharges")).width = 0.5
       CreateReset(opts, {"color", "NoCharges"})
     end
     
@@ -1531,7 +1567,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
     
     local samples = {}
     local secondName = UnitExists"target" and UnitName"target" or nil
-    secondName = secondName and secondName ~= self.MY_NAME and secondName or self.SAMPLE_NAMES[random(#self.SAMPLE_NAMES)]
+    secondName = secondName and secondName ~= self.MY_NAME and secondName or self:Random(self.SAMPLE_NAMES)
     for _, name in ipairs{self.MY_NAME, secondName} do
       for _, pattern in ipairs{self.ITEM_CREATED_BY, self.ITEM_WRAPPED_BY, ITEM_WRITTEN_BY} do
         local defaultText = format(pattern, name)
@@ -1577,6 +1613,8 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
   
   if not self:GetOption("doReorder", "Refundable")         then MakeRefundableOption() end
   if not self:GetOption("doReorder", "SoulboundTradeable") then MakeTradeableOption() end
+  
+  if not self:GetOption("doReorder", "StackSize") then MakeStackSizeOptions() GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true) end
   
   -- Misc locale rewording
   if #self:GetExtraReplacements() > 0 then
@@ -1703,6 +1741,23 @@ function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
       
       GUI:CreateToggle(opts, {"debugView", "paddingConversionFailures"}, "Padding Conversion Failures", nil, disabled).width = 2
     end
+    
+    do
+      local opts = GUI:CreateGroupBox(opts, "Scanner Tooltips")
+      
+      GUI:CreateToggle(opts, {"debugView", "tooltip_GameTooltip"}, "GameTooltip", nil, disabled)
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"debugView", "tooltip_ItemRefTooltip"}, "ItemRefTooltip", nil, disabled)
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"debugView", "tooltip_ShoppingTooltip1"}, "ShoppingTooltip1", nil, disabled)
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"debugView", "tooltip_ShoppingTooltip2"}, "ShoppingTooltip2", nil, disabled)
+      GUI:CreateNewline(opts)
+      GUI:CreateExecute(opts, "reload", self.L["Reload UI"], nil, ReloadUI)
+    end
   end
   
   -- Debug Output
@@ -1759,18 +1814,18 @@ function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
     end
     
     do
-      local opts = GUI:CreateGroupBox(opts, "Tooltips")
+      local opts = GUI:CreateGroupBox(opts, "Scanner Tooltips")
       
-      GUI:CreateToggle(opts, {"debugOutput", "GameTooltip"}, "GameTooltip", nil, disabled)
+      GUI:CreateToggle(opts, {"debugOutput", "tooltip_GameTooltip"}, "GameTooltip", nil, disabled)
       GUI:CreateNewline(opts)
       
-      GUI:CreateToggle(opts, {"debugOutput", "ItemRefTooltip"}, "ItemRefTooltip", nil, disabled)
+      GUI:CreateToggle(opts, {"debugOutput", "tooltip_ItemRefTooltip"}, "ItemRefTooltip", nil, disabled)
       GUI:CreateNewline(opts)
       
-      GUI:CreateToggle(opts, {"debugOutput", "ShoppingTooltip1"}, "ShoppingTooltip1", nil, disabled)
+      GUI:CreateToggle(opts, {"debugOutput", "tooltip_ShoppingTooltip1"}, "ShoppingTooltip1", nil, disabled)
       GUI:CreateNewline(opts)
       
-      GUI:CreateToggle(opts, {"debugOutput", "ShoppingTooltip2"}, "ShoppingTooltip2", nil, disabled)
+      GUI:CreateToggle(opts, {"debugOutput", "tooltip_ShoppingTooltip2"}, "ShoppingTooltip2", nil, disabled)
       GUI:CreateNewline(opts)
       GUI:CreateExecute(opts, "reload", self.L["Reload UI"], nil, ReloadUI)
     end

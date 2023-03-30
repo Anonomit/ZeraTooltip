@@ -2,6 +2,7 @@
   
   <Script file="AddHeroicTag.lua"/>
   <Script file="AddItemLevel.lua"/>
+  <Script file="AddStackSize.lua"/>
   <Script file="CalculatePadding.lua"/>
   <Script file="CreateConstructor.lua"/>
   <Script file="HideLine.lua"/>

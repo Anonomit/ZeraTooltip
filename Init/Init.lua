@@ -26,8 +26,22 @@ local strSub    = string.sub
 local tblConcat = table.concat
 local tblRemove = table.remove
 
+local mathFloor = math.floor
 local mathMin   = math.min
 local mathMax   = math.max
+
+local ipairs       = ipairs
+local next         = next
+local unpack       = unpack
+local select       = select
+local type         = type
+local format       = format
+local tostring     = tostring
+local tonumber     = tonumber
+local getmetatable = getmetatable
+local setmetatable = setmetatable
+local assert       = assert
+local random       = random
 
 
 
@@ -94,15 +108,14 @@ do
     return DebugIf(self, "Debugf", keys, ...)
   end
   
-  local tblConcat = table.concat
   function Addon:DebugData(t)
     local texts = {}
     for _, data in ipairs(t) do
       if data[2] then
         if type(data[2]) == "string" then
-          table.insert(texts, data[1] .. ": '" .. data[2] .. "'")
+          tinsert(texts, data[1] .. ": '" .. data[2] .. "'")
         else
-          table.insert(texts, data[1] .. ": " .. tostring(data[2]))
+          tinsert(texts, data[1] .. ": " .. tostring(data[2]))
         end
       end
     end
@@ -245,6 +258,9 @@ do
   end
   function Addon:SetOption(val, ...)
     return SetOption(self, Addon.GetProfile(self), val, ...)
+  end
+  function Addon:ToggleOption(...)
+    return Addon:SetOption(not Addon:GetOption(...), ...)
   end
   function Addon:ResetOption(...)
     return Addon.SetOption(self, Addon.Copy(self, Addon.GetDefaultOption(self, ...)), ...)
@@ -434,7 +450,7 @@ end
 do
   function Addon:Round(num, nearest)
     nearest = nearest or 1
-    local lower = math.floor(num / nearest) * nearest
+    local lower = mathFloor(num / nearest) * nearest
     local upper = lower + nearest
     return (upper - num < num - lower) and upper or lower
   end
@@ -510,5 +526,9 @@ do
       end
     end
     return new
+  end
+  
+  function Addon:Random(t)
+    return t[random(#t)]
   end
 end

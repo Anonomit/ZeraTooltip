@@ -368,6 +368,8 @@ end
 --  ╚══════╝╚══════╝  ╚═══╝  ╚══════╝╚══════╝╚══════╝
 
 do
+  Addon.MAX_ITEMLEVEL = 284
+  
   Addon.MAX_LEVEL = MAX_PLAYER_LEVEL_TABLE[GetExpansionLevel()]
   
   Addon.MY_LEVEL = UnitLevel"player"
@@ -737,6 +739,8 @@ do
   
   self.statsInfo["Refundable"]         = {color = self.COLORS.SKY_BLUE}
   self.statsInfo["SoulboundTradeable"] = {color = self.COLORS.SKY_BLUE}
+  
+  self.statsInfo["StackSize"]          = {color = self.COLORS.DEFAULT}
 end
 
 
