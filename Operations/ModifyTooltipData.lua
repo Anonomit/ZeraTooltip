@@ -10,6 +10,9 @@ local tblConcat = table.concat
 
 local function OutputLineRecognition(line)
   Addon:DebugData{
+    {"fake",        line.fake},
+    {"textLeft",    line[2]},
+    
     {"line",        line.i},
     {"textLeft",    line.textLeftText},
     {"textRight",   line.textRightText},
@@ -47,14 +50,14 @@ function Addon:ModifyTooltipData(tooltip, tooltipData)
     end
   end
   
-  self:ReorderLines(tooltipData)
-  
   self:AddHeroicTag(tooltipData)
   self:AddItemLevel(tooltipData)
   self:AddStackSize(tooltipData)
   
+  self:ReorderLines(tooltipData)
+  
   self:CalculatePadding(tooltipData)
-    
+  
   if self:GetOption("debugOutput", "finalTooltipData") then
     for i, line in ipairs(tooltipData) do
       OutputLineRecognition(line)
@@ -62,16 +65,42 @@ function Addon:ModifyTooltipData(tooltip, tooltipData)
   end
 end
 
-
-function Addon:AddExtraLine(tooltipData, n, textLeft, hex, wordWrap)
-  if not tooltipData.extraLines then
-    tooltipData.extraLines = {}
+do
+  local function AddLine(tooltipData, i, ...)
+    tooltipData.extraLines = true
+    tinsert(tooltipData, i, {fake = true, ...})
+    Addon:BumpLocationsRange(tooltipData, i)
   end
-  tinsert(tooltipData.extraLines, {false, n, textLeft, hex, wordWrap})
+  
+  function Addon:AddExtraLine(tooltipData, n, textLeft, hex, wordWrap)
+    AddLine(tooltipData, n+1, false, textLeft, hex, wordWrap)
+  end
+  function Addon:AddExtraDoubleLine(tooltipData, n, textLeft, hexLeft, textRight, hexRight)
+    AddLine(tooltipData, n+1, true, textLeft, hexLeft, textRight, hexRight)
+  end
 end
-function Addon:AddExtraDoubleLine(tooltipData, n, textLeft, hexLeft, textRight, hexRight)
-  if not tooltipData.extraLines then
-    tooltipData.extraLines = {}
+
+function Addon:BumpLocationsExact(tooltipData, amount, ...)
+  if not amount then
+    amount = 1
   end
-  tinsert(tooltipData.extraLines, {true, n, textLeft, hexLeft, textRight, hexRight})
+  for _, k in ipairs{...} do
+    local loc = tooltipData.locs[k]
+    if loc then
+      tooltipData.locs[k] = loc + amount
+    end
+  end
+end
+
+function Addon:BumpLocationsRange(tooltipData, min, max, amount)
+  if not amount then
+    amount = 1
+  end
+  for k, loc in pairs(tooltipData.locs) do
+    if not min or min <= loc then
+      if not max or max >= loc then
+        tooltipData.locs[k] = loc + amount
+      end
+    end
+  end
 end

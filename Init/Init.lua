@@ -111,7 +111,7 @@ do
   function Addon:DebugData(t)
     local texts = {}
     for _, data in ipairs(t) do
-      if data[2] then
+      if data[2] ~= nil then
         if type(data[2]) == "string" then
           tinsert(texts, data[1] .. ": '" .. data[2] .. "'")
         else

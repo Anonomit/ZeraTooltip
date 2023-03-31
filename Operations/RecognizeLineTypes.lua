@@ -122,10 +122,16 @@ local contexts = Addon:MakeLookupTable({
 }, nil, true)
 
 local contextAscensions = Addon:Map({
+  Title = function(context, tooltipData, line, currentContext)
+    -- mark where the title would be if it existed on this item
+    if not tooltipData.locs.title then
+      tooltipData.locs.title = line.i - 1
+    end
+  end,
   Binding = function(context, tooltipData, line, currentContext)
     -- mark where the binding would be if it existed on this item
-    if not tooltipData.binding then
-      tooltipData.binding = line.i
+    if not tooltipData.locs.binding then
+      tooltipData.locs.binding = line.i - 1
     end
   end,
   -- Damage = function(context, tooltipData, line)
@@ -136,8 +142,8 @@ local contextAscensions = Addon:Map({
   -- end,
   BaseStat = function(context, tooltipData, line, currentContext)
     -- mark where the base stats would be if they existed on this item
-    if not tooltipData.statStart then
-      tooltipData.statStart = line.i - 1
+    if not tooltipData.locs.statStart then
+      tooltipData.locs.statStart = line.i - 1
     end
   end,
   Enchant = function(context, tooltipData, line, currentContext)
@@ -149,26 +155,26 @@ local contextAscensions = Addon:Map({
     end
     
     -- mark where the enchant would be if it existed on this item
-    if not tooltipData.enchant then
-      tooltipData.enchant = line.i - 1
+    if not tooltipData.locs.enchant then
+      tooltipData.locs.enchant = line.i - 1
     end
   end,
   SocketBonus = function(context, tooltipData, line, currentContext)
     -- mark where the socket bonus would be if it existed on this item
-    if not tooltipData.socketBonus then
-      tooltipData.socketBonus = line.i - 1
+    if not tooltipData.locs.socketBonus then
+      tooltipData.locs.socketBonus = line.i - 1
     end
   end,
   ItemLevel = function(context, tooltipData, line, currentContext)
     -- mark where the item level would be if it existed on this item
-    if not tooltipData.itemLevel then
-      tooltipData.itemLevel = line.i - 1
+    if not tooltipData.locs.itemLevel then
+      tooltipData.locs.itemLevel = line.i - 1
     end
   end,
   SecondaryStat = function(context, tooltipData, line, currentContext)
     -- mark where the secondary stats would be if they existed on this item
-    if not tooltipData.secondaryStatStart then
-      tooltipData.secondaryStatStart = line.i - 1
+    if not tooltipData.locs.secondaryStatStart then
+      tooltipData.locs.secondaryStatStart = line.i - 1
     end
   end,
   EnchantOnUse = function(context, tooltipData, line, currentContext)
@@ -182,40 +188,45 @@ local contextAscensions = Addon:Map({
   end,
   RecipeTitle = function(context, tooltipData, line, currentContext)
   -- reset the base stat location
-    tooltipData.statStart = nil
+    tooltipData.locs.statStart = nil
     tooltipData.context = contexts.Title
   end,
   Tail = function(context, tooltipData, line, currentContext)
     -- do everything that needs to be done if the tooltip only has a title
     
+    -- mark where the title would be if it existed on this item
+    if not tooltipData.locs.title then
+      tooltipData.locs.title = line.i 
+    end
+    
     -- mark where the binding would be if it existed on this item
-    if not tooltipData.binding then
-      tooltipData.binding = line.i
+    if not tooltipData.locs.binding then
+      tooltipData.locs.binding = line.i
     end
     
     -- mark where the base stats would be if they existed on this item
-    if not tooltipData.statStart then
-      tooltipData.statStart = line.i
+    if not tooltipData.locs.statStart then
+      tooltipData.locs.statStart = line.i
     end
     
     -- mark where the enchant would be if it existed on this item
-    if not tooltipData.enchant then
-      tooltipData.enchant = line.i
+    if not tooltipData.locs.enchant then
+      tooltipData.locs.enchant = line.i
     end
     
     -- mark where the socket bonus would be if it existed on this item
-    if not tooltipData.socketBonus then
-      tooltipData.socketBonus = line.i
+    if not tooltipData.locs.socketBonus then
+      tooltipData.locs.socketBonus = line.i
     end
     
     -- mark where the item level would be if it existed on this item
-    if not tooltipData.itemLevel then
-      tooltipData.itemLevel = line.i - 1
+    if not tooltipData.locs.itemLevel then
+      tooltipData.locs.itemLevel = line.i
     end
     
     -- mark where the secondary stats would be if they existed on this item
-    if not tooltipData.secondaryStatStart then
-      tooltipData.secondaryStatStart = line.i
+    if not tooltipData.locs.secondaryStatStart then
+      tooltipData.locs.secondaryStatStart = line.i
     end
   end,
 }, nil, contexts)
@@ -243,7 +254,7 @@ contextActions = Addon:Map({
     end
   end,
   Title = function(i, tooltipData, line)
-    tooltipData.title = line.i
+    tooltipData.locs.title = line.i
     return SetContext(i, tooltipData, line)
   end,
   Difficulty = function(i, tooltipData, line)
@@ -254,8 +265,8 @@ contextActions = Addon:Map({
   Binding = function(i, tooltipData, line)
     local bindType = MatchesAny(line.textLeftTextStripped, ITEM_SOULBOUND, ITEM_BIND_ON_EQUIP, ITEM_BIND_ON_USE, ITEM_BIND_ON_PICKUP, ITEM_BIND_TO_ACCOUNT, ITEM_BIND_TO_BNETACCOUNT)
     if bindType then
-      tooltipData.binding = line.i
-      line.bindType       = bindTypes[bindType]
+      tooltipData.locs.binding = line.i
+      line.bindType            = bindTypes[bindType]
       return SetContext(i, tooltipData, line)
     end
   end,
@@ -348,7 +359,7 @@ contextActions = Addon:Map({
   end,
   Enchant = function(i, tooltipData, line)
     if tooltipData.hasEnchant and not tooltipData.foundEnchant and line.colorLeft == Addon.COLORS.GREEN then
-      tooltipData.enchant      = line.i
+      tooltipData.locs.enchant = line.i
       tooltipData.foundEnchant = true
       return SetContext(i, tooltipData, line)
     end
@@ -393,8 +404,8 @@ contextActions = Addon:Map({
   SocketBonus = function(i, tooltipData, line)
   local prefix = MatchesAny(line.textLeftTextStripped, ITEM_SOCKET_BONUS)
     if prefix then
-      line.prefix             = prefix
-      tooltipData.socketBonus = line.i
+      line.prefix                  = prefix
+      tooltipData.locs.socketBonus = line.i
       return SetContext(i, tooltipData, line)
     end
   end,
@@ -455,7 +466,7 @@ contextActions = Addon:Map({
   end,
   EnchantOnUse = function(i, tooltipData, line)
     if tooltipData.hasEnchant and not tooltipData.foundEnchant and line.colorLeft == Addon.COLORS.GREEN and StartsWithAny(line.textLeftTextStripped, ITEM_SPELL_TRIGGER_ONUSE) then
-      tooltipData.enchant      = line.i
+      tooltipData.locs.enchant = line.i
       line.prefix              = ITEM_SPELL_TRIGGER_ONUSE
       tooltipData.foundEnchant = true
       return SetContext(i, tooltipData, line)

@@ -33,8 +33,8 @@ local function OutputConstructorCreation(constructor)
     for i, line in ipairs(constructor.addLines or {}) do
       Addon:DebugData{
         {"addLine",        i},
-        {"double",         line[1]},
-        {"dest",           line[2]},
+        {"dest",           line[1]},
+        {"double",         line[2]},
         {"textLeft",       line[3]},
         {"hexLeft",        line[4]},
         {"textRight/wrap", line[5]},
@@ -57,22 +57,41 @@ function Addon:CreateConstructor(tooltipData)
   local hideLefts     = {}
   local hideRights    = {}
   local fakeouts      = {}
+  local extraMoves    = {}
+  
+  if tooltipData.extraLines then
+    constructor.addLines = {}
+    for i = #tooltipData, 1, -1 do
+      local line = tooltipData[i]
+      if line.fake then
+        local before
+        for j = i, 1, -1 do
+          before = tooltipData[j].i
+          if before then
+            break
+          end
+        end
+        local after
+        for j = i, #tooltipData do
+          after = tooltipData[j].i
+          if after then
+            break
+          end
+        end
+        
+        tinsert(constructor.addLines, {before or 0, line.pad, unpack(line)})
+        extraMoves[after or (i+1)] = true
+        tblRemove(tooltipData, i)
+      end
+    end
+    
+    tblSort(constructor.addLines, function(a, b) return a[1] > b[1] end)
+  end
   
   if self:GetOption("constructor", "doValidation") then
     constructor.validation = {}
     for _, line in ipairs(tooltipData) do
       constructor.validation[line.i] = line.realTextLeft
-    end
-  end
-  
-  local extraMoves = {}
-  if tooltipData.extraLines then
-    tblSort(tooltipData.extraLines, function(a, b) return a[2] > b[2] end)
-    
-    constructor.addLines = {}
-    for i, line in ipairs(tooltipData.extraLines) do
-      tinsert(constructor.addLines, line)
-      extraMoves[line[2] + 1] = true
     end
   end
   

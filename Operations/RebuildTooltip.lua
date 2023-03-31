@@ -156,7 +156,7 @@ function Addon:ConstructTooltip(tooltip, constructor)
   local extraLines    = {}
   local addedExtraLine
   for i, data in ipairs(constructor.addLines or {}) do
-    local double, _, textLeft, hexLeft = unpack(data, 1, 4)
+    local pad, double, textLeft, hexLeft = unpack(data, 2, 5)
     if Addon:GetDebugView"tooltipLineNumbers" then
       textLeft = format("[%d] ", numLines + i) .. textLeft
     end
@@ -165,23 +165,23 @@ function Addon:ConstructTooltip(tooltip, constructor)
       rLeft, gLeft, bLeft = self:ConvertColorToBlizzard(hexLeft)
     end
     if double then
-      local textRight, hexRight = unpack(data, 5, 6)
+      local textRight, hexRight = unpack(data, 6, 7)
       local rRight, gRight, bRight
       if hexRight then
         rRight, gRight, bRight = self:ConvertColorToBlizzard(hexRight)
       end
       tooltip:AddDoubleLine(textLeft, textRight, rLeft, gLeft, bLeft, rRight, gRight, bRight)
     else
-      local wordWrap = unpack(data, 3, 5)
-      tooltip:AddLine(textLeft, rLeft, gLeft, bLeft, data[5])
+      local wordWrap = data[6]
+      tooltip:AddLine(textLeft, rLeft, gLeft, bLeft, wordWrap)
     end
     local source = tooltip:NumLines()
     local frame = _G[tooltipName.."TextLeft"..source]
     table.insert(halfDestructor, function() frame:Hide() end)
-    local dest = data[2]
+    local dest = data[1]
     local lastExtraLine = constructor.addLines[i-1]
-    if not lastExtraLine or lastExtraLine[2] ~= dest then
-      MoveLine(fullDestructor, halfDestructor, tooltip, tooltipName, frame, source, dest, nil, lastFrame, extraLinesMap)
+    if not lastExtraLine or lastExtraLine[1] ~= dest then
+      MoveLine(fullDestructor, halfDestructor, tooltip, tooltipName, frame, source, dest, pad, lastFrame, extraLinesMap)
     end
     extraLinesMap[dest] = source
     extraLines[source]  = true
