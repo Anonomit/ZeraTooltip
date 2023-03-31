@@ -60,6 +60,9 @@ function Addon:CreateConstructor(tooltipData)
   local extraMoves    = {}
   
   if tooltipData.extraLines then
+    local slot = 1
+    local lastDest
+    
     constructor.addLines = {}
     for i = #tooltipData, 1, -1 do
       local line = tooltipData[i]
@@ -71,6 +74,8 @@ function Addon:CreateConstructor(tooltipData)
             break
           end
         end
+        before = before or 0
+        
         local after
         for j = i, #tooltipData do
           after = tooltipData[j].i
@@ -79,13 +84,16 @@ function Addon:CreateConstructor(tooltipData)
           end
         end
         
-        tinsert(constructor.addLines, {before or 0, line.pad, unpack(line)})
+        if before == lastDest then
+          slot = slot - 1
+        end
+        tinsert(constructor.addLines, slot, {before, line.pad, unpack(line)})
         extraMoves[after or (i+1)] = true
         tblRemove(tooltipData, i)
+        slot     = slot + 1
+        lastDest = before
       end
     end
-    
-    tblSort(constructor.addLines, function(a, b) return a[1] > b[1] end)
   end
   
   if self:GetOption("constructor", "doValidation") then

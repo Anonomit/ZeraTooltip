@@ -68,15 +68,15 @@ end
 do
   local function AddLine(tooltipData, i, ...)
     tooltipData.extraLines = true
-    tinsert(tooltipData, i, {fake = true, ...})
+    tinsert(tooltipData, i+1, {fake = true, ...})
     Addon:BumpLocationsRange(tooltipData, i)
   end
   
   function Addon:AddExtraLine(tooltipData, n, textLeft, hex, wordWrap)
-    AddLine(tooltipData, n+1, false, textLeft, hex, wordWrap)
+    AddLine(tooltipData, n, false, textLeft, hex, wordWrap)
   end
   function Addon:AddExtraDoubleLine(tooltipData, n, textLeft, hexLeft, textRight, hexRight)
-    AddLine(tooltipData, n+1, true, textLeft, hexLeft, textRight, hexRight)
+    AddLine(tooltipData, n, true, textLeft, hexLeft, textRight, hexRight)
   end
 end
 

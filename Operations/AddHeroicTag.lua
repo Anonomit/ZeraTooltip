@@ -122,7 +122,7 @@ function Addon:AddHeroicTag(tooltipData)
     if self:GetOption("allow", "recolor") and self:GetOption("doRecolor", stat) then
       color = self:GetOption("color", stat)
     end
-    self:AddExtraLine(tooltipData, tooltipData.locs.title or 1, self:RewordHeroic(self.L["Heroic"]), color)
+    self:AddExtraLine(tooltipData, tooltipData.locs.title, self:RewordHeroic(self.L["Heroic"]), color)
   end
 end
 

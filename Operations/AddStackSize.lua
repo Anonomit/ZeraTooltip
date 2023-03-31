@@ -47,6 +47,6 @@ function Addon:AddStackSize(tooltipData)
   
   local color = self:GetOption("allow", "recolor") and self:GetOption("doRecolor", stat) and self:GetOption("color", stat) or self:GetDefaultOption("color", stat)
   
-  self:AddExtraLine(tooltipData, self:GetOption("doReorder", stat) and tooltipData.locs.title or tooltipData.locs.itemLevel, self:RewordStackSize(format(coveredText .. ": %d", stackSize)), color)
+  self:AddExtraLine(tooltipData, self:GetOption("doReorder", stat) and tooltipData.locs.title or #tooltipData, self:RewordStackSize(format(coveredText .. ": %d", stackSize)), color)
 end
 
