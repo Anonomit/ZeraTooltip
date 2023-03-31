@@ -356,6 +356,7 @@ contextActions = Addon:Map({
   end,
   LastSocket = function(i, tooltipData, line)
     if line.texture then
+      line.socketType = Addon:GetGemColor(line.texture[1], line.textLeftText)
       return SetContext(i-1, tooltipData, line)
     end
   end,

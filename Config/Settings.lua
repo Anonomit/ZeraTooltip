@@ -64,16 +64,24 @@ function Addon:MakeDefaultOptions()
           Speed = 1,
         },
         doRecolor = {
-          ["*"]        = true,
-          Title        = false,
-          Armor        = false,
-          BonusArmor   = false,
-          Block        = false,
-          Enchant      = false,
-          EnchantOnUse = false, -- no GUI option, should not be enabled. inherits from Use
-          Equip        = false, -- just to match Use
-          ChanceOnHit  = false, -- just to match Use
-          Use          = false, -- because of EnchantOnUse
+          ["*"]            = true,
+          Title            = false,
+          Armor            = false,
+          BonusArmor       = false,
+          Block            = false,
+          Enchant          = false,
+          EnchantOnUse     = false, -- no GUI option, should not be enabled. inherits from Use
+          Socket_red       = false,
+          Socket_blue      = false,
+          Socket_yellow    = false,
+          Socket_purple    = false,
+          Socket_green     = false,
+          Socket_orange    = false,
+          Socket_prismatic = false,
+          Socket_meta      = false,
+          Equip            = false, -- just to match Use
+          ChanceOnHit      = false, -- just to match Use
+          Use              = false, -- because of EnchantOnUse
         },
         color = (function() local colors = {["*"] = "00ff00"} for stat, StatInfo in pairs(self.statsInfo) do colors[stat] = StatInfo.color end return colors end)(),
         

@@ -56,7 +56,7 @@ function Addon:ReadTooltip(tooltip, name, link, maxLines)
     if texture and texture:IsShown() then
       local _, parent = texture:GetPoint()
       if parent then
-        textureMap[parent] = {i, texture}
+        textureMap[parent] = {texture:GetTexture(), i}
       end
     end
   end

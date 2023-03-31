@@ -1380,6 +1380,45 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
   end
   GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
   
+  -- Socket
+  do
+    local stat = "Socket"
+    
+    local sockets = {
+      {"Socket_red",       GEM_TEXT_RED},
+      {"Socket_blue",      GEM_TEXT_BLUE},
+      {"Socket_yellow",    GEM_TEXT_YELLOW},
+      {"Socket_purple",    GEM_TEXT_PURPLE},
+      {"Socket_green",     GEM_TEXT_GREEN},
+      {"Socket_orange",    GEM_TEXT_ORANGE},
+      {"Socket_prismatic", GEM_TEXT_PRISMATIC},
+      {"Socket_meta",      GEM_TEXT_META},
+    }
+    
+    local samples = {}
+    for _, socket in ipairs(sockets) do
+      local socketType, defaultText = unpack(socket, 1, 2)
+      local defaultText, formattedText = GetFormattedText(socketType, self.COLORS.WHITE, defaultText, defaultText)
+      tinsert(samples, {defaultText, formattedText})
+    end
+    
+    
+    local opts = GUI:CreateGroup(opts, stat, samples[1][2])
+      
+    -- CreateTitle(opts, defaultText, formattedText, changed)
+    CreateSamples(opts, samples)
+    
+    for _, socket in ipairs(sockets) do
+      local stat = socket[1]
+      local opts = GUI:CreateGroupBox(opts, socket[2])
+      
+      local disabled = disabled or not Addon:GetOption("allow", "recolor")
+      GUI:CreateToggle(opts, {"doRecolor", stat}, L["Recolor"], nil, disabled).width = 0.5
+      GUI:CreateColor(opts, {"color", stat}, self.L["Color"], nil, disabled or not Addon:GetOption("doRecolor", stat)).width = 0.5
+      CreateReset(opts, {"color", stat})
+    end
+  end
+  
   -- Socket Hint
   local function MakeSocketHintOptions()
     do
@@ -1400,9 +1439,9 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       
       CreateHide(opts, stat)
     end
-    GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
   end
   if self:GetOption("doReorder", "SocketHint") then MakeSocketHintOptions() end
+  GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
   
   -- Durability
   do
@@ -1609,7 +1648,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
   end
   GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
   
-  if not self:GetOption("doReorder", "SocketHint") then MakeSocketHintOptions() end
+  if not self:GetOption("doReorder", "SocketHint") then MakeSocketHintOptions() GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true) end
   
   if not self:GetOption("doReorder", "Refundable")         then MakeRefundableOption() end
   if not self:GetOption("doReorder", "SoulboundTradeable") then MakeTradeableOption() end

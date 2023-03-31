@@ -134,7 +134,7 @@ do
   
   do
     local function GetErrorHandler(errFunc)
-      if Addon:IsDebugEnabled() and Addon:GetOption("debugOutput", "luaError") then
+      if Addon:IsDebugEnabled() and (not Addon:IsDBLoaded() or Addon:GetOption("debugOutput", "luaError")) then
         return function(...)
           geterrorhandler()(...)
           if errFunc then
@@ -146,6 +146,15 @@ do
     end
     function Addon:xpcall(func, errFunc)
       return xpcall(func, GetErrorHandler(errFunc))
+    end
+    function Addon:Throw(...)
+      if Addon:IsDebugEnabled() and (not Addon:IsDBLoaded() or Addon:GetOption("debugOutput", "luaError")) then
+        local text = format(...)
+        geterrorhandler()(...)
+      end
+    end
+    function Addon:Throwf(...)
+      return self:Throw(format(...))
     end
   end
 end
@@ -220,6 +229,9 @@ do
     return DeepCopy(val, {})
   end
   
+  function Addon:IsDBLoaded()
+    return self.db ~= nil
+  end
   function Addon:GetDB()
     return self.db
   end

@@ -87,7 +87,7 @@ function Addon:CreateConstructor(tooltipData)
         if before == lastDest then
           slot = slot - 1
         end
-        tinsert(constructor.addLines, slot, {before, line.pad, unpack(line)})
+        tinsert(constructor.addLines, slot, {before, line.pad, unpack(line, 1, 4)})
         extraMoves[after or (i+1)] = true
         tblRemove(tooltipData, i)
         slot     = slot + 1
