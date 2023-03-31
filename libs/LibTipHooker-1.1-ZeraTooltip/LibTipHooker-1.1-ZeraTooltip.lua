@@ -184,9 +184,7 @@ local Set = {
     end
   end,
   buff = function(methodName, tooltip, unitId, buffIndex, raidFilter)
-    if not unitId then
-      unitId = "player"
-    end
+    unitId = unitId or "player"
     for handler in pairs(HandlerList.buff) do
       handler(tooltip, methodName, unitId, buffIndex, raidFilter)
     end
@@ -345,9 +343,7 @@ function TipHooker:Hook(handler, ...)
     if self.VariablesLoaded then
       InitializeHook(tipType)
     end
-    if not HandlerList[tipType] then
-      HandlerList[tipType] = {}
-    end
+    HandlerList[tipType] = HandlerList[tipType] or {}
     HandlerList[tipType][handler] = true
   end
 end

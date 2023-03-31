@@ -45,9 +45,7 @@ local matchCache = {}
 
 local function MatchesAny(text, ...)
   for _, pattern in ipairs{...} do
-    if not matchCache[pattern] then
-      matchCache[pattern] = Addon:ReversePattern(pattern)
-    end
+    matchCache[pattern] = matchCache[pattern] or Addon:ReversePattern(pattern)
     local startI, endI, match = strFind(text, matchCache[pattern])
     if startI then
       return pattern, match
@@ -124,15 +122,11 @@ local contexts = Addon:MakeLookupTable({
 local contextAscensions = Addon:Map({
   Title = function(context, tooltipData, line, currentContext)
     -- mark where the title would be if it existed on this item
-    if not tooltipData.locs.title then
-      tooltipData.locs.title = line.i - 1
-    end
+    tooltipData.locs.title = tooltipData.locs.title or line.i - 1
   end,
   Binding = function(context, tooltipData, line, currentContext)
     -- mark where the binding would be if it existed on this item
-    if not tooltipData.locs.binding then
-      tooltipData.locs.binding = line.i - 1
-    end
+    tooltipData.locs.binding = tooltipData.locs.binding or line.i - 1
   end,
   -- Damage = function(context, tooltipData, line)
   --   local lastLine = tooltipData[line.i-1]
@@ -142,9 +136,7 @@ local contextAscensions = Addon:Map({
   -- end,
   BaseStat = function(context, tooltipData, line, currentContext)
     -- mark where the base stats would be if they existed on this item
-    if not tooltipData.locs.statStart then
-      tooltipData.locs.statStart = line.i - 1
-    end
+    tooltipData.locs.statStart = tooltipData.locs.statStart or line.i - 1
   end,
   Enchant = function(context, tooltipData, line, currentContext)
     -- mark red enchantment lines if I found an "enchantment disabled" line
@@ -155,27 +147,19 @@ local contextAscensions = Addon:Map({
     end
     
     -- mark where the enchant would be if it existed on this item
-    if not tooltipData.locs.enchant then
-      tooltipData.locs.enchant = line.i - 1
-    end
+    tooltipData.locs.enchant = tooltipData.locs.enchant or line.i - 1
   end,
   SocketBonus = function(context, tooltipData, line, currentContext)
     -- mark where the socket bonus would be if it existed on this item
-    if not tooltipData.locs.socketBonus then
-      tooltipData.locs.socketBonus = line.i - 1
-    end
+    tooltipData.locs.socketBonus = tooltipData.locs.socketBonus or line.i - 1
   end,
   ItemLevel = function(context, tooltipData, line, currentContext)
     -- mark where the item level would be if it existed on this item
-    if not tooltipData.locs.itemLevel then
-      tooltipData.locs.itemLevel = line.i - 1
-    end
+    tooltipData.locs.itemLevel = tooltipData.locs.itemLevel or line.i - 1
   end,
   SecondaryStat = function(context, tooltipData, line, currentContext)
     -- mark where the secondary stats would be if they existed on this item
-    if not tooltipData.locs.secondaryStatStart then
-      tooltipData.locs.secondaryStatStart = line.i - 1
-    end
+    tooltipData.locs.secondaryStatStart = tooltipData.locs.secondaryStatStart or line.i - 1
   end,
   EnchantOnUse = function(context, tooltipData, line, currentContext)
     -- mark red enchantment lines if I found an "enchantment disabled" line
@@ -195,39 +179,25 @@ local contextAscensions = Addon:Map({
     -- do everything that needs to be done if the tooltip only has a title
     
     -- mark where the title would be if it existed on this item
-    if not tooltipData.locs.title then
-      tooltipData.locs.title = line.i 
-    end
+    tooltipData.locs.title = tooltipData.locs.title or line.i 
     
     -- mark where the binding would be if it existed on this item
-    if not tooltipData.locs.binding then
-      tooltipData.locs.binding = line.i
-    end
+    tooltipData.locs.binding = tooltipData.locs.binding or line.i
     
     -- mark where the base stats would be if they existed on this item
-    if not tooltipData.locs.statStart then
-      tooltipData.locs.statStart = line.i
-    end
+    tooltipData.locs.statStart = tooltipData.locs.statStart or line.i
     
     -- mark where the enchant would be if it existed on this item
-    if not tooltipData.locs.enchant then
-      tooltipData.locs.enchant = line.i
-    end
+    tooltipData.locs.enchant = tooltipData.locs.enchant or line.i
     
     -- mark where the socket bonus would be if it existed on this item
-    if not tooltipData.locs.socketBonus then
-      tooltipData.locs.socketBonus = line.i
-    end
+    tooltipData.locs.socketBonus = tooltipData.locs.socketBonus or line.i
     
     -- mark where the item level would be if it existed on this item
-    if not tooltipData.locs.itemLevel then
-      tooltipData.locs.itemLevel = line.i
-    end
+    tooltipData.locs.itemLevel = tooltipData.locs.itemLevel or line.i
     
     -- mark where the secondary stats would be if they existed on this item
-    if not tooltipData.locs.secondaryStatStart then
-      tooltipData.locs.secondaryStatStart = line.i
-    end
+    tooltipData.locs.secondaryStatStart = tooltipData.locs.secondaryStatStart or line.i
   end,
 }, nil, contexts)
 
@@ -346,9 +316,7 @@ contextActions = Addon:Map({
       if stat then
         if stat == ITEM_RESIST_SINGLE then
           local n = strMatch(line.textLeftTextStripped, "(%d+)")
-          if not tooltipData.resistN then
-            tooltipData.resistN = n
-          end
+          tooltipData.resistN = tooltipData.resistN or n
           if tooltipData.resistN == n then
             tooltipData.resists = tooltipData.resists + 1
           end

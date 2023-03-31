@@ -81,9 +81,7 @@ do
 end
 
 function Addon:BumpLocationsExact(tooltipData, amount, ...)
-  if not amount then
-    amount = 1
-  end
+  amount = amount or 1
   for _, k in ipairs{...} do
     local loc = tooltipData.locs[k]
     if loc then
@@ -93,9 +91,7 @@ function Addon:BumpLocationsExact(tooltipData, amount, ...)
 end
 
 function Addon:BumpLocationsRange(tooltipData, min, max, amount)
-  if not amount then
-    amount = 1
-  end
+  amount = amount or 1
   for k, loc in pairs(tooltipData.locs) do
     if not min or min <= loc then
       if not max or max >= loc then

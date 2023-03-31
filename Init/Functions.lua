@@ -67,9 +67,7 @@ do
   }
   local reversedPatternsCache = {}
   function Addon:ReversePattern(text)
-    if not reversedPatternsCache[text] then
-      reversedPatternsCache[text] = "^" .. self:ChainGsub(text, unpack(chainGsubPattern)) .. "$"
-    end
+    reversedPatternsCache[text] = reversedPatternsCache[text] or "^" .. self:ChainGsub(text, unpack(chainGsubPattern)) .. "$"
     return reversedPatternsCache[text]
   end
   
@@ -199,9 +197,7 @@ do
     return localeExtraStatCaptures[stat]
   end
   function Addon:AddExtraStatCapture(stat, ...)
-    if not localeExtraStatCaptures[stat] then
-      localeExtraStatCaptures[stat] = {}
-    end
+    localeExtraStatCaptures[stat] = localeExtraStatCaptures[stat] or {}
     for i, rule in ipairs{...} do
       tinsert(localeExtraStatCaptures[stat], rule)
     end

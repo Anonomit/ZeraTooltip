@@ -151,9 +151,7 @@ function Addon:RewordLine(tooltip, line, tooltipData)
     end
     
     if self:GetOption("cache", "enabled") and self:GetOption("cache", "text") then
-      if not textCache[line.type] then
-        textCache[line.type] = {}
-      end
+      textCache[line.type] = textCache[line.type] or {}
       textCache[line.type][line.textLeftText] = {text, line.rewordRight}
       cacheSize = cacheSize + 1
     end

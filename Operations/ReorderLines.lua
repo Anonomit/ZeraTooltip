@@ -45,12 +45,8 @@ local function SortStats(tooltipData)
       tinsert(stats.EnchantOnUse, tblRemove(stats.RequiredEnchantOnUse, 1))
     end
   end
-  if not stats.BaseStat.location then
-    stats.BaseStat.location = tooltipData.locs.statStart + 1
-  end
-  if not stats.SecondaryStat.location then
-    stats.SecondaryStat.location = tooltipData.locs.secondaryStatStart + 1
-  end
+  stats.BaseStat.location      = stats.BaseStat.location      or tooltipData.locs.statStart + 1
+  stats.SecondaryStat.location = stats.SecondaryStat.location or tooltipData.locs.secondaryStatStart + 1
   
   for i = #stats.Charges, 1, -1 do
     tinsert(stats[tooltipData.lastUse], tblRemove(stats.Charges, 1))
