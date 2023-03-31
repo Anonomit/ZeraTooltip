@@ -104,6 +104,18 @@ for ids, ilvl in pairs({
   [{46052}] = 226, -- Reply-Code Alpha 10
   [{46053}] = 239, -- Reply-Code Alpha 25
   [{45038}] = 258, -- Fragment of Val'anyr
+  
+  
+  [{47242}] = 245, -- T9 10H / 25 / 25H
+  [{47557, 47558, 47559}] = 258, -- T9 25H
+  
+  
+  [{49643, 49644}] = 245, -- Head of Onyxia
+  
+  
+  [{52025, 52026, 52027}] = 264, -- T10 10H / 25 / 25H
+  [{52028, 52029, 52030}] = 277, -- T10 25H
+  [{50274, 49869, 50226, 50231}] = 284, -- Shadowmourne
 }) do
   for _, id in ipairs(ids) do
     tokenOverrides[id] = ilvl
