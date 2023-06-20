@@ -1475,7 +1475,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
     CreateHide(opts, stat)
   end
   GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
-  
+  --[[
   -- Socket
   do
     local stat = "Socket"
@@ -1514,7 +1514,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       CreateReset(opts, {"color", stat})
     end
   end
-  
+  --]]
   -- Socket Hint
   local function MakeSocketHintOptions()
     do
