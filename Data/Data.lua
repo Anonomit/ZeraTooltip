@@ -737,7 +737,7 @@ do
   self.statsInfo["Socket_prismatic"]   = {color = self.COLORS.WHITE}
   self.statsInfo["Socket_meta"]        = {color = self.COLORS.WHITE}
   
-  self.statsInfo["Charges"]            = {color = self.COLORS.WHITE}
+  self.statsInfo["Charges"]            = {color = self.COLORS.ORANGE}
   self.statsInfo["NoCharges"]          = {color = self.COLORS.RED}
   self.statsInfo["Cooldown"]           = {color = self.COLORS.RED}
   
