@@ -317,7 +317,7 @@ function Addon:MakeAddonOptionsTemp(chatCmd)
   local GUI = self.GUI:ResetOrder()
   local opts = GUI:CreateGroupTop(title, "tab")
   
-  GUI:CreateDescription(opts, "The new options menu is extremely laggy with ZeraTooltip.|nFor now, options have been moved into a separate window.", fontSize)
+  GUI:CreateDescription(opts, "The new options menu is bugged and embedded textures cause extreme lag.|nFor now, ZeraTooltip options have been moved into a separate window.", fontSize)
   GUI:CreateNewline(opts)
   
   GUI:CreateExecute(opts, "key", "ZeraTooltip Options", nil, function() Addon:OpenConfig(ADDON_NAME) end)
