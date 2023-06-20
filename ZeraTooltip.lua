@@ -31,12 +31,15 @@ end
 
 
 function Addon:CreateOptions()
-  self:MakeAddonOptions(self.chatCommands[1])
+  self:MakeAddonOptionsTemp(self.chatCommands[1])
   
-  self:MakeStatsOptions(self.L["Stats"], self.chatCommands[1], "stats", "stat", "st")
-  self:MakePaddingOptions(L["Spacing"], self.chatCommands[1], "spacing", "space", "spaces", "spa", "sp", "padding", "pad", "pa")
-  self:MakeExtraOptions(self.L["Miscellaneous"], self.chatCommands[1], "misc", "miscellaneous", "other", "m")
+  self:MakeAddonOptionsContainer(self.chatCommands[1])
+  -- self:MakeAddonOptions(self.chatCommands[1])
   
+  -- self:MakeStatsOptions(self.L["Stats"], self.chatCommands[1], "stats", "stat", "st")
+  -- self:MakePaddingOptions(L["Spacing"], self.chatCommands[1], "spacing", "space", "spaces", "spa", "sp", "padding", "pad", "pa")
+  -- self:MakeExtraOptions(self.L["Miscellaneous"], self.chatCommands[1], "misc", "miscellaneous", "other", "m")
+  --[[
   -- Profile Options
   do
     local args = {"profiles", "profile", "prof", "pro", "pr", "p"}
@@ -49,14 +52,16 @@ function Addon:CreateOptions()
       self.chatArgs[arg] = OpenOptions
     end
   end
-  
+  --]]
   -- Reset Options
-  self:MakeResetOptions(self.L["Reset"], self.chatCommands[1], "reset", "res", "re", "r")
+  -- self:MakeResetOptions(self.L["Reset"], self.chatCommands[1], "reset", "res", "re", "r")
   
   -- Debug Options
-  if self:IsDebugEnabled() then
-    self:MakeDebugOptions(self.L["Debug"], self.chatCommands[1], "debug", "db", "d")
-  end
+  -- if self:IsDebugEnabled() then
+  --   self:MakeDebugOptions(self.L["Debug"], self.chatCommands[1], "debug", "db", "d")
+  -- end
+  
+  
 end
 
 function Addon:InitDB()

@@ -236,6 +236,99 @@ end
 
 
 
+function Addon:MakeAddonOptionsContainer(chatCmd)
+  local title = format("%s v%s  (/%s)", ADDON_NAME, tostring(self:GetOption"version"), chatCmd)
+  local panel = self:CreateOptionsCategory(nil, function()
+  
+  local GUI = self.GUI:ResetOrder()
+  local opts = GUI:CreateGroupTop(title)
+  
+  do
+    local opts = GUI:CreateGroup(opts, GUI:Order(), GUI:Order())
+    local sub = self:MakeAddonOptions(chatCmd)
+    for k, v in pairs(sub) do
+      opts[k] = v
+    end
+  end
+  
+  do
+    local opts = GUI:CreateGroup(opts, GUI:Order(), GUI:Order())
+    local sub = self:MakeStatsOptions(self.L["Stats"], self.chatCommands[1], "stats", "stat", "st")
+    for k, v in pairs(sub) do
+      opts[k] = v
+    end
+  end
+  
+  do
+    local opts = GUI:CreateGroup(opts, GUI:Order(), GUI:Order())
+    local sub = self:MakePaddingOptions(L["Spacing"], self.chatCommands[1], "spacing", "space", "spaces", "spa", "sp", "padding", "pad", "pa")
+    for k, v in pairs(sub) do
+      opts[k] = v
+    end
+  end
+  
+  do
+    local opts = GUI:CreateGroup(opts, GUI:Order(), GUI:Order())
+    local sub = self:MakeExtraOptions(self.L["Miscellaneous"], self.chatCommands[1], "misc", "miscellaneous", "other", "m")
+    for k, v in pairs(sub) do
+      opts[k] = v
+    end
+  end
+    
+  -- Profile Options
+  do
+    local args = {"profiles", "profile", "prof", "pro", "pr", "p"}
+    local profileOptions = self.AceDBOptions:GetOptionsTable(self:GetDB())
+    local categoryName = profileOptions.name
+    profileOptions.name = format("%s v%s > %s  (/%s %s)", ADDON_NAME, tostring(self:GetOption"version"), profileOptions.name, self.chatCommands[1], args[1])
+    local panel = self:CreateOptionsCategory(categoryName, profileOptions)
+    local function OpenOptions() return self:OpenConfig(panel) end
+    for _, arg in ipairs(args) do
+      self.chatArgs[arg] = OpenOptions
+    end
+  end
+  
+  do
+    local opts = GUI:CreateGroup(opts, GUI:Order(), GUI:Order())
+    local sub = self:MakeResetOptions(self.L["Reset"], self.chatCommands[1], "reset", "res", "re", "r")
+    for k, v in pairs(sub) do
+      opts[k] = v
+    end
+  end
+  
+  if self:IsDebugEnabled() then
+    local opts = GUI:CreateGroup(opts, GUI:Order(), GUI:Order())
+    local sub = self:MakeDebugOptions(self.L["Debug"], self.chatCommands[1], "debug", "db", "d")
+    for k, v in pairs(sub) do
+      opts[k] = v
+    end
+  end
+  
+  return opts
+  end)
+  function self:OpenAddonOptions() return self:OpenConfig(panel) end
+end
+
+
+function Addon:MakeAddonOptionsTemp(chatCmd)
+  local title = format("%s v%s  (/%s)", ADDON_NAME, tostring(self:GetOption"version"), chatCmd)
+  local panel = self:CreateOptionsCategory_temp(nil, function()
+  
+  local GUI = self.GUI:ResetOrder()
+  local opts = GUI:CreateGroupTop(title, "tab")
+  
+  GUI:CreateDescription(opts, "The new options menu is extremely laggy with ZeraTooltip.|nFor now, options have been moved into a separate window.", fontSize)
+  GUI:CreateNewline(opts)
+  
+  GUI:CreateExecute(opts, "key", "ZeraTooltip Options", nil, function() Addon:OpenConfig(ADDON_NAME) end)
+  
+  return opts
+  end)
+  -- function self:OpenAddonOptions() return self:OpenConfig(panel) end
+end
+
+
+
 
 
 --   █████╗ ██████╗ ██████╗  ██████╗ ███╗   ██╗     ██████╗ ██████╗ ████████╗██╗ ██████╗ ███╗   ██╗███████╗
@@ -247,7 +340,8 @@ end
 
 function Addon:MakeAddonOptions(chatCmd)
   local title = format("%s v%s  (/%s)", ADDON_NAME, tostring(self:GetOption"version"), chatCmd)
-  local panel = self:CreateOptionsCategory(nil, function()
+  local title = format("%s", ADDON_NAME)
+  -- local panel = self:CreateOptionsCategory(nil, function()
   
   local GUI = self.GUI:ResetOrder()
   local opts = GUI:CreateGroupTop(title, "tab")
@@ -295,10 +389,9 @@ function Addon:MakeAddonOptions(chatCmd)
   end
   
   return opts
-  end)
-  function self:OpenAddonOptions() return self:OpenConfig(panel) end
+  -- end)
+  -- function self:OpenAddonOptions() return self:OpenConfig(panel) end
 end
-
 
 
 
@@ -364,7 +457,8 @@ end
 
 function Addon:MakeStatsOptions(categoryName, chatCmd, arg1, ...)
   local title = format("%s v%s > %s  (/%s %s)", ADDON_NAME, tostring(self:GetOption"version"), categoryName, chatCmd, arg1)
-  local panel = self:CreateOptionsCategory(categoryName, function()
+  local title = format("%s", categoryName)
+  -- local panel = self:CreateOptionsCategory(categoryName, function()
   
   local GUI = self.GUI:ResetOrder()
   local opts = GUI:CreateGroupTop(title)
@@ -382,11 +476,11 @@ function Addon:MakeStatsOptions(categoryName, chatCmd, arg1, ...)
   end
   
   return opts
-  end)
-  local function OpenOptions() return self:OpenConfig(panel) end
-  for _, arg in ipairs{arg1, ...} do
-    self.chatArgs[arg] = OpenOptions
-  end
+  -- end)
+  -- local function OpenOptions() return self:OpenConfig(panel) end
+  -- for _, arg in ipairs{arg1, ...} do
+  --   self.chatArgs[arg] = OpenOptions
+  -- end
 end
 
 
@@ -443,7 +537,8 @@ end
 
 function Addon:MakePaddingOptions(categoryName, chatCmd, arg1, ...)
   local title = format("%s v%s > %s  (/%s %s)", ADDON_NAME, tostring(self:GetOption"version"), categoryName, chatCmd, arg1)
-  local panel = self:CreateOptionsCategory(categoryName, function()
+  local title = format("%s", categoryName)
+  -- local panel = self:CreateOptionsCategory(categoryName, function()
   
   local GUI = self.GUI:ResetOrder()
   local opts = GUI:CreateGroupTop(title)
@@ -498,11 +593,11 @@ function Addon:MakePaddingOptions(categoryName, chatCmd, arg1, ...)
   GUI:CreateGroup(opts, GUI:Order(), "------------------", nil, nil, true)
   
   return opts
-  end)
-  local function OpenOptions() return self:OpenConfig(panel) end
-  for _, arg in ipairs{arg1, ...} do
-    self.chatArgs[arg] = OpenOptions
-  end
+  -- end)
+  -- local function OpenOptions() return self:OpenConfig(panel) end
+  -- for _, arg in ipairs{arg1, ...} do
+  --   self.chatArgs[arg] = OpenOptions
+  -- end
 end
 
 
@@ -524,7 +619,8 @@ local sampleSpeed    = 2.6
 
 function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
   local title = format("%s v%s > %s  (/%s %s)", ADDON_NAME, tostring(self:GetOption"version"), categoryName, chatCmd, arg1)
-  local panel = self:CreateOptionsCategory(categoryName, function()
+  local title = format("%s", categoryName)
+  -- local panel = self:CreateOptionsCategory(categoryName, function()
   
   local GUI = self.GUI:ResetOrder()
   local opts = GUI:CreateGroupTop(title)
@@ -1673,11 +1769,11 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
   end
   
   return opts
-  end)
-  local function OpenOptions() return self:OpenConfig(panel) end
-  for _, arg in ipairs{arg1, ...} do
-    self.chatArgs[arg] = OpenOptions
-  end
+  -- end)
+  -- local function OpenOptions() return self:OpenConfig(panel) end
+  -- for _, arg in ipairs{arg1, ...} do
+  --   self.chatArgs[arg] = OpenOptions
+  -- end
 end
 
 
@@ -1693,7 +1789,8 @@ end
 
 function Addon:MakeResetOptions(categoryName, chatCmd, arg1, ...)
   local title = format("%s v%s > %s  (/%s %s)", ADDON_NAME, tostring(self:GetOption"version"), categoryName, chatCmd, arg1)
-  local panel = self:CreateOptionsCategory(categoryName, function()
+  local title = format("%s", categoryName)
+  -- local panel = self:CreateOptionsCategory(categoryName, function()
   
   local GUI = self.GUI:ResetOrder()
   local opts = GUI:CreateGroupTop(title)
@@ -1718,11 +1815,11 @@ function Addon:MakeResetOptions(categoryName, chatCmd, arg1, ...)
   end
   
   return opts
-  end)
-  local function OpenOptions() return self:OpenConfig(panel) end
-  for _, arg in ipairs{arg1, ...} do
-    self.chatArgs[arg] = OpenOptions
-  end
+  -- end)
+  -- local function OpenOptions() return self:OpenConfig(panel) end
+  -- for _, arg in ipairs{arg1, ...} do
+  --   self.chatArgs[arg] = OpenOptions
+  -- end
 end
 
 
@@ -1738,7 +1835,8 @@ end
 
 function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
   local title = format("%s v%s > %s  (/%s %s)", ADDON_NAME, tostring(self:GetOption"version"), categoryName, chatCmd, arg1)
-  local panel = self:CreateOptionsCategory(categoryName, function()
+  local title = format("%s", categoryName)
+  -- local panel = self:CreateOptionsCategory(categoryName, function()
   
   local GUI = self.GUI:ResetOrder()
   local opts = GUI:CreateGroupTop(title, "tab")
@@ -1961,11 +2059,11 @@ function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
   end
   
   return opts
-  end)
-  local function OpenOptions() return self:OpenConfig(panel) end
-  for _, arg in ipairs{arg1, ...} do
-    self.chatArgs[arg] = OpenOptions
-  end
+  -- end)
+  -- local function OpenOptions() return self:OpenConfig(panel) end
+  -- for _, arg in ipairs{arg1, ...} do
+  --   self.chatArgs[arg] = OpenOptions
+  -- end
 end
 
 
