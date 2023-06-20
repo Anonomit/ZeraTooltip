@@ -21,7 +21,10 @@ local function HideLeft(line)
 end
 
 function Addon:HideLine(line, allResist)
-  if line.type == "Binding" then
+  if line.type == "Difficulty" then
+    -- always hide it so I can add it in myself
+    return HideLeft(line)
+  elseif line.type == "Binding" then
     if self:GetOption("hide", line.bindType) then
       return HideLeft(line)
     end
