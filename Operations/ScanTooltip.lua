@@ -31,7 +31,7 @@ function Addon:PrepareTooltip(tooltip, methodName, ...)
     end
     if methodName then
       tooltip[methodName](tooltip, unpack(args, 1, args.n))
-      self:DebugfIf({"debugOutput", opt}, "Refreshing scanner tooltip: %s", tooltipName)
+      self:DebugfIfOutput(opt, "Refreshing scanner tooltip: %s", tooltipName)
     end
   end)
 end

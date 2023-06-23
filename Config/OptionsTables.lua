@@ -277,14 +277,10 @@ function Addon:MakeAddonOptionsContainer(chatCmd)
     
   -- Profile Options
   do
-    local args = {"profiles", "profile", "prof", "pro", "pr", "p"}
+    local opts = GUI:CreateGroup(opts, GUI:Order(), GUI:Order())
     local profileOptions = self.AceDBOptions:GetOptionsTable(self:GetDB())
-    local categoryName = profileOptions.name
-    profileOptions.name = format("%s v%s > %s  (/%s %s)", ADDON_NAME, tostring(self:GetOption"version"), profileOptions.name, self.chatCommands[1], args[1])
-    local panel = self:CreateOptionsCategory(categoryName, profileOptions)
-    local function OpenOptions() return self:OpenConfig(panel) end
-    for _, arg in ipairs(args) do
-      self.chatArgs[arg] = OpenOptions
+    for k, v in pairs(profileOptions) do
+      opts[k] = v
     end
   end
   
@@ -343,7 +339,7 @@ function Addon:MakeAddonOptions(chatCmd)
   local title = format("%s", ADDON_NAME)
   -- local panel = self:CreateOptionsCategory(nil, function()
   
-  local GUI = self.GUI:ResetOrder()
+  local GUI = self.GUI
   local opts = GUI:CreateGroupTop(title, "tab")
   
   do
@@ -460,7 +456,7 @@ function Addon:MakeStatsOptions(categoryName, chatCmd, arg1, ...)
   local title = format("%s", categoryName)
   -- local panel = self:CreateOptionsCategory(categoryName, function()
   
-  local GUI = self.GUI:ResetOrder()
+  local GUI = self.GUI
   local opts = GUI:CreateGroupTop(title)
   
   CreateCombineStatsOption(opts)
@@ -540,7 +536,7 @@ function Addon:MakePaddingOptions(categoryName, chatCmd, arg1, ...)
   local title = format("%s", categoryName)
   -- local panel = self:CreateOptionsCategory(categoryName, function()
   
-  local GUI = self.GUI:ResetOrder()
+  local GUI = self.GUI
   local opts = GUI:CreateGroupTop(title)
   
   CreateCombineStatsOption(opts)
@@ -622,7 +618,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
   local title = format("%s", categoryName)
   -- local panel = self:CreateOptionsCategory(categoryName, function()
   
-  local GUI = self.GUI:ResetOrder()
+  local GUI = self.GUI
   local opts = GUI:CreateGroupTop(title)
   
   local disabled -- just in case some other addon clobbers _G.disabled
@@ -1792,7 +1788,7 @@ function Addon:MakeResetOptions(categoryName, chatCmd, arg1, ...)
   local title = format("%s", categoryName)
   -- local panel = self:CreateOptionsCategory(categoryName, function()
   
-  local GUI = self.GUI:ResetOrder()
+  local GUI = self.GUI
   local opts = GUI:CreateGroupTop(title)
   
   GUI:CreateDivider(opts)
@@ -1838,7 +1834,7 @@ function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
   local title = format("%s", categoryName)
   -- local panel = self:CreateOptionsCategory(categoryName, function()
   
-  local GUI = self.GUI:ResetOrder()
+  local GUI = self.GUI
   local opts = GUI:CreateGroupTop(title, "tab")
   
   -- Enable
@@ -1849,6 +1845,10 @@ function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
       local opts = GUI:CreateGroupBox(opts, "Debug")
       GUI:CreateToggle(opts, {"debug"}, self.L["Enable"])
       GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"debugShowLuaErrors"}, "Show Lua Errors", nil, disabled).width = 2
+      GUI:CreateNewline(opts)
+      
       GUI:CreateExecute(opts, "reload", self.L["Reload UI"], nil, ReloadUI)
     end
   end
@@ -1914,9 +1914,6 @@ function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
       
       local disabled = disabled or self:GetOption("debugOutput", "suppressAll")
       
-      GUI:CreateToggle(opts, {"debugOutput", "luaError"}, "Lua Error", nil, disabled).width = 2
-      GUI:CreateNewline(opts)
-      
       GUI:CreateToggle(opts, {"debugOutput", "tooltipMethodHook"}, "Tooltip Method Hook", nil, disabled).width = 2
       GUI:CreateNewline(opts)
       
@@ -1945,6 +1942,9 @@ function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
       GUI:CreateNewline(opts)
       
       GUI:CreateToggle(opts, {"debugOutput", "constructorLineMove"}, "Constructor Moving Line", nil, disabled).width = 2
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"debugOutput", "paddingDecisions"}, "Padding Decisions", nil, disabled).width = 2
       GUI:CreateNewline(opts)
       
       GUI:CreateToggle(opts, {"debugOutput", "InterfaceOptionsFrameFix"}, "Interface Options Patch", nil, disabled).width = 2

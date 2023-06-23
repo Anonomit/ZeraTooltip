@@ -184,6 +184,8 @@ function Addon:MakeDefaultOptions()
         
         -- Debug options
         debug = false,
+        
+        debugShowLuaErrors = true,
           
         debugView = {
           ["*"] = false,

@@ -107,6 +107,12 @@ do
   function Addon:DebugfIf(keys, ...)
     return DebugIf(self, "Debugf", keys, ...)
   end
+  function Addon:DebugIfOutput(key, ...)
+    return DebugIf(self, "Debug", {"debugOutput", key}, ...)
+  end
+  function Addon:DebugfIfOutput(key, ...)
+    return DebugIf(self, "Debugf", {"debugOutput", key}, ...)
+  end
   
   function Addon:DebugData(t)
     local texts = {}
@@ -134,7 +140,7 @@ do
   
   do
     local function GetErrorHandler(errFunc)
-      if Addon:IsDebugEnabled() and (not Addon:IsDBLoaded() or Addon:GetOption("debugOutput", "luaError")) then
+      if Addon:IsDebugEnabled() and (not Addon:IsDBLoaded() or Addon:GetOption"debugShowLuaErrors") then
         return function(...)
           geterrorhandler()(...)
           if errFunc then
@@ -148,7 +154,7 @@ do
       return xpcall(func, GetErrorHandler(errFunc))
     end
     function Addon:Throw(...)
-      if Addon:IsDebugEnabled() and (not Addon:IsDBLoaded() or Addon:GetOption("debugOutput", "luaError")) then
+      if Addon:IsDebugEnabled() and (not Addon:IsDBLoaded() or Addon:GetOption"debugShowLuaErrors") then
         local text = format(...)
         geterrorhandler()(...)
       end

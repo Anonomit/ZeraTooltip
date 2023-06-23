@@ -115,7 +115,7 @@ local function MoveLine(fullDestructor, halfDestructor, tooltip, tooltipName, fr
     end
   end
   
-  Addon:DebugfIf({"debugOutput", "constructorLineMove"}, "Attaching line %s to line %s", source, dest)
+  Addon:DebugfIfOutput("constructorLineMove", "Attaching line %s to line %s", source, dest)
   
   -- attach the source line to the dest line, with padding offset
   local numPoints = frame:GetNumPoints()
@@ -294,16 +294,16 @@ function Addon:ValidateConstructor(tooltip, constructor)
   for i = constructor.numLines, 1, -1 do
     local validation = constructor.validation[i]
     if not validation then
-      self:DebugfIf({"debugOutput", "constructorValidationFail"}, "Constructor validation failed. Line %d, Missing validation data", i)
+      self:DebugfIfOutput("constructorValidationFail", "Constructor validation failed. Line %d, Missing validation data", i)
     end
     
     local frame = _G[tooltipName.."TextLeft"..i]
     if not frame then
-      self:DebugfIf({"debugOutput", "constructorValidationFail"}, "Constructor validation failed. Line %d, Expected '%s', Could not find %s", i, validation, tooltipName.."TextLeft"..i)
+      self:DebugfIfOutput("constructorValidationFail", "Constructor validation failed. Line %d, Expected '%s', Could not find %s", i, validation, tooltipName.."TextLeft"..i)
       return false
     end
     if frame:GetText() ~= validation then
-      self:DebugfIf({"debugOutput", "constructorValidationFail"}, "Constructor validation failed. Line %d, Expected '%s', Found '%s'", i, validation, frame:GetText())
+      self:DebugfIfOutput("constructorValidationFail", "Constructor validation failed. Line %d, Expected '%s', Found '%s'", i, validation, frame:GetText())
       return false
     end
   end

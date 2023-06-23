@@ -13,7 +13,7 @@ local cacheSize = 0
 local constructorCache = {}
 function Addon:WipeConstructorCache()
   for hash, timer in pairs(constructorCleanup) do
-    Addon:DebugfIf({"debugOutput", "constructorWiped"}, "Constructor wiped: %s", hash)
+    Addon:DebugfIfOutput("constructorWiped", "Constructor wiped: %s", hash)
     timer:Cancel()
   end
   wipe(constructorCache)
@@ -82,7 +82,7 @@ local function GetHash(tooltip, methodName, link, ...)
 end
 
 local function Cleanup(hash)
-  Addon:DebugfIf({"debugOutput", "constructorWiped"}, "Constructor wiped: %s", hash)
+  Addon:DebugfIfOutput("constructorWiped", "Constructor wiped: %s", hash)
   
   if constructorCache[hash] then
     cacheSize = cacheSize - 1
@@ -119,7 +119,7 @@ function Addon:SetConstructor(constructor, tooltip, link, methodName, ...)
   StartCleanup(hash)
   
   if constructorCount[hash] >= self:GetOption("cache", "constructorMinSeenCount") and GetTime() - constructorClock[hash] >= self:GetOption("cache", "constructorMinSeenTime") then
-    self:DebugfIf({"debugOutput", "constructorCached"}, "Constructor cached: %s", hash)
+    self:DebugfIfOutput("constructorCached", "Constructor cached: %s", hash)
     if not constructorCache[hash] then
       cacheSize = cacheSize + 1
     end
