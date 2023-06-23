@@ -172,7 +172,7 @@ end
 
 do
   Addon.expansions = {
-    retail  = 9,
+    retail  = 10,
     wrath   = 3,
     wotlk   = 3,
     tbc     = 2,
