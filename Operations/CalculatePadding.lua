@@ -84,7 +84,7 @@ function Addon:CalculatePadding(tooltipData, tooltip, methodName)
         end
       else
         local otherLine = tooltipData[i + offset]
-        local padType = GetPadType2(offset, line.type, lastUse)
+        local padType = GetPadType(offset, line.type, lastUse)
         self:DebugfIfOutput("paddingDecisions", "Pad type for line %d (%s) of type %s with offset %d is %s", i, line.textLeftText or "nil", line.type or "nil", offset, padType or "nil")
         if padType then
           if self:GetOption("pad", cat, padType) and not padded[padType] then
