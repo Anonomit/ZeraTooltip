@@ -86,7 +86,9 @@ local contexts = Addon:MakeLookupTable({
   "RequiredEnchant",
   "WeaponEnchant",
   "Socket",
+  "RequiredSocket",
   "LastSocket",
+  "LastRequiredSocket",
   "ProposedEnchant",
   "EnchantHint",
   "SocketBonus",
@@ -356,8 +358,16 @@ contextActions = Addon:Map({
   end,
   LastSocket = function(i, tooltipData, line)
     if line.texture then
+      if line.colorLeft == Addon.COLORS.RED then
+        tooltipData.unmatchedRedSockets = (tooltipData.unmatchedRedSockets or 0) + 1
+      end
       line.socketType = Addon:GetGemColor(line.texture[1], line.textLeftText)
-      return SetContext(i-1, tooltipData, line)
+      return SetContext(i-2, tooltipData, line)
+    end
+  end,
+  LastRequiredSocket = function(i, tooltipData, line)
+    if (tooltipData.unmatchedRedSockets or 0) > 0 and line.colorLeft == Addon.COLORS.RED and MatchesAny(line.textLeftTextStripped, SOCKET_ITEM_REQ_SKILL, ENCHANT_ITEM_REQ_SKILL, ENCHANT_ITEM_MIN_SKILL, ENCHANT_ITEM_REQ_LEVEL) then
+      return SetContext(i-2, tooltipData, line)
     end
   end,
   ProposedEnchant = function(i, tooltipData, line)

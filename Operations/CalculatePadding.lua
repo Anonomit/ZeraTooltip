@@ -21,6 +21,7 @@ local easyLines = {
   EnchantHint     = "Enchant",
   WeaponEnchant   = "WeaponEnchant",
   Socket          = "Socket",
+  RequiredSocket  = "Socket",
   SocketBonus     = "SocketBonus",
   SetName         = "SetBonus",
   SetPiece        = "SetBonus",
