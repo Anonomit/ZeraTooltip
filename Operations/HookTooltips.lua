@@ -54,7 +54,7 @@ local function CreateScanner(tooltip)
   local scannerTooltip = tooltipScanners[tooltipName]
   if not scannerTooltip then
     -- can't have tooltipName as an unbroken string anywhere in the name due to overly aggressive tooltip hooking from previous versions of TipHooker-1.0
-    scannerTooltip = CreateFrame("GameTooltip", strGsub(tooltipName, "Tooltip", "ZeraTooltip"), UIParent, "GameTooltipTemplate")
+    scannerTooltip = CreateFrame("GameTooltip", strGsub(tooltipName, "Tooltip", "ZeraTooltip"), nil, "GameTooltipTemplate")
     scannerTooltip:HookScript("OnTooltipSetItem", ScannerOnTooltipSetItem)
     scannerTooltip.tooltip = tooltip
     
