@@ -12,38 +12,67 @@ local lineOffsets = {
   before = -1,
   after  =  1,
 }
-local enchantLines = {
-  Enchant         = true,
-  ProposedEnchant = true,
-  EnchantHint     = true,
-}
-local padLocations = {
-  [-1] = {
-    BaseStat      = function(line) return line.type == "BaseStat"      or Addon:GetOption"combineStats" and (line.type == "SecondaryStat" or Addon:GetOption("doReorder", "EnchantOnUse") and line.type == "EnchantOnUse") end,
-    SecondaryStat = function(line) return(line.type == "SecondaryStat" or Addon:GetOption("doReorder", "EnchantOnUse") and (line.type == "EnchantOnUse" or line.type == "RequiredEnchantOnUse")) and not Addon:GetOption"combineStats" end,
-    Enchant       = function(line) return enchantLines[line.type]      or not Addon:GetOption("doReorder", "EnchantOnUse") and line.type == "EnchantOnUse" end,
-    WeaponEnchant = function(line) return line.type == "WeaponEnchant" end,
-    Socket        = function(line) return line.type == "Socket"        end,
-    SetName       = function(line) return line.type == "SetName"       end,
-    SetBonus      = function(line) return line.type == "SetBonus"      end,
-  },
-  [1] = {
-    BaseStat      = function(line) return line.type == "BaseStat"      or Addon:GetOption"combineStats" and (line.type == "SecondaryStat" or lastUse == "SecondaryStat" and (line.type == "Charges" or line.type == "Cooldown") or Addon:GetOption("doReorder", "EnchantOnUse") and (line.type == "EnchantOnUse" or line.type == "RequiredEnchantOnUse")) end,
-    SecondaryStat = function(line) return(line.type == "SecondaryStat" or lastUse == "SecondaryStat" and (line.type == "Charges" or line.type == "Cooldown") or Addon:GetOption("doReorder", "EnchantOnUse") and (line.type == "EnchantOnUse" or line.type == "RequiredEnchantOnUse")) and not Addon:GetOption"combineStats" end,
-    Enchant       = function(line) return enchantLines[line.type]      or lastUse == "EnchantOnUse" and (line.type == "Charges" or line.type == "Cooldown") or line.type == "RequiredEnchant" or not Addon:GetOption("doReorder", "EnchantOnUse") and (line.type == "EnchantOnUse" or line.type == "RequiredEnchantOnUse") end,
-    WeaponEnchant = function(line) return line.type == "WeaponEnchant" end,
-    SocketBonus   = function(line) return line.type == "SocketBonus"   or line.type == "Socket" or Addon:GetOption("doReorder", "SocketHint") and line.type == "SocketHint" end,
-    SetPiece      = function(line) return line.type == "SetPiece"      end,
-    SetBonus      = function(line) return line.type == "SetBonus"      end,
-  }
-}
 
-function Addon:CalculatePadding(tooltipData)
-  lastUse = tooltipData.lastUse
-  local padded  = {}
+local easyLines = {
+  BaseStat        = "BaseStat",
+  Enchant         = "Enchant",
+  RequiredEnchant = "Enchant",
+  ProposedEnchant = "Enchant",
+  EnchantHint     = "Enchant",
+  WeaponEnchant   = "WeaponEnchant",
+  Socket          = "Socket",
+  SocketBonus     = "SocketBonus",
+  SetName         = "SetBonus",
+  SetPiece        = "SetBonus",
+  SetBonus        = "SetBonus",
+}
+local hardLines = Addon:MakeLookupTable{"SecondaryStat", "EnchantOnUse", "RequiredEnchantOnUse", "Charges", "Cooldown", "SocketHint"}
+
+
+local function GetPadType(offset, lineType, lastUse)
+  local easy = easyLines[lineType]
+  if easy then
+    return easy
+  end
+  
+  if not hardLines[lineType] then
+    return
+  end
+  
+  if lineType == "SecondaryStat" then
+    if Addon:GetOption"combineStats" then
+      return "BaseStat"
+    end
+  elseif lineType == "EnchantOnUse" or lineType == "RequiredEnchantOnUse" then
+    if Addon:GetOption("doReorder", "EnchantOnUse") then
+      if Addon:GetOption"combineStats" then
+        return "BaseStat"
+      else
+        return "SecondaryStat"
+      end
+    else
+      return "Enchant"
+    end
+  elseif lineType == "Charges" or lineType == "Cooldown" then
+    if lastUse == "SecondaryStat" and Addon:GetOption"combineStats" then
+      return "BaseStat"
+    else
+      return lastUse
+    end
+  elseif lineType == "SocketHint" then
+    if Addon:GetOption("doReorder", "SocketHint") then
+      return "SocketBonus"
+    end
+  end
+  
+  return lineType
+end
+
+function Addon:CalculatePadding(tooltipData, tooltip, methodName)
+  local lastUse = tooltipData.lastUse
   
   for cat, offset in pairs(lineOffsets) do
-    local padLocation = padLocations[offset]
+    local padded = {}
     local i = offset == 1 and #tooltipData or 1
     local usedPaddingRecently = false
     while tooltipData[i] do
@@ -54,22 +83,25 @@ function Addon:CalculatePadding(tooltipData)
         end
       else
         local otherLine = tooltipData[i + offset]
-        for padType, Recognize in pairs(padLocation) do
-          if self:GetOption("pad", cat, padType) and not padded[padType] and Recognize(line) then
+        local padType = GetPadType2(offset, line.type, lastUse)
+        self:DebugfIfOutput("paddingDecisions", "Pad type for line %d (%s) of type %s with offset %d is %s", i, line.textLeftText or "nil", line.type or "nil", offset, padType or "nil")
+        if padType then
+          if self:GetOption("pad", cat, padType) and not padded[padType] then
             if otherLine then
               if otherLine.type == "Padding" then
                 if not usedPaddingRecently then
                   otherLine.used = true
+                  self:DebugfIfOutput("paddingDecisions", "Marking padding on line %d (%s) as used, due to %s with offset %d", i, line.textLeftText or "", padType, offset)
                 end
               else
                 if offset == 1 then
+                  self:DebugfIfOutput("paddingDecisions", "Padding line %d (%s) with type %s and offset %d", i + offset, otherLine.textLeftText or "", padType, offset)
                   otherLine.pad = true
                 else
+                  self:DebugfIfOutput("paddingDecisions", "Padding line %d (%s) with type %s and offset %d", i, line.textLeftText or "", padType, offset)
                   line.pad = true
                 end
               end
-            -- elseif offset == 1 then
-              -- tooltipData.padLast = true
             end
             padded[padType] = true
           end
@@ -78,7 +110,6 @@ function Addon:CalculatePadding(tooltipData)
       end
       i = i - offset
     end
-    wipe(padded)
   end
   
   local found

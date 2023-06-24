@@ -171,11 +171,23 @@ function Addon:MakeDefaultOptions()
         
         pad = {
           before = {
-            ["*"]    = true,
-            BaseStat = false,
+            ["*"]         = false,
+            BaseStat      = false,
+            SecondaryStat = true,
+            Enchant       = true,
+            WeaponEnchant = true,
+            Socket        = true,
+            SetBonus      = true,
+            BonusEffect   = true,
           },
           after = {
-            ["*"] = true,
+            ["*"]         = false,
+            BaseStat      = false,
+            SecondaryStat = true,
+            Enchant       = true,
+            WeaponEnchant = true,
+            SocketBonus   = true,
+            SetBonus      = true,
           },
         },
         padLastLine  = true,
