@@ -26,7 +26,9 @@ function Addon:RecolorLine(tooltip, line, tooltipData)
   }
   
   if Addon:GetOption("allow", "recolor") then
-    if line.type == "Binding" then
+    if line.type == "Quality" then
+      Recolor("left", line.type)
+    elseif line.type == "Binding" then
       Recolor("left", line.bindType)
     elseif line.type == "RedType" then
       if IsEquippableItem(tooltipData.id) and self:IsItemUsable(tooltipData.id) then

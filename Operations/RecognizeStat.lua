@@ -29,6 +29,7 @@ function Addon:GetStatCacheSize()
   return cacheSize
 end
 Addon.onOptionSetHandlers["WipeStatCache"] = true
+Addon.onCVarSetHandlers["WipeStatCache"]   = true
 
 local function RecognizeStatHelper(line)
   local self = Addon

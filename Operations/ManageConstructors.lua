@@ -23,6 +23,7 @@ function Addon:GetConstructorCacheSize()
   return cacheSize
 end
 Addon.onOptionSetHandlers["WipeConstructorCache"] = true
+Addon.onCVarSetHandlers["WipeConstructorCache"]   = true
 
 local hashMaps = {
   SetHyperlink            = function(link, itemStringOrLink) return itemStringOrLink end,

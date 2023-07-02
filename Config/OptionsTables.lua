@@ -45,6 +45,23 @@ local function GetStatNormalName(stat)
   return Addon:MakeColorCode(StatInfo.tooltipColor, StatInfo:GetNormalName())
 end
 
+local OpenColorblindOptions
+Addon:xpcall(function()
+  if SettingsPanel then
+    for _, category in ipairs(SettingsPanel:GetCategoryList().allCategories) do
+      if category.categorySet == 1 and category:GetName() == COLORBLIND_LABEL then
+        local id = category:GetID()
+        OpenColorblindOptions = function() Settings.OpenToCategory(category:GetID()) self.AceConfigDialog:Close(ADDON_NAME) end
+        break
+      end
+    end
+  elseif InterfaceOptionsColorblindPanel then
+    OpenColorblindOptions = function()
+      InterfaceOptionsFrame_OpenToCategory(InterfaceOptionsColorblindPanel)
+    end
+  end
+end)
+
 local function GetFormattedStatText(number, stat)
   local StatInfo = Addon.statsInfo[stat]
   local hidden = Addon:GetOption("hide", stat)
@@ -156,8 +173,8 @@ local function CreateReword(opts, stat, disabled)
   local disabled = disabled or not self:GetOption("doReword", stat)
   local option = GUI:CreateInput(opts, {"reword", stat}, self.L["Custom"], nil, nil, disabled)
   option.width = 0.9
-  option.set = function(info, val)        self:SetOption(self:CoverSpecialCharacters(val), "reword", stat) end
   option.get = function(info)      return Addon:UncoverSpecialCharacters(self:GetOption("reword", stat))   end
+  option.set = function(info, val)        self:SetOption(self:CoverSpecialCharacters(val), "reword", stat) end
   GUI:CreateReset(opts, {"reword", stat}, function() self:ResetReword(stat) end)
   
   return opts
@@ -196,8 +213,8 @@ local function CreateIcon(opts, stat)
   GUI:CreateToggle(opts, {"doIcon", stat}, self.L["Icon"], nil, disabled).width = 0.6
   local option = GUI:CreateSelect(opts, {"icon", stat}, self.L["Choose an Icon:"], nil, iconsDropdown, icons, disabled or not self:GetOption("doIcon", stat))
   option.width = 0.7
-  option.set   = function(info, v) self:SetOption(self:UnmakeIcon(v), "icon", stat)   end
   option.get   = function(info)    return self:MakeIcon(self:GetOption("icon", stat), 16) end
+  option.set   = function(info, v) self:SetOption(self:UnmakeIcon(v), "icon", stat)   end
   GUI:CreateReset(opts, {"icon", stat}, function() self:ResetOption("icon", stat) end)
   GUI:CreateNewline(opts)
   
@@ -415,8 +432,8 @@ local function CreateStatOption(opts, i, stat)
     local option = GUI:CreateRange(opts, {"sampleNumber"}, L["Test"], nil, -1000000, 1000000, 1)
     option.softMin = 0
     option.softMax = 100
-    option.set = function(info, val)        sampleNumber = val end
     option.get = function(info)      return sampleNumber       end
+    option.set = function(info, val)        sampleNumber = val end
   end
   
   do -- Reorder
@@ -657,18 +674,64 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
   end
   GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
   
-  -- Heroic
-  if self.expansionLevel >= self.expansions.wrath then
+  -- Quality
+  if GetCVarBool"colorblindMode" or self.expansionLevel < self.expansions.wrath then
+    local stat = "Quality"
+    
+    local samples = {}
+    local hiddenText
+    for _, sample in ipairs(self.ITEM_QUALITY_DESCRIPTIONS) do
+      local defaultText = sample
+      hiddenText = hiddenText or (self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, defaultText))
+      local defaultText, formattedText = GetFormattedText(stat, self.COLORS.WHITE, defaultText, defaultText)
+      tinsert(samples, {defaultText, formattedText})
+    end
+    
+    local opts = GUI:CreateGroup(opts, "Quality", GetCVarBool"colorblindMode" and (samples[1] or {})[2] or hiddenText or "", nil, nil, disabled)
+    
+    do
+      local option = GUI:CreateToggle(opts, {"colorblindMode"}, self.L["Enable UI Colorblind Mode"], self.L["Adds additional information to tooltips and several other interfaces."])
+      option.get = function() return C_CVar.GetCVarBool"colorblindMode" end
+      option.set = function() C_CVar.SetCVar("colorblindMode", C_CVar.GetCVarBool"colorblindMode" and 0 or 1) end
+      option.width = 1.5
+    end
+    GUI:CreateReset(opts, {"colorblindMode"}, function() C_CVar.SetCVar("colorblindMode", C_CVar.GetCVarDefault"colorblindMode") end)
+    GUI:CreateNewline(opts)
+    if OpenColorblindOptions then
+      GUI:CreateExecute(opts, "openColorblindSettings", self.L["Colorblind Mode"], nil, function() OpenColorblindOptions() self.AceConfigDialog:Close(ADDON_NAME) end)
+      GUI:CreateNewline(opts)
+    end
+    
+    if GetCVarBool"colorblindMode" then
+      CreateSamples(opts, samples)
+      
+      CreateColor(opts, stat)
+      
+      CreateHide(opts, stat)
+    end
+  else -- Heroic
     local stat = "Heroic"
     
     local samples = {}
     local defaultText = ITEM_HEROIC
-    local _, formattedText = GetFormattedText(stat, self.COLORS.GREEN, defaultText, self:RewordHeroic(defaultText))
-    defaultText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, defaultText)
+    local defaultText, formattedText = GetFormattedText(stat, self.COLORS.GREEN, defaultText, self:RewordHeroic(defaultText))
     tinsert(samples, {defaultText, formattedText})
     
-    local opts = GUI:CreateGroup(opts, stat, samples[1][2], nil, nil, disabled)
-      
+    local opts = GUI:CreateGroup(opts, "Quality", samples[1][2], nil, nil, disabled)
+    
+    do
+      local option = GUI:CreateToggle(opts, {"colorblindMode"}, self.L["Enable UI Colorblind Mode"], self.L["Adds additional information to tooltips and several other interfaces."])
+      option.get = function() return C_CVar.GetCVarBool"colorblindMode" end
+      option.set = function() C_CVar.SetCVar("colorblindMode", C_CVar.GetCVarBool"colorblindMode" and 0 or 1) end
+      option.width = 1.5
+    end
+    GUI:CreateReset(opts, {"colorblindMode"}, function() C_CVar.SetCVar("colorblindMode", C_CVar.GetCVar"colorblindMode") end)
+    GUI:CreateNewline(opts)
+    if OpenColorblindOptions then
+      GUI:CreateExecute(opts, "openColorblindSettings", self.L["Colorblind Mode"], nil, OpenColorblindOptions)
+      GUI:CreateNewline(opts)
+    end
+    
     CreateSamples(opts, samples)
     
     CreateColor(opts, stat)
@@ -708,8 +771,8 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       local disabled = disabled or not self:GetOption("doReword", stat)
       local option = GUI:CreateInput(opts, {"reword", stat}, self.L["Custom"], nil, nil, disabled)
       option.width = 0.9
-      option.set = function(info, val)        self:SetOption(self:CoverSpecialCharacters(val), "reword", stat) end
       option.get = function(info)      return self:UncoverSpecialCharacters(self:GetOption("reword", stat))    end
+      option.set = function(info, val)        self:SetOption(self:CoverSpecialCharacters(val), "reword", stat) end
       GUI:CreateReset(opts, {"reword", stat}, function() self:ResetReword(stat) end)
       
       GUI:CreateNewline(opts)
@@ -1106,12 +1169,12 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       local option = GUI:CreateRange(opts, {"sampleDamage"}, L["Test"], nil, 0, 1000000, 0.5)
       option.softMax = 1000
       option.bigStep = 10
-      option.set = function(info, val)        sampleDamage = val end
       option.get = function(info)      return sampleDamage       end
+      option.set = function(info, val)        sampleDamage = val end
       local option = GUI:CreateRange(opts, {"sampleVariance"}, L["Test"], nil, 0, 1, 0.1)
       option.isPercent = true
-      option.set = function(info, val)        sampleVariance = val end
       option.get = function(info)      return sampleVariance       end
+      option.set = function(info, val)        sampleVariance = val end
     end
     
     CreateColor(opts, stat)
@@ -1163,8 +1226,8 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       
       -- Test
       local option = GUI:CreateRange(opts, {"sampleSpeed"}, L["Test"], nil, self:GetDefaultOption("speedBar", "min"), self:GetDefaultOption("speedBar", "max"), 0.1, disabled)
-      option.set = function(info, val)        sampleSpeed = val end
       option.get = function(info)      return sampleSpeed       end
+      option.set = function(info, val)        sampleSpeed = val end
     end
     
     CreateColor(opts, stat, disabled)
@@ -1247,8 +1310,8 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
         
         -- Test
         local option = GUI:CreateRange(opts, {"sampleSpeed"}, L["Test"], nil, self:GetDefaultOption("speedBar", "min"), self:GetDefaultOption("speedBar", "max"), 0.1)
-        option.set = function(info, val)        sampleSpeed = val end
         option.get = function(info)      return sampleSpeed       end
+        option.set = function(info, val)        sampleSpeed = val end
       end
       
       CreateColor(opts, stat)

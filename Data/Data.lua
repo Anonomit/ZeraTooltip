@@ -30,6 +30,26 @@ local tostring = tostring
 
 do
   
+  Addon.ITEM_QUALITY_DESCRIPTIONS = Addon:MakeLookupTable((function()
+    local t = {}
+    local function iter(globalstring)
+      local i = 0
+      return function()
+        i = i + 1
+        return _G[format(globalstring, i)]
+      end
+    end
+    for key in iter"ITEM_QUALITY%d_DESC" do
+      tinsert(t, key)
+    end
+    if Addon.expansionLevel >= Addon.expansions.wrath then
+      for key in iter"ITEM_HEROIC_QUALITY%d_DESC" do
+        tinsert(t, key)
+      end
+    end
+    return t
+  end)(), true, true)
+  
   Addon.prefixStats = {
     [ITEM_SPELL_TRIGGER_ONEQUIP] = "Equip",
     [ITEM_SPELL_TRIGGER_ONPROC]  = "ChanceOnHit",
@@ -705,6 +725,7 @@ do
   
   self.statsInfo["Title"]              = {color = self.COLORS.WHITE}
   
+  self.statsInfo["Quality"]            = {color = self.COLORS.WHITE}
   self.statsInfo["Heroic"]             = {color = self.COLORS.GREEN}
   self.statsInfo["ItemLevel"]          = {color = self.COLORS.DEFAULT}
   

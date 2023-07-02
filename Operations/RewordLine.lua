@@ -19,6 +19,7 @@ function Addon:GetTextCacheSize()
   return cacheSize
 end
 Addon.onOptionSetHandlers["WipeTextCache"] = true
+Addon.onCVarSetHandlers["WipeTextCache"]   = true
 
 
 local miscRewordLines = {
@@ -50,6 +51,8 @@ function Addon:RewordLine(tooltip, line, tooltipData)
       end
     elseif line.type == "Title" then
       text = self:RewordTitle(text, tooltipData.icon)
+    elseif line.type == "Quality" then
+      text = self:RewordQuality(text, tooltipData)
     elseif line.type == "Binding" then
       text = self:RewordBinding(text, line.bindType)
     elseif line.type == "Damage" then

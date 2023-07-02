@@ -101,8 +101,8 @@ function Addon:ReorderLines(tooltipData)
       end
     elseif line.type == "RequiredRaces" or line.type == "RequiredClasses" or line.type == "RequiredLevel" then
       if self:GetOption("doReorder", line.type) then
-        tinsert(tooltipData, tooltipData.locs.title + 1, tblRemove(tooltipData, i))
-        self:BumpLocationsRange(tooltipData, tooltipData.locs.title + 1)
+        tinsert(tooltipData, tooltipData.locs.quality + 1, tblRemove(tooltipData, i))
+        self:BumpLocationsRange(tooltipData, tooltipData.locs.quality + 1)
       end
     elseif line.type == "SocketHint" then
       if self:GetOption("doReorder", line.type) then

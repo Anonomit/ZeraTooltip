@@ -9,7 +9,7 @@ local strGsub  = string.gsub
 local strFind  = string.find
 local strMatch = string.match
 
-
+local tinsert = tinsert
 
 
 local ITEM_CREATED_BY    = Addon.ITEM_CREATED_BY
@@ -19,8 +19,6 @@ local ITEM_MOD_STRENGTH  = Addon.ITEM_MOD_STRENGTH
 local ITEM_MOD_AGILITY   = Addon.ITEM_MOD_AGILITY
 local ITEM_MOD_INTELLECT = Addon.ITEM_MOD_INTELLECT
 local ITEM_MOD_SPIRIT    = Addon.ITEM_MOD_SPIRIT
-
-
 
 
 
@@ -67,7 +65,8 @@ local contexts = Addon:MakeLookupTable({
   "Init",
   "PreTitle",
   "Title",
-  "Difficulty",
+  "Quality",
+  "Heroic",
   "Binding",
   "Unique",
   "LastUnique",
@@ -126,6 +125,10 @@ local contextAscensions = Addon:Map({
     -- mark where the title would be if it existed on this item
     tooltipData.locs.title = tooltipData.locs.title or line.i - 1
   end,
+  Quality = function(context, tooltipData, line, currentContext)
+    -- mark where the quality would be if it existed on this item
+    tooltipData.locs.quality = tooltipData.locs.quality or line.i - 1
+  end,
   Binding = function(context, tooltipData, line, currentContext)
     -- mark where the binding would be if it existed on this item
     tooltipData.locs.binding = tooltipData.locs.binding or line.i - 1
@@ -181,7 +184,10 @@ local contextAscensions = Addon:Map({
     -- do everything that needs to be done if the tooltip only has a title
     
     -- mark where the title would be if it existed on this item
-    tooltipData.locs.title = tooltipData.locs.title or line.i 
+    tooltipData.locs.title = tooltipData.locs.title or line.i
+    
+    -- mark where the quality would be if it existed on this item
+    tooltipData.locs.quality = tooltipData.locs.quality or line.i
     
     -- mark where the binding would be if it existed on this item
     tooltipData.locs.binding = tooltipData.locs.binding or line.i
@@ -229,9 +235,14 @@ contextActions = Addon:Map({
     tooltipData.locs.title = line.i
     return SetContext(i, tooltipData, line)
   end,
-  Difficulty = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, ITEM_HEROIC, ITEM_HEROIC_EPIC) then
-      return SetContext(i, tooltipData, line)
+  Quality = function(i, tooltipData, line)
+    if line.colorLeft == Addon.COLORS.WHITE and Addon.ITEM_QUALITY_DESCRIPTIONS[line.textLeftText] or line.colorLeft == Addon.COLORS.GREEN and MatchesAny(line.textLeftTextStripped, ITEM_HEROIC) then
+      tooltipData.locs.quality = line.i
+      if GetCVarBool"colorblindMode" then
+        return SetContext(i, tooltipData, line)
+      else
+        return SetContext(i+1, tooltipData, line)
+      end
     end
   end,
   Binding = function(i, tooltipData, line)

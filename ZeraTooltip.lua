@@ -211,6 +211,20 @@ function Addon:OnEnable()
   self:ThrottleInspectUpdates()
   self:ThrottleMailUpdates()
   self:ThrottleTradeSkillUpdates()
+  
+  local criticalCVars = self:MakeLookupTable{"colorblindMode"}
+  self:RegisterEvent("CVAR_UPDATE", function(e, cvar, val)
+    if criticalCVars[cvar] then
+    self:DebugfIfOutput("cvarSet", "Setting %s: %s", cvar, tostring(val))
+      for funcName, func in next, Addon.onCVarSetHandlers, nil do
+        if type(func) == "function" then
+          func(self, cvar, val)
+        else
+          self[funcName](self, cvar, val)
+        end
+      end
+    end
+  end)
 end
 
 function Addon:OnDisable()

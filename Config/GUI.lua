@@ -86,8 +86,8 @@ do
   function GUI:CreateReverseToggle(opts, keys, name, desc, disabled)
     local option = self:CreateEntry(opts, keys, name, desc, "toggle", disabled)
     local set, get = option.set, option.get
-    option.set = function(info, val)        set(info, not val) end
     option.get = function(info)      return not get()          end
+    option.set = function(info, val)        set(info, not val) end
     return option
   end
   
@@ -121,8 +121,8 @@ do
   
   function GUI:CreateColor(opts, keys, name, desc, disabled)
     local option = self:CreateEntry(opts, keys, name, desc, "color", disabled)
-    option.set   = SetColorFunction(keys)
     option.get   = GetColorFunction(keys)
+    option.set   = SetColorFunction(keys)
     return option
   end
   

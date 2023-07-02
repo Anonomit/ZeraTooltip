@@ -87,6 +87,10 @@ L["Icon"]            = EMBLEM_SYMBOL
 L["Choose an Icon:"] = MACRO_POPUP_CHOOSE_ICON
 L["Manual"]          = TRACKER_SORT_MANUAL
 
+L["Enable UI Colorblind Mode"]                                             = USE_COLORBLIND_MODE
+L["Adds additional information to tooltips and several other interfaces."] = OPTION_TOOLTIP_USE_COLORBLIND_MODE
+L["Colorblind Mode"]                                                       = COLORBLIND_LABEL or COLORBLIND_MODE_LABEL or COLORBLIND_MODE_TAB
+
 L["Bonus Armor"] = BONUS_ARMOR
 
 L["Effects"]        = EFFECTS_SUBHEADER

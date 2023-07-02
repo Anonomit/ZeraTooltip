@@ -69,7 +69,7 @@ function Addon:CreateConstructor(tooltipData)
       if line.fake then
         local before
         for j = i, 1, -1 do
-          before = tooltipData[j].i
+          before = not tooltipData[j].hide and tooltipData[j].i
           if before then
             break
           end

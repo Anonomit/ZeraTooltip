@@ -11,6 +11,7 @@ local tinsert = table.insert
 
 local heroicItems = Addon:MakeLookupTable({
   -- Original Wrath
+  --[[
   44964, 46964, 46965, 46966, 46967, 46968, 46969, 46971, 46973, 46975, 46977,
   46980, 46986, 46989, 46991, 46993, 46995, 47001, 47002, 47003, 47004, 47059,
   47060, 47061, 47062, 47063, 47064, 47066, 47067, 47068, 47074, 47075, 47076,
@@ -98,6 +99,7 @@ local heroicItems = Addon:MakeLookupTable({
   52034, 52042, 54556, 54557, 54558, 54559, 54560, 54561, 54562, 54563, 54564,
   54565, 54566, 54567, 54576, 54577, 54578, 54579, 54580, 54581, 54582, 54583,
   54584, 54585, 54586, 54587, 54588, 54589, 54590, 54591,
+  --]]
   
   -- ZeraTooltip
   47557, 47558, 47559,
@@ -105,9 +107,22 @@ local heroicItems = Addon:MakeLookupTable({
 
 
 
+
+local stat = "Quality"
+local defaultText = ITEM_HEROIC_QUALITY4_DESC
+local coveredDefaultText = Addon:CoverSpecialCharacters(defaultText)
+function Addon:RewordQuality(text, tooltipData)
+  if not self:GetOption("hide", stat) and heroicItems[tooltipData.id] then
+    text = ITEM_HEROIC_QUALITY4_DESC
+  end
+  return text
+end
+
+
+
 local stat = "Heroic"
 local defaultText = ITEM_HEROIC
-local coveredDefaultText = Addon:CoverSpecialCharacters(ITEM_HEROIC)
+local coveredDefaultText = Addon:CoverSpecialCharacters(defaultText)
 function Addon:RewordHeroic(text)
   if self:GetOption("allow", "reword") and self:GetOption("doReword", stat) then
     local alias = self:GetOption("reword", stat)
@@ -121,6 +136,7 @@ end
 
 function Addon:AddHeroicTag(tooltipData)
   if self:GetOption("hide", stat) then return end
+  if GetCVarBool"colorblindMode" then return end
   if heroicItems[tooltipData.id] then
     local color = self:GetDefaultOption("color", stat)
     if self:GetOption("allow", "recolor") and self:GetOption("doRecolor", stat) then

@@ -86,9 +86,16 @@ do
     end
   end
   
+  function Addon:Dump(t)
+    print"hither"
+    self:Debugf("%s %s", self.debugPrefix, tostring(t))
+    return DevTools_Dump(t)
+  end
+  
   local function Debug(self, methodName, ...)
     if not self:IsDebugEnabled() then return end
     if self.GetGlobalOption and self:GetGlobalOption("debugOutput", "suppressAll") then return end
+    print"there"
     return self[methodName](self, ...)
   end
   function Addon:Debug(...)
@@ -96,6 +103,10 @@ do
   end
   function Addon:Debugf(...)
     return Debug(self, "Printf", "%s " .. select(1, ...), self.debugPrefix, select(2, ...))
+  end
+  function Addon:DebugDump(...)
+    print("here")
+    return Debug(self, "Dump", ...)
   end
   
   local function DebugIf(self, methodName, keys, ...)
@@ -109,6 +120,9 @@ do
   function Addon:DebugfIf(keys, ...)
     return DebugIf(self, "Debugf", keys, ...)
   end
+  function Addon:DebugDumpIf(keys, ...)
+    return DebugIf(self, "DebugDump", keys, ...)
+  end
   
   local function DebugIfOutput(self, methodName, key, ...)
     if self.GetGlobalOption and self:GetGlobalOption("debugOutput", key) then
@@ -120,6 +134,9 @@ do
   end
   function Addon:DebugfIfOutput(key, ...)
     return DebugIfOutput(self, "Debugf", key, ...)
+  end
+  function Addon:DebugDumpIfOutput(key, ...)
+    return DebugIfOutput(self, "DebugDump", key, ...)
   end
   
   function Addon:DebugData(t)

@@ -176,6 +176,6 @@ function Addon:AddItemLevel(tooltipData)
   
   local color = self:GetOption("allow", "recolor") and self:GetOption("doRecolor", stat) and self:GetOption("color", stat) or self:GetDefaultOption("color", stat)
   
-  self:AddExtraLine(tooltipData, self:GetOption("doReorder", stat) and tooltipData.locs.itemLevel or tooltipData.locs.title, self:RewordItemLevel(format(self.itemLevelTexts[self:GetOption("itemLevel", "useShortName")].iLvlFormat, itemLevel)), color)
+  self:AddExtraLine(tooltipData, self:GetOption("doReorder", stat) and tooltipData.locs.itemLevel or tooltipData.locs.quality, self:RewordItemLevel(format(self.itemLevelTexts[self:GetOption("itemLevel", "useShortName")].iLvlFormat, itemLevel)), color)
 end
 
