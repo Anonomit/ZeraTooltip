@@ -238,7 +238,7 @@ function Addon:MakeAddonOptionsContainer(chatCmd)
   local panel = self:CreateOptionsCategory(nil, function()
   
   local GUI = self.GUI:ResetOrder()
-  local opts = GUI:CreateGroupTop(title)
+  local opts = GUI:CreateGroupTop(title, "tab")
   
   do
     local opts = GUI:CreateGroup(opts, GUI:Order(), GUI:Order())
