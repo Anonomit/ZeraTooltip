@@ -1534,9 +1534,9 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
     CreateHide(opts, stat)
   end
   GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
-  --[[
+  
   -- Socket
-  do
+  if self.expansionLevel >= self.expansions.tbc then
     local stat = "Socket"
     
     local sockets = {
@@ -1573,7 +1573,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       GUI:CreateReset(opts, {"color", stat})
     end
   end
-  --]]
+  
   -- Socket Hint
   local function MakeSocketHintOptions()
     do
@@ -1595,8 +1595,8 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       CreateHide(opts, stat)
     end
   end
-  if self:GetOption("doReorder", "SocketHint") then MakeSocketHintOptions() end
-  GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
+  if self.expansionLevel >= self.expansions.tbc and self:GetOption("doReorder", "SocketHint") then MakeSocketHintOptions() end
+  if self.expansionLevel >= self.expansions.tbc then GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true) end
   
   -- Durability
   do
@@ -1803,7 +1803,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
   end
   GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
   
-  if not self:GetOption("doReorder", "SocketHint") then MakeSocketHintOptions() GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true) end
+  if self.expansionLevel >= self.expansions.tbc and not self:GetOption("doReorder", "SocketHint") then MakeSocketHintOptions() GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true) end
   
   if not self:GetOption("doReorder", "Refundable")         then MakeRefundableOption() end
   if not self:GetOption("doReorder", "SoulboundTradeable") then MakeTradeableOption() end
