@@ -18,7 +18,7 @@ do
   function ThrottleAuctionFrameItem()
     local AuctionFrameItem_OnEnter_old = AuctionFrameItem_OnEnter
     function AuctionFrameItem_OnEnter(self, typ, index, ...)
-      if Addon:GetOption("throttle", "AuctionFrame") and GameTooltip:GetOwner() == self and GetTime() - lastUpdate < TOOLTIP_UPDATE_TIME then return end
+      if Addon:GetGlobalOption("throttle", "AuctionFrame") and GameTooltip:GetOwner() == self and GetTime() - lastUpdate < TOOLTIP_UPDATE_TIME then return end
       lastUpdate = GetTime()
       AuctionFrameItem_OnEnter_old(self, typ, index, ...)
     end

@@ -18,7 +18,7 @@ do
   function ThrottleTradeSkillFrameItem()
     local TradeSkillItem_OnEnter_old = TradeSkillItem_OnEnter
     function TradeSkillItem_OnEnter(self, ...)
-      if Addon:GetOption("throttle", "TradeSkillFrame") and GameTooltip:GetOwner() == self and GetTime() - lastUpdate < TOOLTIP_UPDATE_TIME then return end
+      if Addon:GetGlobalOption("throttle", "TradeSkillFrame") and GameTooltip:GetOwner() == self and GetTime() - lastUpdate < TOOLTIP_UPDATE_TIME then return end
       lastUpdate = GetTime()
       TradeSkillItem_OnEnter_old(self, ...)
     end

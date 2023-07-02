@@ -432,7 +432,7 @@ do
   -- local isMe = false
   -- hooksecurefunc("InterfaceOptionsFrame_OpenToCategory", function(...)
   --   if skip then return end
-  --   if Addon:GetOption("fix", "InterfaceOptionsFrameForAll") or Addon:GetOption("fix", "InterfaceOptionsFrameForMe") and isMe then
+  --   if Addon:GetGlobalOption("fix", "InterfaceOptionsFrameForAll") or Addon:GetGlobalOption("fix", "InterfaceOptionsFrameForMe") and isMe then
   --     Addon:DebugIfOutput("InterfaceOptionsFrameFix", "Patching Interface Options")
   --     InterfaceOptionsFrame_OpenToCategory_Fix(...)
   --     isMe = false
@@ -440,7 +440,7 @@ do
   -- end)
   
   function Addon:OpenConfig_old(category)
-    isMe = Addon:GetOption("fix", "InterfaceOptionsFrameForMe")
+    isMe = Addon:GetGlobalOption("fix", "InterfaceOptionsFrameForMe")
     if isMe then
       InterfaceOptionsFrame_OpenToCategory(category)
       isMe = true
