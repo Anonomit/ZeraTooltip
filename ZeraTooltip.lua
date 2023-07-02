@@ -83,6 +83,14 @@ function Addon:InitDB()
         self:SetOption(self:UnmakeIcon(icon), "icon", stat)
       end
     end
+    
+    -- make cache option global
+    if configVersion <= self.SemVer"2.8.1" then
+      self:xpcallSilent(function()
+        self:SetGlobalOption(self:GetOption("cache", "enabled"), "cache", "enabled")
+      end)
+      self:SetOption(nil, "cache")
+    end
   end
   
   

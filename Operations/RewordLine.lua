@@ -39,7 +39,7 @@ function Addon:RewordLine(tooltip, line, tooltipData)
   
   local text = line.textLeftText
   
-  if self:GetOption("cache", "enabled") and self:GetOption("cache", "text") and textCache[line.type] and textCache[line.type][line.textLeftText] then
+  if self:GetGlobalOption("cache", "enabled") and self:GetGlobalOption("cache", "text") and textCache[line.type] and textCache[line.type][line.textLeftText] then
     text, line.rewordRight = unpack(textCache[line.type][line.textLeftText], 1, 2)
   else
     
@@ -150,7 +150,7 @@ function Addon:RewordLine(tooltip, line, tooltipData)
       end
     end
     
-    if self:GetOption("cache", "enabled") and self:GetOption("cache", "text") then
+    if self:GetGlobalOption("cache", "enabled") and self:GetGlobalOption("cache", "text") then
       textCache[line.type] = textCache[line.type] or {}
       textCache[line.type][line.textLeftText] = {text, line.rewordRight}
       cacheSize = cacheSize + 1

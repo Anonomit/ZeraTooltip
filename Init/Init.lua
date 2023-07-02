@@ -36,6 +36,7 @@ local unpack       = unpack
 local select       = select
 local type         = type
 local format       = format
+local strjoin      = strjoin
 local tostring     = tostring
 local tonumber     = tonumber
 local getmetatable = getmetatable
@@ -46,6 +47,7 @@ local random       = random
 
 
 Addon.onOptionSetHandlers = {}
+Addon.onCVarSetHandlers   = {}
 
 
 
@@ -78,7 +80,7 @@ do
   
   function Addon:IsDebugEnabled()
     if self.db then
-      return self:GetOption"debug"
+      return self:GetGlobalOption"debug"
     else
       return debugMode
     end
@@ -86,7 +88,7 @@ do
   
   local function Debug(self, methodName, ...)
     if not self:IsDebugEnabled() then return end
-    if self.GetOption and self:GetOption("debugOutput", "suppressAll") then return end
+    if self.GetGlobalOption and self:GetGlobalOption("debugOutput", "suppressAll") then return end
     return self[methodName](self, ...)
   end
   function Addon:Debug(...)
@@ -107,11 +109,17 @@ do
   function Addon:DebugfIf(keys, ...)
     return DebugIf(self, "Debugf", keys, ...)
   end
+  
+  local function DebugIfOutput(self, methodName, key, ...)
+    if self.GetGlobalOption and self:GetGlobalOption("debugOutput", key) then
+      return self[methodName](self, ...)
+    end
+  end
   function Addon:DebugIfOutput(key, ...)
-    return DebugIf(self, "Debug", {"debugOutput", key}, ...)
+    return DebugIfOutput(self, "Debug", key, ...)
   end
   function Addon:DebugfIfOutput(key, ...)
-    return DebugIf(self, "Debugf", {"debugOutput", key}, ...)
+    return DebugIfOutput(self, "Debugf", key, ...)
   end
   
   function Addon:DebugData(t)
@@ -135,12 +143,12 @@ do
   
   
   function Addon:GetDebugView(key)
-    return self:IsDebugEnabled() and not self:GetOption("debugView", "suppressAll") and self:GetOption("debugView", key)
+    return self:IsDebugEnabled() and not self:GetGlobalOption("debugView", "suppressAll") and self:GetGlobalOption("debugView", key)
   end
   
   do
     local function GetErrorHandler(errFunc)
-      if Addon:IsDebugEnabled() and (not Addon:IsDBLoaded() or Addon:GetOption"debugShowLuaErrors") then
+      if Addon:IsDebugEnabled() and (not Addon:IsDBLoaded() or Addon:GetGlobalOption"debugShowLuaErrors") then
         return function(...)
           geterrorhandler()(...)
           if errFunc then
@@ -153,8 +161,11 @@ do
     function Addon:xpcall(func, errFunc)
       return xpcall(func, GetErrorHandler(errFunc))
     end
+    function Addon:xpcallSilent(func, errFunc)
+      return xpcall(func, nop)
+    end
     function Addon:Throw(...)
-      if Addon:IsDebugEnabled() and (not Addon:IsDBLoaded() or Addon:GetOption"debugShowLuaErrors") then
+      if Addon:IsDebugEnabled() and (not Addon:IsDBLoaded() or Addon:GetGlobalOption"debugShowLuaErrors") then
         local text = format(...)
         geterrorhandler()(...)
       end
@@ -235,57 +246,84 @@ do
     return DeepCopy(val, {})
   end
   
-  function Addon:IsDBLoaded()
-    return self.db ~= nil
-  end
-  function Addon:GetDB()
-    return self.db
-  end
-  function Addon:GetDefaultDB()
-    return self.dbDefault
-  end
-  function Addon:GetProfile()
-    return Addon.GetDB(self).profile
-  end
-  function Addon:GetDefaultProfile()
-    return Addon.GetDefaultDB(self).profile
-  end
-  local function GetOption(self, db, ...)
-    local val = db
-    for _, key in ipairs{...} do
-      assert(type(val) == "table", format("Bad database access: %s", tblConcat({...}, " > ")))
-      val = val[key]
+  local dbTables = {
+    {"dbDefault", "Default", true},
+    {"db", ""},
+  }
+  local dbTypes = {
+    {"profile", ""},
+    {"global", "Global"},
+  }
+  
+  local defaultKey, defaultName
+  
+  for _, dbType in ipairs(dbTables) do
+    local dbKey, dbName, isDefault = unpack(dbType, 1, 3)
+    if isDefault then
+      defaultKey  = dbKey
+      defaultName = dbName
     end
-    return val
-  end
-  function Addon:GetOption(...)
-    return GetOption(self, Addon.GetProfile(self), ...)
-  end
-  function Addon:GetDefaultOption(...)
-    return GetOption(self, Addon.GetDefaultProfile(self), ...)
-  end
-  local function SetOption(self, db, val, ...)
-    local keys = {...}
-    local lastKey = tblRemove(keys, #keys)
-    local tbl = db
-    for _, key in ipairs(keys) do
-      tbl = tbl[key]
+    
+    local IsDBLoaded = format("Is%sDBLoaded", dbName)
+    local GetDB      = format("Get%sDB",      dbName)
+    
+    Addon[IsDBLoaded] = function(self)
+    return self[dbKey] ~= nil
     end
-    tbl[lastKey] = val
-    Addon.OnOptionSet(Addon, db, val, ...)
-  end
-  function Addon:SetOption(val, ...)
-    return SetOption(self, Addon.GetProfile(self), val, ...)
-  end
-  function Addon:ToggleOption(...)
-    return Addon:SetOption(not Addon:GetOption(...), ...)
-  end
-  function Addon:ResetOption(...)
-    return Addon.SetOption(self, Addon.Copy(self, Addon.GetDefaultOption(self, ...)), ...)
+    Addon[GetDB] = function(self)
+      return self[dbKey]
+    end
+    
+    for _, dbSection in ipairs(dbTypes) do
+      local typeKey, typeName = unpack(dbSection, 1, 2)
+      
+      local GetOption        = format("Get%s%sOption", dbName, typeName)
+      local GetDefaultOption = format("Get%s%sOption", defaultName, typeName)
+      
+      Addon[GetOption] = function(self, ...)
+        local val = self[dbKey][typeKey]
+        for _, key in ipairs{...} do
+          assert(type(val) == "table", format("Bad database access: %s", tblConcat({dbKey, typeKey, ...}, " > ")))
+          val = val[key]
+        end
+        if type(val) == "table" then
+          self:Debugf("Warning! Database request returned a table: %s", tblConcat({dbKey, typeKey, ...}, " > "))
+        end
+        return val
+      end
+      
+      if not isDefault then
+        local SetOption    = format("Set%s%sOption",    dbName, typeName)
+        local ToggleOption = format("Toggle%s%sOption", dbName, typeName)
+        local ResetOption  = format("Reset%s%sOption",  dbName, typeName)
+      
+        Addon[SetOption] = function(self, val, ...)
+          local keys = {...}
+          local lastKey = tblRemove(keys, #keys)
+          local tbl = self[dbKey][typeKey]
+          for _, key in ipairs(keys) do
+            assert(type(tbl[key]) == "table", format("Bad database access: %s", tblConcat({dbKey, typeKey, ...}, " > ")))
+            tbl = tbl[key]
+          end
+          tbl[lastKey] = val
+          Addon.OnOptionSet(Addon, val, dbKey, typeKey, ...)
+        end
+        
+        Addon[ToggleOption] = function(self, ...)
+          return self[SetOption](self, not self[GetOption](self, ...), ...)
+        end
+        
+        Addon[ResetOption] = function(self, ...)
+          return self[SetOption](self, Addon.Copy(self, self[GetDefaultOption](self, ...)), ...)
+        end
+      end
+      
+    end
   end
   
-  function Addon:OnOptionSet(...)
+  function Addon:OnOptionSet(val, ...)
     if not self:GetDB() then return end -- db hasn't loaded yet
+    self:DebugfIfOutput("optionSet", "Setting %s: %s", strjoin(" > ", ...), tostring(val))
     for funcName, func in next, Addon.onOptionSetHandlers, nil do
       if type(func) == "function" then
         func(self, ...)
@@ -295,8 +333,6 @@ do
     end
   end
 end
-
-
 
 
 
@@ -380,7 +416,7 @@ do
   -- hooksecurefunc("InterfaceOptionsFrame_OpenToCategory", function(...)
   --   if skip then return end
   --   if Addon:GetOption("fix", "InterfaceOptionsFrameForAll") or Addon:GetOption("fix", "InterfaceOptionsFrameForMe") and isMe then
-  --     Addon:DebugIf({"debugOutput", "InterfaceOptionsFrameFix"}, "Patching Interface Options")
+  --     Addon:DebugIfOutput("InterfaceOptionsFrameFix", "Patching Interface Options")
   --     InterfaceOptionsFrame_OpenToCategory_Fix(...)
   --     isMe = false
   --   end

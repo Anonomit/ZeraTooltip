@@ -13,7 +13,7 @@ local tblConcat = table.concat
 
 
 local function OutputConstructorCreation(constructor)
-  if Addon:GetOption("debugOutput", "constructorCreated") then
+  if Addon:GetGlobalOption("debugOutput", "constructorCreated") then
     for i, line in ipairs(constructor) do
       Addon:DebugData{
         {"instruction",  i},
@@ -96,7 +96,7 @@ function Addon:CreateConstructor(tooltipData)
     end
   end
   
-  if self:GetOption("constructor", "doValidation") then
+  if self:GetGlobalOption("constructor", "doValidation") then
     constructor.validation = {}
     for _, line in ipairs(tooltipData) do
       constructor.validation[line.i] = line.realTextLeft

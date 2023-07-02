@@ -192,8 +192,9 @@ function Addon:MakeDefaultOptions()
         },
         padLastLine  = true,
         combineStats = true,
-        
-        
+      },
+      
+      global = {
         -- Debug options
         debug = false,
         

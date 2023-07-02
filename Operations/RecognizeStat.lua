@@ -77,7 +77,7 @@ local function RecognizeStatHelper(line)
     end
   end
   
-  if self:GetOption("cache", "enabled") and self:GetOption("cache", "stat") then
+  if self:GetGlobalOption("cache", "enabled") and self:GetGlobalOption("cache", "stat") then
     statCache[line.textLeftText] = {stat = line.stat, normalForm = line.normalForm, prefix = line.prefix, newPrefix = line.newPrefix}
     cacheSize = cacheSize + 1
   end

@@ -32,9 +32,6 @@ local mathMax   = math.max
 --  ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝╚══════╝
 
 
-local function CreateReset(opts, option, func, disabled)
-  Addon.GUI:CreateExecute(opts, {"reset", unpack(option)}, Addon.L["Reset"], nil, func or function() Addon:ResetOption(unpack(option)) end, disabled).width = 0.6
-end
 local function CreateCombineStatsOption(opts)
   Addon.GUI:CreateToggle(opts, {"combineStats"}, L["Group Secondary Stats with Base Stats"], L["Move secondary effects (such as Attack Power and Spell Power), up to where the base stats (such as Stamina) are located."], not Addon:GetOption("allow", "reorder")).width = 2
 end
@@ -144,7 +141,7 @@ local function CreateColor(opts, stat, disabled)
   local disabled = disabled or not Addon:GetOption("allow", "recolor")
   GUI:CreateToggle(opts, {"doRecolor", stat}, self.L["Enable"], nil, disabled).width = 0.5
   GUI:CreateColor(opts, {"color", stat}, self.L["Color"], nil, disabled or not Addon:GetOption("doRecolor", stat)).width = 0.5
-  CreateReset(opts, {"color", stat})
+  GUI:CreateReset(opts, {"color", stat})
   
   return opts
 end
@@ -161,7 +158,7 @@ local function CreateReword(opts, stat, disabled)
   option.width = 0.9
   option.set = function(info, val)        self:SetOption(self:CoverSpecialCharacters(val), "reword", stat) end
   option.get = function(info)      return Addon:UncoverSpecialCharacters(self:GetOption("reword", stat))   end
-  CreateReset(opts, {"reword", stat}, function() self:ResetReword(stat) end)
+  GUI:CreateReset(opts, {"reword", stat}, function() self:ResetReword(stat) end)
   
   return opts
 end
@@ -172,7 +169,7 @@ local function CreateHide(opts, stat, disabled)
   local opts = GUI:CreateGroupBox(opts, self.L["Hide"])
   
   GUI:CreateToggle(opts, {"hide", stat}, self.L["Hide"], nil, disabled).width = 0.6
-  CreateReset(opts, {"hide", stat})
+  GUI:CreateReset(opts, {"hide", stat})
   
   return opts
 end
@@ -183,7 +180,7 @@ local function CreateShow(opts, stat)
   local opts = GUI:CreateGroupBox(opts, self.L["Show"])
   
   GUI:CreateReverseToggle(opts, {"hide", stat}, self.L["Show"], nil, disabled).width = 0.6
-  CreateReset(opts, {"hide", stat})
+  GUI:CreateReset(opts, {"hide", stat})
   
   return opts
 end
@@ -201,7 +198,7 @@ local function CreateIcon(opts, stat)
   option.width = 0.7
   option.set   = function(info, v) self:SetOption(self:UnmakeIcon(v), "icon", stat)   end
   option.get   = function(info)    return self:MakeIcon(self:GetOption("icon", stat), 16) end
-  CreateReset(opts, {"icon", stat}, function() self:ResetOption("icon", stat) end)
+  GUI:CreateReset(opts, {"icon", stat}, function() self:ResetOption("icon", stat) end)
   GUI:CreateNewline(opts)
   
   local disabled = disabled or not self:GetOption("doIcon", stat)
@@ -210,11 +207,11 @@ local function CreateIcon(opts, stat)
   option.width = 0.7
   option.softMin = 8
   option.softMax = 32
-  CreateReset(opts, {"iconSize", stat}, function() self:ResetOption("iconSize", stat) end)
+  GUI:CreateReset(opts, {"iconSize", stat}, function() self:ResetOption("iconSize", stat) end)
   GUI:CreateNewline(opts)
   
   GUI:CreateToggle(opts, {"iconSpace", stat}, L["Icon Space"], nil, disabled).width = 0.7
-  CreateReset(opts, {"iconSpace", stat}, function() self:ResetOption("iconSpace", stat) end)
+  GUI:CreateReset(opts, {"iconSpace", stat}, function() self:ResetOption("iconSpace", stat) end)
   
   return opts
 end
@@ -227,7 +224,7 @@ local function CreateReorder(opts, stat, desc)
   local disabled = not Addon:GetOption("allow", "reorder")
   
   GUI:CreateToggle(opts, {"doReorder", stat}, self.L["Enable"], desc, disabled).width = 0.6
-  CreateReset(opts, {"doReorder", stat}, function() self:ResetOption("doReorder", stat) end)
+  GUI:CreateReset(opts, {"doReorder", stat}, function() self:ResetOption("doReorder", stat) end)
   
   return opts
 end
@@ -371,16 +368,19 @@ function Addon:MakeAddonOptions(chatCmd)
       local opts = GUI:CreateGroupBox(opts, self.L["Features"])
       
       GUI:CreateToggle(opts, {"allow", "reorder"}, L["Reorder"], L["Allow or prohibit all reordering."])
-      CreateReset(opts, {"allow", "reorder"})
+      GUI:CreateReset(opts, {"allow", "reorder"})
       GUI:CreateNewline(opts)
       GUI:CreateToggle(opts, {"allow", "reword"} , self.L["Rename"], L["Allow or prohibit all rewording."])
-      CreateReset(opts, {"allow", "reword"})
+      GUI:CreateReset(opts, {"allow", "reword"})
       GUI:CreateNewline(opts)
       GUI:CreateToggle(opts, {"allow", "recolor"}, L["Recolor"], L["Allow or prohibit all recoloring."])
-      CreateReset(opts, {"allow", "recolor"})
+      GUI:CreateReset(opts, {"allow", "recolor"})
       GUI:CreateNewline(opts)
+      
+      GUI:SetDBType"Global"
       GUI:CreateToggle(opts, {"cache", "enabled"}, L["Cache"], L["Speeds up processing, but may introduce tooltip issues."])
-      CreateReset(opts, {"cache", "enabled"})
+      GUI:CreateReset(opts, {"cache", "enabled"})
+      GUI:ResetDBType()
     end
   end
   
@@ -442,9 +442,9 @@ local function CreateStatOption(opts, i, stat)
     option.softMax   = 12
     option.bigStep   = 0.1
     option.isPercent = true
-    CreateReset(opts, {"mod", stat}, function() self:ResetMod(stat) end)
+    GUI:CreateReset(opts, {"mod", stat}, function() self:ResetMod(stat) end)
     GUI:CreateRange(opts, {"precision", stat}, L["Precision"], nil, 0, 5, 1, disabled).width = 1.5
-    CreateReset(opts, {"precision", stat}, function() self:ResetPrecision(stat) end)
+    GUI:CreateReset(opts, {"precision", stat}, function() self:ResetPrecision(stat) end)
   end
   
   CreateHide(opts, stat)
@@ -639,7 +639,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       
       local disabled = not self:GetOption("allow", "reword")
       GUI:CreateToggle(opts, {"doIcon", stat}, self.L["Icon"], nil, disabled).width = 0.6
-      CreateReset(opts, {"doIcon", stat}, function() self:ResetOption("doIcon", stat) end)
+      GUI:CreateReset(opts, {"doIcon", stat}, function() self:ResetOption("doIcon", stat) end)
       GUI:CreateNewline(opts)
       
       local disabled = disabled or not self:GetOption("doIcon", stat)
@@ -648,11 +648,11 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       option.width = 0.7
       option.softMin = 8
       option.softMax = 32
-      CreateReset(opts, {"iconSize", stat}, function() self:ResetOption("iconSize", stat) end)
+      GUI:CreateReset(opts, {"iconSize", stat}, function() self:ResetOption("iconSize", stat) end)
       GUI:CreateNewline(opts)
       
       GUI:CreateToggle(opts, {"iconSpace", stat}, L["Icon Space"], nil, disabled).width = 0.7
-      CreateReset(opts, {"iconSpace", stat}, function() self:ResetOption("iconSpace", stat) end)
+      GUI:CreateReset(opts, {"iconSpace", stat}, function() self:ResetOption("iconSpace", stat) end)
     end
   end
   GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
@@ -700,7 +700,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       local opts = GUI:CreateGroupBox(opts, self.L["Rename"])
       
       GUI:CreateToggle(opts, {"itemLevel", "useShortName"}, self.L["Short Name"], format(L["Show %s instead of %s."], self:MakeColorCode(self.COLORS.DEFAULT, self.itemLevelTexts[true].iLvlText), self:MakeColorCode(self.COLORS.DEFAULT, self.itemLevelTexts[false].iLvlText)), disabled)
-      CreateReset(opts, {"itemLevel", "useShortName"})
+      GUI:CreateReset(opts, {"itemLevel", "useShortName"})
       GUI:CreateNewline(opts)
       
       local disabled = disabled or not self:GetOption("allow", "reword")
@@ -710,14 +710,14 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       option.width = 0.9
       option.set = function(info, val)        self:SetOption(self:CoverSpecialCharacters(val), "reword", stat) end
       option.get = function(info)      return self:UncoverSpecialCharacters(self:GetOption("reword", stat))    end
-      CreateReset(opts, {"reword", stat}, function() self:ResetReword(stat) end)
+      GUI:CreateReset(opts, {"reword", stat}, function() self:ResetReword(stat) end)
       
       GUI:CreateNewline(opts)
       
       -- Trim Space
       local disabled = disabled or not self:GetOption("doReword", stat)
       GUI:CreateToggle(opts, {"trimSpace", stat}, L["Remove Space"], nil, disabled)
-      CreateReset(opts, {"trimSpace", stat}, function() self:ResetOption("trimSpace", stat) end)
+      GUI:CreateReset(opts, {"trimSpace", stat}, function() self:ResetOption("trimSpace", stat) end)
     end
     
     CreateIcon(opts, stat)
@@ -726,12 +726,12 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       local opts = GUI:CreateGroupBox(opts, self.L["Show"])
       
       GUI:CreateReverseToggle(opts, {"hide", stat}, self.L["Show Item Level"], nil, disabled)
-      CreateReset(opts, {"hide", stat})
+      GUI:CreateReset(opts, {"hide", stat})
       GUI:CreateNewline(opts)
       
       local disabled = self:GetOption("hide", stat)
       GUI:CreateReverseToggle(opts, {"hide", "nonEquipment"}, L["Show Non Equipment"], L["Show item level on items that cannot be equipped by anyone."], disabled)
-      CreateReset(opts, {"hide", "nonEquipment"})
+      GUI:CreateReset(opts, {"hide", "nonEquipment"})
     end
   end
   if not self:GetOption("doReorder", "ItemLevel") then MakeItemLevelOptions() end
@@ -762,12 +762,12 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       GUI:CreateNewline(opts)
       
       GUI:CreateToggle(opts, {"hide", "StackSize_single"}, L["Hide Single Stacks"], L["Hide stack size on items that do not stack."], disabled)
-      CreateReset(opts, {"hide", "StackSize_single"})
+      GUI:CreateReset(opts, {"hide", "StackSize_single"})
       GUI:CreateNewline(opts)
       
       local disabled = self:GetOption("hide", stat)
       GUI:CreateToggle(opts, {"hide", "StackSize_equipment"}, L["Hide Equipment"], L["Hide stack size on items that can be equipped on a character."], disabled)
-      CreateReset(opts, {"hide", "StackSize_equipment"})
+      GUI:CreateReset(opts, {"hide", "StackSize_equipment"})
     end
   end
   if self:GetOption("doReorder", "StackSize") then MakeStackSizeOptions() end
@@ -812,7 +812,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       GUI:CreateNewline(opts)
       
       GUI:CreateToggle(opts, {"hide", "uselessRaces"}, L["Hide Pointless Lines"], L["Hide lines which list every race."])
-      CreateReset(opts, {"hide", "uselessRaces"})
+      GUI:CreateReset(opts, {"hide", "uselessRaces"})
     end
   end
   -- Classes
@@ -870,7 +870,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       
       local disabled = not self:GetOption("allow", "recolor")
       GUI:CreateToggle(opts, {"doRecolor", stat}, self.L["Show Class Color"], nil, disabled).width = 1
-      CreateReset(opts, {"doRecolor", stat})
+      GUI:CreateReset(opts, {"doRecolor", stat})
     end
     
     do
@@ -878,11 +878,11 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       
       local disabled = disabled or not self:GetOption("allow", "reword")
       GUI:CreateToggle(opts, {"doReword", stat}, self.L["Enable"], nil, disabled or not self:GetOption("doIcon", stat)).width = 0.6
-      CreateReset(opts, {"reword", stat}, function() self:ResetOption("doReword", stat) end, disabled or not self:GetOption("doIcon", stat))
+      GUI:CreateReset(opts, {"reword", stat}, function() self:ResetOption("doReword", stat) end, disabled or not self:GetOption("doIcon", stat))
       GUI:CreateNewline(opts)
       
       GUI:CreateToggle(opts, {"trimPunctuation", stat}, self.L["Minimize"], nil, disabled).width = 0.6
-      CreateReset(opts, {"trimPunctuation", stat}, function() self:ResetOption("trimPunctuation", stat) end, disabled)
+      GUI:CreateReset(opts, {"trimPunctuation", stat}, function() self:ResetOption("trimPunctuation", stat) end, disabled)
     end
     
     do
@@ -890,7 +890,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       
       local disabled = not self:GetOption("allow", "reword")
       GUI:CreateToggle(opts, {"doIcon", stat}, self.L["Icon"], nil, disabled or self:GetOption("doReword", stat)).width = 0.6
-      CreateReset(opts, {"doIcon", stat}, function() self:ResetOption("doIcon", stat) end, disabled or self:GetOption("doReword", stat))
+      GUI:CreateReset(opts, {"doIcon", stat}, function() self:ResetOption("doIcon", stat) end, disabled or self:GetOption("doReword", stat))
       GUI:CreateNewline(opts)
       
       local disabled = disabled or not self:GetOption("doIcon", stat)
@@ -899,11 +899,11 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       option.width = 0.7
       option.softMin = 8
       option.softMax = 32
-      CreateReset(opts, {"iconSize", stat}, function() self:ResetOption("iconSize", stat) end)
+      GUI:CreateReset(opts, {"iconSize", stat}, function() self:ResetOption("iconSize", stat) end)
       GUI:CreateNewline(opts)
       
       GUI:CreateToggle(opts, {"iconSpace", stat}, L["Icon Space"], nil, disabled).width = 0.7
-      CreateReset(opts, {"iconSpace", stat}, function() self:ResetOption("iconSpace", stat) end)
+      GUI:CreateReset(opts, {"iconSpace", stat}, function() self:ResetOption("iconSpace", stat) end)
     end
     
     do
@@ -911,7 +911,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       GUI:CreateNewline(opts)
       
       GUI:CreateToggle(opts, {"hide", "myClass"}, self.L["Me"], L["Hide lines that contain only my class."]).width = 0.6
-      CreateReset(opts, {"hide", "myClass"})
+      GUI:CreateReset(opts, {"hide", "myClass"})
     end
   end
   -- Level
@@ -965,11 +965,11 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       GUI:CreateNewline(opts)
       
       GUI:CreateToggle(opts, {"hide", "requiredLevelMet"}, format(self:ChainGsub(self.L["|cff000000%s (low level)|r"], {"|c%x%x%x%x%x%x%x%x", "|r", ""}), format(self.L["Level %d"], sample1)), L["Hide white level requirements."])
-      CreateReset(opts, {"hide", "requiredLevelMet"})
+      GUI:CreateReset(opts, {"hide", "requiredLevelMet"})
       GUI:CreateNewline(opts)
       
       GUI:CreateToggle(opts, {"hide", "requiredLevelMax"}, self.L["Max Level"], L["Hide maximum level requirements when you are the maximum level."])
-      CreateReset(opts, {"hide", "requiredLevelMax"})
+      GUI:CreateReset(opts, {"hide", "requiredLevelMax"})
     end
   end
   
@@ -1031,7 +1031,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
         
         local disabled = not self:GetOption("allow", "reword")
         GUI:CreateToggle(opts, {"doReword", stat}, self.L["Enable"], nil, disabled).width = 0.6
-        CreateReset(opts, {"doReword", stat}, function() self:ResetOption("doReword", stat) end)
+        GUI:CreateReset(opts, {"doReword", stat}, function() self:ResetOption("doReword", stat) end)
       end
       
       CreateHide(opts, stat)
@@ -1064,7 +1064,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
         
         local disabled = not self:GetOption("allow", "reword")
         GUI:CreateToggle(opts, {"doReword", stat}, self.L["Enable"], nil, disabled).width = 0.6
-        CreateReset(opts, {"doReword", stat}, function() self:ResetOption("doReword", stat) end)
+        GUI:CreateReset(opts, {"doReword", stat}, function() self:ResetOption("doReword", stat) end)
       end
       
       CreateHide(opts, stat)
@@ -1121,19 +1121,19 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       
       local disabled = not self:GetOption("allow", "reword")
       GUI:CreateToggle(opts, {"damage", "showMinMax"}  , L["Show Minimum and Maximum"], nil, disabled or not self:GetOption("damage", "showAverage")).width = 1.5
-      CreateReset(opts, {"damage", "showMinMax"})
+      GUI:CreateReset(opts, {"damage", "showMinMax"})
       GUI:CreateNewline(opts)
       GUI:CreateToggle(opts, {"damage", "showAverage"} , L["Show Average"], nil, disabled or not self:GetOption("damage", "showMinMax")).width = 1.5
-      CreateReset(opts, {"damage", "showAverage"})
+      GUI:CreateReset(opts, {"damage", "showAverage"})
       GUI:CreateNewline(opts)
       GUI:CreateToggle(opts, {"damage", "showVariance"}, L["Show Variance"], nil, disabled).width = 1.5
-      CreateReset(opts, {"damage", "showVariance"})
+      GUI:CreateReset(opts, {"damage", "showVariance"})
       GUI:CreateNewline(opts)
       GUI:CreateToggle(opts, {"damage", "variancePercent"}, L["Show Percent"], nil, disabled or not self:GetOption("damage", "showVariance")).width = 1.5
-      CreateReset(opts, {"damage", "variancePercent"})
+      GUI:CreateReset(opts, {"damage", "variancePercent"})
       GUI:CreateNewline(opts)
       GUI:CreateInput(opts, {"damage", "variancePrefix"} , L["Variance Prefix"], nil, nil, disabled).width = 0.5
-      CreateReset(opts, {"damage", "variancePrefix"})
+      GUI:CreateReset(opts, {"damage", "variancePrefix"})
     end
     
     CreateHide(opts, stat)
@@ -1175,7 +1175,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       local opts = GUI:CreateGroupBox(opts, L["Precision"])
       
       GUI:CreateRange(opts, {"precision", stat}, L["Precision"], nil, 0, 5, 1, disabled)
-      CreateReset(opts, {"precision", stat}, function() self:ResetOption("precision", stat) end)
+      GUI:CreateReset(opts, {"precision", stat}, function() self:ResetOption("precision", stat) end)
     end
     
     CreateHide(opts, stat, disabled)
@@ -1214,7 +1214,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       local opts = GUI:CreateGroupBox(opts, L["Remove Brackets"])
       
       GUI:CreateToggle(opts, {"dps", "removeBrackets"}, L["Remove Brackets"], nil, disabled)
-      CreateReset(opts, {"dps", "removeBrackets"})
+      GUI:CreateReset(opts, {"dps", "removeBrackets"})
     end
     
     CreateHide(opts, stat)
@@ -1274,7 +1274,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
         end
         
         GUI:CreateToggle(opts, {"speedBar", "speedPrefix"}, L["Show Speed"], nil, disabled)
-        CreateReset(opts, {"speedBar", "speedPrefix"})
+        GUI:CreateReset(opts, {"speedBar", "speedPrefix"})
       end
       
       do
@@ -1288,7 +1288,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
         local option = GUI:CreateRange(opts, {"speedBar", "size"}, self.L["Frame Width"], L["Width of the speed bar."], 1, 1000, 1, disabled)
         option.softMin = 10
         option.softMax = 50
-        CreateReset(opts, {"speedBar", "size"}, func)
+        GUI:CreateReset(opts, {"speedBar", "size"}, func)
       end
       
       CreateHide(opts, stat)
@@ -1320,7 +1320,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       -- Trim Space
       local disabled = disabled or not self:GetOption("allow", "reword") or not self:GetOption("doReword", stat)
       GUI:CreateToggle(opts, {"trimSpace", stat}, L["Remove Space"], nil, disabled)
-      CreateReset(opts, {"trimSpace", stat}, function() self:ResetOption("trimSpace", stat) end)
+      GUI:CreateReset(opts, {"trimSpace", stat}, function() self:ResetOption("trimSpace", stat) end)
       GUI:CreateNewline(opts)
     end
     
@@ -1353,7 +1353,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       -- Trim Space
       local disabled = disabled or not self:GetOption("allow", "reword") or not self:GetOption("doReword", stat)
       GUI:CreateToggle(opts, {"trimSpace", stat}, L["Remove Space"], nil, disabled)
-      CreateReset(opts, {"trimSpace", stat}, function() self:ResetOption("trimSpace", stat) end)
+      GUI:CreateReset(opts, {"trimSpace", stat}, function() self:ResetOption("trimSpace", stat) end)
       GUI:CreateNewline(opts)
     end
     
@@ -1383,7 +1383,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       -- Trim Space
       local disabled = disabled or not self:GetOption("doReword", stat)
       GUI:CreateToggle(opts, {"trimSpace", stat}, L["Remove Space"], nil, disabled)
-      CreateReset(opts, {"trimSpace", stat}, function() self:ResetOption("trimSpace", stat) end)
+      GUI:CreateReset(opts, {"trimSpace", stat}, function() self:ResetOption("trimSpace", stat) end)
       GUI:CreateNewline(opts)
     end
     
@@ -1507,7 +1507,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       local disabled = disabled or not Addon:GetOption("allow", "recolor")
       GUI:CreateToggle(opts, {"doRecolor", stat}, L["Recolor"], nil, disabled).width = 0.5
       GUI:CreateColor(opts, {"color", stat}, self.L["Color"], nil, disabled or not Addon:GetOption("doRecolor", stat)).width = 0.5
-      CreateReset(opts, {"color", stat})
+      GUI:CreateReset(opts, {"color", stat})
     end
   end
   --]]
@@ -1556,15 +1556,15 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       -- Trim Space
       local disabled = disabled or not self:GetOption("doReword", stat)
       GUI:CreateToggle(opts, {"trimSpace", stat}, L["Remove Space"], nil, disabled)
-      CreateReset(opts, {"trimSpace", stat}, function() self:ResetOption("trimSpace", stat) end)
+      GUI:CreateReset(opts, {"trimSpace", stat}, function() self:ResetOption("trimSpace", stat) end)
       GUI:CreateNewline(opts)
       
       local disabled = false
       GUI:CreateToggle(opts, {"durability", "showCur"}  , L["Show Current"], nil, disabled or not self:GetOption("durability", "showPercent"))
-      CreateReset(opts, {"durability", "showCur"})
+      GUI:CreateReset(opts, {"durability", "showCur"})
       GUI:CreateNewline(opts)
       GUI:CreateToggle(opts, {"durability", "showPercent"}, L["Show Percent"], nil, disabled or not self:GetOption("durability", "showCur"))
-      CreateReset(opts, {"durability", "showPercent"})
+      GUI:CreateReset(opts, {"durability", "showPercent"})
     end
     
     CreateIcon(opts, stat)
@@ -1608,7 +1608,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       -- Trim Space
       local disabled = disabled or not self:GetOption("doReword", stat)
       GUI:CreateToggle(opts, {"trimSpace", stat}, L["Remove Space"], nil, disabled)
-      CreateReset(opts, {"trimSpace", stat}, function() self:ResetOption("trimSpace", stat) end)
+      GUI:CreateReset(opts, {"trimSpace", stat}, function() self:ResetOption("trimSpace", stat) end)
     end
     
     CreateIcon(opts, stat)
@@ -1660,12 +1660,12 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       local disabled = disabled or not self:GetOption("allow", "recolor")
       GUI:CreateToggle(opts, {"doRecolor", "Charges"}, someCharges, nil, disabled).width = 1
       GUI:CreateColor(opts, {"color", "Charges"}, self.L["Color"], nil, disabled or not self:GetOption("doRecolor", "Charges")).width = 0.5
-      CreateReset(opts, {"color", "Charges"})
+      GUI:CreateReset(opts, {"color", "Charges"})
       GUI:CreateNewline(opts)
       
       GUI:CreateToggle(opts, {"doRecolor", "NoCharges"}, noCharges, nil, disabled).width = 1
       GUI:CreateColor(opts, {"color", "NoCharges"}, self.L["Color"], nil, disabled or not self:GetOption("doRecolor", "NoCharges")).width = 0.5
-      CreateReset(opts, {"color", "NoCharges"})
+      GUI:CreateReset(opts, {"color", "NoCharges"})
     end
     
     CreateHide(opts, stat)
@@ -1731,11 +1731,11 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       
       local disabled = self:GetOption("hide", stat)
       GUI:CreateToggle(opts, {"hide", "MadeByMe"}, self.L["Me"], L["Made by myself."], disabled).width = 0.6
-      CreateReset(opts, {"hide", "MadeByMe"})
+      GUI:CreateReset(opts, {"hide", "MadeByMe"})
       GUI:CreateNewline(opts)
       
       GUI:CreateToggle(opts, {"hide", "MadeByOther"}, self.L["Other"], L["Made by others."], disabled).width = 0.6
-      CreateReset(opts, {"hide", "MadeByOther"})
+      GUI:CreateReset(opts, {"hide", "MadeByOther"})
     end
   end
   GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
@@ -1760,7 +1760,7 @@ function Addon:MakeExtraOptions(categoryName, chatCmd, arg1, ...)
       -- Reword
       local disabled = not self:GetOption("allow", "reword")
       GUI:CreateToggle(opts, {"doReword", stat}, self.L["Rename"], L["Reword some various small things, such as mana potions and speed enchantments. This option is different for each locale."], disabled).width = 0.6
-      CreateReset(opts, {"doReword", stat})
+      GUI:CreateReset(opts, {"doReword", stat})
     end
   end
   
@@ -1806,7 +1806,7 @@ function Addon:MakeResetOptions(categoryName, chatCmd, arg1, ...)
   } do
     local cat, func = unpack(v, 1, 2)
     GUI:CreateDescription(opts, cat)
-    CreateReset(opts, {cat}, func)
+    GUI:CreateReset(opts, {cat}, func)
     GUI:CreateNewline(opts)
   end
   
@@ -1835,6 +1835,7 @@ function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
   -- local panel = self:CreateOptionsCategory(categoryName, function()
   
   local GUI = self.GUI
+  GUI:SetDBType"Global"
   local opts = GUI:CreateGroupTop(title, "tab")
   
   -- Enable
@@ -1857,7 +1858,7 @@ function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
   do
     local opts = GUI:CreateGroup(opts, GUI:Order(), "View")
     
-    local disabled = not self:GetOption"debug"
+    local disabled = not self:GetGlobalOption"debug"
     
     do
       local opts = GUI:CreateGroupBox(opts, "Suppress All")
@@ -1868,7 +1869,7 @@ function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
     do
       local opts = GUI:CreateGroupBox(opts, "Tooltips")
       
-      local disabled = disabled or self:GetOption("debugView", "suppressAll")
+      local disabled = disabled or self:GetGlobalOption("debugView", "suppressAll")
       
       GUI:CreateToggle(opts, {"debugView", "tooltipLineNumbers"}, "Tooltip Line Numbers", nil, disabled).width = 2
       GUI:CreateNewline(opts)
@@ -1901,7 +1902,7 @@ function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
   do
     local opts = GUI:CreateGroup(opts, GUI:Order(), "Output")
     
-    local disabled = not self:GetOption"debug"
+    local disabled = not self:GetGlobalOption"debug"
     
     do
       local opts = GUI:CreateGroupBox(opts, "Suppress All")
@@ -1912,7 +1913,7 @@ function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
     do
       local opts = GUI:CreateGroupBox(opts, "Message Types")
       
-      local disabled = disabled or self:GetOption("debugOutput", "suppressAll")
+      local disabled = disabled or self:GetGlobalOption("debugOutput", "suppressAll")
       
       GUI:CreateToggle(opts, {"debugOutput", "tooltipMethodHook"}, "Tooltip Method Hook", nil, disabled).width = 2
       GUI:CreateNewline(opts)
@@ -1947,6 +1948,12 @@ function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
       GUI:CreateToggle(opts, {"debugOutput", "paddingDecisions"}, "Padding Decisions", nil, disabled).width = 2
       GUI:CreateNewline(opts)
       
+      GUI:CreateToggle(opts, {"debugOutput", "optionSet"}, "Option Set", nil, disabled).width = 2
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"debugOutput", "cvarSet"}, "CVar Set", nil, disabled).width = 2
+      GUI:CreateNewline(opts)
+      
       GUI:CreateToggle(opts, {"debugOutput", "InterfaceOptionsFrameFix"}, "Interface Options Patch", nil, disabled).width = 2
     end
     
@@ -1979,11 +1986,11 @@ function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
       group = opts
       
       GUI:CreateToggle(opts, {"cache", "enabled"}, self.L["Enable"])
-      CreateReset(opts, {"cache", "enabled"})
+      GUI:CreateReset(opts, {"cache", "enabled"})
       GUI:CreateNewline(opts)
       
       GUI:CreateToggle(opts, {"constructor", "alwaysDestruct"}, "Always Destruct", "Undo tooltip modifications after they're complete.")
-      CreateReset(opts, {"constructor", "alwaysDestruct"})
+      GUI:CreateReset(opts, {"constructor", "alwaysDestruct"})
     end
     
     for _, data in ipairs{
@@ -1994,9 +2001,9 @@ function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
       local opts = GUI:CreateGroupBox(opts, data[1] .. ": " .. self[data[4]](self))
       group = opts
       
-      local disabled = not self:GetOption("cache", "enabled")
+      local disabled = not self:GetGlobalOption("cache", "enabled")
       GUI:CreateToggle(opts, data[2], self.L["Enable"], nil, disabled)
-      CreateReset(opts, data[2])
+      GUI:CreateReset(opts, data[2])
       GUI:CreateExecute(opts, {"wipe", unpack(data[2])}, self.L["Clear Cache"], nil, function() self[data[3]](self) end, disabled).width = 0.6
     end
     
@@ -2004,27 +2011,27 @@ function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
       local opts = group
       GUI:CreateDivider(opts)
       
-      local disabled = not self:GetOption("cache", "enabled") or not self:GetOption("cache", "constructor")
+      local disabled = not self:GetGlobalOption("cache", "enabled") or not self:GetGlobalOption("cache", "constructor")
       
       GUI:CreateToggle(opts, {"constructor", "doValidation"}, "Do Validation", "Perform constructor validation checks.", disabled)
-      CreateReset(opts, {"constructor", "doValidation"})
+      GUI:CreateReset(opts, {"constructor", "doValidation"})
       GUI:CreateNewline(opts)
       
       local option = GUI:CreateRange(opts, {"cache", "constructorWipeDelay"}, "Wipe Delay", "Time in seconds without constructor being requested before it's cleared.", 0, 1000000, 0.001, disabled)
       option.softMax = 60
       option.bigStep = 1
-      CreateReset(opts, {"cache", "constructorWipeDelay"})
+      GUI:CreateReset(opts, {"cache", "constructorWipeDelay"})
       GUI:CreateNewline(opts)
       
       local option = GUI:CreateRange(opts, {"cache", "constructorMinSeenCount"}, "Minimum Seen Count", "Minimum number of times constructor must be requested before it can be cached.", 0, 1000000, 1, disabled)
       option.softMax = 50
-      CreateReset(opts, {"cache", "constructorMinSeenCount"})
+      GUI:CreateReset(opts, {"cache", "constructorMinSeenCount"})
       GUI:CreateNewline(opts)
       
       local option = GUI:CreateRange(opts, {"cache", "constructorMinSeenTime"}, "Minimum Seen Time", "Minimum time in seconds since constructor was first requested before it can be cached.", 0, 1000000, 0.001, disabled)
       option.softMax = 10
       option.bigStep = 0.25
-      CreateReset(opts, {"cache", "constructorMinSeenTime"})
+      GUI:CreateReset(opts, {"cache", "constructorMinSeenTime"})
     end
   end
   
@@ -2057,6 +2064,8 @@ function Addon:MakeDebugOptions(categoryName, chatCmd, arg1, ...)
       GUI:CreateToggle(opts, {"fix", "InterfaceOptionsFrameForAll"}, "Fix Category Opening For All", "Fix a bug with Interface Options so that it can be opened to a category that isn't visible without scrolling.").width = 2
     end
   end
+  
+  GUI:ResetDBType()
   
   return opts
   -- end)

@@ -22,6 +22,20 @@ do
   local defaultOrder = 1000
   local order        = defaultOrder
   
+  local dbType = ""
+  local GetFunction      = function(keys) local funcName = format("Get%sOption",   dbType) return function(info)      return Addon[funcName](Addon, unpack(keys))      end end
+  local SetFunction      = function(keys) local funcName = format("Set%sOption",   dbType) return function(info, val)        Addon[funcName](Addon, val, unpack(keys)) end end
+  local ResetFunction    = function(keys) local funcName = format("Reset%sOption", dbType) return function(info, val)        Addon[funcName](Addon, unpack(keys))      end end
+  local GetColorFunction = function(keys) local funcName = format("Get%sOption",   dbType) return function(info)          return Addon:ConvertColorToBlizzard(Addon[funcName](Addon, unpack(keys)))            end end
+  local SetColorFunction = function(keys) local funcName = format("Set%sOption",   dbType) return function(info, r, g, b)        Addon[funcName](Addon, Addon:ConvertColorFromBlizzard(r, g, b), unpack(keys)) end end
+  
+  function GUI:SetDBType(typ)
+    dbType = typ or ""
+  end
+  function GUI:ResetDBType()
+    self:SetDBType()
+  end
+  
   function GUI:GetOrder()
     return order
   end
@@ -42,8 +56,8 @@ do
     if type(keys) ~= "table" then keys = {keys} end
     local key = widgetType .. "_" .. (tblConcat(keys, ".") or "")
     opts.args[key] = {name = name, desc = desc, type = widgetType, order = order or self:Order(), disabled = disabled}
-    opts.args[key].set = function(info, val)        Addon:SetOption(val, unpack(keys)) end
-    opts.args[key].get = function(info)      return Addon:GetOption(unpack(keys))      end
+    opts.args[key].set = SetFunction(keys)
+    opts.args[key].get = GetFunction(keys)
     return opts.args[key]
   end
   
@@ -107,14 +121,20 @@ do
   
   function GUI:CreateColor(opts, keys, name, desc, disabled)
     local option = self:CreateEntry(opts, keys, name, desc, "color", disabled)
-    option.set   = function(info, r, g, b)        Addon:SetOption(Addon:ConvertColorFromBlizzard(r, g, b), unpack(keys)) end
-    option.get   = function(info)          return Addon:ConvertColorToBlizzard(Addon:GetOption(unpack(keys)))            end
+    option.set   = SetColorFunction(keys)
+    option.get   = GetColorFunction(keys)
     return option
   end
   
   function GUI:CreateExecute(opts, key, name, desc, func, disabled)
     local option = self:CreateEntry(opts, key, name, desc, "execute", disabled)
     option.func  = func
+    return option
+  end
+  function GUI:CreateReset(opts, keys, func, disabled)
+    local option = self:CreateEntry(opts, {"reset", unpack(keys)}, Addon.L["Reset"], nil, "execute", disabled)
+    option.func  = func or ResetFunction(keys)
+    option.width = 0.6
     return option
   end
   

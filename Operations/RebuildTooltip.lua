@@ -281,11 +281,11 @@ end
 
 
 function Addon:ValidateConstructor(tooltip, constructor)
-  if not self:GetOption("constructor", "doValidation") then
+  if not self:GetGlobalOption("constructor", "doValidation") then
     return true
   end
   if not constructor.validation then
-    self:DebugIf({"debugOutput", "constructorValidationFail"}, "Constructor validation failed. Constructor has no validation table")
+    self:DebugIfOutput("constructorValidationFail", "Constructor validation failed. Constructor has no validation table")
     return false
   end
   

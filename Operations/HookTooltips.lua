@@ -117,7 +117,7 @@ local function OnTooltipItemMethod(tooltip, methodName, ...)
   if not self:IsHookEnabled() then return end
   
   if not tooltip.GetItem then
-    if Addon:GetOption("debugOutput", "tooltipHookFail") then
+    if Addon:GetGlobalOption("debugOutput", "tooltipHookFail") then
       local args = ConvertArgs(...)
       Addon:Debugf("Bad Hook (no field 'GetItem'): %s:%s(%s)", tooltip:GetName(), methodName, tblConcat({unpack(args, 1, args.n)}, ", "))
     end
@@ -125,7 +125,7 @@ local function OnTooltipItemMethod(tooltip, methodName, ...)
   end
   local name, link = tooltip:GetItem()
   if not name or not link then
-    if Addon:GetOption("debugOutput", "tooltipHookFail") then
+    if Addon:GetGlobalOption("debugOutput", "tooltipHookFail") then
       local args = ConvertArgs(...)
       Addon:Debugf("Bad Hook (GetItem() returned nil): %s:%s(%s)", tooltip:GetName(), methodName, tblConcat({unpack(args, 1, args.n)}, ", "))
     end
@@ -133,7 +133,7 @@ local function OnTooltipItemMethod(tooltip, methodName, ...)
   end
   local isComparison = compareMethods[methodName]
   
-  if Addon:GetOption("debugOutput", "tooltipMethodHook") then
+  if Addon:GetGlobalOption("debugOutput", "tooltipMethodHook") then
     local args = ConvertArgs(...)
     Addon:Debugf("Hook: %s:%s(%s) - %s", tooltip:GetName(), methodName, tblConcat({unpack(args, 1, args.n)}, ", "), link)
   end
@@ -175,7 +175,7 @@ local function OnTooltipItemMethod(tooltip, methodName, ...)
       
       if constructor then
         local destructor = self:ConstructTooltip(tooltip, constructor)
-        if self:GetOption("constructor", "alwaysDestruct") then
+        if self:GetGlobalOption("constructor", "alwaysDestruct") then
           self:DestructTooltip(tooltip, destructor)
         end
       end
@@ -210,7 +210,7 @@ local function OnTooltipSetItem(tooltip)
   scannerTooltip.updates = scannerTooltip.updates + 1
   if scannerTooltip.isRecipe and scannerTooltip.updates % 2 == 1 then return end
   
-  if self:GetOption("debugOutput", "tooltipOnSetItemHook") then
+  if self:GetGlobalOption("debugOutput", "tooltipOnSetItemHook") then
     local methodName = scannerTooltip.lastCall[2]
     local args = ConvertArgs(unpack(scannerTooltip.lastCall, 3, scannerTooltip.lastCall.n))
     Addon:Debugf("OnTooltipSetItem: %s:%s(%s) - %s", tooltip:GetName(), methodName, tblConcat({unpack(args, 1, args.n)}, ", "), link)
@@ -229,7 +229,7 @@ local function OnTooltipSetItem(tooltip)
   end
   if constructor then
     local destructor = self:ConstructTooltip(scannerTooltip.tooltip, constructor)
-    if self:GetOption("constructor", "alwaysDestruct") then
+    if self:GetGlobalOption("constructor", "alwaysDestruct") then
       self:DestructTooltip(scannerTooltip.tooltip, destructor)
     end
   end

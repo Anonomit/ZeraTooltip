@@ -24,7 +24,7 @@ function Addon:PrepareTooltip(tooltip, methodName, ...)
     tooltip:Hide()
     local tooltipName = tooltip.tooltip:GetName()
     local opt = "tooltip_" .. tooltipName
-    if self:GetOption("debugView", opt) then
+    if self:GetGlobalOption("debugView", opt) then
       tooltip:SetOwner(WorldFrame, "ANCHOR_TOP")
     else
       tooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
