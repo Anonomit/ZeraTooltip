@@ -9,11 +9,25 @@ local strGsub  = string.gsub
 local strMatch = string.match
 local tinsert  = table.insert
 
+local mathMax = math.max
 
 local invTypeBlacklist = Addon:MakeLookupTable{"", "INVTYPE_BAG", "INVTYPE_TABARD", "INVTYPE_BODY"}
 
-local tokenOverrides = {}
 
+local function TableMax(t)
+  local key, val = next(t)
+  local max = val
+  repeat
+      max = mathMax(max, val)
+      key, val = next(t, key)
+  until not val
+  return max
+end
+local function GetItemLevelByClass(classLevels)
+  return classLevels[Addon.MY_CLASS] or TableMax(classLevels)
+end
+
+local tokenOverrides = {}
 for ids, ilvl in pairs({
   [{18665, 18646}] = 75, -- Benediction / Anathema
   [{18703, 18704, 18705}] = 75, -- Lok'delar, Rhok'delar, Lamina
@@ -25,11 +39,11 @@ for ids, ilvl in pairs({
   [{19002, 19003}] = 83, -- Head of Nefarian
   
   [{19721}] = 61, -- Primal Hakkari Shawl
-  [{19724}] = ({
+  [{19724}] = GetItemLevelByClass{
     [3] = 68,
     [4] = 65,
     [5] = 68,
-  })[Addon.MY_CLASS], -- Primal Hakkari Aegis
+  }, -- Primal Hakkari Aegis
   [{19723}] = 65, -- Primal Hakkari Kossack
   [{19722}] = 65, -- Primal Hakkari Tabard
   [{19717}] = 61, -- Primal Hakkari Armsplint
@@ -53,12 +67,13 @@ for ids, ilvl in pairs({
   
   [{21237}] = 79, -- Imperial Qiraji Regalia
   [{21232}] = 79, -- Imperial Qiraji Armaments
-  [{21232}] = ({
+  [{20928}] = GetItemLevelByClass{
     [1] = 78,
+    [3] = 81,
     [4] = 78,
     [5] = 78,
-  })[Addon.MY_CLASS], -- Qiraji Bindings of Command
-  [{21232}] = 78, -- Qiraji Bindings of Dominance
+  }, -- Qiraji Bindings of Command
+  [{20932}] = 78, -- Qiraji Bindings of Dominance
   
   [{20930, 20926}] = 81, -- Vek'lor's Diadem, Vek'nilash's Circlet
   [{20927, 20931}] = 81, -- Ouro's Intact Hide, Skin of the Great Sandworm
@@ -105,19 +120,17 @@ for ids, ilvl in pairs({
   [{46053}] = 239, -- Reply-Code Alpha 25
   [{45038}] = 258, -- Fragment of Val'anyr
   
-  
   [{47242}] = 245, -- T9 10H / 25 / 25H
   [{47557, 47558, 47559}] = 258, -- T9 25H
   
-  
   [{49643, 49644}] = 245, -- Head of Onyxia
-  
   
   [{52025, 52026, 52027}] = 264, -- T10 10H / 25 / 25H
   [{52028, 52029, 52030}] = 277, -- T10 25H
   [{50274, 49869, 50226, 50231}] = 284, -- Shadowmourne
 }) do
   for _, id in ipairs(ids) do
+    Addon:Assertf(not tokenOverrides[id], "Duplicate item level override: %d", id)
     tokenOverrides[id] = ilvl
   end
 end

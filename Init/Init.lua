@@ -183,12 +183,23 @@ do
     end
     function Addon:Throw(...)
       if Addon:IsDebugEnabled() and (not Addon:IsDBLoaded() or Addon:GetGlobalOption"debugShowLuaErrors") then
-        local text = format(...)
         geterrorhandler()(...)
       end
     end
     function Addon:Throwf(...)
-      return self:Throw(format(...))
+      local args = {...}
+      local count = select("#", ...)
+      self:xpcall(function() self:Throw(format(unpack(args, 1, count))) end)
+    end
+    function Addon:Assert(bool, ...)
+      if not bool then
+        self:Throw(...)
+      end
+    end
+    function Addon:Assertf(bool, ...)
+      if not bool then
+        self:Throwf(...)
+      end
     end
   end
 end
