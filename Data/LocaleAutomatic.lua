@@ -16,15 +16,14 @@ local tostring = tostring
 local L = setmetatable({}, {
   __index = function(self, key)
     rawset(self, key, key)
-    if Addon:IsDebugEnabled() then
-      geterrorhandler()(ADDON_NAME..": Missing automatic translation for '"..tostring(key).."'")
-    end
+    Addon:Throw(ADDON_NAME..": Missing automatic translation for '"..tostring(key).."'")
     return key
   end
 })
 Addon.L = L
 
 
+L["Options"] = OPTIONS
 
 L["Enable"]  = ENABLE
 L["Disable"] = DISABLE

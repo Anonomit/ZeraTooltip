@@ -12,12 +12,6 @@ do
   Addon.GUI = {}
   local GUI = Addon.GUI
   
-  local links = setmetatable({}, {__index = function(t, k) return k end})
-  
-  function GUI:SwapLinks(link1, link2)
-    links[link1], links[link2] = links[link2], links[link1]
-  end
-  
   local defaultInc   = 1000
   local defaultOrder = 1000
   local order        = defaultOrder
@@ -139,19 +133,19 @@ do
   end
   
   function GUI:CreateGroup(opts, key, name, desc, groupType, disabled)
-    key = "group_" .. links[key]
+    key = tostring(key)
     opts.args[key] = {name = name, desc = desc, type = "group", childGroups = groupType, args = {}, order = self:Order(), disabled = disabled}
     return opts.args[key]
   end
-  
   function GUI:CreateGroupBox(opts, name)
-    local key = "group_" .. self:Order(-1)
-    opts.args[key] = {name = name, type = "group", args = {}, order = self:Order(), inline = true}
-    return opts.args[key]
+    local key = self:Order(-1)
+    local option = self:CreateGroup(opts, key, name)
+    option.inline = true
+    return option
   end
   
-  function GUI:CreateGroupTop(name, groupType, disabled)
-    return {name = name, type = "group", childGroups = groupType, args = {}, order = self:Order(), disabled = disabled}
+  function GUI:CreateOpts(name, groupType, disabled)
+    return {name = name, type = "group", childGroups = groupType, args = {}, order = self:Order()}
   end
 end
 

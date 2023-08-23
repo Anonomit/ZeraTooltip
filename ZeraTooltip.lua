@@ -13,56 +13,23 @@ local strGmatch = string.gmatch
 local tinsert   = table.insert
 local tblRemove = table.remove
 local tblConcat = table.concat
-local tblSort   = table.sort
 
 
+function Addon:RegisterChatArg(arg, func)
+  self.chatArgs[arg] = func
+end
 
 function Addon:OnChatCommand(input)
-  local arg = self:GetArgs(input, 1)
+  local args = {self:GetArgs(input, 1)}
   
-  local func = arg and self.chatArgs[arg] or nil
+  local func = args[1] and self.chatArgs[args[1]] or nil
   if func then
-    func(self)
+    func(self, unpack(args))
   else
-    self:OpenConfig(ADDON_NAME)
+    self:OpenConfig()
   end
 end
 
-
-
-function Addon:CreateOptions()
-  self:MakeAddonOptionsTemp(self.chatCommands[1])
-  
-  self:MakeAddonOptionsContainer(self.chatCommands[1])
-  -- self:MakeAddonOptions(self.chatCommands[1])
-  
-  -- self:MakeStatsOptions(self.L["Stats"], self.chatCommands[1], "stats", "stat", "st")
-  -- self:MakePaddingOptions(L["Spacing"], self.chatCommands[1], "spacing", "space", "spaces", "spa", "sp", "padding", "pad", "pa")
-  -- self:MakeExtraOptions(self.L["Miscellaneous"], self.chatCommands[1], "misc", "miscellaneous", "other", "m")
-  --[[
-  -- Profile Options
-  do
-    local args = {"profiles", "profile", "prof", "pro", "pr", "p"}
-    local profileOptions = self.AceDBOptions:GetOptionsTable(self:GetDB())
-    local categoryName = profileOptions.name
-    profileOptions.name = format("%s v%s > %s  (/%s %s)", ADDON_NAME, tostring(self:GetOption"version"), profileOptions.name, self.chatCommands[1], args[1])
-    local panel = self:CreateOptionsCategory(categoryName, profileOptions)
-    local function OpenOptions() return self:OpenConfig(panel) end
-    for _, arg in ipairs(args) do
-      self.chatArgs[arg] = OpenOptions
-    end
-  end
-  --]]
-  -- Reset Options
-  -- self:MakeResetOptions(self.L["Reset"], self.chatCommands[1], "reset", "res", "re", "r")
-  
-  -- Debug Options
-  -- if self:IsDebugEnabled() then
-  --   self:MakeDebugOptions(self.L["Debug"], self.chatCommands[1], "debug", "db", "d")
-  -- end
-  
-  
-end
 
 function Addon:InitDB()
   local configVersion = self.SemVer(self:GetOption"version" or tostring(self.version))
@@ -176,11 +143,7 @@ function Addon:OnInitialize()
   self.db        = self.AceDB:New(("%sDB"):format(ADDON_NAME), self:MakeDefaultOptions(), true)
   self.dbDefault = self.AceDB:New({}                         , self:MakeDefaultOptions(), true)
   
-  self.chatCommands = {"zt", "zera", ADDON_NAME:lower()}
-  for _, chatCommand in ipairs(self.chatCommands) do
-    self:RegisterChatCommand(chatCommand, "OnChatCommand", true)
-  end
-  
+  self.chatArgs     = {}
   self.tooltipCache = {}
 end
 
@@ -191,12 +154,18 @@ function Addon:OnEnable()
   self:GetDB().RegisterCallback(self, "OnProfileCopied" , "InitDB")
   self:GetDB().RegisterCallback(self, "OnProfileReset"  , "InitDB")
   
-  self.chatArgs = {}
+  for i, chatCommand in ipairs{"zt", "zera", ADDON_NAME:lower()} do
+    if i == 1 then
+      self:MakeAddonOptions(chatCommand)
+      self:MakeBlizzardOptions(chatCommand)
+    end
+    self:RegisterChatCommand(chatCommand, "OnChatCommand", true)
+  end
+  
   do
     local function PrintVersion() self:Printf("Version: %s", tostring(self.version)) end
-    for _, arg in ipairs{"version", "vers", "ver", "v"} do self.chatArgs[arg] = PrintVersion end
+    for _, arg in ipairs{"version", "vers", "ver", "v"} do self:RegisterChatArg(arg, PrintVersion) end
   end
-  self:CreateOptions()
   
   self:HookTooltips()
   
@@ -215,7 +184,7 @@ function Addon:OnEnable()
   local criticalCVars = self:MakeLookupTable{"colorblindMode"}
   self:RegisterEvent("CVAR_UPDATE", function(e, cvar, val)
     if criticalCVars[cvar] then
-    self:DebugfIfOutput("cvarSet", "Setting %s: %s", cvar, tostring(val))
+      self:DebugfIfOutput("cvarSet", "Setting %s: %s", cvar, tostring(val))
       for funcName, func in next, Addon.onCVarSetHandlers, nil do
         if type(func) == "function" then
           func(self, cvar, val)

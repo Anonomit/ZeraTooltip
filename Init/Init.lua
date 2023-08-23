@@ -373,100 +373,132 @@ end
 --   ╚═════╝ ╚═╝        ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
 
 do
+  local usingSettingsPanel = Settings and Settings.RegisterCanvasLayoutCategory -- from AceConfigDialog
+  local SettingsFrame = usingSettingsPanel and SettingsPanel or InterfaceOptionsFrame
+  local blizzardCategory
+  
   -- Fix InterfaceOptionsFrame_OpenToCategory not actually opening the category (and not even scrolling to it)
   -- Originally from BlizzBugsSuck (https://www.wowinterface.com/downloads/info17002-BlizzBugsSuck.html) and edited to not be global
-  
-  -- local function GetPanelName(panel)
-  --   local tp = type(panel)
-  --   local cat = INTERFACEOPTIONS_ADDONCATEGORIES
-  --   if tp == "string" then
-  --     for i = 1, #cat do
-  --       local p = cat[i]
-  --       if p.name == panel then
-  --         if p.parent then
-  --           return GetPanelName(p.parent)
-  --         else
-  --           return panel
-  --         end
-  --       end
-  --     end
-  --   elseif tp == "table" then
-  --     for i = 1, #cat do
-  --       local p = cat[i]
-  --       if p == panel then
-  --         if p.parent then
-  --           return GetPanelName(p.parent)
-  --         else
-  --           return panel.name
-  --         end
-  --       end
-  --     end
-  --   end
-  -- end
-  
-  -- local skip
-  -- local function InterfaceOptionsFrame_OpenToCategory_Fix(panel)
-  --   if skip --[[or InCombatLockdown()--]] then return end
-  --   local panelName = GetPanelName(panel)
-  --   if not panelName then return end -- if its not part of our list return early
-  --   local noncollapsedHeaders = {}
-  --   local shownPanels = 0
-  --   local myPanel
-  --   local t = {}
-  --   local cat = INTERFACEOPTIONS_ADDONCATEGORIES
-  --   for i = 1, #cat do
-  --     local panel = cat[i]
-  --     if not panel.parent or noncollapsedHeaders[panel.parent] then
-  --       if panel.name == panelName then
-  --         panel.collapsed = true
-  --         t.element = panel
-  --         InterfaceOptionsListButton_ToggleSubCategories(t)
-  --         noncollapsedHeaders[panel.name] = true
-  --         myPanel = shownPanels + 1
-  --       end
-  --       if not panel.collapsed then
-  --         noncollapsedHeaders[panel.name] = true
-  --       end
-  --       shownPanels = shownPanels + 1
-  --     end
-  --   end
-  --   local min, max = InterfaceOptionsFrameAddOnsListScrollBar:GetMinMaxValues()
-  --   if shownPanels > 15 and min < max then
-  --     local val = (max/(shownPanels-15))*(myPanel-2)
-  --     InterfaceOptionsFrameAddOnsListScrollBar:SetValue(val)
-  --   end
-  --   skip = true
-  --   InterfaceOptionsFrame_OpenToCategory(panel)
-  --   skip = false
-  -- end
-  
-  -- local isMe = false
-  -- hooksecurefunc("InterfaceOptionsFrame_OpenToCategory", function(...)
-  --   if skip then return end
-  --   if Addon:GetGlobalOption("fix", "InterfaceOptionsFrameForAll") or Addon:GetGlobalOption("fix", "InterfaceOptionsFrameForMe") and isMe then
-  --     Addon:DebugIfOutput("InterfaceOptionsFrameFix", "Patching Interface Options")
-  --     InterfaceOptionsFrame_OpenToCategory_Fix(...)
-  --     isMe = false
-  --   end
-  -- end)
-  
-  function Addon:OpenConfig_old(category)
-    isMe = Addon:GetGlobalOption("fix", "InterfaceOptionsFrameForMe")
-    if isMe then
-      InterfaceOptionsFrame_OpenToCategory(category)
-      isMe = true
+  if not usingSettingsPanel then
+    local function GetPanelName(panel)
+      local tp = type(panel)
+      local cat = INTERFACEOPTIONS_ADDONCATEGORIES
+      if tp == "string" then
+        for i = 1, #cat do
+          local p = cat[i]
+          if p.name == panel then
+            if p.parent then
+              return GetPanelName(p.parent)
+            else
+              return panel
+            end
+          end
+        end
+      elseif tp == "table" then
+        for i = 1, #cat do
+          local p = cat[i]
+          if p == panel then
+            if p.parent then
+              return GetPanelName(p.parent)
+            else
+              return panel.name
+            end
+          end
+        end
+      end
     end
-    InterfaceOptionsFrame_OpenToCategory(category)
+    
+    local skip
+    local function InterfaceOptionsFrame_OpenToCategory_Fix(panel)
+      if skip --[[or InCombatLockdown()--]] then return end
+      local panelName = GetPanelName(panel)
+      if not panelName then return end -- if its not part of our list return early
+      local noncollapsedHeaders = {}
+      local shownPanels = 0
+      local myPanel
+      local t = {}
+      local cat = INTERFACEOPTIONS_ADDONCATEGORIES
+      for i = 1, #cat do
+        local panel = cat[i]
+        if not panel.parent or noncollapsedHeaders[panel.parent] then
+          if panel.name == panelName then
+            panel.collapsed = true
+            t.element = panel
+            InterfaceOptionsListButton_ToggleSubCategories(t)
+            noncollapsedHeaders[panel.name] = true
+            myPanel = shownPanels + 1
+          end
+          if not panel.collapsed then
+            noncollapsedHeaders[panel.name] = true
+          end
+          shownPanels = shownPanels + 1
+        end
+      end
+      local min, max = InterfaceOptionsFrameAddOnsListScrollBar:GetMinMaxValues()
+      if shownPanels > 15 and min < max then
+        local val = (max/(shownPanels-15))*(myPanel-2)
+        InterfaceOptionsFrameAddOnsListScrollBar:SetValue(val)
+      end
+      skip = true
+      InterfaceOptionsFrame_OpenToCategory(panel)
+      skip = false
+    end
+    
+    local isMe = false
+    hooksecurefunc("InterfaceOptionsFrame_OpenToCategory", function(...)
+      if skip then return end
+      if Addon:GetGlobalOption("fix", "InterfaceOptionsFrameForAll") or Addon:GetGlobalOption("fix", "InterfaceOptionsFrameForMe") and isMe then
+        Addon:DebugIfOutput("InterfaceOptionsFrameFix", "Patching Interface Options")
+        InterfaceOptionsFrame_OpenToCategory_Fix(...)
+        isMe = false
+      end
+    end)
   end
   
-  function Addon:OpenConfig(category)
-    if self.AceConfigDialog.OpenFrames[category] then
-      self.AceConfigDialog:Close(category)
+  function Addon:OpenBlizzardConfig(category)
+    if usingSettingsPanel then
+      Settings.OpenToCategory(blizzardCategory)
     else
-      self.AceConfigDialog:Open(category)
+      isMe = Addon:GetGlobalOption("fix", "InterfaceOptionsFrameForMe")
+      if isMe then
+        InterfaceOptionsFrame_OpenToCategory(blizzardCategory)
+        isMe = true
+      end
+      InterfaceOptionsFrame_OpenToCategory(blizzardCategory)
+    end
+  end
+  function Addon:CloseBlizzardConfig()
+    if usingSettingsPanel then
+      SettingsFrame:Close(true)
+    else
+      SettingsFrame:Hide()
+    end
+  end
+  function Addon:ToggleBlizzardConfig(...)
+    if SettingsFrame:IsShown() then
+      self:CloseBlizzardConfig(...)
+    else
+      self:OpenBlizzardConfig(...)
     end
   end
   
+  function Addon:OpenConfig(...)
+    self.AceConfigDialog:Open(ADDON_NAME)
+    if select("#", ...) > 0 then
+      self.AceConfigDialog:SelectGroup(ADDON_NAME, ...)
+    end
+  end
+  function Addon:CloseConfig()
+    self.AceConfigDialog:Close(ADDON_NAME)
+  end
+  function Addon:ToggleConfig(...)
+    if self.AceConfigDialog.OpenFrames[ADDON_NAME] then
+      self:CloseConfig()
+    else
+      self:OpenConfig(...)
+      self.AceConfigDialog:SelectGroup(ADDON_NAME, ...)
+    end
+  end
   
   
   function Addon:ResetProfile(category)
@@ -474,29 +506,13 @@ do
     self.AceConfigRegistry:NotifyChange(category)
   end
   
-  function Addon:CreateOptionsCategory_old(categoryName, options)
-    local category = ADDON_NAME .. (categoryName and ("." .. categoryName) or "")
-    self.AceConfig:RegisterOptionsTable(category, options)
-    local Panel = self.AceConfigDialog:AddToBlizOptions(category, categoryName, categoryName and ADDON_NAME or nil)
-    Panel.default = function() self:ResetProfile(category) end
+  function Addon:CreateBlizzardOptionsCategory(options)
+    local blizzardOptions = ADDON_NAME .. ".Blizzard"
+    self.AceConfig:RegisterOptionsTable(blizzardOptions, options)
+    local Panel, id = self.AceConfigDialog:AddToBlizOptions(blizzardOptions, ADDON_NAME)
+    blizzardCategory = id
+    Panel.default = function() self:ResetProfile(blizzardOptions) end
     return Panel
-  end
-  
-  function Addon:CreateOptionsCategory_temp(categoryName, options)
-    local category = ADDON_NAME .. (categoryName and ("." .. categoryName) or " ")
-    self.AceConfig:RegisterOptionsTable(category, options)
-    local Panel = self.AceConfigDialog:AddToBlizOptions(category, categoryName, categoryName and ADDON_NAME or nil)
-    Panel.default = function() self:ResetProfile(category) end
-    return Panel
-  end
-  
-  function Addon:CreateOptionsCategory(categoryName, options)
-    local category = ADDON_NAME .. (categoryName and ("." .. categoryName) or "")
-    self.AceConfig:RegisterOptionsTable(category, options)
-    -- local Panel = self.AceConfigDialog:AddToBlizOptions(category, categoryName, categoryName and ADDON_NAME or nil)
-    -- Panel.default = function() self:ResetProfile(category) end
-    -- return Panel
-    return category
   end
 end
 
@@ -564,10 +580,16 @@ do
   end
   
   function Addon:Clamp(min, num, max)
-    assert(type(min) == "number", "Can't clamp. min is " .. type(min))
-    assert(type(max) == "number", "Can't clamp. max is " .. type(max))
-    assert(min <= max, format("Can't clamp. min (%d) > max (%d)", min, max))
-    return mathMin(mathMax(num, min), max)
+    assert(not min or type(min) == "number", "Can't clamp. min is " .. type(min))
+    assert(not max or type(max) == "number", "Can't clamp. max is " .. type(max))
+    assert(not min or not max or (min <= max), format("Can't clamp. min (%d) > max (%d)", min, max))
+    if min then
+      num = mathMax(num, min)
+    end
+    if max then
+      num = mathMin(num, max)
+    end
+    return num
   end
 end
 
