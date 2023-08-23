@@ -15,10 +15,11 @@ L["Reorder"] = true
 L["Recolor"] = true
 L["Cache"]   = true
 
-L["Allow or prohibit all reordering."]                       = true
-L["Allow or prohibit all rewording."]                        = true
-L["Allow or prohibit all recoloring."]                       = true
-L["Speeds up processing, but may introduce tooltip issues."] = true
+L["Allow or prohibit all reordering."]                                                            = true
+L["Allow or prohibit all rewording."]                                                             = true
+L["Allow or prohibit all recoloring."]                                                            = true
+L["Greatly speeds up processing, but may occasionally cause tooltip formatting issues."]          = true
+L["If a tooltip appears to be formatted incorrectly, hide it for %d seconds to clear the cache."] = true
 
 
 L["Multiply"]   = true

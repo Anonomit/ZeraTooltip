@@ -305,7 +305,7 @@ local function MakeGeneralOptions(opts)
       GUI:CreateNewline(opts)
       
       GUI:SetDBType"Global"
-      GUI:CreateToggle(opts, {"cache", "enabled"}, L["Cache"], L["Speeds up processing, but may introduce tooltip issues."])
+      GUI:CreateToggle(opts, {"cache", "enabled"}, L["Cache"], L["Greatly speeds up processing, but may occasionally cause tooltip formatting issues."] .. "|n|n" .. Addon:MakeColorCode(Addon.COLORS.RED, format(L["If a tooltip appears to be formatted incorrectly, hide it for %d seconds to clear the cache."], Addon:GetGlobalOption("cache", "constructorWipeDelay"))))
       GUI:CreateReset(opts, {"cache", "enabled"})
       GUI:ResetDBType()
     end

@@ -216,15 +216,15 @@ function Addon:MakeDefaultOptions()
         
         cache = {
           ["*"]   = true,
-          enabled = false,
+          enabled = true,
           
           -- constructor = false,
           -- text        = false,
           -- stat        = false,
           
-          constructorWipeDelay    = 3, -- time in seconds without constructor being requested before it's cleared
-          constructorMinSeenCount = 6, -- minimum number of times constructor must be requested before it can be cached
-          constructorMinSeenTime  = 1, -- minimum time in seconds since constructor was first requested before it can be cached
+          constructorWipeDelay    = 5,   -- time in seconds without constructor being accessed before it's cleared
+          constructorMinSeenCount = 3,   -- minimum number of times item must be seen (within wipe delay) before it can be cached
+          constructorMinSeenTime  = 0.5, -- minimum time in seconds since item was first seen (within wipe delay) before it can be cached
         },
         
         throttle = {
