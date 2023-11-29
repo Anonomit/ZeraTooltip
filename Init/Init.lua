@@ -4,7 +4,6 @@ local ADDON_NAME, Data = ...
 
 
 local Addon = LibStub("AceAddon-3.0"):NewAddon(ADDON_NAME, "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0")
-ZeraTooltip = Addon
 
 
 Addon.AceConfig         = LibStub"AceConfig-3.0"
@@ -13,22 +12,21 @@ Addon.AceConfigRegistry = LibStub"AceConfigRegistry-3.0"
 Addon.AceDB             = LibStub"AceDB-3.0"
 Addon.AceDBOptions      = LibStub"AceDBOptions-3.0"
 
-Addon.TipHooker  = LibStub"LibTipHooker-1.1-ZeraTooltip"
-Addon.TipHooker2 = LibStub"LibTipHooker-1.0-ZeraTooltip"
-Addon.SemVer     = LibStub"SemVer"
+Addon.SemVer = LibStub"SemVer"
 
 
 
 
-local strMatch  = string.match
-local strSub    = string.sub
+local strMatch     = string.match
+local strSub       = string.sub
 
-local tblConcat = table.concat
-local tblRemove = table.remove
+local tblConcat    = table.concat
+local tblRemove    = table.remove
 
-local mathFloor = math.floor
-local mathMin   = math.min
-local mathMax   = math.max
+local mathFloor    = math.floor
+local mathMin      = math.min
+local mathMax      = math.max
+local mathRandom   = math.random
 
 local ipairs       = ipairs
 local next         = next
@@ -87,7 +85,6 @@ do
   end
   
   function Addon:Dump(t)
-    print"hither"
     self:Debugf("%s %s", self.debugPrefix, tostring(t))
     return DevTools_Dump(t)
   end
@@ -95,7 +92,6 @@ do
   local function Debug(self, methodName, ...)
     if not self:IsDebugEnabled() then return end
     if self.GetGlobalOption and self:GetGlobalOption("debugOutput", "suppressAll") then return end
-    print"there"
     return self[methodName](self, ...)
   end
   function Addon:Debug(...)
@@ -105,7 +101,6 @@ do
     return Debug(self, "Printf", "%s " .. select(1, ...), self.debugPrefix, select(2, ...))
   end
   function Addon:DebugDump(...)
-    print("here")
     return Debug(self, "Dump", ...)
   end
   
@@ -309,6 +304,7 @@ do
       local GetDefaultOption = format("Get%s%sOption", defaultName, typeName)
       
       Addon[GetOption] = function(self, ...)
+        assert(self[dbKey], format("Attempted to access database before initialization: %s", tblConcat({dbKey, typeKey, ...}, " > ")))
         local val = self[dbKey][typeKey]
         for _, key in ipairs{...} do
           assert(type(val) == "table", format("Bad database access: %s", tblConcat({dbKey, typeKey, ...}, " > ")))
@@ -326,11 +322,12 @@ do
         local ResetOption  = format("Reset%s%sOption",  dbName, typeName)
       
         Addon[SetOption] = function(self, val, ...)
+          assert(self[dbKey], format("Attempted to access database before initialization: %s = %s", tblConcat({dbKey, typeKey, ...}, " > "), tostring(val)))
           local keys = {...}
           local lastKey = tblRemove(keys, #keys)
           local tbl = self[dbKey][typeKey]
           for _, key in ipairs(keys) do
-            assert(type(tbl[key]) == "table", format("Bad database access: %s", tblConcat({dbKey, typeKey, ...}, " > ")))
+            assert(type(tbl[key]) == "table", format("Bad database access: %s = %s", tblConcat({dbKey, typeKey, ...}, " > "), tostring(val)))
             tbl = tbl[key]
           end
           tbl[lastKey] = val
@@ -519,6 +516,48 @@ end
 
 
 
+--   ██████╗██╗  ██╗ █████╗ ████████╗
+--  ██╔════╝██║  ██║██╔══██╗╚══██╔══╝
+--  ██║     ███████║███████║   ██║   
+--  ██║     ██╔══██║██╔══██║   ██║   
+--  ╚██████╗██║  ██║██║  ██║   ██║   
+--   ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   
+
+do
+  Addon.chatArgs = {}
+
+  function Addon:RegisterChatArg(arg, func)
+    Addon.chatArgs[arg] = func
+  end
+
+  function Addon:OnChatCommand(input)
+    local args = {self:GetArgs(input, 1)}
+    
+    local func = args[1] and self.chatArgs[args[1]] or nil
+    if func then
+      func(self, unpack(args))
+    else
+      self:OpenConfig()
+    end
+  end
+
+  function Addon:InitChatCommands(slashKeywords)
+    for i, chatCommand in ipairs(slashKeywords) do
+      if i == 1 then
+        self:MakeAddonOptions(chatCommand)
+        self:MakeBlizzardOptions(chatCommand)
+      end
+      self:RegisterChatCommand(chatCommand, "OnChatCommand", true)
+    end
+
+    local function PrintVersion() self:Printf("Version: %s", tostring(self.version)) end
+    for _, arg in ipairs{"version", "vers", "ver", "v"} do self:RegisterChatArg(arg, PrintVersion) end
+  end
+end
+
+
+
+
 --   ██████╗ ██████╗ ██╗      ██████╗ ██████╗ ███████╗
 --  ██╔════╝██╔═══██╗██║     ██╔═══██╗██╔══██╗██╔════╝
 --  ██║     ██║   ██║██║     ██║   ██║██████╔╝███████╗
@@ -634,6 +673,39 @@ do
     end
     return new
   end
+
+  function Addon:Filter(t, ...)
+    local new = {}
+    
+    for i, v in pairs(t) do
+      local pass = true
+      for j = 1, select("#", ...) do
+        local filter = select(j, ...)
+        if not filter(v, i, t) then
+          pass = false
+          break
+        end
+      end
+      if pass then
+        tinsert(new, v)
+      end
+    end
+    
+    local meta = getmetatable(self)
+    if meta then
+      setmetatable(new, meta)
+    end
+    
+    return new
+  end
+
+  function Addon:Shuffle(t)
+    for i = #t, 2, -1 do
+      local j = math.random(i)
+      t[i], t[j] = t[j], t[i]
+    end
+  end
+
   
   function Addon:MakeLookupTable(t, val, keepOrigVals)
     local ValFunc

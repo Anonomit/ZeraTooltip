@@ -15,20 +15,8 @@ local tblRemove = table.remove
 local tblConcat = table.concat
 
 
-function Addon:RegisterChatArg(arg, func)
-  self.chatArgs[arg] = func
-end
 
-function Addon:OnChatCommand(input)
-  local args = {self:GetArgs(input, 1)}
-  
-  local func = args[1] and self.chatArgs[args[1]] or nil
-  if func then
-    func(self, unpack(args))
-  else
-    self:OpenConfig()
-  end
-end
+
 
 
 function Addon:InitDB()
@@ -142,8 +130,7 @@ end
 function Addon:OnInitialize()
   self.db        = self.AceDB:New(("%sDB"):format(ADDON_NAME), self:MakeDefaultOptions(), true)
   self.dbDefault = self.AceDB:New({}                         , self:MakeDefaultOptions(), true)
-  
-  self.chatArgs     = {}
+
   self.tooltipCache = {}
 end
 
@@ -154,18 +141,7 @@ function Addon:OnEnable()
   self:GetDB().RegisterCallback(self, "OnProfileCopied" , "InitDB")
   self:GetDB().RegisterCallback(self, "OnProfileReset"  , "InitDB")
   
-  for i, chatCommand in ipairs{"zt", "zera", ADDON_NAME:lower()} do
-    if i == 1 then
-      self:MakeAddonOptions(chatCommand)
-      self:MakeBlizzardOptions(chatCommand)
-    end
-    self:RegisterChatCommand(chatCommand, "OnChatCommand", true)
-  end
-  
-  do
-    local function PrintVersion() self:Printf("Version: %s", tostring(self.version)) end
-    for _, arg in ipairs{"version", "vers", "ver", "v"} do self:RegisterChatArg(arg, PrintVersion) end
-  end
+  self:InitChatCommands{"zt", "zera", ADDON_NAME:lower()}
   
   self:HookTooltips()
   
