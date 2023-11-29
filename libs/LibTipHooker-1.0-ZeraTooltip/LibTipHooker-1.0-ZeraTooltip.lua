@@ -74,6 +74,7 @@ local TooltipList = {
 		"GameTooltip",
 		"ItemRefTooltip",
 		"ShoppingTooltip",
+		"AceConfigDialogTooltip",
     -- "ItemSocketingDescription",
 		-- -- EquipCompare support
 		-- "ComparisonTooltip",

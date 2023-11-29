@@ -78,6 +78,7 @@ local TooltipList = {
     "GameTooltip",
     "ItemRefTooltip",
     "ShoppingTooltip",
+    "AceConfigDialogTooltip",
     -- "ItemSocketingDescription",
     -- "AtlasLootTooltip",-- AtlasLoot, kept for LibTipHooker LOD
     -- "ComparisonTooltip",-- EquipCompare
