@@ -246,6 +246,11 @@ do
     bcc     = 2,
     classic = 1,
   }
+  Addon.seasons = {
+    mastery   = 1,
+    discovery = 2,
+  }
+  Addon.season = ((C_Seasons or {}).GetActiveSeason or nop)() or 0
   Addon.expansionLevel = tonumber(GetBuildInfo():match"^(%d+)%.")
   if Addon.expansionLevel >= Addon.expansions.retail then
     Addon.expansionName = "retail"
@@ -260,6 +265,12 @@ do
   Addon.isWrath   = Addon.expansionName == "wrath"
   Addon.isTBC     = Addon.expansionName == "tbc"
   Addon.isClassic = Addon.expansionName == "classic"
+  
+  Addon.isSeasonOfMastery   = Addon.season == Addon.seasons.mastery
+  Addon.isSeasonOfDiscovery = Addon.season == Addon.seasons.discovery
+  
+  Addon.isSoM = Addon.isSeasonOfMastery
+  Addon.isSoD = Addon.isSeasonOfDiscovery
 end
 
 

@@ -115,6 +115,9 @@ if Addon.isClassic then
   Addon:AddExtraStatCapture("Spell Penetration",
     {INPUT = "^Decreases the magical resistances of your spell targets by (%d+)%.$"})
   
+  Addon:AddExtraStatCapture("Hit Rating",
+    {INPUT = "^Improves your chance to hit with spells and with melee and ranged attacks by (%d+%%)%.$"})
+  
   Addon:AddExtraStatCapture("Physical Hit Rating",
     {INPUT = "^Improves your chance to hit by (%d+%%)%.$"})
   
