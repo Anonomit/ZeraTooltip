@@ -99,6 +99,9 @@ L["This applies to enchantments that add an On Use effect to the item."] = true
 L["This applies to temporary weapon enchantments."]                      = true
 L["Whether to position this line with other On Use effects rather than the normal enchantment location."] = true
 
+-- rune
+L["This applies to runes."] = true
+
 -- durability
 L["Show Current"] = true
 

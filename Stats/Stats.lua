@@ -389,6 +389,7 @@ do
   
   self.statsInfo["Enchant"]            = {color = self.COLORS.GREEN}
   self.statsInfo["WeaponEnchant"]      = {color = self.COLORS.GREEN}
+  self.statsInfo["Rune"]               = {color = self.COLORS.GREEN}
   
   self.statsInfo["Socket_red"]         = {color = self.COLORS.RED}
   self.statsInfo["Socket_blue"]        = {color = self.COLORS.BLUE}

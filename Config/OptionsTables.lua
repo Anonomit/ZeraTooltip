@@ -482,7 +482,20 @@ local function MakePaddingOptions(opts, categoryName)
   
   -- Weapon Enchant
   local name, beforeStat, afterStat, sample = self.L["Weapon Enchantment"], {"pad", "before", "WeaponEnchant"}, {"pad", "after", "WeaponEnchant"}, self:MakeColorCode(self.COLORS.GREEN, format(ENCHANTED_TOOLTIP_LINE, self.L["Weapon Enchantment"]))
-  paddedAfterPrevious = CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, paddedAfterPrevious)
+  CreatePaddingOption(opts, name, beforeStat, afterStat, sample)
+  paddedAfterPrevious = false
+  -- paddedAfterPrevious = CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, paddedAfterPrevious)
+  
+  -- Rune
+  if Addon.isSoD then
+    local name, beforeStat, afterStat, sample = self.L["Equipped Runes"], {"pad", "before", "WeaponEnchant"}, {"pad", "after", "WeaponEnchant"}, self:MakeColorCode(self.COLORS.GREEN, self.L["Equipped Runes"])
+    CreatePaddingOption(opts, name, beforeStat, afterStat, sample, true)
+  end
+  
+  if self:GetOption("pad", "after", "WeaponEnchant") then
+    CreateGroupGap(opts, "after" .. self.L["Weapon Enchantment"])
+    paddedAfterPrevious = true
+  end
   
   -- Sockets
   local name, beforeStat, afterStat, sample = L["Sockets"], {"pad", "before", "Socket"}, {"pad", "after", "SocketBonus"}, {self.socketIcon .. " " .. self:MakeColorCode(self.COLORS.GRAY, self.L["Meta Socket"]), self:MakeColorCode(self.COLORS.GRAY, format(ITEM_SOCKET_BONUS, format(ITEM_MOD_MANA_REGENERATION, "10")))}
@@ -1415,6 +1428,26 @@ local function MakeExtraOptions(opts, categoryName)
     local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.GREEN, defaultText, self:ModifyWeaponEnchantment(defaultText))
     
     local opts = GUI:CreateGroup(opts, stat, formattedText, L["This applies to temporary weapon enchantments."])
+    
+    CreateTitle(opts, defaultText, formattedText, changed)
+    
+    CreateColor(opts, stat)
+    
+    CreateReword(opts, stat)
+    
+    CreateIcon(opts, stat)
+    
+    CreateHide(opts, stat)
+  end
+  
+  -- Rune
+  if Addon.isSoD then
+    local stat = "Rune"
+    
+    local defaultText = self.L["All Runes"]
+    local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.GREEN, defaultText, self:ModifyRune(defaultText))
+    
+    local opts = GUI:CreateGroup(opts, stat, formattedText, L["This applies to runes."])
     
     CreateTitle(opts, defaultText, formattedText, changed)
     

@@ -20,6 +20,7 @@ local easyLines = {
   ProposedEnchant = "Enchant",
   EnchantHint     = "Enchant",
   WeaponEnchant   = "WeaponEnchant",
+  Rune            = "WeaponEnchant",
   Socket          = "Socket",
   RequiredSocket  = "Socket",
   SocketBonus     = "SocketBonus",

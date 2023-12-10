@@ -81,6 +81,8 @@ function Addon:RewordLine(tooltip, line, tooltipData)
       text = self:ModifyEnchantment(text)
     elseif line.type == "WeaponEnchant" then
       text = self:ModifyWeaponEnchantment(text)
+    elseif line.type == "Rune" then
+      text = self:ModifyRune(text)
     elseif line.type == "Durability" then
       text = self:ModifyDurability(text)
     elseif line.type == "RequiredClasses" then

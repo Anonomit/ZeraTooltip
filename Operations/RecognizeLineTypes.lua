@@ -84,6 +84,7 @@ local contexts = Addon:MakeLookupTable({
   "Enchant",
   "RequiredEnchant",
   "WeaponEnchant",
+  "Rune",
   "Socket",
   "RequiredSocket",
   "LastSocket",
@@ -352,6 +353,23 @@ contextActions = Addon:Map({
   end,
   WeaponEnchant = function(i, tooltipData, line)
     if tooltipData.isWeapon and line.colorLeft == Addon.COLORS.GREEN then
+      for _, alt in ipairs{
+        contexts.ProposedEnchant,
+        contexts.LastSecondaryStat,
+        contexts.MadeBy,
+        contexts.SocketHint,
+      } do
+        local increment = contextActions[alt](alt, tooltipData, line)
+        if increment then
+          return alt - i + increment
+        end
+      end
+      -- didn't match any other possible green line
+      return SetContext(i, tooltipData, line)
+    end
+  end,
+  Rune = function(i, tooltipData, line)
+    if not tooltipData.isWeapon and line.colorLeft == Addon.COLORS.GREEN then
       for _, alt in ipairs{
         contexts.ProposedEnchant,
         contexts.LastSecondaryStat,

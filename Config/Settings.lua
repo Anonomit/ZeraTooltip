@@ -44,6 +44,7 @@ function Addon:MakeDefaultOptions()
           Block              = false,
           Enchant            = false,
           WeaponEnchant      = false,
+          Rune               = false,
           EnchantOnUse       = false,
           Durability         = false,
           RequiredClasses    = false,
@@ -136,6 +137,7 @@ function Addon:MakeDefaultOptions()
           Enchant         = true,
           EnchantOnUse    = false,
           WeaponEnchant   = true,
+          Rune            = true,
           RequiredClasses = true,
         },
         icon = {
@@ -150,6 +152,7 @@ function Addon:MakeDefaultOptions()
           Block          = "Interface\\ICONS\\INV_Shield_09",
           Enchant        = "Interface\\Buttons\\UI-GroupLoot-DE-Up",
           WeaponEnchant  = "Interface\\CURSOR\\Attack",
+          Rune           = "Interface\\ICONS\\INV_Misc_Rune_06",
           EnchantOnUse   = "Interface\\Buttons\\UI-GroupLoot-DE-Up",
           Durability     = "Interface\\MINIMAP\\TRACKING\\Repair",
           Equip          = "Interface\\Tooltips\\ReforgeGreenArrow",
@@ -159,6 +162,7 @@ function Addon:MakeDefaultOptions()
         iconSizeManual = {
           ["*"] = false,
           Title = true,
+          Rune  = true,
         },
         iconSize = {
           ["*"] = 16,

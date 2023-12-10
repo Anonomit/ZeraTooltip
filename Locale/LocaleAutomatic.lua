@@ -62,6 +62,8 @@ L["Show"]   = SHOW
 L["Base Stats"]         = PLAYERSTAT_BASE_STATS
 L["Enchant"]            = ENSCRIBE
 L["Weapon Enchantment"] = WEAPON_ENCHANTMENT
+L["Equipped Runes"]     = EQUIPPED_RUNES
+L["All Runes"]          = ALL_RUNES
 L["Meta Socket"]        = EMPTY_SOCKET_META
 L["End"]                = KEY_END
 

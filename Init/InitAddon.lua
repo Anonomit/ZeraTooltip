@@ -634,6 +634,7 @@ do
   Addon.iconPaths = {
     Addon.texturesPath .. "Samwise",
     
+    
     "Interface\\Buttons\\UI-AttributeButton-Encourage-Up",
     "Interface\\Buttons\\UI-GroupLoot-Coin-Up",
     "Interface\\Buttons\\UI-GroupLoot-DE-Up",
@@ -697,11 +698,12 @@ do
     "Interface\\FriendsFrame\\StatusIcon-Online",
     
     "Interface\\HELPFRAME\\HotIssueIcon",
+    
+    "Interface\\ICONS\\INV_Misc_Rune_06",
+    
     -- "Interface\\HELPFRAME\\HelpIcon-HotIssues",
     -- "Interface\\HELPFRAME\\HelpIcon-Suggestion",
     -- "Interface\\HELPFRAME\\ReportLagIcon-Spells",
-    
-    
     
     -- "Interface\\ICONS\\ABILITY_Rogue_PlunderArmor",
     -- "Interface\\ICONS\\Garrison_ArmorUpgrade",
@@ -806,14 +808,14 @@ do
     -- "Interface\\ICONS\\INV_Shield_08",
     "Interface\\ICONS\\INV_Shield_09",
     "Interface\\ICONS\\INV_Shield_10",
-    "Interface\\ICONS\\_________",
-    "Interface\\ICONS\\_________",
-    "Interface\\ICONS\\_________",
-    "Interface\\ICONS\\_________",
-    "Interface\\ICONS\\_________",
-    "Interface\\ICONS\\_________",
-    "Interface\\ICONS\\_________",
-    "Interface\\ICONS\\_________",
+    -- "Interface\\ICONS\\_________",
+    -- "Interface\\ICONS\\_________",
+    -- "Interface\\ICONS\\_________",
+    -- "Interface\\ICONS\\_________",
+    -- "Interface\\ICONS\\_________",
+    -- "Interface\\ICONS\\_________",
+    -- "Interface\\ICONS\\_________",
+    -- "Interface\\ICONS\\_________",
     
     
     "Interface\\MINIMAP\\Dungeon",
