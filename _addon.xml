@@ -7,6 +7,8 @@
   <Include file="Locale\_locale.xml"/>
   <Include file="LocaleExtra\_localeExtra.xml"/>
   
+  <Include file="Stats\_stats.xml"/>
+  
   <Include file="Operations\_operations.xml"/>
   
   <Include file="Config\_config.xml"/>

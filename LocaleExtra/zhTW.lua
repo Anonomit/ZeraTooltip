@@ -46,6 +46,9 @@ if Addon.isClassic then
   Addon:AddExtraStatCapture("Shadow Damage",
     {INPUT = "^提高暗影法術和效果所造成的傷害，最多(%d+)點。$"})
   
+  Addon:AddExtraStatCapture("Holy Damage",
+    {INPUT = "^%+(%d+) 神聖法術傷害$"})
+  
   Addon:AddExtraStatCapture("Healing",
     {INPUT = "^提高法術和魔法效果所造成的治療效果，最多(%d+)點。$"})
   

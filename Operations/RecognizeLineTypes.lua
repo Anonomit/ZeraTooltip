@@ -444,7 +444,12 @@ contextActions = Addon:Map({
     else -- check for extra stat captures
       for _, rule in ipairs(Addon:GetExtraStatCapture"Attack Power In Forms" or {}) do
         if strMatch(line.textLeftTextStripped, rule.INPUT) then
-          SetContext(i-1, tooltipData, line)
+          return SetContext(i-1, tooltipData, line)
+        end
+      end
+      for _, rule in ipairs(Addon:GetExtraStatCapture"Holy Damage" or {}) do
+        if strMatch(line.textLeftTextStripped, rule.INPUT) then
+          return SetContext(i-1, tooltipData, line)
         end
       end
     end

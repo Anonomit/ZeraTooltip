@@ -45,6 +45,9 @@ if Addon.isClassic then
   Addon:AddExtraStatCapture("Shadow Damage",
     {INPUT = "^Aumenta hasta (%d+) p%. el daño que infligen los hechizos y efectos de las Sombras%.$"})
   
+  Addon:AddExtraStatCapture("Holy Damage",
+    {INPUT = "^%+(%d+) daño con hechizos Sagrado$"})
+  
   Addon:AddExtraStatCapture("Healing",
     {INPUT = "^Aumenta hasta (%d+) p%. la sanación de los hechizos y efectos%.$"})
   

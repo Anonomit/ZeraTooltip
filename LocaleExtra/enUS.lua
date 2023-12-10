@@ -53,7 +53,7 @@ do
   -- Addon:AddDefaultModByLocale(stat, val)
   
   Addon:AddDefaultModByLocale("Health Regeneration", 12)
-  Addon:AddDefaultModByLocale("Mana Regeneration", 12)
+  Addon:AddDefaultModByLocale("Mana Regeneration",   12)
 end
 
 
@@ -105,6 +105,9 @@ if Addon.isClassic then
   
   Addon:AddExtraStatCapture("Shadow Damage",
     {INPUT = "^Increases damage done by Shadow spells and effects by up to (%d+)%.$"})
+  
+  Addon:AddExtraStatCapture("Holy Damage",
+    {INPUT = "%+(%d+) Holy Spell Damage"})
   
   Addon:AddExtraStatCapture("Healing",
     {INPUT = "^Increases healing done by spells and effects by up to (%d+)%.$"})

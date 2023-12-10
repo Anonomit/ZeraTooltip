@@ -41,6 +41,7 @@ do
   Addon:AddDefaultRewordByLocale("Nature Damage", "к силе заклинаний природы")
   Addon:AddDefaultRewordByLocale("Frost Damage" , "к силе заклинаний магии льда")
   Addon:AddDefaultRewordByLocale("Shadow Damage", "к силе заклинаний темной магии")
+  Addon:AddDefaultRewordByLocale("Holy Damage"  , "к силе заклинаний светлой магии")
   
   Addon:AddDefaultRewordByLocale("Hit Rating"            , "к меткости")
   Addon:AddDefaultRewordByLocale("Critical Strike Rating", "к критическому удару")
@@ -118,6 +119,9 @@ if Addon.isClassic then
   
   Addon:AddExtraStatCapture("Shadow Damage",
     {INPUT = "^Увеличение урона, наносимого заклинаниями и эффектами темной магии, на (%d+) ед%.$"})
+  
+  Addon:AddExtraStatCapture("Holy Damage",
+    {INPUT = "^%+(%d+) к урону от заклинаний светлой магии$"})
   
   Addon:AddExtraStatCapture("Healing",
     {INPUT = "^Усиливает исцеление от заклинаний и эффектов максимум на (%d+) ед%.$"})

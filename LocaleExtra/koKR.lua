@@ -40,6 +40,9 @@ if Addon.isClassic then
   Addon:AddExtraStatCapture("Shadow Damage",
     {INPUT = "^암흑 계열의 주문과 효과의 공격력이 최대 (%d+)만큼 증가합니다%.$"})
   
+  Addon:AddExtraStatCapture("Holy Damage",
+    {INPUT = "^신성 주문 공격력 %+(%d+)$"})
+  
   Addon:AddExtraStatCapture("Healing",
     {INPUT = "^모든 주문 및 효과에 의한 치유량이 최대 (%d+)만큼 증가합니다%.$"})
   
