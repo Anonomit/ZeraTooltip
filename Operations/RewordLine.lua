@@ -18,8 +18,8 @@ end
 function Addon:GetTextCacheSize()
   return cacheSize
 end
-Addon.onOptionSetHandlers["WipeTextCache"] = true
-Addon.onCVarSetHandlers["WipeTextCache"]   = true
+Addon:RegisterOptionSetHandler(Addon.WipeTextCache)
+Addon:RegisterCVarCallback("colorblindMode", Addon.WipeTextCache)
 
 
 local miscRewordLines = {

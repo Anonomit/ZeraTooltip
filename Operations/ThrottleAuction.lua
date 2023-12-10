@@ -10,36 +10,21 @@ local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 -- let's slow it down to the standard tooltip refresh interval
 
 
-local ThrottleAuctionFrameItem
-
-do
-  local lastUpdate = TOOLTIP_UPDATE_TIME * (-1) - 1
+local function Throttle()
+  Addon.lastTooltipUpdate = -1 - TOOLTIP_UPDATE_TIME
+  if not Addon.throttleRegistrationID then
+    Addon.throttleRegistrationID = Addon:RegisterEventCallback("MODIFIER_STATE_CHANGED", function()
+      Addon.lastTooltipUpdate = -1 - TOOLTIP_UPDATE_TIME
+    end)
+  end
   
-  function ThrottleAuctionFrameItem()
-    local AuctionFrameItem_OnEnter_old = AuctionFrameItem_OnEnter
-    function AuctionFrameItem_OnEnter(self, typ, index, ...)
-      if Addon:GetGlobalOption("throttle", "AuctionFrame") and GameTooltip:GetOwner() == self and GetTime() - lastUpdate < TOOLTIP_UPDATE_TIME then return end
-      lastUpdate = GetTime()
-      AuctionFrameItem_OnEnter_old(self, typ, index, ...)
-    end
+  local AuctionFrameItem_OnEnter_old = AuctionFrameItem_OnEnter
+  _G.AuctionFrameItem_OnEnter = function(self, typ, index, ...)
+    if Addon:GetGlobalOption("throttle", "AuctionFrame") and GameTooltip:GetOwner() == self and GetTime() - Addon.lastTooltipUpdate < TOOLTIP_UPDATE_TIME then return end
+    Addon.lastTooltipUpdate = GetTime()
+    AuctionFrameItem_OnEnter_old(self, typ, index, ...)
   end
 end
 
 
-function Addon:ThrottleAuctionUpdates()
-  if AuctionFrameItem_OnEnter then
-    ThrottleAuctionFrameItem()
-  else
-    self.addonLoadHooks["Blizzard_AuctionUI"] = function()
-      if AuctionFrameItem_OnEnter then
-        ThrottleAuctionFrameItem()
-      else -- this probably can't happen, but do the hook next frame if it does
-        C_Timer.After(0, ThrottleAuctionFrameItem)
-      end
-    end
-  end
-  
-  self:RegisterEvent("MODIFIER_STATE_CHANGED", function()
-    lastUpdate = -1 - TOOLTIP_UPDATE_TIME 
-  end)
-end
+Addon:RegisterEnableCallback(function() Addon:OnAddonLoad("Blizzard_AuctionUI", Throttle) end)

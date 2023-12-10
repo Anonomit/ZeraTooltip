@@ -22,8 +22,8 @@ end
 function Addon:GetConstructorCacheSize()
   return cacheSize
 end
-Addon.onOptionSetHandlers["WipeConstructorCache"] = true
-Addon.onCVarSetHandlers["WipeConstructorCache"]   = true
+Addon:RegisterOptionSetHandler(Addon.WipeConstructorCache)
+Addon:RegisterCVarCallback("colorblindMode", Addon.WipeConstructorCache)
 
 local hashMaps = {
   SetHyperlink            = function(link, itemStringOrLink) return itemStringOrLink end,

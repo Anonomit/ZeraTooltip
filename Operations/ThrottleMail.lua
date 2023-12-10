@@ -10,45 +10,28 @@ local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 -- let's slow it down to the standard tooltip refresh interval
 
 
-local ThrottleInboxFrameItem
-local ThrottleOpenMailAttachment
-
-do
-  local lastUpdate = TOOLTIP_UPDATE_TIME * (-1) - 1
-  
-  function ThrottleInboxFrameItem()
-    local InboxFrameItem_OnEnter_old = InboxFrameItem_OnEnter
-    function InboxFrameItem_OnEnter(self, ...)
-      if Addon:GetGlobalOption("throttle", "MailFrame") and GameTooltip:GetOwner() == self and GetTime() - lastUpdate < TOOLTIP_UPDATE_TIME then return end
-      lastUpdate = GetTime()
-      InboxFrameItem_OnEnter_old(self, ...)
-    end
+local function Throttle()
+  Addon.lastTooltipUpdate = -1 - TOOLTIP_UPDATE_TIME
+  if not Addon.throttleRegistrationID then
+    Addon.throttleRegistrationID = Addon:RegisterEventCallback("MODIFIER_STATE_CHANGED", function()
+      Addon.lastTooltipUpdate = -1 - TOOLTIP_UPDATE_TIME
+    end)
   end
-end
-
-do
-  local lastUpdate = TOOLTIP_UPDATE_TIME * (-1) - 1
   
-  function ThrottleOpenMailAttachment()
-    local OpenMailAttachment_OnEnter_old = OpenMailAttachment_OnEnter
-    function OpenMailAttachment_OnEnter(self, index, ...)
-      if Addon:GetGlobalOption("throttle", "MailFrame") and GameTooltip:GetOwner() == self and GetTime() - lastUpdate < TOOLTIP_UPDATE_TIME then return end
-      lastUpdate = GetTime()
-      OpenMailAttachment_OnEnter_old(self, index, ...)
-    end
+  local InboxFrameItem_OnEnter_old = InboxFrameItem_OnEnter
+  _G.InboxFrameItem_OnEnter = function(self, ...)
+    if Addon:GetGlobalOption("throttle", "MailFrame") and GameTooltip:GetOwner() == self and GetTime() - Addon.lastTooltipUpdate < TOOLTIP_UPDATE_TIME then return end
+    Addon.lastTooltipUpdate = GetTime()
+    InboxFrameItem_OnEnter_old(self, ...)
+  end
+  
+  local OpenMailAttachment_OnEnter_old = OpenMailAttachment_OnEnter
+  _G.OpenMailAttachment_OnEnter = function(self, index, ...)
+    if Addon:GetGlobalOption("throttle", "MailFrame") and GameTooltip:GetOwner() == self and GetTime() - Addon.lastTooltipUpdate < TOOLTIP_UPDATE_TIME then return end
+    Addon.lastTooltipUpdate = GetTime()
+    OpenMailAttachment_OnEnter_old(self, index, ...)
   end
 end
 
 
-
-
-
-function Addon:ThrottleMailUpdates()
-  assert(MailFrame)
-  ThrottleInboxFrameItem()
-  ThrottleOpenMailAttachment()
-  
-  self:RegisterEvent("MODIFIER_STATE_CHANGED", function()
-    lastUpdate = -1 - TOOLTIP_UPDATE_TIME 
-  end)
-end
+Addon:RegisterEnableCallback(Throttle)

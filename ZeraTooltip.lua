@@ -130,8 +130,8 @@ end
 function Addon:OnInitialize()
   self.db        = self.AceDB:New(("%sDB"):format(ADDON_NAME), self:MakeDefaultOptions(), true)
   self.dbDefault = self.AceDB:New({}                         , self:MakeDefaultOptions(), true)
-
-  self.tooltipCache = {}
+  
+  self:RunInitializeCallbacks()
 end
 
 function Addon:OnEnable()
@@ -143,36 +143,9 @@ function Addon:OnEnable()
   
   self:InitChatCommands{"zt", "zera", ADDON_NAME:lower()}
   
-  self:HookTooltips()
-  
-  -- fix some blizzard addons not respecting tooltip.updateTooltip
-  self.addonLoadHooks = {}
-  self:RegisterEvent("ADDON_LOADED", function(e, addon)
-    if self.addonLoadHooks[addon] then
-      self.addonLoadHooks[addon]()
-    end
-  end)
-  self:ThrottleAuctionUpdates()
-  self:ThrottleInspectUpdates()
-  self:ThrottleMailUpdates()
-  self:ThrottleTradeSkillUpdates()
-  
-  local criticalCVars = self:MakeLookupTable{"colorblindMode"}
-  self:RegisterEvent("CVAR_UPDATE", function(e, cvar, val)
-    if criticalCVars[cvar] then
-      self:DebugfIfOutput("cvarSet", "Setting %s: %s", cvar, tostring(val))
-      for funcName, func in next, Addon.onCVarSetHandlers, nil do
-        if type(func) == "function" then
-          func(self, cvar, val)
-        else
-          self[funcName](self, cvar, val)
-        end
-      end
-    end
-  end)
+  self:RunEnableCallbacks()
 end
 
 function Addon:OnDisable()
-  
 end
 

@@ -10,36 +10,21 @@ local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 -- let's slow it down to the standard tooltip refresh interval
 
 
-local ThrottleTradeSkillFrameItem
-
-do
-  local lastUpdate = TOOLTIP_UPDATE_TIME * (-1) - 1
+local function Throttle()
+  Addon.lastTooltipUpdate = -1 - TOOLTIP_UPDATE_TIME
+  if not Addon.throttleRegistrationID then
+    Addon.throttleRegistrationID = Addon:RegisterEventCallback("MODIFIER_STATE_CHANGED", function()
+      Addon.lastTooltipUpdate = -1 - TOOLTIP_UPDATE_TIME
+    end)
+  end
   
-  function ThrottleTradeSkillFrameItem()
-    local TradeSkillItem_OnEnter_old = TradeSkillItem_OnEnter
-    function TradeSkillItem_OnEnter(self, ...)
-      if Addon:GetGlobalOption("throttle", "TradeSkillFrame") and GameTooltip:GetOwner() == self and GetTime() - lastUpdate < TOOLTIP_UPDATE_TIME then return end
-      lastUpdate = GetTime()
-      TradeSkillItem_OnEnter_old(self, ...)
-    end
+  local TradeSkillItem_OnEnter_old = TradeSkillItem_OnEnter
+  _G.TradeSkillItem_OnEnter = function(self, ...)
+    if Addon:GetGlobalOption("throttle", "TradeSkillFrame") and GameTooltip:GetOwner() == self and GetTime() - Addon.lastTooltipUpdate < TOOLTIP_UPDATE_TIME then return end
+    Addon.lastTooltipUpdate = GetTime()
+    TradeSkillItem_OnEnter_old(self, ...)
   end
 end
 
 
-function Addon:ThrottleTradeSkillUpdates()
-  if TradeSkillItem_OnEnter then
-    ThrottleTradeSkillFrameItem()
-  else
-    self.addonLoadHooks["Blizzard_TradeSkillUI"] = function()
-      if TradeSkillItem_OnEnter then
-        ThrottleTradeSkillFrameItem()
-      else -- this probably can't happen, but do the hook next frame if it does
-        C_Timer.After(0, ThrottleTradeSkillFrameItem)
-      end
-    end
-  end
-  
-  self:RegisterEvent("MODIFIER_STATE_CHANGED", function()
-    lastUpdate = -1 - TOOLTIP_UPDATE_TIME 
-  end)
-end
+Addon:RegisterEnableCallback(function() Addon:OnAddonLoad("Blizzard_TradeSkillUI", Throttle) end)

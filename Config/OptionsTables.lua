@@ -381,7 +381,7 @@ local function MakeStatsOptions(opts, categoryName)
   local self = Addon
   local GUI = self.GUI
   
-  local opts = GUI:CreateGroup(opts, categoryName, categoryName)
+  local opts = GUI:CreateGroup(opts, categoryName, categoryName, nil, "tree")
   
   CreateCombineStatsOption(opts)
   
@@ -454,7 +454,7 @@ local function MakePaddingOptions(opts, categoryName)
   local self = Addon
   local GUI = self.GUI
   
-  local opts = GUI:CreateGroup(opts, categoryName, categoryName)
+  local opts = GUI:CreateGroup(opts, categoryName, categoryName, nil, "tree")
   
   CreateCombineStatsOption(opts)
   Addon.GUI:CreateToggle(opts, {"pad", "before", "BonusEffect"}, L["Add Space Above Bonus Effects"], L["Bonus effects are secondary effects that aren't just adding a stat (example: Hearthstone)."]).width = 2
@@ -529,7 +529,7 @@ local function MakeExtraOptions(opts, categoryName)
   local self = Addon
   local GUI = self.GUI
   
-  local opts = GUI:CreateGroup(opts, categoryName, categoryName)
+  local opts = GUI:CreateGroup(opts, categoryName, categoryName, nil, "tree")
   
   local disabled -- just in case some other addon clobbers _G.disabled
   

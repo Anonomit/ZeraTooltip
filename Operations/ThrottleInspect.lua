@@ -10,36 +10,21 @@ local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 -- let's slow it down to the standard tooltip refresh interval
 
 
-local ThrottleInspectPaperDollItemSlotButton
-
-do
-  local lastUpdate = TOOLTIP_UPDATE_TIME * (-1) - 1
+local function Throttle()
+  Addon.lastTooltipUpdate = -1 - TOOLTIP_UPDATE_TIME
+  if not Addon.throttleRegistrationID then
+    Addon.throttleRegistrationID = Addon:RegisterEventCallback("MODIFIER_STATE_CHANGED", function()
+      Addon.lastTooltipUpdate = -1 - TOOLTIP_UPDATE_TIME
+    end)
+  end
   
-  function ThrottleInspectPaperDollItemSlotButton()
-    local InspectPaperDollItemSlotButton_OnEnter_old = InspectPaperDollItemSlotButton_OnEnter
-    function InspectPaperDollItemSlotButton_OnEnter(self, ...)
-      if Addon:GetGlobalOption("throttle", "InspectFrame") and GameTooltip:GetOwner() == self and GetTime() - lastUpdate < TOOLTIP_UPDATE_TIME then return end
-      lastUpdate = GetTime()
-      InspectPaperDollItemSlotButton_OnEnter_old(self, ...)
-    end
+  local InspectPaperDollItemSlotButton_OnEnter_old = InspectPaperDollItemSlotButton_OnEnter
+  _G.InspectPaperDollItemSlotButton_OnEnter = function(self, ...)
+    if Addon:GetGlobalOption("throttle", "InspectFrame") and GameTooltip:GetOwner() == self and GetTime() - Addon.lastTooltipUpdate < TOOLTIP_UPDATE_TIME then return end
+    Addon.lastTooltipUpdate = GetTime()
+    InspectPaperDollItemSlotButton_OnEnter_old(self, ...)
   end
 end
 
 
-function Addon:ThrottleInspectUpdates()
-  if InspectPaperDollItemSlotButton_OnEnter then
-    ThrottleInspectPaperDollItemSlotButton()
-  else
-    self.addonLoadHooks["Blizzard_InspectUI"] = function()
-      if InspectPaperDollItemSlotButton_OnEnter then
-        ThrottleInspectPaperDollItemSlotButton()
-      else -- this probably can't happen, but do the hook next frame if it does
-        C_Timer.After(0, ThrottleInspectPaperDollItemSlotButton)
-      end
-    end
-  end
-  
-  self:RegisterEvent("MODIFIER_STATE_CHANGED", function()
-    lastUpdate = -1 - TOOLTIP_UPDATE_TIME 
-  end)
-end
+Addon:RegisterEnableCallback(function() Addon:OnAddonLoad("Blizzard_InspectUI", Throttle) end)
