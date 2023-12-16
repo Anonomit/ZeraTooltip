@@ -70,6 +70,7 @@ local contexts = Addon:MakeLookupTable({
   "Binding",
   "Unique",
   "LastUnique",
+  "Locked",
   "LockedWithProfession",
   "Embed",
   "Type",
@@ -257,6 +258,11 @@ contextActions = Addon:Map({
   LastUnique = function(i, tooltipData, line)
     if MatchesAny(line.textLeftTextStripped, ITEM_UNIQUE, ITEM_UNIQUE_MULTIPLE, ITEM_UNIQUE_EQUIPPABLE, ITEM_LIMIT_CATEGORY_MULTIPLE, ITEM_LIMIT_CATEGORY) then
       return SetContext(i-1, tooltipData, line)
+    end
+  end,
+  Locked = function(i, tooltipData, line)
+    if MatchesAny(line.textLeftTextStripped, LOCKED) then -- text isn't always red
+      return SetContext(i, tooltipData, line)
     end
   end,
   LockedWithProfession = function(i, tooltipData, line)

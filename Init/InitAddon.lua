@@ -552,7 +552,7 @@ do
     WHITE     = rgb(255, 255, 255),
     GRAY      = rgb(128, 128, 128),
     RED       = rgb(255,  32,  32),
-    ORANGE    = rgb(255, 127,  32),
+    ORANGE    = rgb(255, 128,  38),
     GREEN     = rgb(  0, 255,   0),
     BLUE      = rgb(  0,   0, 255),
     YELLOW    = rgb(255, 255,   0),
