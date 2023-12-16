@@ -32,21 +32,27 @@ if Addon.isClassic then
     {INPUT = "^提高法術和魔法效果所造成的傷害和治療效果，最多(%d+)點。$"})
   
   Addon:AddExtraStatCapture("Arcane Damage",
-    {INPUT = "^祕法法術和效果造成的傷害提高最多(%d+)點。$"})
+    {INPUT = "^祕法法術和效果造成的傷害提高最多(%d+)點。$"},
+    {INPUT = "^%+(%d+) 祕法法術傷害$"})
   
   Addon:AddExtraStatCapture("Fire Damage",
-    {INPUT = "^提高火焰法術和效果所造成的傷害，最多(%d+)點。$"})
+    {INPUT = "^提高火焰法術和效果所造成的傷害，最多(%d+)點。$"},
+    {INPUT = "^%+(%d+) 火焰法術傷害$"})
   
   Addon:AddExtraStatCapture("Nature Damage",
-    {INPUT = "^提高自然法術和效果所造成的傷害，最多(%d+)點。$"})
+    {INPUT = "^提高自然法術和效果所造成的傷害，最多(%d+)點。$"},
+    {INPUT = "^%+(%d+) 自然法術傷害$"})
   
   Addon:AddExtraStatCapture("Frost Damage",
-    {INPUT = "^提高冰霜法術和效果所造成的傷害，最多(%d+)點。$"})
+    {INPUT = "^提高冰霜法術和效果所造成的傷害，最多(%d+)點。$"},
+    {INPUT = "^%+(%d+) 冰霜法術傷害$"})
   
   Addon:AddExtraStatCapture("Shadow Damage",
-    {INPUT = "^提高暗影法術和效果所造成的傷害，最多(%d+)點。$"})
+    {INPUT = "^提高暗影法術和效果所造成的傷害，最多(%d+)點。$"},
+    {INPUT = "^%+(%d+) 暗影法術傷害$"})
   
   Addon:AddExtraStatCapture("Holy Damage",
+    {INPUT = "^提高神聖法術和效果所造成的傷害，最多(%d+)點。$"},
     {INPUT = "^%+(%d+) 神聖法術傷害$"})
   
   Addon:AddExtraStatCapture("Healing",

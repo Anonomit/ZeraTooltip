@@ -35,21 +35,27 @@ if Addon.isClassic then
     {INPUT = "^Aumenta el daño y la curación de los hechizos mágicos y los efectos hasta en (%d+) p%.$"})
   
   Addon:AddExtraStatCapture("Arcane Damage",
-    {INPUT = "^Aumenta el daño causado por los hechizos Arcanos y los efectos hasta en (%d+) p%.$"})
+    {INPUT = "^Aumenta el daño causado por los hechizos Arcanos y los efectos hasta en (%d+) p%.$"},
+    {INPUT = "^%+(%d+) de daño de Hechizos Arcanos$"})
   
   Addon:AddExtraStatCapture("Fire Damage",
-    {INPUT = "^Aumenta el daño causado por los hechizos de Fuego y los efectos hasta en (%d+) p%.$"})
+    {INPUT = "^Aumenta el daño causado por los hechizos de Fuego y los efectos hasta en (%d+) p%.$"},
+    {INPUT = "^%+(%d+) de daño de Hechizos de Fuego$"})
   
   Addon:AddExtraStatCapture("Nature Damage",
-    {INPUT = "^Aumenta el daño causado por los hechizos de Naturaleza y los efectos hasta en (%d+) p%.$"})
+    {INPUT = "^Aumenta el daño causado por los hechizos de Naturaleza y los efectos hasta en (%d+) p%.$"},
+    {INPUT = "^%+(%d+) de daño de Hechizos de Naturaleza$"})
   
   Addon:AddExtraStatCapture("Frost Damage",
-    {INPUT = "^Aumenta el daño causado por los hechizos de Escarcha y los efectos hasta en (%d+) p%.$"})
+    {INPUT = "^Aumenta el daño causado por los hechizos de Escarcha y los efectos hasta en (%d+) p%.$"},
+    {INPUT = "^%+(%d+) de daño de Hechizos de Escarcha$"})
   
   Addon:AddExtraStatCapture("Shadow Damage",
-    {INPUT = "^Aumenta el daño causado por los hechizos de Sombras y los efectos hasta en (%d+) p%.$"})
+    {INPUT = "^Aumenta el daño causado por los hechizos de Sombras y los efectos hasta en (%d+) p%.$"},
+    {INPUT = "^%+(%d+) de daño de Hechizos de Sombras$"})
   
   Addon:AddExtraStatCapture("Holy Damage",
+    {INPUT = "^Aumenta el daño causado por los hechizos Sagrados y los efectos hasta en (%d+) p%.$"},
     {INPUT = "^%+(%d+) de daño de Hechizos Sagrados$"})
   
   Addon:AddExtraStatCapture("Healing",

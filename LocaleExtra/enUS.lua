@@ -92,21 +92,27 @@ if Addon.isClassic then
     {INPUT = "^Increases damage and healing done by magical spells and effects by up to (%d+)%.$"})
   
   Addon:AddExtraStatCapture("Arcane Damage",
-    {INPUT = "^Increases damage done by Arcane spells and effects by up to (%d+)%.$"})
+    {INPUT = "^Increases damage done by Arcane spells and effects by up to (%d+)%.$"},
+    {INPUT = "%+(%d+) Arcane Spell Damage"})
   
   Addon:AddExtraStatCapture("Fire Damage",
-    {INPUT = "^Increases damage done by Fire spells and effects by up to (%d+)%.$"})
+    {INPUT = "^Increases damage done by Fire spells and effects by up to (%d+)%.$"},
+    {INPUT = "%+(%d+) Fire Spell Damage"})
   
   Addon:AddExtraStatCapture("Nature Damage",
-    {INPUT = "^Increases damage done by Nature spells and effects by up to (%d+)%.$"})
+    {INPUT = "^Increases damage done by Nature spells and effects by up to (%d+)%.$"},
+    {INPUT = "%+(%d+) Nature Spell Damage"})
   
   Addon:AddExtraStatCapture("Frost Damage",
-    {INPUT = "^Increases damage done by Frost spells and effects by up to (%d+)%.$"})
+    {INPUT = "^Increases damage done by Frost spells and effects by up to (%d+)%.$"},
+    {INPUT = "%+(%d+) Frost Spell Damage"})
   
   Addon:AddExtraStatCapture("Shadow Damage",
-    {INPUT = "^Increases damage done by Shadow spells and effects by up to (%d+)%.$"})
+    {INPUT = "^Increases damage done by Shadow spells and effects by up to (%d+)%.$"},
+    {INPUT = "%+(%d+) Shadow Spell Damage"})
   
   Addon:AddExtraStatCapture("Holy Damage",
+    {INPUT = "^Increases damage done by Holy spells and effects by up to (%d+)%.$"},
     {INPUT = "%+(%d+) Holy Spell Damage"})
   
   Addon:AddExtraStatCapture("Healing",

@@ -99,7 +99,7 @@ do
     return Addon:IsDebugEnabled() and CheckOptionSafe(debugMode, "global", "debugShowLuaWarnings")
   end
   function Addon:GetDebugView(key)
-    return self:IsDebugEnabled() and not CheckOptionSafe(debugMode, "global", "suppressAll") and CheckOptionSafe(debugMode, "debugView", key)
+    return self:IsDebugEnabled() and not CheckOptionSafe(debugMode, "global", "suppressAll") and CheckOptionSafe(debugMode, "global", "debugView", key)
   end
   
   function Addon:Dump(t)
@@ -1163,7 +1163,11 @@ do
   
   
   function Addon:Switch(val, t, fallback)
-    assert(val ~= nil)
-    return setmetatable(t, {__index = function() return fallback or nop end})[val]()
+    fallback = fallback or nop
+    if val == nil then
+      return fallback(val)
+    else
+      return setmetatable(t, {__index = function() return fallback end})[val](val)
+    end
   end
 end

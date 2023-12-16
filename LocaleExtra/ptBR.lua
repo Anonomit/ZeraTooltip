@@ -35,21 +35,27 @@ if Addon.isClassic then
     {INPUT = "^Aumenta em até (%d+) o dano causado e a cura realizada por feitiços e efeitos mágicos%.$"})
   
   Addon:AddExtraStatCapture("Arcane Damage",
-    {INPUT = "^Aumenta em até (%d+) o dano causado por feitiços e efeitos Arcanos%.$"})
+    {INPUT = "^Aumenta em até (%d+) o dano causado por feitiços e efeitos Arcanos%.$"},
+    {INPUT = "^%+(%d+) Dano Mágico Arcano$"})
   
   Addon:AddExtraStatCapture("Fire Damage",
-    {INPUT = "^Aumenta em até (%d+) o dano causado por feitiços e efeitos de Fogo%.$"})
+    {INPUT = "^Aumenta em até (%d+) o dano causado por feitiços e efeitos de Fogo%.$"},
+    {INPUT = "^%+(%d+) Dano Mágico de Fogo$"})
   
   Addon:AddExtraStatCapture("Nature Damage",
-    {INPUT = "^Aumenta em até (%d+) o dano causado por feitiços e efeitos de Natureza%.$"})
+    {INPUT = "^Aumenta em até (%d+) o dano causado por feitiços e efeitos de Natureza%.$"},
+    {INPUT = "^%+(%d+) Dano Mágico de Natureza$"})
   
   Addon:AddExtraStatCapture("Frost Damage",
-    {INPUT = "^Aumenta em até (%d+) o dano causado por feitiços e efeitos de Gelo%.$"})
+    {INPUT = "^Aumenta em até (%d+) o dano causado por feitiços e efeitos de Gelo%.$"},
+    {INPUT = "^%+(%d+) Dano Mágico de Gelo$"})
   
   Addon:AddExtraStatCapture("Shadow Damage",
-    {INPUT = "^Aumenta em até (%d+) o dano causado por feitiços e efeitos de Sombra%.$"})
+    {INPUT = "^Aumenta em até (%d+) o dano causado por feitiços e efeitos de Sombra%.$"},
+    {INPUT = "^%+(%d+) Dano Mágico de Sombra$"})
   
   Addon:AddExtraStatCapture("Holy Damage",
+    {INPUT = "^Aumenta em até (%d+) o dano causado por feitiços e efeitos Sagrados%.$"},
     {INPUT = "^%+(%d+) Dano Mágico Sagrado$"})
   
   Addon:AddExtraStatCapture("Healing",

@@ -26,21 +26,27 @@ if Addon.isClassic then
     {INPUT = "^Erhöht durch Zauber und magische Effekte zugefügten Schaden und Heilung um bis zu (%d+)%.$"})
   
   Addon:AddExtraStatCapture("Arcane Damage",
-    {INPUT = "^Erhöht durch Arkanzauber und Arkaneffekte zugefügten Schaden um bis zu (%d+)%.$"})
-  
+    {INPUT = "^Erhöht durch Arkanzauber und Arkaneffekte zugefügten Schaden um bis zu (%d+)%.$"},
+    {INPUT = "^%+(%d+) Arkanzauberschaden$"})
+
   Addon:AddExtraStatCapture("Fire Damage",
-    {INPUT = "^Erhöht durch Feuerzauber und Feuereffekte zugefügten Schaden um bis zu (%d+)%.$"})
+    {INPUT = "^Erhöht durch Feuerzauber und Feuereffekte zugefügten Schaden um bis zu (%d+)%.$"},
+    {INPUT = "^%+(%d+) Feuerzauberschaden$"})
   
   Addon:AddExtraStatCapture("Nature Damage",
-    {INPUT = "^Erhöht durch Naturzauber und Natureffekte zugefügten Schaden um bis zu (%d+)%.$"})
+    {INPUT = "^Erhöht durch Naturzauber und Natureffekte zugefügten Schaden um bis zu (%d+)%.$"},
+    {INPUT = "^%+(%d+) Naturzauberschaden$"})
   
   Addon:AddExtraStatCapture("Frost Damage",
-    {INPUT = "^Erhöht durch Frostzauber und Frosteffekte zugefügten Schaden um bis zu (%d+)%.$"})
+    {INPUT = "^Erhöht durch Frostzauber und Frosteffekte zugefügten Schaden um bis zu (%d+)%.$"},
+    {INPUT = "^%+(%d+) Frostzauberschaden$"})
   
   Addon:AddExtraStatCapture("Shadow Damage",
-    {INPUT = "^Erhöht durch Schattenzauber und Schatteneffekte zugefügten Schaden um bis zu (%d+)%.$"})
+    {INPUT = "^Erhöht durch Schattenzauber und Schatteneffekte zugefügten Schaden um bis zu (%d+)%.$"},
+    {INPUT = "^%+(%d+) Schattenzauberschaden$"})
   
   Addon:AddExtraStatCapture("Holy Damage",
+    {INPUT = "^Erhöht durch Heiligzauber und Heiligeffekte zugefügten Schaden um bis zu (%d+)%.$"},
     {INPUT = "^%+(%d+) Heiligzauberschaden$"})
   
   Addon:AddExtraStatCapture("Healing",

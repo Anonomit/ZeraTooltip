@@ -342,6 +342,14 @@ contextActions = Addon:Map({
           end
         end
         return SetContext(i-1, tooltipData, line)
+      else
+        for _, stat in ipairs{"Attack Power In Forms", "Arcane Damage", "Fire Damage", "Nature Damage", "Frost Damage", "Shadow Damage", "Holy Damage"} do
+          for _, rule in ipairs(Addon:GetExtraStatCapture(stat) or {}) do
+            if strMatch(line.textLeftTextStripped, rule.INPUT) then
+              return SetContext(i-1, tooltipData, line)
+            end
+          end
+        end
       end
     end
   end,
@@ -459,21 +467,20 @@ contextActions = Addon:Map({
     end
   end,
   LastSecondaryStat = function(i, tooltipData, line)
-    local prefix = line.colorLeft == Addon.COLORS.GREEN and StartsWithAny(line.textLeftTextStripped, ITEM_SPELL_TRIGGER_ONEQUIP, ITEM_SPELL_TRIGGER_ONUSE, ITEM_SPELL_TRIGGER_ONPROC)
-    if prefix then
-      line.prefix = prefix
-      return SetContext(i-1, tooltipData, line)
-    elseif MatchesAny(line.textLeftTextStripped, ITEM_RANDOM_ENCHANT, ITEM_MOD_FERAL_ATTACK_POWER) then
-      return SetContext(i-1, tooltipData, line)
-    else -- check for extra stat captures
-      for _, rule in ipairs(Addon:GetExtraStatCapture"Attack Power In Forms" or {}) do
-        if strMatch(line.textLeftTextStripped, rule.INPUT) then
-          return SetContext(i-1, tooltipData, line)
-        end
-      end
-      for _, rule in ipairs(Addon:GetExtraStatCapture"Holy Damage" or {}) do
-        if strMatch(line.textLeftTextStripped, rule.INPUT) then
-          return SetContext(i-1, tooltipData, line)
+    if line.colorLeft == Addon.COLORS.GREEN then
+      local prefix = StartsWithAny(line.textLeftTextStripped, ITEM_SPELL_TRIGGER_ONEQUIP, ITEM_SPELL_TRIGGER_ONUSE, ITEM_SPELL_TRIGGER_ONPROC)
+      if prefix then
+        line.prefix = prefix
+        return SetContext(i-1, tooltipData, line)
+      elseif MatchesAny(line.textLeftTextStripped, ITEM_RANDOM_ENCHANT, ITEM_MOD_FERAL_ATTACK_POWER) then
+        return SetContext(i-1, tooltipData, line)
+      else -- check for extra stat captures
+        for _, stat in ipairs{"Attack Power In Forms"} do
+          for _, rule in ipairs(Addon:GetExtraStatCapture(stat) or {}) do
+            if strMatch(line.textLeftTextStripped, rule.INPUT) then
+              return SetContext(i-1, tooltipData, line)
+            end
+          end
         end
       end
     end

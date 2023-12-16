@@ -36,21 +36,27 @@ if Addon.isClassic then
     {INPUT = "^Augmente les soins et dégâts produits par les sorts et effets magiques de (%d+) au maximum%.$"})
   
   Addon:AddExtraStatCapture("Arcane Damage",
-    {INPUT = "^Augmente les dégâts infligés par les sorts et effets des Arcanes de (%d+) au maximum%.$"})
+    {INPUT = "^Augmente les dégâts infligés par les sorts et effets des Arcanes de (%d+) au maximum%.$"},
+    {INPUT = "^%+(%d+) aux dégâts des sorts des Arcanes$"})
   
   Addon:AddExtraStatCapture("Fire Damage",
-    {INPUT = "^Augmente les dégâts infligés par les sorts et effets de Feu de (%d+) au maximum%.$"})
+    {INPUT = "^Augmente les dégâts infligés par les sorts et effets de Feu de (%d+) au maximum%.$"},
+    {INPUT = "^%+(%d+) aux dégâts des sorts de Feu$"})
   
   Addon:AddExtraStatCapture("Nature Damage",
-    {INPUT = "^Augmente les dégâts infligés par les sorts et effets de Nature de (%d+) au maximum%.$"})
+    {INPUT = "^Augmente les dégâts infligés par les sorts et effets de Nature de (%d+) au maximum%.$"},
+    {INPUT = "^%+(%d+) aux dégâts des sorts de Nature$"})
   
   Addon:AddExtraStatCapture("Frost Damage",
-    {INPUT = "^Augmente les dégâts infligés par les sorts et effets de Givre de (%d+) au maximum%.$"})
+    {INPUT = "^Augmente les dégâts infligés par les sorts et effets de Givre de (%d+) au maximum%.$"},
+    {INPUT = "^%+(%d+) aux dégâts des sorts de Givre$"})
   
   Addon:AddExtraStatCapture("Shadow Damage",
-    {INPUT = "^Augmente les dégâts infligés par les sorts et effets d'Ombre de (%d+) au maximum%.$"})
+    {INPUT = "^Augmente les dégâts infligés par les sorts et effets d'Ombre de (%d+) au maximum%.$"},
+    {INPUT = "^%+(%d+) aux dégâts des sorts d'Ombre$"})
   
   Addon:AddExtraStatCapture("Holy Damage",
+    {INPUT = "^Augmente les dégâts infligés par les sorts et effets du Sacré de (%d+) au maximum%.$"},
     {INPUT = "^%+(%d+) aux dégâts des sorts du Sacré$"})
   
   Addon:AddExtraStatCapture("Healing",
