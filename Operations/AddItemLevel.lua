@@ -29,6 +29,8 @@ end
 
 local tokenOverrides = {}
 for ids, ilvl in pairs({
+  [{209693, 211452}] = 33, -- Perfect Blackfathom Pearl
+  
   [{18665, 18646}] = 75, -- Benediction / Anathema
   [{18703, 18704, 18705}] = 75, -- Lok'delar, Rhok'delar, Lamina
   [{17204}] = 80, -- Sulfuras
