@@ -54,6 +54,8 @@ L["Hearthstone"] = true
 L["Show %s instead of %s."]                                                       = true
 L["Show Non Equipment"]                                                           = true
 L["Show item level on items that cannot be equipped by anyone."]                  = true
+L["Show Waylaid Supplies"]                                                        = true
+L["Show item level on Waylaid Supplies and Supply Shipments."]                    = true
 L["Show this line where it was originally positioned in Wrath of The Lich King."] = true
 
 -- stack size

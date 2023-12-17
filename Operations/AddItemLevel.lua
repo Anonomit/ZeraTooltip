@@ -28,7 +28,7 @@ local function GetItemLevelByClass(classLevels)
 end
 
 local tokenOverrides = {}
-for ids, ilvl in pairs({
+for ids, ilvl in pairs{
   [{209693, 211452}] = 33, -- Perfect Blackfathom Pearl
   
   [{18665, 18646}] = 75, -- Benediction / Anathema
@@ -130,7 +130,7 @@ for ids, ilvl in pairs({
   [{52025, 52026, 52027}] = 264, -- T10 10H / 25 / 25H
   [{52028, 52029, 52030}] = 277, -- T10 25H
   [{50274, 49869, 50226, 50231}] = 284, -- Shadowmourne
-}) do
+} do
   for _, id in ipairs(ids) do
     Addon:Assertf(not tokenOverrides[id], "Duplicate item level override: %d", id)
     tokenOverrides[id] = ilvl
@@ -179,14 +179,20 @@ end
 function Addon:AddItemLevel(tooltipData)
   if self:GetOption("hide", stat) then return end
   
-  if self:GetOption("hide", "nonEquipment") and not tokenOverrides[tooltipData.id] then
+  local tokenOverride = tokenOverrides[tooltipData.id]
+  
+  if tokenOverride then
+    -- success
+  elseif Addon.waylaidSupplies[tooltipData.id] and self:GetOption("itemLevel", "showWaylaidSupplies") then
+    -- success
+  elseif self:GetOption("hide", "nonEquipment") then
     local equipLoc = select(4, GetItemInfoInstant(tooltipData.id))
     if invTypeBlacklist[equipLoc] then
       return
     end
   end
   
-  local itemLevel = tokenOverrides[tooltipData.id] or select(4, GetItemInfo(tooltipData.id))
+  local itemLevel = tokenOverride or select(4, GetItemInfo(tooltipData.id))
   if not itemLevel then return end
   
   local color = self:GetOption("allow", "recolor") and self:GetOption("doRecolor", stat) and self:GetOption("color", stat) or self:GetDefaultOption("color", stat)

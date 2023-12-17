@@ -56,6 +56,7 @@ function Addon:ModifyTooltipData(tooltip, tooltipData)
   
   self:AddHeroicTag(tooltipData)
   self:AddItemLevel(tooltipData)
+  self:AddReputation(tooltipData)
   self:AddStackSize(tooltipData)
   
   self:ReorderLines(tooltipData)

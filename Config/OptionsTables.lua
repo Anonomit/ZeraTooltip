@@ -701,6 +701,12 @@ local function MakeExtraOptions(opts, categoryName)
       local disabled = self:GetOption("hide", stat)
       GUI:CreateReverseToggle(opts, {"hide", "nonEquipment"}, L["Show Non Equipment"], L["Show item level on items that cannot be equipped by anyone."], disabled)
       GUI:CreateReset(opts, {"hide", "nonEquipment"})
+      if Addon.isSoD then
+        local disabled = disabled or not self:GetOption("hide", "nonEquipment")
+        GUI:CreateNewline(opts)
+        GUI:CreateToggle(opts, {"itemLevel", "showWaylaidSupplies"}, L["Show Waylaid Supplies"], L["Show item level on Waylaid Supplies and Supply Shipments."], disabled)
+        GUI:CreateReset(opts, {"itemLevel", "showWaylaidSupplies"})
+      end
     end
   end
   if not self:GetOption("doReorder", "ItemLevel") then MakeItemLevelOptions() end
@@ -1680,6 +1686,32 @@ local function MakeExtraOptions(opts, categoryName)
     CreateHide(opts, stat)
   end
   GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
+  
+  -- Reputation
+  if Addon.isSoD then
+    do
+      local stat = "Reputation"
+      
+      local samples = {}
+      for _, itemID in ipairs{211331, 211819} do
+        local defaultText = Addon:RewordReputation(itemID)
+        local defaultText, formattedText = GetFormattedText(stat, self.COLORS.PURPLE, defaultText, defaultText)
+        tinsert(samples, {defaultText, formattedText})
+      end
+      
+      local opts = GUI:CreateGroup(opts, stat, samples[1][2], nil, nil, disabled)
+        
+      CreateSamples(opts, samples)
+      
+      CreateColor(opts, stat)
+      
+      CreateIcon(opts, stat)
+      
+      CreateHide(opts, stat)
+    end
+    
+    GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
+  end
   
   -- Made By
   do

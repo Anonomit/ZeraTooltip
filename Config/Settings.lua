@@ -102,8 +102,9 @@ function Addon:MakeDefaultOptions()
         },
         
         itemLevel = {
-          ["*"]        = true,
-          useShortName = true,
+          ["*"]               = true,
+          useShortName        = true,
+          showWaylaidSupplies = true,
         },
         damage = {
           ["*"]           = true,
@@ -159,6 +160,8 @@ function Addon:MakeDefaultOptions()
           Equip          = "Interface\\Tooltips\\ReforgeGreenArrow",
           ChanceOnHit    = "Interface\\Buttons\\UI-GroupLoot-Dice-Up",
           Use            = "Interface\\CURSOR\\Cast",
+          Reputation     = "Interface\\COMMON\\friendship-heart",
+          
         },
         iconSizeManual = {
           ["*"] = false,

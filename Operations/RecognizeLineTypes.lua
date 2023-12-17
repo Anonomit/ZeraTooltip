@@ -114,6 +114,7 @@ local contexts = Addon:MakeLookupTable({
   "SetBonus",
   "LastSetBonus",
   "Cooldown",
+  "Description",
   "MadeBy",
   "SocketHint",
   "Refundable",
@@ -179,6 +180,10 @@ local contextAscensions = Addon:Map({
       tooltipData.foundEnchant = true
     end
   end,
+  Description = function(context, tooltipData, line, currentContext)
+    -- mark where the description would be if it existed on this item
+    tooltipData.locs.description = tooltipData.locs.description or line.i - 1
+  end,
   RecipeTitle = function(context, tooltipData, line, currentContext)
   -- reset the base stat location
     tooltipData.locs.statStart = nil
@@ -210,6 +215,9 @@ local contextAscensions = Addon:Map({
     
     -- mark where the secondary stats would be if they existed on this item
     tooltipData.locs.secondaryStatStart = tooltipData.locs.secondaryStatStart or line.i
+    
+    -- mark where the description would be if it existed on this item
+    tooltipData.locs.description = tooltipData.locs.description or line.i
   end,
 }, nil, contexts)
 
@@ -524,6 +532,12 @@ contextActions = Addon:Map({
   end,
   Cooldown = function(i, tooltipData, line)
     if MatchesAny(line.textLeftTextStripped, ITEM_COOLDOWN_TIME) then
+      return SetContext(i, tooltipData, line)
+    end
+  end,
+  Description = function(i, tooltipData, line)
+    if line.colorLeft == Addon.COLORS.FLAVOR and MatchesAny(line.textLeftTextStripped, "\"%s\"") then
+      tooltipData.locs.description = line.i
       return SetContext(i, tooltipData, line)
     end
   end,

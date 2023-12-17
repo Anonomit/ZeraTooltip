@@ -546,9 +546,11 @@ do
   
   -- https://colornamer.robertcooper.me/
   Addon.COLORS = {
-    SKY_BLUE  = rgb(  0, 204, 255), -- used by BIND_TRADE_TIME_REMAINING
     DEFAULT   = rgb(255, 215,   6), -- used by default font
+    SKY_BLUE  = rgb(  0, 204, 255), -- used by BIND_TRADE_TIME_REMAINING
     PURE_RED  = rgb(255,   0,   0), -- used by ITEM_ENCHANT_DISCLAIMER
+    FLAVOR    = rgb(255, 209,   0), -- used by item description text
+    PURPLE    = rgb(128, 128, 255), -- used by reputation chat channel
     WHITE     = rgb(255, 255, 255),
     GRAY      = rgb(128, 128, 128),
     RED       = rgb(255,  32,  32),
@@ -556,7 +558,6 @@ do
     GREEN     = rgb(  0, 255,   0),
     BLUE      = rgb(  0,   0, 255),
     YELLOW    = rgb(255, 255,   0),
-    PURPLE    = rgb(255,   0, 255),
 
     ARCANE = rgb(255, 127, 255),
     FIRE   = rgb(255, 128,   0),
