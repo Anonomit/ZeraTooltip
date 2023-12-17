@@ -22,6 +22,10 @@ Addon:RegisterOptionSetHandler(Addon.WipeTextCache)
 Addon:RegisterCVarCallback("colorblindMode", Addon.WipeTextCache)
 
 
+cacheLineTypes = setmetatable({
+  Title = false,
+}, {__index = function() return true end})
+
 local miscRewordLines = {
   SecondaryStat = true,
   Enchant       = true,
@@ -155,7 +159,7 @@ function Addon:RewordLine(tooltip, line, tooltipData)
       end
     end
     
-    if self:GetGlobalOption("cache", "enabled") and self:GetGlobalOption("cache", "text") then
+    if self:GetGlobalOption("cache", "enabled") and self:GetGlobalOption("cache", "text") and cacheLineTypes[line.type] then
       textCache[line.type] = textCache[line.type] or {}
       textCache[line.type][line.textLeftText] = {text, line.rewordRight}
       cacheSize = cacheSize + 1
