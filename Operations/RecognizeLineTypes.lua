@@ -279,14 +279,14 @@ contextActions = Addon:Map({
     if line.colorRight == Addon.COLORS.RED then
       return SetContext(i, tooltipData, line)
     elseif line.colorLeft == Addon.COLORS.RED then
-      for _, alt in ipairs{
+      for _, alt in ipairs(Addon:Squish{
         contexts.RequiredEnchant,
         contexts.RequiredClasses,
         contexts.RequiredRaces,
         contexts.RequiredLevel,
         contexts.RequiredRep,
         contexts.RequiredEnchantOnUse,
-      } do
+      }) do
         local increment = contextActions[alt](alt, tooltipData, line)
         if increment then
           return alt - i + increment
@@ -367,12 +367,12 @@ contextActions = Addon:Map({
   end,
   WeaponEnchant = function(i, tooltipData, line)
     if tooltipData.isWeapon and line.colorLeft == Addon.COLORS.GREEN then
-      for _, alt in ipairs{
+      for _, alt in ipairs(Addon:Squish{
         contexts.ProposedEnchant,
         contexts.LastSecondaryStat,
         contexts.MadeBy,
         contexts.SocketHint,
-      } do
+      }) do
         local increment = contextActions[alt](alt, tooltipData, line)
         if increment then
           return alt - i + increment
@@ -382,14 +382,14 @@ contextActions = Addon:Map({
       return SetContext(i, tooltipData, line)
     end
   end,
-  Rune = function(i, tooltipData, line)
-    if not tooltipData.isWeapon and line.colorLeft == Addon.COLORS.GREEN then
-      for _, alt in ipairs{
+  Rune = Addon.isSoD and function(i, tooltipData, line)
+    if tooltipData.isEngravable and line.colorLeft == Addon.COLORS.GREEN then
+      for _, alt in ipairs(Addon:Squish{
         contexts.ProposedEnchant,
         contexts.LastSecondaryStat,
         contexts.MadeBy,
         contexts.SocketHint,
-      } do
+      }) do
         local increment = contextActions[alt](alt, tooltipData, line)
         if increment then
           return alt - i + increment
@@ -398,8 +398,8 @@ contextActions = Addon:Map({
       -- didn't match any other possible green line
       return SetContext(i, tooltipData, line)
     end
-  end,
-  LastSocket = function(i, tooltipData, line)
+  end or nil,
+  LastSocket = Addon.expansionLevel >= Addon.expansions.tbc and function(i, tooltipData, line)
     if line.texture then
       if line.colorLeft == Addon.COLORS.RED then
         tooltipData.unmatchedRedSockets = (tooltipData.unmatchedRedSockets or 0) + 1
@@ -407,12 +407,12 @@ contextActions = Addon:Map({
       line.socketType = Addon:GetGemColor(line.texture[1], line.textLeftText)
       return SetContext(i-2, tooltipData, line)
     end
-  end,
-  LastRequiredSocket = function(i, tooltipData, line)
+  end or nil,
+  LastRequiredSocket = Addon.expansionLevel >= Addon.expansions.tbc and function(i, tooltipData, line)
     if (tooltipData.unmatchedRedSockets or 0) > 0 and line.colorLeft == Addon.COLORS.RED and MatchesAny(line.textLeftTextStripped, SOCKET_ITEM_REQ_SKILL, ENCHANT_ITEM_REQ_SKILL, ENCHANT_ITEM_MIN_SKILL, ENCHANT_ITEM_REQ_LEVEL) then
       return SetContext(i-2, tooltipData, line)
     end
-  end,
+  end or nil,
   ProposedEnchant = function(i, tooltipData, line)
     if line.colorLeft == Addon.COLORS.GREEN and MatchesAny(line.textLeftTextStripped, ITEM_PROPOSED_ENCHANT) then
       return SetContext(i, tooltipData, line)
@@ -423,14 +423,14 @@ contextActions = Addon:Map({
       return SetContext(i, tooltipData, line)
     end
   end,
-  SocketBonus = function(i, tooltipData, line)
+  SocketBonus = Addon.expansionLevel >= Addon.expansions.tbc and function(i, tooltipData, line)
   local prefix = MatchesAny(line.textLeftTextStripped, ITEM_SOCKET_BONUS)
     if prefix then
       line.prefix                  = prefix
       tooltipData.locs.socketBonus = line.i
       return SetContext(i, tooltipData, line)
     end
-  end,
+  end or nil,
   Durability = function(i, tooltipData, line)
     if MatchesAny(line.textLeftTextStripped, DURABILITY_TEMPLATE) then
       return SetContext(i, tooltipData, line)
@@ -532,11 +532,11 @@ contextActions = Addon:Map({
       return SetContext(i, tooltipData, line)
     end
   end,
-  SocketHint = function(i, tooltipData, line)
+  SocketHint = Addon.expansionLevel >= Addon.expansions.tbc and function(i, tooltipData, line)
     if line.colorLeft == Addon.COLORS.GREEN and StartsWithAny(line.textLeftTextStripped, ITEM_SOCKETABLE) then
       return SetContext(i, tooltipData, line)
     end
-  end,
+  end or nil,
   Refundable = function(i, tooltipData, line)
     if line.colorLeft == Addon.COLORS.SKY_BLUE and MatchesAny(line.textLeftTextStripped, REFUND_TIME_REMAINING) then
       return SetContext(i, tooltipData, line)

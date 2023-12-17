@@ -16,6 +16,17 @@ local weaponInvTypes = {
   INVTYPE_WEAPONMAINHAND = true,
   INVTYPE_WEAPONOFFHAND  = true,
 }
+local engravableInvTypes = {
+  INVTYPE_CHEST    = true,
+  INVTYPE_LEGS     = true,
+  INVTYPE_HAND     = true,
+  INVTYPE_WRIST    = true,
+  INVTYPE_CLOAK    = true,
+  INVTYPE_FEET     = true,
+  INVTYPE_HEAD     = true,
+  INVTYPE_SHOULDER = true,
+  INVTYPE_WAIST    = true,
+}
 
 
 function Addon:PrepareTooltip(tooltip, methodName, ...)
@@ -109,8 +120,9 @@ function Addon:ReadTooltip(tooltip, name, link, maxLines)
     tooltipData.hasEnchant = true
   end
   local _, _, _, itemEquipLoc, icon = GetItemInfoInstant(tooltipData.id)
-  tooltipData.isWeapon = weaponInvTypes[itemEquipLoc]
-  tooltipData.icon     = icon
+  tooltipData.isWeapon     = weaponInvTypes[itemEquipLoc]
+  tooltipData.isEngravable = Addon.isSoD and engravableInvTypes[itemEquipLoc] or nil
+  tooltipData.icon         = icon
   
   tooltipData.resists = 0
   tooltipData.lastUse = "SecondaryStat"
