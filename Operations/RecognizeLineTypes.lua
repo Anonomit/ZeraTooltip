@@ -25,6 +25,8 @@ local ITEM_MOD_SPIRIT    = Addon.ITEM_MOD_SPIRIT
 
 local numberPattern = "[%d%"..DECIMAL_SEPERATOR.."]+"
 
+local LOCKED_PATTERN = "%s" .. LOCKED
+
 
 local bindTypes = {
   [ITEM_SOULBOUND]           = "AlreadyBound",
@@ -261,7 +263,7 @@ contextActions = Addon:Map({
     end
   end,
   Locked = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, LOCKED) then -- text isn't always red
+    if MatchesAny(line.textLeftTextStripped, LOCKED_PATTERN) then -- text isn't always red
       return SetContext(i, tooltipData, line)
     end
   end,
