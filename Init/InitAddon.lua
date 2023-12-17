@@ -780,6 +780,7 @@ do
     
     "Interface\\MINIMAP\\TRACKING\\Repair",
     
+    "Interface\\ICONS\\INV_Misc_Wrench_01",
     
     "Interface\\MINIMAP\\Vehicle-HammerGold-1",
     "Interface\\MINIMAP\\Vehicle-HammerGold-2",

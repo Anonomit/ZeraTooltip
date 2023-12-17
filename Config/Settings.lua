@@ -142,6 +142,7 @@ function Addon:MakeDefaultOptions()
         },
         icon = {
           ["*"]          = "Interface\\AddOns\\" .. ADDON_NAME .. "\\Assets\\Textures\\Samwise",
+          Title          = "Interface\\ICONS\\INV_Misc_Wrench_01", -- should only show up when an item doesn't exist
           ItemLevel      = "Interface\\Transmogrify\\transmog-tooltip-arrow",
           AlreadyBound   = "Interface\\PetBattles\\PetBattle-LockIcon",
           CharacterBound = "Interface\\PetBattles\\PetBattle-LockIcon",
