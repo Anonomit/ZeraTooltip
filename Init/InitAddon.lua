@@ -235,7 +235,7 @@ do
       end
     end
     return t
-  end)(), true, true)
+  end)(), nil, true)
   
   Addon.prefixStats = {
     [ITEM_SPELL_TRIGGER_ONEQUIP] = "Equip",
@@ -504,6 +504,21 @@ do
   
   Addon:RegisterEvent("PLAYER_LEVEL_UP", function(_, level) Addon.MY_LEVEL = UnitLevel"player" end)
 end
+
+
+
+--  ███████╗ █████╗  ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗
+--  ██╔════╝██╔══██╗██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
+--  █████╗  ███████║██║        ██║   ██║██║   ██║██╔██╗ ██║███████╗
+--  ██╔══╝  ██╔══██║██║        ██║   ██║██║   ██║██║╚██╗██║╚════██║
+--  ██║     ██║  ██║╚██████╗   ██║   ██║╚██████╔╝██║ ╚████║███████║
+--  ╚═╝     ╚═╝  ╚═╝ ╚═════╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
+
+do
+  Addon.MY_FACTION = UnitFactionGroup"player"
+end
+
+
 
 
 

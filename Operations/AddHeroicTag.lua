@@ -9,7 +9,7 @@ local strGsub = string.gsub
 local tinsert = table.insert
 
 
-local heroicItems = Addon:MakeLookupTable({
+local heroicItems = Addon:MakeLookupTable{
   -- Original Wrath
   --[[
   44964, 46964, 46965, 46966, 46967, 46968, 46969, 46971, 46973, 46975, 46977,
@@ -103,7 +103,7 @@ local heroicItems = Addon:MakeLookupTable({
   
   -- ZeraTooltip
   47557, 47558, 47559,
-}, true)
+}
 
 
 

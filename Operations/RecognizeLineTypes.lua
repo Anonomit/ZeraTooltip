@@ -123,7 +123,7 @@ local contexts = Addon:MakeLookupTable({
   "RecipeMats",
   "RecipeTitle",
   "Tail",
-}, nil, true)
+}, function(v, k) return k end, true)
 
 local contextAscensions = Addon:Map({
   Title = function(context, tooltipData, line, currentContext)

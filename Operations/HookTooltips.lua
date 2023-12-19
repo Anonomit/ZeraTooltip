@@ -109,7 +109,7 @@ local function ConvertArgs(...)
   return args
 end
 
-local compareMethods = setmetatable({SetCompareItem = true, SetHyperlinkCompareItem = true}, {__index = function() return false end})
+local compareMethods = Addon:MakeLookupTable{"SetCompareItem", "SetHyperlinkCompareItem"}
 local recursion      = false -- used for shopping tooltips
 local alreadyPrepped = false -- used for shopping tooltips
 local function OnTooltipItemMethod(tooltip, methodName, ...)

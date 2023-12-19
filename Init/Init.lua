@@ -1048,7 +1048,7 @@ do
     end
     return new
   end
-
+  
   function Addon:Filter(t, ...)
     local new = {}
     
@@ -1085,14 +1085,14 @@ do
     end
     return new
   end
-
+  
   function Addon:Shuffle(t)
     for i = #t, 2, -1 do
       local j = math.random(i)
       t[i], t[j] = t[j], t[i]
     end
   end
-
+  
   
   function Addon:MakeLookupTable(t, val, keepOrigVals)
     local ValFunc
@@ -1108,13 +1108,17 @@ do
       if ValFunc then
         new[v] = ValFunc(v, k, t)
       else
-        new[v] = k
+        new[v] = true
       end
       if keepOrigVals and new[k] == nil then
         new[k] = v
       end
     end
     return new
+  end
+  
+  function Addon:MakeBoolTable(t)
+    return setmetatable(self:MakeLookupTable(t), {__index = function() return false end})
   end
   
   

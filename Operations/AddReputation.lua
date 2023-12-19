@@ -23,7 +23,6 @@ Reputation standings
 ]]
 
 
-local FACTION = UnitFactionGroup"player"
 
 local REPUTATION_TEXT_PATTERN   = "%s +%d"
 local REPUTATION_MAX_PATTERN    = "/%d"
@@ -44,16 +43,16 @@ end
 Addon.waylaidSupplies = {}
 local reputationItems = {}
 for ids, repInfo in pairs{
-  [{211331, 210771, 211332, 211329, 211315, 211316, 211933, 211317, 211330}]                         = {factionID = FACTION == "Alliance" and 2586 or 2587, min = 100, cutoff = 5, max = 300},
-  [{211365}]                                                                                         = {factionID = FACTION == "Alliance" and 2586 or 2587, min = 300, cutoff = 5},
-  [{211327, 211328, 211319, 211326, 211325, 211934, 211321, 211318, 211322, 211324, 211323, 211320}] = {factionID = FACTION == "Alliance" and 2586 or 2587, min = 100, cutoff = 5, max = 450},
-  [{211367}]                                                                                         = {factionID = FACTION == "Alliance" and 2586 or 2587, min = 450, cutoff = 5},
-  [{211819, 211822, 211837, 211838, 211821, 211820, 211836, 211835, 211823}]                         = {factionID = FACTION == "Alliance" and 2586 or 2587, min = 200, cutoff = 6, max = 500},
-  [{211839}]                                                                                         = {factionID = FACTION == "Alliance" and 2586 or 2587, min = 500, cutoff = 6},
-  [{211831, 211833, 211824, 211828, 211825, 211829}]                                                 = {factionID = FACTION == "Alliance" and 2586 or 2587, min = 200, cutoff = 6, max = 650},
-  [{211840}]                                                                                         = {factionID = FACTION == "Alliance" and 2586 or 2587, min = 650, cutoff = 6},
-  [{211935, 211832, 211830, 211834, 211827, 211826}]                                                 = {factionID = FACTION == "Alliance" and 2586 or 2587, min = 200, cutoff = 6, max = 800},
-  [{211841}]                                                                                         = {factionID = FACTION == "Alliance" and 2586 or 2587, min = 800, cutoff = 6},
+  [{211331, 210771, 211332, 211329, 211315, 211316, 211933, 211317, 211330}]                         = {factionID = Addon.MY_FACTION == "Alliance" and 2586 or 2587, min = 100, cutoff = 5, max = 300},
+  [{211365}]                                                                                         = {factionID = Addon.MY_FACTION == "Alliance" and 2586 or 2587, min = 300, cutoff = 5},
+  [{211327, 211328, 211319, 211326, 211325, 211934, 211321, 211318, 211322, 211324, 211323, 211320}] = {factionID = Addon.MY_FACTION == "Alliance" and 2586 or 2587, min = 100, cutoff = 5, max = 450},
+  [{211367}]                                                                                         = {factionID = Addon.MY_FACTION == "Alliance" and 2586 or 2587, min = 450, cutoff = 5},
+  [{211819, 211822, 211837, 211838, 211821, 211820, 211836, 211835, 211823}]                         = {factionID = Addon.MY_FACTION == "Alliance" and 2586 or 2587, min = 200, cutoff = 6, max = 500},
+  [{211839}]                                                                                         = {factionID = Addon.MY_FACTION == "Alliance" and 2586 or 2587, min = 500, cutoff = 6},
+  [{211831, 211833, 211824, 211828, 211825, 211829}]                                                 = {factionID = Addon.MY_FACTION == "Alliance" and 2586 or 2587, min = 200, cutoff = 6, max = 650},
+  [{211840}]                                                                                         = {factionID = Addon.MY_FACTION == "Alliance" and 2586 or 2587, min = 650, cutoff = 6},
+  [{211935, 211832, 211830, 211834, 211827, 211826}]                                                 = {factionID = Addon.MY_FACTION == "Alliance" and 2586 or 2587, min = 200, cutoff = 6, max = 800},
+  [{211841}]                                                                                         = {factionID = Addon.MY_FACTION == "Alliance" and 2586 or 2587, min = 800, cutoff = 6},
 } do
   for _, id in ipairs(ids) do
     Addon:Assertf(not reputationItems[id], "Duplicate waylaid supply crate: %d", id)
