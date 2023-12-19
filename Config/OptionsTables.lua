@@ -2114,12 +2114,12 @@ function Addon:MakeAddonOptions(chatCmd)
   local sections = {}
   for _, data in ipairs{
     {MakeGeneralOptions, nil},
-    {MakeStatsOptions,   self.L["Stats"],         "stats", "stat", "st"},
-    {MakePaddingOptions, L["Spacing"],            "spacing", "space", "spaces", "spa", "sp", "padding", "pad", "pa"},
-    {MakeExtraOptions,   self.L["Miscellaneous"], "misc", "miscellaneous", "other", "m"},
-    {MakeProfileOptions, "Profiles",              "profiles", "profile", "prof", "pro", "pr", "p"},
-    {MakeResetOptions,   self.L["Reset"],         "reset", "res", "re", "r"},
-    {MakeDebugOptions,   self.L["Debug"],         "debug", "db", "d"},
+    {MakeStatsOptions,   self.L["Stats"],         "stats"},
+    {MakePaddingOptions, L["Spacing"],            "spacing", "spaces", "padding"},
+    {MakeExtraOptions,   self.L["Miscellaneous"], "miscellaneous", "other"},
+    {MakeProfileOptions, "Profiles",              "profiles"},
+    {MakeResetOptions,   self.L["Reset"],         "reset"},
+    {MakeDebugOptions,   self.L["Debug"],         "debug"},
   } do
     
     local func = data[1]
@@ -2128,10 +2128,20 @@ function Addon:MakeAddonOptions(chatCmd)
     
     tinsert(sections, function(opts) return func(opts, name) end)
     
-    -- resizing the options window before using these commands can cause incredibly long freezes
     local function OpenOptions() return self:OpenConfig(name) end
+    if name == self.L["Debug"] then
+      local OpenOptions_Old = OpenOptions
+      OpenOptions = function(...)
+        if not self:GetGlobalOption"debug" then
+          self:SetGlobalOption(true, "debug")
+          self:Debug("Debug mode enabled")
+        end
+        return OpenOptions_Old(...)
+      end
+    end
+    
     for _, arg in ipairs(args) do
-      self.chatArgs[arg] = OpenOptions
+      self:RegisterChatArgAliases(arg, OpenOptions)
     end
   end
   
@@ -2146,9 +2156,6 @@ function Addon:MakeAddonOptions(chatCmd)
     return opts
   end)
   
-  -- unstable function. can cause game crash
-  -- '/zt m' crashes the game in classic era
-  -- '/zt m' followed by '/zt p' crashes the game in wrath
   -- default is (700, 500)
   self.AceConfigDialog:SetDefaultSize(ADDON_NAME, 700, 800)
 end
