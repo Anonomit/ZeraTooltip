@@ -63,6 +63,8 @@ function Addon:ModifyTooltipData(tooltip, tooltipData)
   
   self:CalculatePadding(tooltipData)
   
+  self:MarkTooltip(tooltipData)
+  
   if self:GetGlobalOption("debugOutput", "finalTooltipData") then
     for i, line in ipairs(tooltipData) do
       OutputLineRecognition(line)

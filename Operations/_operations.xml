@@ -9,6 +9,7 @@
   <Script file="HideLine.lua"/>
   <Script file="HookTooltips.lua"/>
   <Script file="ManageConstructors.lua"/>
+  <Script file="MarkTooltip.lua"/>
   <Script file="ModifyBinding.lua"/>
   <Script file="ModifyMadeBy.lua"/>
   <Script file="ModifyRequiredClasses.lua"/>

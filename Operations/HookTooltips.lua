@@ -49,7 +49,7 @@ local function ScannerOnTooltipSetItem(scannerTooltip)
   end
 end
 
-local function CreateScanner(tooltip)
+local function GetScanner(tooltip)
   local tooltipName = tooltip:GetName()
   local scannerTooltip = tooltipScanners[tooltipName]
   if not scannerTooltip then
@@ -131,6 +131,8 @@ local function OnTooltipItemMethod(tooltip, methodName, ...)
     end
     return
   end
+  if self:IsTooltipMarked(tooltip) then return end
+  
   local isComparison = compareMethods[methodName]
   
   if Addon:GetGlobalOption("debugOutput", "tooltipMethodHook") then
@@ -141,13 +143,13 @@ local function OnTooltipItemMethod(tooltip, methodName, ...)
   local args = {...}
   args.n = select("#", ...)
   if not recursion and isComparison then
-    args[1] = CreateScanner(args[1])
+    args[1] = GetScanner(args[1])
     ResetScanner(args[1], nil, methodName, ...)
     alreadyPrepped = false
   end
   
   do
-    local scannerTooltip = CreateScanner(tooltip)
+    local scannerTooltip = GetScanner(tooltip)
     if not recursion then
       if scannerTooltip.lastTime == GetTime() and scannerTooltip.lastLink == link then return end
       ResetScanner(scannerTooltip, link, methodName, ...)
@@ -201,11 +203,12 @@ end
 local function OnTooltipSetItem(tooltip)
   local self = Addon
   if not self:IsHookEnabled() then return end
-  local scannerTooltip = CreateScanner(tooltip)
+  local scannerTooltip = GetScanner(tooltip)
   if not tooltip.GetItem then return end
   local name, link = tooltip:GetItem()
   if not name or not link then return end
-  if scannerTooltip.lastTime ~= GetTime() or not DoLinksMatch(scannerTooltip.lastLink, link) then return end
+  if not scannerTooltip.lastLink or not DoLinksMatch(scannerTooltip.lastLink, link) then return end
+  if self:IsTooltipMarked(tooltip) then return end
   
   scannerTooltip.updates = scannerTooltip.updates + 1
   if scannerTooltip.isRecipe and scannerTooltip.updates % 2 == 1 then return end
