@@ -505,6 +505,7 @@ contextActions = Addon:Map({
     end
   end,
   EnchantOnUse = function(i, tooltipData, line)
+    if Addon.expansionLevel < Addon.expansions.wrath then return end
     if tooltipData.hasEnchant and not tooltipData.foundEnchant and line.colorLeft == Addon.COLORS.GREEN and StartsWithAny(line.textLeftTextStripped, ITEM_SPELL_TRIGGER_ONUSE) then
       tooltipData.locs.enchant = line.i
       line.prefix              = ITEM_SPELL_TRIGGER_ONUSE
@@ -513,6 +514,7 @@ contextActions = Addon:Map({
     end
   end,
   RequiredEnchantOnUse = function(i, tooltipData, line)
+    if Addon.expansionLevel < Addon.expansions.wrath then return end
     if tooltipData.hasEnchant and not tooltipData.foundEnchant and line.colorLeft == Addon.COLORS.RED and MatchesAny(line.textLeftTextStripped, ENCHANT_ITEM_REQ_SKILL, ENCHANT_ITEM_MIN_SKILL, ENCHANT_ITEM_REQ_LEVEL) then
       return SetContext(i, tooltipData, line)
     end

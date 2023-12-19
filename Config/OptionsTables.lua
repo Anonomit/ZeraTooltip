@@ -1424,7 +1424,7 @@ local function MakeExtraOptions(opts, categoryName)
     
     CreateHide(opts, stat)
   end
-  if not self:GetOption("doReorder", "EnchantOnUse") then MakeEnchantOnUseOptions() end
+  if Addon.expansionLevel >= Addon.expansions.wrath and not self:GetOption("doReorder", "EnchantOnUse") then MakeEnchantOnUseOptions() end
   
   -- Weapon Enchant
   do
@@ -1612,7 +1612,7 @@ local function MakeExtraOptions(opts, categoryName)
   end
   GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
   
-  if self:GetOption("doReorder", "EnchantOnUse") then MakeEnchantOnUseOptions() GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true) end
+  if Addon.expansionLevel >= Addon.expansions.wrath and self:GetOption("doReorder", "EnchantOnUse") then MakeEnchantOnUseOptions() GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true) end
   
   
   -- Charges
