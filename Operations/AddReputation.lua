@@ -95,6 +95,6 @@ function Addon:AddReputation(tooltipData)
   -- local color = self:GetOption("allow", "recolor") and self:GetOption("doRecolor", stat) and self:GetOption("color", stat) or self:GetDefaultOption("color", stat)
   local color = Addon.COLORS.PURPLE
   
-  self:AddExtraLine(tooltipData, tooltipData.locs.description + 1, text, color)
+  self:AddExtraLine(tooltipData, tooltipData.locs.description, text, color)
 end
 
