@@ -70,7 +70,7 @@ local function GetPadType(offset, lineType, lastUse)
   return lineType
 end
 
-function Addon:CalculatePadding(tooltipData, tooltip, methodName)
+function Addon:CalculatePadding(tooltipData)
   local lastUse = tooltipData.lastUse
   
   for cat, offset in pairs(lineOffsets) do

@@ -235,12 +235,12 @@ local function OnTooltipSetItem(tooltip)
   end
 end
 
-function Addon:HookTooltips()
+Addon:RegisterEnableCallback(function(self)
   -- hook tooltips with OnTooltipSetItem
   self.TipHooker2:Hook(OnTooltipSetItem, "item")
   
   -- hook tooltips with a more powerful method
   self.TipHooker:Hook(OnTooltipItemMethod, "item")
   self.TipHooker:Hook(function(tooltip, methodName, slot) OnTooltipItemMethod(tooltip, methodName, slot) end, "action")
-end
+end)
 
