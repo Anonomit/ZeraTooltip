@@ -323,13 +323,16 @@ end
 --  ███████║   ██║   ██║  ██║   ██║       ╚██████╔╝██║        ██║   ██║╚██████╔╝██║ ╚████║███████║
 --  ╚══════╝   ╚═╝   ╚═╝  ╚═╝   ╚═╝        ╚═════╝ ╚═╝        ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
 
+local percentStats = Addon:MakeLookupTable{"Dodge Rating", "Parry Rating", "Block Rating", "Hit Rating", "Physical Hit Rating", "Physical Critical Strike Rating", "Spell Hit Rating", "Spell Critical Strike Rating"}
 local sampleNumber = 10
 local function CreateStatOption(opts, i, stat)
   local self = Addon
   local GUI  = self.GUI
   
-  local defaultText = GetDefaultStatText(sampleNumber, stat)
-  local formattedText = GetFormattedStatText(sampleNumber, stat)
+  local percent = Addon.isClassic and percentStats[stat] and "%" or ""
+  
+  local defaultText = GetDefaultStatText(sampleNumber .. percent, stat)
+  local formattedText = GetFormattedStatText(sampleNumber .. percent, stat)
   
   local opts = GUI:CreateGroup(opts, stat, formattedText, GetStatNormalName(stat), "tab")
   

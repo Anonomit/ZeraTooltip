@@ -361,6 +361,9 @@ do
       
       function StatInfo:GetDefaultForm(number)
         local strNumber = tostring(number)
+        if type(number) == "string" then
+          number = tonumber(strMatch(number, "%d+"))
+        end
         if DECIMAL_SEPERATOR ~= "." then
           strNumber = strGsub(strNumber, "%.", DECIMAL_SEPERATOR)
         end
