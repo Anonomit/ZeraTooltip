@@ -5,6 +5,18 @@ local ADDON_NAME, Data = ...
 local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 
 
+
+-- override the default stat rewords for this locale
+do
+  -- Addon:AddDefaultRewordByLocale(stat, val)
+  
+  if Addon.isSoD then
+    Addon:AddDefaultRewordByLocale("Physical Hit Rating",             format("%s (%s)", ITEM_MOD_HIT_RATING_SHORT,  SPELL_SCHOOL0_CAP))
+    Addon:AddDefaultRewordByLocale("Physical Critical Strike Rating", format("%s (%s)", ITEM_MOD_CRIT_RATING_SHORT, SPELL_SCHOOL0_CAP))
+  end
+end
+
+
   
 Addon:AddExtraStatCapture("Arcane Damage",
   {INPUT = "^%+(%d+) Arkanzauberschaden$"})
@@ -70,6 +82,9 @@ if Addon.isClassic then
   Addon:AddExtraStatCapture("Spell Penetration",
     {INPUT = "^Reduziert die Magiewiderstände der Ziele Eurer Zauber um (%d+)%.$"},
     {INPUT = "^Verringert die Magiewiderstände der Ziele Eurer Zauber um (%d+)%.$"})
+  
+  Addon:AddExtraStatCapture("Hit Rating",
+    {INPUT = "^Erhöht Eure Trefferchance mit Zaubern sowie Nahkampf%- und Distanzangriffen um (%d+%%)%.$"})
   
   Addon:AddExtraStatCapture("Physical Hit Rating",
     {INPUT = "^Verbessert Eure Trefferchance um (%d+%%)%.$"})

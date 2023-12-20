@@ -10,59 +10,45 @@ local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 do
   -- Addon:AddDefaultRewordByLocale(stat, val)
   
-  Addon:AddDefaultRewordByLocale("Stamina"  , "к выносливости")
-  Addon:AddDefaultRewordByLocale("Strength" , "к силе")
-  Addon:AddDefaultRewordByLocale("Agility"  , "к ловкости")
+  Addon:AddDefaultRewordByLocale("Stamina",   "к выносливости")
+  Addon:AddDefaultRewordByLocale("Strength",  "к силе")
+  Addon:AddDefaultRewordByLocale("Agility",   "к ловкости")
   Addon:AddDefaultRewordByLocale("Intellect", "к интеллекту")
-  Addon:AddDefaultRewordByLocale("Spirit"   , "к духу")
+  Addon:AddDefaultRewordByLocale("Spirit",    "к духу")
   
-  Addon:AddDefaultRewordByLocale("All Resistance"   , "ко всем сопротивлениям")
+  Addon:AddDefaultRewordByLocale("All Resistance",    "ко всем сопротивлениям")
   Addon:AddDefaultRewordByLocale("Arcane Resistance", "к сопротивлению тайной магии")
-  Addon:AddDefaultRewordByLocale("Fire Resistance"  , "к сопротивлению огню")
+  Addon:AddDefaultRewordByLocale("Fire Resistance",   "к сопротивлению огню")
   Addon:AddDefaultRewordByLocale("Nature Resistance", "к сопротивлению силам природы")
-  Addon:AddDefaultRewordByLocale("Frost Resistance" , "к сопротивлению магии льда")
+  Addon:AddDefaultRewordByLocale("Frost Resistance",  "к сопротивлению магии льда")
   Addon:AddDefaultRewordByLocale("Shadow Resistance", "к сопротивлению темной магии")
   
-  Addon:AddDefaultRewordByLocale("Attack Power"            , "к силе атаки")
-  Addon:AddDefaultRewordByLocale("Ranged Attack Power"     , "к силе атаки дальнего боя")
-  Addon:AddDefaultRewordByLocale("Attack Power In Forms"   , "к силе атаки в зверином облике")
-  Addon:AddDefaultRewordByLocale("Attack Power In Forms"   , "к силе атаки в зверином облике")
-  Addon:AddDefaultRewordByLocale("Defense Rating"          , "к защите")
-  Addon:AddDefaultRewordByLocale("Parry Rating"            , "к парированию")
-  Addon:AddDefaultRewordByLocale("Dodge Rating"            , "к уклонению")
-  Addon:AddDefaultRewordByLocale("Armor Penetration Rating", "к пробиванию брони")
-  Addon:AddDefaultRewordByLocale("Expertise Rating"        , "к мастерству")
-  Addon:AddDefaultRewordByLocale("Resilience Rating"       , "к PvP-устойчивости")
-  Addon:AddDefaultRewordByLocale("Block Rating"            , "к блокированию")
-  Addon:AddDefaultRewordByLocale("Block Value"             , "к показателю блокирования")
-  
-  Addon:AddDefaultRewordByLocale("Spell Power"  , "к силе заклинаний")
+  Addon:AddDefaultRewordByLocale("Spell Power",   "к силе заклинаний")
+  -- Addon:AddDefaultRewordByLocale("Spell Damage",  "к силе заклинаний")
   Addon:AddDefaultRewordByLocale("Arcane Damage", "к силе заклинаний тайной магии")
-  Addon:AddDefaultRewordByLocale("Fire Damage"  , "к силе заклинаний огня")
+  Addon:AddDefaultRewordByLocale("Fire Damage",   "к силе заклинаний огня")
   Addon:AddDefaultRewordByLocale("Nature Damage", "к силе заклинаний природы")
-  Addon:AddDefaultRewordByLocale("Frost Damage" , "к силе заклинаний магии льда")
+  Addon:AddDefaultRewordByLocale("Frost Damage",  "к силе заклинаний магии льда")
   Addon:AddDefaultRewordByLocale("Shadow Damage", "к силе заклинаний темной магии")
-  Addon:AddDefaultRewordByLocale("Holy Damage"  , "к силе заклинаний светлой магии")
+  Addon:AddDefaultRewordByLocale("Holy Damage",   "к силе заклинаний светлой магии")
   
-  Addon:AddDefaultRewordByLocale("Hit Rating"            , "к меткости")
-  Addon:AddDefaultRewordByLocale("Critical Strike Rating", "к критическому удару")
-  Addon:AddDefaultRewordByLocale("Haste Rating"          , "к скорости")
-  
-  Addon:AddDefaultRewordByLocale("Health Regeneration", "к восстановлению здоровья за минуту")
-  Addon:AddDefaultRewordByLocale("Mana Regeneration"  , "к восполнению маны за минуту")
-  
-  -- tbc & classic
-  Addon:AddDefaultRewordByLocale("Healing"     , "к дополнительному исцелению")
-  -- Addon:AddDefaultRewordByLocale("Spell Damage", "к силе заклинаний")
-
   Addon:AddDefaultRewordByLocale("Spell Penetration", "к проникающей способности заклинаний")
   
-  Addon:AddDefaultRewordByLocale("Physical Hit Rating"            , "к меткости")
-  Addon:AddDefaultRewordByLocale("Physical Critical Strike Rating", "к критическому удару")
-  Addon:AddDefaultRewordByLocale("Physical Haste Rating"          , "к скорости")
-  Addon:AddDefaultRewordByLocale("Spell Hit Rating"               , "к меткости заклинаний")
-  Addon:AddDefaultRewordByLocale("Spell Critical Strike Rating"   , "к критическому эффекту заклинаний")
-  Addon:AddDefaultRewordByLocale("Spell Haste Rating"             , "к скорости заклинаний")
+  Addon:AddDefaultRewordByLocale("Hit Rating",             "к меткости")
+  Addon:AddDefaultRewordByLocale("Critical Strike Rating", "к критическому удару")
+  Addon:AddDefaultRewordByLocale("Haste Rating",           "к скорости")
+  
+  if Addon.isSoD then
+    Addon:AddDefaultRewordByLocale("Physical Hit Rating",             format("%s (%s)", ITEM_MOD_HIT_RATING_SHORT,  SPELL_SCHOOL0_NAME))
+    Addon:AddDefaultRewordByLocale("Physical Critical Strike Rating", format("%s (%s)", ITEM_MOD_CRIT_RATING_SHORT, SPELL_SCHOOL0_NAME))
+  end
+  
+  Addon:AddDefaultRewordByLocale("Spell Critical Strike Rating",    "к критическому эффекту заклинаний")
+  Addon:AddDefaultRewordByLocale("Spell Haste Rating",              "к скорости заклинаний")
+  
+  
+  Addon:AddDefaultRewordByLocale("Health Regeneration", "к восстановлению здоровья за минуту")
+  Addon:AddDefaultRewordByLocale("Mana Regeneration",   "к восполнению маны за минуту")
 end
 
 
@@ -155,6 +141,9 @@ if Addon.isClassic then
   
   Addon:AddExtraStatCapture("Spell Penetration",
     {INPUT = "^Снижает сопротивление магии целей ваших заклинаний на (%d+)%.$"})
+  
+  Addon:AddExtraStatCapture("Hit Rating",
+    {INPUT = "^Повышает вероятность попадания заклинаниями и атаками в ближнем и дальнем бою на (%d+%%)%.$"})
   
   Addon:AddExtraStatCapture("Physical Hit Rating",
     {INPUT = "^Вероятность нанесения удара увеличена на (%d+%%)%.$"})

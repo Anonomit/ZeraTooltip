@@ -6,6 +6,18 @@ local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 
 
 
+-- override the default stat rewords for this locale
+do
+  -- Addon:AddDefaultRewordByLocale(stat, val)
+  
+  if Addon.isSoD then
+    Addon:AddDefaultRewordByLocale("Physical Hit Rating",             format("%s (%s)", ITEM_MOD_HIT_RATING_SHORT,  SPELL_SCHOOL0_CAP))
+    Addon:AddDefaultRewordByLocale("Physical Critical Strike Rating", format("%s (%s)", ITEM_MOD_CRIT_RATING_SHORT, SPELL_SCHOOL0_CAP))
+  end
+end
+
+
+
 Addon:AddExtraStatCapture("Arcane Damage",
   {INPUT = "^%+(%d+) 奥术法术伤害$"})
 
@@ -73,6 +85,9 @@ if Addon.isClassic then
   
   Addon:AddExtraStatCapture("Spell Penetration",
     {INPUT = "^使你的法术目标的魔法抗性降低(%d+)点。$"})
+  
+  Addon:AddExtraStatCapture("Hit Rating",
+    {INPUT = "^使你的法术、近战和远程攻击的命中几率提高(%d+%%)。$"})
   
   Addon:AddExtraStatCapture("Physical Hit Rating",
     {INPUT = "^使你击中目标的几率提高(%d+%%)。$"})

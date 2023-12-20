@@ -6,6 +6,16 @@ local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 
 
 
+-- override the default stat rewords for this locale
+do
+  -- Addon:AddDefaultRewordByLocale(stat, val)
+  
+  if Addon.isSoD then
+    Addon:AddDefaultRewordByLocale("Physical Hit Rating",             format("%s (%s)", ITEM_MOD_HIT_RATING_SHORT,  SPELL_SCHOOL0_NAME))
+    Addon:AddDefaultRewordByLocale("Physical Critical Strike Rating", format("%s (%s)", ITEM_MOD_CRIT_RATING_SHORT, SPELL_SCHOOL0_NAME))
+  end
+end
+
 
 
 Addon:AddExtraStatCapture("Block Value",
@@ -80,6 +90,9 @@ if Addon.isClassic then
   
   Addon:AddExtraStatCapture("Spell Penetration",
     {INPUT = "^Las resistencias mágicas de los objetivos de tus hechizos se reducen (%d+) p%.$"})
+  
+  Addon:AddExtraStatCapture("Hit Rating",
+    {INPUT = "^Aumenta un (%d+%%) tu probabilidad de golpear con hechizos y con ataques cuerpo a cuerpo y a distancia%.$"})
   
   Addon:AddExtraStatCapture("Physical Hit Rating",
     {INPUT = "^Mejora tu probabilidad de golpear un (%d+%%)%.$"})

@@ -14,38 +14,37 @@ do
   -- Addon:AddDefaultRewordByLocale(stat, val)
   Addon:AddDefaultRewordByLocale("BonusArmor", "Bonus Armor")
   
-  Addon:AddDefaultRewordByLocale("All Resistance"   , "All Resist")
+  Addon:AddDefaultRewordByLocale("All Resistance",    "All Resist")
   Addon:AddDefaultRewordByLocale("Arcane Resistance", "Arcane Resist")
-  Addon:AddDefaultRewordByLocale("Fire Resistance"  , "Fire Resist")
+  Addon:AddDefaultRewordByLocale("Fire Resistance",   "Fire Resist")
   Addon:AddDefaultRewordByLocale("Nature Resistance", "Nature Resist")
-  Addon:AddDefaultRewordByLocale("Frost Resistance" , "Frost Resist")
+  Addon:AddDefaultRewordByLocale("Frost Resistance",  "Frost Resist")
   Addon:AddDefaultRewordByLocale("Shadow Resistance", "Shadow Resist")
   
-  Addon:AddDefaultRewordByLocale("Attack Power In Forms"   , "Feral Attack Power")
-  Addon:AddDefaultRewordByLocale("Defense Rating"          , "Defense")
-  Addon:AddDefaultRewordByLocale("Parry Rating"            , "Parry")
-  Addon:AddDefaultRewordByLocale("Dodge Rating"            , "Dodge")
+  Addon:AddDefaultRewordByLocale("Attack Power In Forms",    "Feral Attack Power")
+  Addon:AddDefaultRewordByLocale("Defense Rating",           "Defense")
+  Addon:AddDefaultRewordByLocale("Parry Rating",             "Parry")
+  Addon:AddDefaultRewordByLocale("Dodge Rating",             "Dodge")
   Addon:AddDefaultRewordByLocale("Armor Penetration Rating", "Armor Pen")
-  Addon:AddDefaultRewordByLocale("Expertise Rating"        , "Expertise")
-  Addon:AddDefaultRewordByLocale("Resilience Rating"       , "Resilience")
+  Addon:AddDefaultRewordByLocale("Expertise Rating",         "Expertise")
+  Addon:AddDefaultRewordByLocale("Resilience Rating",        "Resilience")
   
-  Addon:AddDefaultRewordByLocale("Hit Rating"            , "Hit")
+  Addon:AddDefaultRewordByLocale("Spell Damage", "Spell Damage")
+  Addon:AddDefaultRewordByLocale("Healing",      "Healing")
+  
+  Addon:AddDefaultRewordByLocale("Hit Rating",             "Hit")
   Addon:AddDefaultRewordByLocale("Critical Strike Rating", "Crit")
-  Addon:AddDefaultRewordByLocale("Haste Rating"          , "Haste")
+  Addon:AddDefaultRewordByLocale("Haste Rating",           "Haste")
+  
+  Addon:AddDefaultRewordByLocale("Physical Hit Rating",             "Physical Hit")
+  Addon:AddDefaultRewordByLocale("Physical Critical Strike Rating", "Physical Crit")
+  Addon:AddDefaultRewordByLocale("Physical Haste Rating",           "Physical Haste")
+  Addon:AddDefaultRewordByLocale("Spell Hit Rating",                "Spell Hit")
+  Addon:AddDefaultRewordByLocale("Spell Critical Strike Rating",    "Spell Crit")
+  Addon:AddDefaultRewordByLocale("Spell Haste Rating",              "Spell Haste")
   
   Addon:AddDefaultRewordByLocale("Health Regeneration", "Health per Minute")
-  Addon:AddDefaultRewordByLocale("Mana Regeneration"  , "Mana per Minute")
-  
-  -- tbc & classic
-  Addon:AddDefaultRewordByLocale("Healing"     , "Healing")
-  -- Addon:AddDefaultRewordByLocale("Spell Damage", "Spell Damage")
-  
-  Addon:AddDefaultRewordByLocale("Physical Hit Rating"            , "Physical Hit")
-  Addon:AddDefaultRewordByLocale("Physical Critical Strike Rating", "Physical Crit")
-  Addon:AddDefaultRewordByLocale("Physical Haste Rating"          , "Physical Haste")
-  Addon:AddDefaultRewordByLocale("Spell Hit Rating"               , "Spell Hit")
-  Addon:AddDefaultRewordByLocale("Spell Critical Strike Rating"   , "Spell Crit")
-  Addon:AddDefaultRewordByLocale("Spell Haste Rating"             , "Spell Haste")
+  Addon:AddDefaultRewordByLocale("Mana Regeneration",   "Mana per Minute")
 end
 
 -- override the default stat mods for this locale
