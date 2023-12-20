@@ -72,7 +72,7 @@ do
   }
   local reversedPatternsCache = {}
   function Addon:ReversePattern(text)
-    reversedPatternsCache[text] = reversedPatternsCache[text] or "^" .. self:ChainGsub(text, unpack(chainGsubPattern)) .. "$"
+    reversedPatternsCache[text] = reversedPatternsCache[text] or ("^" .. self:ChainGsub(text, unpack(chainGsubPattern)) .. "$")
     return reversedPatternsCache[text]
   end
   
@@ -160,6 +160,7 @@ do
   function Addon:AddExtraStatCapture(stat, ...)
     localeExtraStatCaptures[stat] = localeExtraStatCaptures[stat] or {}
     for i, rule in ipairs{...} do
+      rule.INPUT = strLower(rule.INPUT)
       tinsert(localeExtraStatCaptures[stat], rule)
     end
   end

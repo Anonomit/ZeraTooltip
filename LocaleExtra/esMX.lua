@@ -7,55 +7,76 @@ local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 
 
 
+
 Addon:AddExtraStatCapture("Block Value",
   {INPUT = "^Aumenta el valor de bloqueo de tu escudo (%d+) p%.$"})
+
+Addon:AddExtraStatCapture("Arcane Damage",
+  {INPUT = "^%+(%d+) daño con hechizos Arcano$"})
+
+Addon:AddExtraStatCapture("Fire Damage",
+  {INPUT = "^%+(%d+) daño con hechizos de Fuego$"})
+
+Addon:AddExtraStatCapture("Nature Damage",
+  {INPUT = "^%+(%d+) daño con hechizos de Naturaleza$"})
+
+Addon:AddExtraStatCapture("Frost Damage",
+  {INPUT = "^%+(%d+) daño con hechizos de Escarcha$"})
+
+Addon:AddExtraStatCapture("Shadow Damage",
+  {INPUT = "^%+(%d+) daño con hechizos de las Sombras$"})
+
+Addon:AddExtraStatCapture("Holy Damage",
+  {INPUT = "^%+(%d+) daño con hechizos Sagrado$"})
+
+Addon:AddExtraStatCapture("Health Regeneration",
+  {INPUT = "^%+(%d+) salud cada 5 s$"})
+
 
 if Addon.isClassic then
   Addon:AddExtraStatCapture("Defense Rating",
     {INPUT = "^Aumenta (%d+) p%. el índice de defensa%.$"})
   
   Addon:AddExtraStatCapture("Dodge Rating",
-    {INPUT = "^Aumenta un (%d+%%) tu probabilidad de esquivar un ataque%.$"})
+    {INPUT = "^Aumenta un (%d+%%) tu probabilidad de esquivar un ataque%.$"},
+    {INPUT = "^%+(%d+%%) de Esquivar$"})
   
   Addon:AddExtraStatCapture("Parry Rating",
     {INPUT = "^Aumenta un (%d+%%) tu probabilidad de parar un ataque%.$"})
   
   Addon:AddExtraStatCapture("Block Rating",
     {INPUT = "^Aumenta la probabilidad de bloquear ataques con un escudo un (%d+%%)%.$"},
-    {INPUT = "^Aumenta un (%d+%%) tu probabilidad de bloquear ataques con un escudo%.$"})
+    {INPUT = "^Aumenta un (%d+%%) tu probabilidad de bloquear ataques con un escudo%.$"},
+    {INPUT = "^%+(%d+%%) de Bloqueo$"})
   
   Addon:AddExtraStatCapture("Attack Power In Forms",
     {INPUT = "^%+(%d+) p%. de poder de ataque solo en las formas felina, de oso y de oso temible%.$"})
   
   Addon:AddExtraStatCapture("Spell Power",
-    {INPUT = "^Aumenta hasta (%d+) p%. el daño y la sanación de los hechizos y efectos mágicos%.$"})
+    {INPUT = "^Aumenta hasta (%d+) p%. el daño y la sanación de los hechizos y efectos mágicos%.$"},
+    {INPUT = "^Daño y hechizos de sanación %+(%d+)$"})
   
   Addon:AddExtraStatCapture("Arcane Damage",
-    {INPUT = "^Aumenta hasta (%d+) p%. el daño que infligen los hechizos y efectos Arcanos%.$"},
-    {INPUT = "^%+(%d+) daño con hechizos Arcano$"})
+    {INPUT = "^Aumenta hasta (%d+) p%. el daño que infligen los hechizos y efectos Arcanos%.$"})
   
   Addon:AddExtraStatCapture("Fire Damage",
-    {INPUT = "^Aumenta hasta (%d+) p%. el daño que infligen los hechizos y efectos de Fuego%.$"},
-    {INPUT = "^%+(%d+) daño con hechizos de Fuego$"})
+    {INPUT = "^Aumenta hasta (%d+) p%. el daño que infligen los hechizos y efectos de Fuego%.$"})
   
   Addon:AddExtraStatCapture("Nature Damage",
-    {INPUT = "^Aumenta hasta (%d+) p%. el daño que infligen los hechizos y efectos de Naturaleza%.$"},
-    {INPUT = "^%+(%d+) daño con hechizos de Naturaleza$"})
+    {INPUT = "^Aumenta hasta (%d+) p%. el daño que infligen los hechizos y efectos de Naturaleza%.$"})
   
   Addon:AddExtraStatCapture("Frost Damage",
-    {INPUT = "^Aumenta hasta (%d+) p%. el daño que infligen los hechizos y efectos de Escarcha%.$"},
-    {INPUT = "^%+(%d+) daño con hechizos de Escarcha$"})
+    {INPUT = "^Aumenta hasta (%d+) p%. el daño que infligen los hechizos y efectos de Escarcha%.$"})
   
   Addon:AddExtraStatCapture("Shadow Damage",
-    {INPUT = "^Aumenta hasta (%d+) p%. el daño que infligen los hechizos y efectos de las Sombras%.$"},
-    {INPUT = "^%+(%d+) daño con hechizos de las Sombras$"})
+    {INPUT = "^Aumenta hasta (%d+) p%. el daño que infligen los hechizos y efectos de las Sombras%.$"})
   
   Addon:AddExtraStatCapture("Holy Damage",
-    {INPUT = "^Aumenta hasta (%d+) p%. el daño que infligen los hechizos y efectos Sagrados%.$"},
-    {INPUT = "^%+(%d+) daño con hechizos Sagrado$"})
+    {INPUT = "^Aumenta hasta (%d+) p%. el daño que infligen los hechizos y efectos Sagrados%.$"})
   
   Addon:AddExtraStatCapture("Healing",
-    {INPUT = "^Aumenta hasta (%d+) p%. la sanación de los hechizos y efectos%.$"})
+    {INPUT = "^Aumenta hasta (%d+) p%. la sanación de los hechizos y efectos%.$"},
+    {INPUT = "^%+(%d+) de hechizos de sanación$"})
   
   Addon:AddExtraStatCapture("Spell Penetration",
     {INPUT = "^Las resistencias mágicas de los objetivos de tus hechizos se reducen (%d+) p%.$"})
@@ -71,6 +92,9 @@ if Addon.isClassic then
   
   Addon:AddExtraStatCapture("Spell Critical Strike Rating",
     {INPUT = "^Mejora tu probabilidad de asestar un golpe crítico con hechizos un (%d+%%)%.$"})
+  
+  Addon:AddExtraStatCapture("Mana Regeneration",
+    {INPUT = "^%+(%d+) maná cada 5 s$"})
 else
   Addon:AddExtraStatCapture("Defense Rating",
     {INPUT = "^Aumenta el índice de defensa (%d+) p%.$"})

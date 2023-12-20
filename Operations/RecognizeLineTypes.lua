@@ -5,6 +5,7 @@ local ADDON_NAME, Data = ...
 local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 
 
+local strLower = string.lower
 local strGsub  = string.gsub
 local strFind  = string.find
 local strMatch = string.match
@@ -41,11 +42,17 @@ local function strStarts(text, matchStr)
   return strFind(text, matchStr) == 1
 end
 
-local matchCache = {}
 
+local loweredPatternsCache = {}
+local function Lower(text)
+  loweredPatternsCache[text] = loweredPatternsCache[text] or strLower(text)
+  return loweredPatternsCache[text]
+end
+
+local matchCache = {}
 local function MatchesAny(text, ...)
   for _, pattern in ipairs{...} do
-    matchCache[pattern] = matchCache[pattern] or Addon:ReversePattern(pattern)
+    matchCache[pattern] = matchCache[pattern] or Lower(Addon:ReversePattern(pattern))
     local startI, endI, match = strFind(text, matchCache[pattern])
     if startI then
       return pattern, match
@@ -56,7 +63,7 @@ end
 
 local function StartsWithAny(text, ...)
   for _, pattern in ipairs{...} do
-    if strStarts(text, pattern) then
+    if strStarts(text, Lower(pattern)) then
       return pattern
     end
   end
@@ -341,8 +348,8 @@ contextActions = Addon:Map({
     end
   end,
   LastBaseStat = function(i, tooltipData, line)
-    if not line.texture and line.colorLeft == Addon.COLORS.WHITE then
-      local stat = MatchesAny(line.textLeftTextStripped, ITEM_MOD_STAMINA, ITEM_MOD_STRENGTH, ITEM_MOD_AGILITY, ITEM_MOD_INTELLECT, ITEM_MOD_SPIRIT, ITEM_RESIST_SINGLE, ITEM_RESIST_ALL)
+    if not line.texture and line.colorLeft == Addon.COLORS.WHITE and strFind(line.textLeftTextStripped, "[%+%-5]") then
+      local stat = MatchesAny(line.textLeftTextStripped, ITEM_MOD_STAMINA, ITEM_MOD_STRENGTH, ITEM_MOD_AGILITY, ITEM_MOD_INTELLECT, ITEM_MOD_SPIRIT, ITEM_RESIST_SINGLE)
       if stat then
         if stat == ITEM_RESIST_SINGLE then
           local n = strMatch(line.textLeftTextStripped, "(%d+)")
@@ -353,11 +360,12 @@ contextActions = Addon:Map({
         end
         return SetContext(i-1, tooltipData, line)
       else
-        for _, stat in ipairs{"Attack Power In Forms", "Arcane Damage", "Fire Damage", "Nature Damage", "Frost Damage", "Shadow Damage", "Holy Damage"} do
-          for _, rule in ipairs(Addon:GetExtraStatCapture(stat) or {}) do
-            if strMatch(line.textLeftTextStripped, rule.INPUT) then
-              return SetContext(i-1, tooltipData, line)
-            end
+        for stat, statInfo in pairs(Addon.statsInfo) do
+          local normalForm = statInfo.ConvertToNormalForm and statInfo:ConvertToNormalForm(line.textLeftTextStripped)
+          if normalForm then
+            line.stat       = stat
+            line.normalForm = normalForm
+            return SetContext(i-1, tooltipData, line)
           end
         end
       end
@@ -490,10 +498,12 @@ contextActions = Addon:Map({
         return SetContext(i-1, tooltipData, line)
       else -- check for extra stat captures
         for _, stat in ipairs{"Attack Power In Forms"} do
-          for _, rule in ipairs(Addon:GetExtraStatCapture(stat) or {}) do
-            if strMatch(line.textLeftTextStripped, rule.INPUT) then
-              return SetContext(i-1, tooltipData, line)
-            end
+          local StatInfo = Addon.statsInfo[stat]
+          local normalForm = StatInfo and StatInfo.ConvertToNormalForm and StatInfo:ConvertToNormalForm(line.textLeftTextStripped)
+          if normalForm then
+            line.stat       = stat
+            line.normalForm = normalForm
+            return SetContext(i-1, tooltipData, line)
           end
         end
       end

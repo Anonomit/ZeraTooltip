@@ -5,6 +5,25 @@ local ADDON_NAME, Data = ...
 local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 
 
+  
+Addon:AddExtraStatCapture("Arcane Damage",
+  {INPUT = "^%+(%d+) Arkanzauberschaden$"})
+
+Addon:AddExtraStatCapture("Fire Damage",
+  {INPUT = "^%+(%d+) Feuerzauberschaden$"})
+
+Addon:AddExtraStatCapture("Nature Damage",
+  {INPUT = "^%+(%d+) Naturzauberschaden$"})
+
+Addon:AddExtraStatCapture("Frost Damage",
+  {INPUT = "^%+(%d+) Frostzauberschaden$"})
+
+Addon:AddExtraStatCapture("Shadow Damage",
+  {INPUT = "^%+(%d+) Schattenzauberschaden$"})
+
+Addon:AddExtraStatCapture("Holy Damage",
+  {INPUT = "^%+(%d+) Heiligzauberschaden$"})
+
 
 if Addon.isClassic then
   Addon:AddExtraStatCapture("Defense Rating",
@@ -23,34 +42,30 @@ if Addon.isClassic then
     {INPUT = "^%+(%d+) Angriffskraft in Katzengestalt, Bärengestalt oder Terrorbärengestalt%.$"})
   
   Addon:AddExtraStatCapture("Spell Power",
-    {INPUT = "^Erhöht durch Zauber und magische Effekte zugefügten Schaden und Heilung um bis zu (%d+)%.$"})
+    {INPUT = "^Erhöht durch Zauber und magische Effekte zugefügten Schaden und Heilung um bis zu (%d+)%.$"},
+    {INPUT = "^%+(%d+) Schadenszauber und Heilzauber$"})
   
   Addon:AddExtraStatCapture("Arcane Damage",
-    {INPUT = "^Erhöht durch Arkanzauber und Arkaneffekte zugefügten Schaden um bis zu (%d+)%.$"},
-    {INPUT = "^%+(%d+) Arkanzauberschaden$"})
+    {INPUT = "^Erhöht durch Arkanzauber und Arkaneffekte zugefügten Schaden um bis zu (%d+)%.$"})
 
   Addon:AddExtraStatCapture("Fire Damage",
-    {INPUT = "^Erhöht durch Feuerzauber und Feuereffekte zugefügten Schaden um bis zu (%d+)%.$"},
-    {INPUT = "^%+(%d+) Feuerzauberschaden$"})
+    {INPUT = "^Erhöht durch Feuerzauber und Feuereffekte zugefügten Schaden um bis zu (%d+)%.$"})
   
   Addon:AddExtraStatCapture("Nature Damage",
-    {INPUT = "^Erhöht durch Naturzauber und Natureffekte zugefügten Schaden um bis zu (%d+)%.$"},
-    {INPUT = "^%+(%d+) Naturzauberschaden$"})
+    {INPUT = "^Erhöht durch Naturzauber und Natureffekte zugefügten Schaden um bis zu (%d+)%.$"})
   
   Addon:AddExtraStatCapture("Frost Damage",
-    {INPUT = "^Erhöht durch Frostzauber und Frosteffekte zugefügten Schaden um bis zu (%d+)%.$"},
-    {INPUT = "^%+(%d+) Frostzauberschaden$"})
+    {INPUT = "^Erhöht durch Frostzauber und Frosteffekte zugefügten Schaden um bis zu (%d+)%.$"})
   
   Addon:AddExtraStatCapture("Shadow Damage",
-    {INPUT = "^Erhöht durch Schattenzauber und Schatteneffekte zugefügten Schaden um bis zu (%d+)%.$"},
-    {INPUT = "^%+(%d+) Schattenzauberschaden$"})
+    {INPUT = "^Erhöht durch Schattenzauber und Schatteneffekte zugefügten Schaden um bis zu (%d+)%.$"})
   
   Addon:AddExtraStatCapture("Holy Damage",
-    {INPUT = "^Erhöht durch Heiligzauber und Heiligeffekte zugefügten Schaden um bis zu (%d+)%.$"},
-    {INPUT = "^%+(%d+) Heiligzauberschaden$"})
+    {INPUT = "^Erhöht durch Heiligzauber und Heiligeffekte zugefügten Schaden um bis zu (%d+)%.$"})
   
   Addon:AddExtraStatCapture("Healing",
-    {INPUT = "^Erhöht durch Zauber und Effekte verursachte Heilung um bis zu (%d+)%.$"})
+    {INPUT = "^Erhöht durch Zauber und Effekte verursachte Heilung um bis zu (%d+)%.$"},
+    {INPUT = "^%+(%d+) Heilzauber$"})
   
   Addon:AddExtraStatCapture("Spell Penetration",
     {INPUT = "^Reduziert die Magiewiderstände der Ziele Eurer Zauber um (%d+)%.$"},
@@ -68,8 +83,12 @@ if Addon.isClassic then
   Addon:AddExtraStatCapture("Spell Critical Strike Rating",
     {INPUT = "^Erhöht Eure Chance, einen kritischen Treffer durch Zauber zu erzielen, um (%d+%%)%.$"})
   
+  Addon:AddExtraStatCapture("Health Regeneration",
+    {INPUT = "^%+(%d+) Gesundheit alle 5 Sek%.$"})
+  
   Addon:AddExtraStatCapture("Mana Regeneration",
-    {INPUT = "^Stellt alle 5 Sek%. (%d+) Punkt%(e%) Mana wieder her%.$"})
+    {INPUT = "^Stellt alle 5 Sek%. (%d+) Punkt%(e%) Mana wieder her%.$"},
+    {INPUT = "^%+(%d+) Mana alle 5 Sek%.$"})
 else
   Addon:AddExtraStatCapture("Defense Rating",
     {INPUT = "^Erhöht Verteidigungswertung um (%d+)%.$"})
@@ -91,6 +110,9 @@ else
   
   Addon:AddExtraStatCapture("Hit Rating",
     {INPUT = "^Erhöht Eure Trefferwertung um (%d+)%.$"})
+  
+  Addon:AddExtraStatCapture("Health Regeneration",
+    {INPUT = "^Alle 5 Sek%. (%d+) Gesundheit$"})
 end
 
 

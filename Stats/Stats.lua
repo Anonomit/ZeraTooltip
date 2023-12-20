@@ -38,6 +38,8 @@ local tostring = tostring
 --  ╚══════╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝╚══════╝╚══════╝
 
 do
+  Addon.ITEM_RESIST_ALL = ITEM_RESIST_ALL
+  
   Addon.DAMAGE_SCHOOL7 = DAMAGE_SCHOOL7
   Addon.DAMAGE_SCHOOL3 = DAMAGE_SCHOOL3
   Addon.DAMAGE_SCHOOL4 = DAMAGE_SCHOOL4
@@ -97,6 +99,8 @@ do
       Addon.ITEM_MOD_AGILITY   = strGsub(ITEM_MOD_AGILITY  , " ", "", 1)
       Addon.ITEM_MOD_INTELLECT = strGsub(ITEM_MOD_INTELLECT, " ", "", 1)
       Addon.ITEM_MOD_SPIRIT    = strGsub(ITEM_MOD_SPIRIT   , " ", "", 1)
+    else
+      Addon.ITEM_RESIST_ALL = strGsub(ITEM_RESIST_ALL, "(%%d)", "%1 ")
     end
   end
   
@@ -189,7 +193,7 @@ do
   tinsert(statsData, {1, {true, true, true}, "Intellect", SPELL_STAT4_NAME, self.ITEM_MOD_INTELLECT, self.COLORS.WHITE, self.COLORS.JORDY_BLUE})
   tinsert(statsData, {0, {true, true, true}, "Spirit",    SPELL_STAT5_NAME, self.ITEM_MOD_SPIRIT,    self.COLORS.WHITE, self.COLORS.LIGHT_AQUA})
     
-  tinsert(statsData, {1, {true, true, true}, "All Resistance", self:ChainGsub(ITEM_RESIST_ALL, {"%%.", "^ *", ""}), self:ChainGsub(ITEM_RESIST_ALL, {"%%%d+%$", "%%"}), self.COLORS.WHITE, self.COLORS.YELLOW})
+  tinsert(statsData, {1, {true, true, true}, "All Resistance", self:ChainGsub(Addon.ITEM_RESIST_ALL, {"%%%d%$", "%%"}, {"%%.", "^ *", " *$", ""}), self:ChainGsub(Addon.ITEM_RESIST_ALL, {"%%%d+%$", "%%"}), self.COLORS.WHITE, self.COLORS.YELLOW})
   
   for i, stat in ipairs{"Arcane Resistance", "Fire Resistance", "Nature Resistance", "Frost Resistance", "Shadow Resistance"} do
     tinsert(statsData, {(i == 1 and 1 or 0), {true, true, true}, stat, elementResistances[i], format(self:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), elementNames[i]), self.COLORS.WHITE, elementColors[i]})
@@ -282,10 +286,14 @@ do
       
       local normalNameReplacePattern = self:CoverSpecialCharacters(normalName)
       
-      local normalFormPattern      = GetLocaleStatFormat(isBaseStat and "%1$s%2$s" or "+%1$s", normalName)
-      local normalFormCapture      = strGsub(self:ReversePattern(GetLocaleStatFormat(isBaseStat and "%c%s%%?" or "+%s%%?", normalName,  nil)), "%$", "[。%.]*%0")
-      local normalFormLooseCapture = strGsub(self:ReversePattern(GetLocaleStatFormat(isBaseStat and "%c%s%%?" or "+%s%%?", normalName, true)), "%$", "[。%.]*%0")
-      local normalFormPattern2     = GetLocaleStatFormat(isBaseStat and "%s%s" or "+%s", normalName)
+      local tooltipPatternLower         = strLower(tooltipPattern)
+      local normalFormPattern           = GetLocaleStatFormat(isBaseStat and "%1$s%2$s" or "+%1$s", normalName)
+      local normalFormCapture           = strGsub(self:ReversePattern(GetLocaleStatFormat(isBaseStat and "%c%s%%?" or "+%s%%?", normalName,  nil)), "%$", "[。%.]*%0")
+      local normalFormCaptureLower      = strLower(normalFormCapture)
+      local normalFormLooseCapture      = strGsub(self:ReversePattern(GetLocaleStatFormat(isBaseStat and "%c%s%%?" or "+%s%%?", normalName, true)), "%$", "[。%.]*%0")
+      local normalFormLooseCaptureLower = strLower(normalFormLooseCapture)
+      local normalFormPattern2          = GetLocaleStatFormat(isBaseStat and "%s%s" or "+%s", normalName)
+      
       
       local function ApplyMod(text, normalForm)
         local match1, match2 = strMatch(normalForm, normalFormCapture)
@@ -329,16 +337,20 @@ do
       end
       
       function StatInfo:ConvertToNormalForm(text)
-        local match1, match2 = strMatch(text, Addon:ReversePattern(tooltipPattern))
+        text = strLower(text)
+        local match1, match2 = strMatch(text, Addon:ReversePattern(tooltipPatternLower))
         if match1 then
           if HasNumber(match1, match2) then return format(normalFormPattern, match1, match2) end
         end
-        local match1, match2 = strMatch(strLower(text), strLower(normalFormLooseCapture))
+        local match1, match2 = strMatch(text, strLower(normalFormCaptureLower))
+        if match1 then
+          if HasNumber(match1, match2) then return format(normalFormPattern, match1, match2) end
+        end
+        local match1, match2 = strMatch(text, strLower(normalFormLooseCaptureLower))
         if match1 then
           if HasNumber(match1, match2) then return format(normalFormPattern, match1, match2) end
         end
         for _, rule in ipairs(Addon:GetExtraStatCapture(stat) or {}) do
-          
           local matches = rule.OUTPUT and {rule.OUTPUT(strMatch(text, rule.INPUT))} or {strMatch(text, rule.INPUT)}
           if #matches > 0 then
             if HasNumber(matches[1], matches[2]) then return format(normalFormPattern, matches[1], matches[2]) end

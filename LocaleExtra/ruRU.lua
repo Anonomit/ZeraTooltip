@@ -9,6 +9,7 @@ local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 -- override the default stat rewords for this locale
 do
   -- Addon:AddDefaultRewordByLocale(stat, val)
+  
   Addon:AddDefaultRewordByLocale("Stamina"  , "к выносливости")
   Addon:AddDefaultRewordByLocale("Strength" , "к силе")
   Addon:AddDefaultRewordByLocale("Agility"  , "к ловкости")
@@ -80,18 +81,42 @@ end
 
 
 
+Addon:AddExtraStatCapture("Arcane Damage",
+  {INPUT = "^%+(%d+) к урону от заклинаний тайной магии$"})
+
+Addon:AddExtraStatCapture("Fire Damage",
+  {INPUT = "^%+(%d+) к урону от заклинаний огня$"})
+
+Addon:AddExtraStatCapture("Nature Damage",
+  {INPUT = "^%+(%d+) к урону от сил природы$"})
+
+Addon:AddExtraStatCapture("Frost Damage",
+  {INPUT = "^%+(%d+) к урону от заклинаний магии льда$"})
+
+Addon:AddExtraStatCapture("Shadow Damage",
+  {INPUT = "^%+(%d+) к урону от заклинаний темной магии$"})
+
+Addon:AddExtraStatCapture("Holy Damage",
+  {INPUT = "^%+(%d+) к урону от заклинаний светлой магии$"})
+
+Addon:AddExtraStatCapture("Health Regeneration",
+  {INPUT = "^%+(%d+) ед%. здоровья каждые 5 секунд$"})
+
+
 if Addon.isClassic then
   Addon:AddExtraStatCapture("Defense Rating",
     {INPUT = "^Увеличение рейтинга защиты на (%d+) ед%.$"})
   
   Addon:AddExtraStatCapture("Dodge Rating",
-    {INPUT = "^Увеличение рейтинга уклонения на (%d+%%)%.$"})
+    {INPUT = "^Увеличение рейтинга уклонения на (%d+%%)%.$"},
+    {INPUT = "^%+(%d+%%) к рейтингу уклонения$"})
   
   Addon:AddExtraStatCapture("Parry Rating",
     {INPUT = "^Увеличение рейтинга парирования атак на (%d+%%)%.$"})
   
   Addon:AddExtraStatCapture("Block Rating",
-    {INPUT = "^Повышает вероятность блокирования атаки щитом на (%d+%%)[.,]$"})
+    {INPUT = "^Повышает вероятность блокирования атаки щитом на (%d+%%)[.,]$"},
+    {INPUT = "^%+(%d+%%) к рейтингу блока$"})
   
   Addon:AddExtraStatCapture("Block Value",
     {INPUT = "^Увеличение показателя блока щитом на (%d+) ед%.$"})
@@ -103,34 +128,30 @@ if Addon.isClassic then
     {INPUT = "^Увеличивает силу атаки на (%d+) ед%. в облике кошки, медведя и лютого медведя%.$"})
   
   Addon:AddExtraStatCapture("Spell Power",
-    {INPUT = "^Увеличение урона и целительного действия магических заклинаний и эффектов не более чем на (%d+) ед%.$"})
+    {INPUT = "^Увеличение урона и целительного действия магических заклинаний и эффектов не более чем на (%d+) ед%.$"},
+    {INPUT = "^%+(%d+) к наносящим урон и исцеляющим заклинаниям$"})
   
   Addon:AddExtraStatCapture("Arcane Damage",
-    {INPUT = "^Увеличение урона, наносимого заклинаниями и эффектами тайной магии, на (%d+) ед%.$"},
-    {INPUT = "^%+(%d+) к урону от заклинаний тайной магии$"})
+    {INPUT = "^Увеличение урона, наносимого заклинаниями и эффектами тайной магии, на (%d+) ед%.$"})
   
   Addon:AddExtraStatCapture("Fire Damage",
-    {INPUT = "^Увеличение наносимого урона от заклинаний и эффектов огня не более чем на (%d+) ед%.$"},
-    {INPUT = "^%+(%d+) к урону от заклинаний огня$"})
+    {INPUT = "^Увеличение наносимого урона от заклинаний и эффектов огня не более чем на (%d+) ед%.$"})
   
   Addon:AddExtraStatCapture("Nature Damage",
-    {INPUT = "^Увеличение урона, наносимого заклинаниями и эффектами сил природы, на (%d+) ед%.$"},
-    {INPUT = "^%+(%d+) к урону от сил природы$"})
+    {INPUT = "^Увеличение урона, наносимого заклинаниями и эффектами сил природы, на (%d+) ед%.$"})
   
   Addon:AddExtraStatCapture("Frost Damage",
-    {INPUT = "^Увеличение урона, наносимого заклинаниями и эффектами льда, на (%d+) ед%.$"},
-    {INPUT = "^%+(%d+) к урону от заклинаний магии льда$"})
+    {INPUT = "^Увеличение урона, наносимого заклинаниями и эффектами льда, на (%d+) ед%.$"})
   
   Addon:AddExtraStatCapture("Shadow Damage",
-    {INPUT = "^Увеличение урона, наносимого заклинаниями и эффектами темной магии, на (%d+) ед%.$"},
-    {INPUT = "^%+(%d+) к урону от заклинаний темной магии$"})
+    {INPUT = "^Увеличение урона, наносимого заклинаниями и эффектами темной магии, на (%d+) ед%.$"})
   
   Addon:AddExtraStatCapture("Holy Damage",
-    {INPUT = "^Увеличение урона, наносимого заклинаниями и эффектами светлой магии, на (%d+) ед%.$"},
-    {INPUT = "^%+(%d+) к урону от заклинаний светлой магии$"})
+    {INPUT = "^Увеличение урона, наносимого заклинаниями и эффектами светлой магии, на (%d+) ед%.$"})
   
   Addon:AddExtraStatCapture("Healing",
-    {INPUT = "^Усиливает исцеление от заклинаний и эффектов максимум на (%d+) ед%.$"})
+    {INPUT = "^Усиливает исцеление от заклинаний и эффектов максимум на (%d+) ед%.$"},
+    {INPUT = "^%+(%d+) к исцеляющим заклинаниям$"})
   
   Addon:AddExtraStatCapture("Spell Penetration",
     {INPUT = "^Снижает сопротивление магии целей ваших заклинаний на (%d+)%.$"})
@@ -151,7 +172,8 @@ if Addon.isClassic then
     {INPUT = "^Восполняет (%d+) ед%. здоровья каждые 5 сек%.$"})
   
   Addon:AddExtraStatCapture("Mana Regeneration",
-    {INPUT = "^Восполнение (%d+) ед%. маны раз в 5 сек%.$"})
+    {INPUT = "^Восполнение (%d+) ед%. маны раз в 5 сек%.$"},
+    {INPUT = "^%+(%d+) ед%. маны каждые 5 секунд$"})
 else
   Addon:AddExtraStatCapture("Dodge Rating",
     {INPUT = "^Увеличивает рейтинг уклонения на (%d+)%.$"})

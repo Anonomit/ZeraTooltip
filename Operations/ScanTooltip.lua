@@ -4,8 +4,12 @@ local ADDON_NAME, Data = ...
 
 local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 
+
+
+local strLower = string.lower
 local strMatch = string.match
 local strFind  = string.find
+
 local mathMin  = math.min
 
 
@@ -101,7 +105,7 @@ function Addon:ReadTooltip(tooltip, name, link, maxLines)
     tooltipData[i] = {
       i                     = i,
       textLeftText          = textLeftText,
-      textLeftTextStripped  = self:StripText(textLeftText),
+      textLeftTextStripped  = strLower(self:StripText(textLeftText)),
       textRightText         = textRightText,
       colorLeft             = hex or self:GetTextColorAsHex(textLeft),
       colorRight            = textRightText and self:GetTextColorAsHex(textRight) or nil,

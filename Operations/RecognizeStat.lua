@@ -5,10 +5,13 @@ local ADDON_NAME, Data = ...
 local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 
 
+local strLower = string.lower
 local strFind  = string.find
 local strMatch = string.match
 local strGsub  = string.gsub
 local strByte  = string.byte
+
+
 
 local typesToSearch = {
   BaseStat      = true,
@@ -69,12 +72,23 @@ local function RecognizeStatHelper(line)
     end
   end
   
-  for stat, StatInfo in pairs(self.statsInfo) do
-    local normalForm = StatInfo.ConvertToNormalForm and StatInfo:ConvertToNormalForm(text)
-    if normalForm then
-      line.stat       = stat
-      line.normalForm = normalForm
-      break
+  
+  if not line.normalForm then
+    if line.stat then
+      local normalForm = self.statsInfo[line.stat].ConvertToNormalForm and self.statsInfo[line.stat]:ConvertToNormalForm(strLower(text))
+      if normalForm then
+        line.normalForm = normalForm
+      end
+    else
+      local text = strLower(text)
+      for stat, StatInfo in pairs(self.statsInfo) do
+        local normalForm = StatInfo.ConvertToNormalForm and StatInfo:ConvertToNormalForm(text)
+        if normalForm then
+          line.stat       = stat
+          line.normalForm = normalForm
+          break
+        end
+      end
     end
   end
   
@@ -96,7 +110,7 @@ do
       if line.stat == "Arcane Resistance" then
         local n         = strMatch(line.normalForm, "(%d+)")
         line.stat       = "All Resistance"
-        line.normalForm = format(ITEM_RESIST_ALL, strByte"+", n)
+        line.normalForm = format(Addon.ITEM_RESIST_ALL, strByte"+", n)
       end
     end
   end

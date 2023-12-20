@@ -6,6 +6,49 @@ local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 
 
 
+-- override the default stat rewords for this locale
+do
+  -- Addon:AddDefaultRewordByLocale(stat, val)
+  
+  Addon:AddDefaultRewordByLocale("Physical Hit Rating", "Toucher (physique)")
+  
+  Addon:AddDefaultRewordByLocale("Health Regeneration", "Vie par Minute")
+  Addon:AddDefaultRewordByLocale("Mana Regeneration"  , "Mana par Minute")
+end
+
+
+-- override the default stat mods for this locale
+do
+  -- Addon:AddDefaultModByLocale(stat, val)
+  
+  Addon:AddDefaultModByLocale("Health Regeneration", 12)
+  Addon:AddDefaultModByLocale("Mana Regeneration", 12)
+end
+
+
+Addon:AddExtraStatCapture("Arcane Damage",
+  {INPUT = "^%+(%d+) aux dégâts des sorts des Arcanes$"})
+
+Addon:AddExtraStatCapture("Fire Damage",
+  {INPUT = "^%+(%d+) aux dégâts des sorts de Feu$"})
+
+Addon:AddExtraStatCapture("Nature Damage",
+  {INPUT = "^%+(%d+) aux dégâts des sorts de Nature$"})
+
+Addon:AddExtraStatCapture("Frost Damage",
+  {INPUT = "^%+(%d+) aux dégâts des sorts de Givre$"})
+
+Addon:AddExtraStatCapture("Shadow Damage",
+  {INPUT = "^%+(%d+) aux dégâts des sorts d'Ombre$"})
+
+Addon:AddExtraStatCapture("Holy Damage",
+  {INPUT = "^%+(%d+) aux dégâts des sorts du Sacré$"})
+
+Addon:AddExtraStatCapture("Health Regeneration",
+  {INPUT = "^Rend (%d+) points? de vie toutes les 5 sec%.$"},
+    {INPUT = "^%+(%d+) points? de vie toutes les 5 sec%.$"})
+
+
 if Addon.isClassic then
     Addon:AddExtraStatCapture("Defense Rating",
     {INPUT = "^Défense augmentée de (%d+)%.$"})
@@ -23,7 +66,7 @@ if Addon.isClassic then
     {INPUT = "^Augmente le score de blocage de votre bouclier de (%d+)%.$"})
   
   Addon:AddExtraStatCapture("Attack Power",
-    {INPUT = "^%+(%d+) à la puissance d'attaque%.$"})
+    {INPUT = "^%+(%d+) à la puissance d'attaque%.?$"})
   
   Addon:AddExtraStatCapture("Ranged Attack Power",
     {INPUT = "^%+(%d+) à la puissance des attaques à distance%.$"})
@@ -33,34 +76,30 @@ if Addon.isClassic then
   
   Addon:AddExtraStatCapture("Spell Power",
     {INPUT = "^Augmente les dégâts et les soins produits par les sorts et effets magiques de (%d+) au maximum%.$"},
-    {INPUT = "^Augmente les soins et dégâts produits par les sorts et effets magiques de (%d+) au maximum%.$"})
+    {INPUT = "^Augmente les soins et dégâts produits par les sorts et effets magiques de (%d+) au maximum%.$"},
+    {INPUT = "^%+(%d+) aux dégâts et aux sorts de soins$"})
   
   Addon:AddExtraStatCapture("Arcane Damage",
-    {INPUT = "^Augmente les dégâts infligés par les sorts et effets des Arcanes de (%d+) au maximum%.$"},
-    {INPUT = "^%+(%d+) aux dégâts des sorts des Arcanes$"})
+    {INPUT = "^Augmente les dégâts infligés par les sorts et effets des Arcanes de (%d+) au maximum%.$"})
   
   Addon:AddExtraStatCapture("Fire Damage",
-    {INPUT = "^Augmente les dégâts infligés par les sorts et effets de Feu de (%d+) au maximum%.$"},
-    {INPUT = "^%+(%d+) aux dégâts des sorts de Feu$"})
+    {INPUT = "^Augmente les dégâts infligés par les sorts et effets de Feu de (%d+) au maximum%.$"})
   
   Addon:AddExtraStatCapture("Nature Damage",
-    {INPUT = "^Augmente les dégâts infligés par les sorts et effets de Nature de (%d+) au maximum%.$"},
-    {INPUT = "^%+(%d+) aux dégâts des sorts de Nature$"})
+    {INPUT = "^Augmente les dégâts infligés par les sorts et effets de Nature de (%d+) au maximum%.$"})
   
   Addon:AddExtraStatCapture("Frost Damage",
-    {INPUT = "^Augmente les dégâts infligés par les sorts et effets de Givre de (%d+) au maximum%.$"},
-    {INPUT = "^%+(%d+) aux dégâts des sorts de Givre$"})
+    {INPUT = "^Augmente les dégâts infligés par les sorts et effets de Givre de (%d+) au maximum%.$"})
   
   Addon:AddExtraStatCapture("Shadow Damage",
-    {INPUT = "^Augmente les dégâts infligés par les sorts et effets d'Ombre de (%d+) au maximum%.$"},
-    {INPUT = "^%+(%d+) aux dégâts des sorts d'Ombre$"})
+    {INPUT = "^Augmente les dégâts infligés par les sorts et effets d'Ombre de (%d+) au maximum%.$"})
   
   Addon:AddExtraStatCapture("Holy Damage",
-    {INPUT = "^Augmente les dégâts infligés par les sorts et effets du Sacré de (%d+) au maximum%.$"},
-    {INPUT = "^%+(%d+) aux dégâts des sorts du Sacré$"})
+    {INPUT = "^Augmente les dégâts infligés par les sorts et effets du Sacré de (%d+) au maximum%.$"})
   
   Addon:AddExtraStatCapture("Healing",
-    {INPUT = "^Augmente les soins prodigués par les sorts et effets de (%d+) au maximum%.$"})
+    {INPUT = "^Augmente les soins prodigués par les sorts et effets de (%d+) au maximum%.$"},
+    {INPUT = "^%+(%d+) aux sorts de soins$"})
   
   Addon:AddExtraStatCapture("Spell Penetration",
     {INPUT = "^Diminue les résistances magiques des cibles de vos sorts de (%d+)%.$"})
@@ -77,8 +116,8 @@ if Addon.isClassic then
   Addon:AddExtraStatCapture("Spell Critical Strike Rating",
     {INPUT = "^Augmente vos chances d'infliger un coup critique avec vos sorts de (%d+%%)%.$"})
   
-  Addon:AddExtraStatCapture("Health Regeneration",
-    {INPUT = "^Rend (%d+) points de vie toutes les 5 sec%.$"})
+  Addon:AddExtraStatCapture("Mana Regeneration",
+    {INPUT = "^%+(%d+) points? de mana toutes les 5 sec%.$"})
 else
   Addon:AddExtraStatCapture("Defense Rating",
     {INPUT = "^Score de défense augmenté de (%d+)%.$"})
@@ -113,9 +152,6 @@ else
   
   Addon:AddExtraStatCapture("Critical Strike Rating",
     {INPUT = "^Augmente votre score de coup critique de (%d+)%.$"})
-  
-  Addon:AddExtraStatCapture("Health Regeneration",
-    {INPUT = "^Rend (%d+) points de vie toutes les 5 sec%.$"})
   
   Addon:AddExtraStatCapture("Mana Regeneration",
     {INPUT = "^Rend (%d+) points de mana toutes les 5 sec%.$"})

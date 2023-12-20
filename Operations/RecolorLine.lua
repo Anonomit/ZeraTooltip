@@ -5,11 +5,11 @@ local ADDON_NAME, Data = ...
 local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 
 
+local strLower = string.lower
+local strFind  = string.find
 
-local strFind = string.find
 
-
-local noChargesPattern = Addon:ReversePattern(ITEM_SPELL_CHARGES_NONE)
+local noChargesPattern = Addon:ReversePattern(strLower(ITEM_SPELL_CHARGES_NONE))
 local sides
 
 local function Recolor(side, stat)
