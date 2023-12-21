@@ -8,6 +8,8 @@ local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 local strGsub  = string.gsub
 local strMatch = string.match
 
+local mathFloor = math.floor
+
 
 --[[
 Reputation standings
@@ -24,9 +26,9 @@ Reputation standings
 
 
 
-local REPUTATION_TEXT_PATTERN   = "%s +%d"
-local REPUTATION_MAX_PATTERN    = "/%d"
-local REPUTATION_CUTOFF_PATTERN = " (|cff%s<%s|r)"
+local REP_PATTERN               = " +%d"
+local WAYLAID_PATTERN           = format(" +%%d (%s) | +%%d (%s)", EMPTY or GLYPH_EMPTY or GLYPH_INACTIVE, LOC_TYPE_FULL or LOAD_FULL or SHAKE_INTENSITY_FULL)
+local REPUTATION_CUTOFF_PATTERN = " (|cff%s%s/%s|r)"
 
 
 
@@ -54,9 +56,22 @@ for ids, repInfo in pairs{
   [{211935, 211832, 211830, 211834, 211827, 211826}]                                                 = {factionID = Addon.MY_FACTION == "Alliance" and 2586 or 2587, min = 200, cutoff = 6, max = 800},
   [{211841}]                                                                                         = {factionID = Addon.MY_FACTION == "Alliance" and 2586 or 2587, min = 800, cutoff = 6},
 } do
+  local faction = GetFactionInfoByID(repInfo.factionID)
+  if faction then
+    repInfo.faction = faction
+  end
+  
+  if Addon.MY_RACE_FILENAME == "Human" then
+    for _, k in ipairs{"min", "max"} do
+      local rep = repInfo[k]
+      if rep then
+        repInfo[k] = mathFloor(rep * 1.1)
+      end
+    end
+  end
   for _, id in ipairs(ids) do
-    Addon:Assertf(not reputationItems[id], "Duplicate waylaid supply crate: %d", id)
-    reputationItems[id]     = repInfo
+    Addon:Assertf(not reputationItems[id], "Duplicate reputation item: %d", id)
+    reputationItems[id]       = repInfo
     Addon.waylaidSupplies[id] = true
   end
 end
@@ -69,14 +84,19 @@ function Addon:RewordReputation(itemID)
   local repInfo = reputationItems[itemID]
   if not repInfo then return end
   
-  local faction, _, standingID = GetFactionInfoByID(repInfo.factionID)
-  
-  local text = format(REPUTATION_TEXT_PATTERN, faction, repInfo.min)
-  if repInfo.max then
-    text = text .. format(REPUTATION_MAX_PATTERN, repInfo.max)
+  if not repInfo.faction then
+    repInfo.faction = GetFactionInfoByID(repInfo.factionID)
   end
+  
+  local text = repInfo.faction
   if repInfo.cutoff then
-    text = text .. format(REPUTATION_CUTOFF_PATTERN, standingID < repInfo.cutoff and Addon.COLORS.GREEN or Addon.COLORS.RED, reputationStandings[repInfo.cutoff])
+    local standingID = select(3, GetFactionInfoByID(repInfo.factionID))
+    text = text .. format(REPUTATION_CUTOFF_PATTERN, standingID < repInfo.cutoff and Addon.COLORS.GREEN or Addon.COLORS.RED, reputationStandings[standingID], reputationStandings[repInfo.cutoff])
+  end
+  if repInfo.max then
+    text = text .. format(WAYLAID_PATTERN, repInfo.min, repInfo.max)
+  else
+    text = text .. format(REP_PATTERN, repInfo.min)
   end
   
   text = self:InsertIcon(text, stat)

@@ -756,7 +756,7 @@ local function MakeExtraOptions(opts, categoryName)
   local function MakeRequiredRacesOption()
     local stat = "RequiredRaces"
     
-    local defaultText = format(ITEM_RACES_ALLOWED, self.MY_RACE_NAME)
+    local defaultText = format(ITEM_RACES_ALLOWED, self.MY_RACE_LOCALNAME)
     local formattedText = defaultText
     local changed
     if self:GetOption("hide", stat) then

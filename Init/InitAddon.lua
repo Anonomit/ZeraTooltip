@@ -344,7 +344,7 @@ end
 --  ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚══════╝╚══════╝
 
 do
-  Addon.MY_RACE_NAME = UnitRace"player"
+  Addon.MY_RACE_LOCALNAME, Addon.MY_RACE_FILENAME = UnitRace"player"
   
   -- Races: Human, Orc, Dwarf, Night Elf, Undead, Tauren, Gnome, Troll, Blood Elf, Draenei
   local raceIDs = {}
