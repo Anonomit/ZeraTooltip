@@ -1,24 +1,28 @@
 <h3>New Features</h3>
 <ul>
-  <li>Added Sockets customization.</li>
+  <li>Added Runes customization for Season of Discovery.</li>
+  <li>Added Reputation customization, which shows how much reputation an item is worth to a faction. Currently this only applies to Waylaid Supplies in Season of Discovery.</li>
+  <li>Waylaid Supplies is Season of Discovery will now show their itemlevel when itemlevels are enabled. Configurable.</li>
+  <li>Holy Damage is now recognized as a stat.</li>
+  <li>Spell School Damage is now recognized and configurable in Wrath of the Lich King.</li>
+  <li>Combined Hit (physical and spell) is now recognized in Season of Discovery, due to Fathomblade. Physical Hit has been given a default rename in all locales.</li>
 </ul>
 <h3>Changes</h3>
 <ul>
-  <li>Cache has been re-enabled.</li>
-  <ul> 
-    <li>This feature greatly improves performance, but it may cause strange formatting on occasion.</li>
-    <li>If a tooltip appears to be formatted incorrectly, hide the tooltip for 5+ seconds to clear the cache.</li>
-    <li>Toggle option in ZeraTooltip Options > Features.</li>
-  </ul>
-  <li>Options menu polish.</li>
+  <li>Spell Power default color has been changed slightly so it doesn't look as much like Shadow Damage.</li>
+  <li>Added itemlevel override for Perfect Blackfathom Pearl. Like other tokens, it will appear to be the same itemlevel as the rewards that it gives.</li>
+  <li>Ace3 tooltips are now modified.</li>
 </ul>
 <h3>Fixes</h3>
 <ul>
-  <li>Now compatible with classic era PTR servers.</li>
-  <li>Heroic tags now work as expected when colorblind mode is enabled.</li>
-  <li>The Socket Hint option is no longer visible before TBC.</li>
-  <li>Some item level overrides for ZG and AQ40 tokens have been corrected.</li>
-  <li>Viewing jewelcrafter's gems when not a jewelcrafter now looks as expected.</li>
-  <li>Increase performance.</li>
-  <li>Fix Blizzard tooltip issue which can cause flickering.</li>
+  <li>Found a workaround for a missing event in Classic which was causing ZeraTooltip to not always modify tooltips the first time they load. It should be back to normal now.</li>
+  <li>Many stats are now recognized much more reliably in all locales.</li>
+  <li>Locked containers are now recognized correctly in colorblind mode, and also when the text is orange instead of red.</li>
+  <li>Icecrown Citadel normal/heroic tokens no longer sometimes show the icon for the other version. This fix applies to all groups of items which share a name but use different icons.</li>
+  <li>Tooltips for nonexistant items now use a specific icon instead of the one from the last item tooltip.</li>
+  <li>Resilience is no longer visible in Classic Era.</li>
+  <li>Expertise is no longer visible in Classic Era.</li>
+  <li>Feral Attack Power is no longer visible in Classic Era.</li>
+  <li>Usable Enchantment is no longer visible in Classic Era.</li>
+  <li>Classic Era stats that are percentages will now be displayed that way in the options menu.</li>
 </ul>

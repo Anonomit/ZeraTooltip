@@ -1,7 +1,7 @@
 ## Interface: 30402
 ## Interface-Wrath: 30402
-## Interface-Classic: 11404
-## Version: 2.9.0
+## Interface-Classic: 11500
+## Version: 2.10.0
 
 ## X-Curse-Project-ID: 533049
 ## X-Wago-ID: Qb6mJ1KP
