@@ -34,15 +34,21 @@ do
   
   Addon:AddDefaultRewordByLocale("Spell Penetration", "к проникающей способности заклинаний")
   
-  Addon:AddDefaultRewordByLocale("Hit Rating",             "к меткости")
-  Addon:AddDefaultRewordByLocale("Critical Strike Rating", "к критическому удару")
-  Addon:AddDefaultRewordByLocale("Haste Rating",           "к скорости")
   
   if Addon.isSoD then
-    Addon:AddDefaultRewordByLocale("Physical Hit Rating",             format("%s (%s)", ITEM_MOD_HIT_RATING_SHORT,  SPELL_SCHOOL0_NAME))
-    Addon:AddDefaultRewordByLocale("Physical Critical Strike Rating", format("%s (%s)", ITEM_MOD_CRIT_RATING_SHORT, SPELL_SCHOOL0_NAME))
+    Addon:AddDefaultRewordByLocale("Hit Rating",             "к меткости атаки и заклинаний")
+    Addon:AddDefaultRewordByLocale("Critical Strike Rating", "к критическому эффекту атаки и заклинаний")
+    Addon:AddDefaultRewordByLocale("Haste Rating",           "к скорости атаки и заклинаний")
+  else
+    Addon:AddDefaultRewordByLocale("Hit Rating",             "к меткости")
+    Addon:AddDefaultRewordByLocale("Critical Strike Rating", "к критическому удару")
+    Addon:AddDefaultRewordByLocale("Haste Rating",           "к скорости")
   end
   
+  Addon:AddDefaultRewordByLocale("Physical Hit Rating",             "к меткости атаки")
+  Addon:AddDefaultRewordByLocale("Physical Critical Strike Rating", "к критическому удару")
+  Addon:AddDefaultRewordByLocale("Physical Haste Rating",           "к скорости атаки")
+  Addon:AddDefaultRewordByLocale("Spell Hit Rating",                "к меткости заклинаний")
   Addon:AddDefaultRewordByLocale("Spell Critical Strike Rating",    "к критическому эффекту заклинаний")
   Addon:AddDefaultRewordByLocale("Spell Haste Rating",              "к скорости заклинаний")
   
