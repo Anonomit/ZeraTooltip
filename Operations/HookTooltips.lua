@@ -13,6 +13,13 @@ local tblConcat = table.concat
 
 
 
+local function RefreshDebugOptions()
+  if ((Addon.AceConfigDialog:GetStatusTable(ADDON_NAME) or {}).groups or {}).selected == "Debug" then
+    Addon.AceConfigRegistry:NotifyChange(ADDON_NAME)
+  end
+end
+
+
 function Addon:IsHookEnabled()
   local invertMode = self:GetOption"invertMode"
   if invertMode == "none" then
@@ -162,10 +169,10 @@ local function OnTooltipItemMethod(tooltip, methodName, ...)
           constructor = self:WipeConstructor(tooltip, link, methodName, ...)
         end
         if isComparison and not recursion then
-          if not self:PrepareTooltip(args[1]) then return end
+          if not self:PrepareTooltip(args[1], link) then return end
         end
         if not recursion or not alreadyPrepped then
-          if not self:PrepareTooltip(scannerTooltip, methodName, unpack(args, 1, args.n)) then return end
+          if not self:PrepareTooltip(scannerTooltip, link, methodName, unpack(args, 1, args.n)) then return end
           alreadyPrepped = true
         end
         
@@ -191,6 +198,7 @@ local function OnTooltipItemMethod(tooltip, methodName, ...)
     OnTooltipItemMethod(args[1], methodName, ...)
     recursion = false
   end
+  RefreshDebugOptions()
 end
 
  -- works on uncached itemlinks
@@ -208,6 +216,7 @@ local function OnTooltipSetItem(tooltip)
   local name, link = tooltip:GetItem()
   if not name or not link then return end
   if not scannerTooltip.lastLink or not DoLinksMatch(scannerTooltip.lastLink, link) then return end
+  if not scannerTooltip.currentItem or not DoLinksMatch(scannerTooltip.currentItem, link) then return end
   if self:IsTooltipMarked(tooltip) then return end
   
   scannerTooltip.updates = scannerTooltip.updates + 1
@@ -236,6 +245,7 @@ local function OnTooltipSetItem(tooltip)
       self:DestructTooltip(scannerTooltip.tooltip, destructor)
     end
   end
+  RefreshDebugOptions()
 end
 
 Addon:RegisterEnableCallback(function(self)

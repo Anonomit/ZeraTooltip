@@ -34,9 +34,10 @@ local engravableInvTypes = Addon:MakeLookupTable{
 }
 
 
-function Addon:PrepareTooltip(tooltip, methodName, ...)
+function Addon:PrepareTooltip(tooltip, link, methodName, ...)
   local args = {n = select("#", ...), ...}
   return pcall(function()
+    tooltip.currentItem = nil
     tooltip:Hide()
     local tooltipName = tooltip.tooltip:GetName()
     local opt = "tooltip_" .. tooltipName
@@ -47,6 +48,7 @@ function Addon:PrepareTooltip(tooltip, methodName, ...)
     end
     if methodName then
       tooltip[methodName](tooltip, unpack(args, 1, args.n))
+      tooltip.currentItem = link
       self:DebugfIfOutput(opt, "Refreshing scanner tooltip: %s", tooltipName)
     end
   end)
