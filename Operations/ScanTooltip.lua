@@ -14,22 +14,23 @@ local mathMin  = math.min
 
 
 
-local weaponInvTypes = {
-  INVTYPE_WEAPON         = true,
-  INVTYPE_2HWEAPON       = true,
-  INVTYPE_WEAPONMAINHAND = true,
-  INVTYPE_WEAPONOFFHAND  = true,
+local weaponInvTypes = Addon:MakeLookupTable{
+  "INVTYPE_WEAPON",
+  "INVTYPE_2HWEAPON",
+  "INVTYPE_WEAPONMAINHAND",
+  "INVTYPE_WEAPONOFFHAND",
 }
-local engravableInvTypes = {
-  INVTYPE_CHEST    = true,
-  INVTYPE_LEGS     = true,
-  INVTYPE_HAND     = true,
-  INVTYPE_WRIST    = true,
-  INVTYPE_CLOAK    = true,
-  INVTYPE_FEET     = true,
-  INVTYPE_HEAD     = true,
-  INVTYPE_SHOULDER = true,
-  INVTYPE_WAIST    = true,
+local engravableInvTypes = Addon:MakeLookupTable{
+  "INVTYPE_CHEST",
+  "INVTYPE_ROBE",
+  "INVTYPE_LEGS",
+  "INVTYPE_HAND",
+  "INVTYPE_WRIST",
+  "INVTYPE_CLOAK",
+  "INVTYPE_FEET",
+  "INVTYPE_HEAD",
+  "INVTYPE_SHOULDER",
+  "INVTYPE_WAIST",
 }
 
 
