@@ -78,9 +78,6 @@ local function ResetScanner(scannerTooltip, link, methodName, ...)
     name, link = tooltip:GetItem()
     if not name or not link then return end
   end
-  
-  scannerTooltip.lastTime = GetTime()
-  scannerTooltip.lastLink = link
   scannerTooltip.lastCall = {link, methodName, ...}
   scannerTooltip.lastCall.n = select("#", ...) + 2
   
@@ -158,7 +155,6 @@ local function OnTooltipItemMethod(tooltip, methodName, ...)
   do
     local scannerTooltip = GetScanner(tooltip)
     if not recursion then
-      if scannerTooltip.lastTime == GetTime() and scannerTooltip.lastLink == link then return end
       ResetScanner(scannerTooltip, link, methodName, ...)
     end
     
@@ -166,13 +162,15 @@ local function OnTooltipItemMethod(tooltip, methodName, ...)
       local constructor = self:GetConstructor(tooltip, link, methodName, ...)
       if not constructor or not self:ValidateConstructor(tooltip, constructor) then
         if constructor then -- failed validation
-          constructor = self:WipeConstructor(tooltip, link, methodName, ...)
+          self:WipeConstructor(tooltip, link, methodName, ...)
+          constructor = nil
         end
-        if isComparison and not recursion then
-          if not self:PrepareTooltip(args[1], link) then return end
+        if isComparison and recursion then
+          scannerTooltip.currentItem = link
         end
         if not recursion or not alreadyPrepped then
           if not self:PrepareTooltip(scannerTooltip, link, methodName, unpack(args, 1, args.n)) then return end
+          scannerTooltip.currentItem = link
           alreadyPrepped = true
         end
         
@@ -211,11 +209,11 @@ end
 local function OnTooltipSetItem(tooltip)
   local self = Addon
   if not self:IsHookEnabled() then return end
+  
   local scannerTooltip = GetScanner(tooltip)
   if not tooltip.GetItem then return end
   local name, link = tooltip:GetItem()
   if not name or not link then return end
-  if not scannerTooltip.lastLink or not DoLinksMatch(scannerTooltip.lastLink, link) then return end
   if not scannerTooltip.currentItem or not DoLinksMatch(scannerTooltip.currentItem, link) then return end
   if self:IsTooltipMarked(tooltip) then return end
   
@@ -229,15 +227,9 @@ local function OnTooltipSetItem(tooltip)
   end
   
   local constructor = self:GetConstructor(tooltip, unpack(scannerTooltip.lastCall, 1, scannerTooltip.lastCall.n))
-  if not constructor or not self:ValidateConstructor(tooltip, constructor) then
-    if constructor then -- failed validation
-      constructor = self:WipeConstructor(tooltip, unpack(scannerTooltip.lastCall, 1, scannerTooltip.lastCall.n))
-    end
-    
-    constructor = GenerateConstructor(scannerTooltip.tooltip, scannerTooltip, name, link, scannerTooltip.isRecipe and scannerTooltip.lengths[1] or nil)
-    if constructor then
-      self:SetConstructor(constructor, tooltip, unpack(scannerTooltip.lastCall, 1, scannerTooltip.lastCall.n))
-    end
+  if constructor and not self:ValidateConstructor(tooltip, constructor) then
+    self:WipeConstructor(tooltip, unpack(scannerTooltip.lastCall, 1, scannerTooltip.lastCall.n))
+    constructor = nil
   end
   if constructor then
     local destructor = self:ConstructTooltip(scannerTooltip.tooltip, constructor)

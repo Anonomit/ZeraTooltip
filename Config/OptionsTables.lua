@@ -739,11 +739,12 @@ local function MakeExtraOptions(opts, categoryName)
       local opts = CreateHide(opts, stat)
       GUI:CreateNewline(opts)
       
+      local disabled = self:GetOption("hide", stat)
       GUI:CreateToggle(opts, {"hide", "StackSize_single"}, L["Hide Single Stacks"], L["Hide stack size on items that do not stack."], disabled)
       GUI:CreateReset(opts, {"hide", "StackSize_single"})
       GUI:CreateNewline(opts)
       
-      local disabled = self:GetOption("hide", stat)
+      local disabled = disabled or self:GetOption("hide", "StackSize_single")
       GUI:CreateToggle(opts, {"hide", "StackSize_equipment"}, L["Hide Equipment"], L["Hide stack size on items that can be equipped on a character."], disabled)
       GUI:CreateReset(opts, {"hide", "StackSize_equipment"})
     end

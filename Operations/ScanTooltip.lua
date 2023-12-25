@@ -48,7 +48,6 @@ function Addon:PrepareTooltip(tooltip, link, methodName, ...)
     end
     if methodName then
       tooltip[methodName](tooltip, unpack(args, 1, args.n))
-      tooltip.currentItem = link
       self:DebugfIfOutput(opt, "Refreshing scanner tooltip: %s", tooltipName)
     end
   end)
