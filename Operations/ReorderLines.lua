@@ -45,8 +45,8 @@ local function SortStats(tooltipData)
       tinsert(stats.EnchantOnUse, tblRemove(stats.RequiredEnchantOnUse, 1))
     end
   end
-  stats.BaseStat.location      = stats.BaseStat.location      or tooltipData.locs.statStart + 1
-  stats.SecondaryStat.location = stats.SecondaryStat.location or tooltipData.locs.secondaryStatStart + 1
+  stats.BaseStat.location      = stats.BaseStat.location      or tooltipData.embedLocs.statStart + 1
+  stats.SecondaryStat.location = stats.SecondaryStat.location or tooltipData.embedLocs.secondaryStatStart + 1
   
   for i = #stats.Charges, 1, -1 do
     tinsert(stats[tooltipData.lastUse], tblRemove(stats.Charges, 1))
@@ -86,6 +86,23 @@ local function SortStats(tooltipData)
   end
 end
 
+
+local function MoveLine(tooltipData, from, toLoc, offset)
+  offset = offset or 0
+  
+  local loc      = tooltipData.locs[toLoc]
+  local embedLoc = tooltipData.embedLocs[toLoc]
+  
+  local to = "embedLocs"
+  if embedLoc + offset > tooltipData[from].i then
+    to = "locs"
+  end
+  to = tooltipData[to][toLoc] + offset
+  
+  tinsert(tooltipData, to, tblRemove(tooltipData, from))
+end
+
+
 function Addon:ReorderLines(tooltipData)
   
   SortStats(tooltipData)
@@ -94,23 +111,23 @@ function Addon:ReorderLines(tooltipData)
   while i <= #tooltipData do
     local line = tooltipData[i]
     
-    if (line.type == "ProposedEnchant" or line.type == "EnchantHint") and tooltipData.locs.enchant then
+    if (line.type == "ProposedEnchant" or line.type == "EnchantHint") then
       if self:GetOption("doReorder", line.type) then
         self:BumpLocationsExact(tooltipData, 1, "enchant", "socketBonus")
-        tinsert(tooltipData, tooltipData.locs.enchant, tblRemove(tooltipData, i))
+        MoveLine(tooltipData, i, "enchant")
       end
     elseif line.type == "RequiredRaces" or line.type == "RequiredClasses" or line.type == "RequiredLevel" then
       if self:GetOption("doReorder", line.type) then
-        tinsert(tooltipData, tooltipData.locs.quality + 1, tblRemove(tooltipData, i))
+        MoveLine(tooltipData, i, "quality", 1)
         self:BumpLocationsRange(tooltipData, tooltipData.locs.quality + 1)
       end
     elseif line.type == "SocketHint" then
       if self:GetOption("doReorder", line.type) then
-        tinsert(tooltipData, tooltipData.locs.socketBonus + 1, tblRemove(tooltipData, i))
+        MoveLine(tooltipData, i, "socketBonus", 1)
       end
     elseif line.type == "Refundable" or line.type == "SoulboundTradeable" then
       if self:GetOption("doReorder", line.type) then
-        tinsert(tooltipData, tooltipData.locs.binding + 1, tblRemove(tooltipData, i))
+        MoveLine(tooltipData, i, "binding", 1)
       end
     end
     

@@ -81,7 +81,6 @@ local contexts = Addon:MakeLookupTable({
   "LastUnique",
   "Locked",
   "LockedWithProfession",
-  "Embed",
   "Type",
   "RedType",
   "Damage",
@@ -113,6 +112,7 @@ local contexts = Addon:MakeLookupTable({
   "SecondaryStat",
   "LastSecondaryStat",
   "Charges",
+  "Embed",
   "EnchantOnUse",
   "RequiredEnchantOnUse",
   "SetName",
@@ -128,7 +128,6 @@ local contexts = Addon:MakeLookupTable({
   "SoulboundTradeable",
   "Delta",
   "RecipeMats",
-  "RecipeTitle",
   "Tail",
 }, function(v, k) return k end, true)
 
@@ -178,6 +177,14 @@ local contextAscensions = Addon:Map({
     -- mark where the secondary stats would be if they existed on this item
     tooltipData.locs.secondaryStatStart = tooltipData.locs.secondaryStatStart or line.i - 1
   end,
+  Embed = function(context, tooltipData, line, currentContext)
+    if currentContext == contexts.Embed then
+      -- reset the base stat location
+      tooltipData.embedLocs = tooltipData.locs
+      tooltipData.locs      = {}
+      tooltipData.context   = contexts.Title
+    end
+  end,
   EnchantOnUse = function(context, tooltipData, line, currentContext)
     -- mark red enchantment lines if I found an "enchantment disabled" line
     if currentContext == contexts.RequiredEnchantOnUse then
@@ -190,11 +197,6 @@ local contextAscensions = Addon:Map({
   Description = function(context, tooltipData, line, currentContext)
     -- mark where the description would be if it existed on this item
     tooltipData.locs.description = tooltipData.locs.description or line.i - 1
-  end,
-  RecipeTitle = function(context, tooltipData, line, currentContext)
-  -- reset the base stat location
-    tooltipData.locs.statStart = nil
-    tooltipData.context = contexts.Title
   end,
   Tail = function(context, tooltipData, line, currentContext)
     -- do everything that needs to be done if the tooltip only has a title
@@ -284,11 +286,6 @@ contextActions = Addon:Map({
   end,
   LockedWithProfession = function(i, tooltipData, line)
     if line.colorLeft == Addon.COLORS.RED and MatchesAny(line.textLeftTextStripped, ITEM_MIN_SKILL) then
-      return SetContext(i, tooltipData, line)
-    end
-  end,
-  Embed = function(i, tooltipData, line)
-    if StartsWithAny(line.textLeftTextStripped, "\n") then
       return SetContext(i, tooltipData, line)
     end
   end,
@@ -514,6 +511,11 @@ contextActions = Addon:Map({
       return SetContext(i, tooltipData, line)
     end
   end,
+  Embed = function(i, tooltipData, line)
+    if StartsWithAny(line.textLeftTextStripped, "\n") then
+      return SetContext(i, tooltipData, line)
+    end
+  end,
   EnchantOnUse = function(i, tooltipData, line)
     if Addon.expansionLevel < Addon.expansions.wrath then return end
     if tooltipData.hasEnchant and not tooltipData.foundEnchant and line.colorLeft == Addon.COLORS.GREEN and StartsWithAny(line.textLeftTextStripped, ITEM_SPELL_TRIGGER_ONUSE) then
@@ -595,11 +597,6 @@ contextActions = Addon:Map({
       return SetContext(i, tooltipData, line)
     end
   end,
-  RecipeTitle = function(i, tooltipData, line)
-    if StartsWithAny(line.textLeftTextStripped, "\n") then
-      return SetContext(i, tooltipData, line)
-    end
-  end,
 }, nil, contexts)
 
 function Addon:RecognizeLineTypes(tooltipData)
@@ -623,7 +620,6 @@ function Addon:RecognizeLineTypes(tooltipData)
     i = i + 1
   end
   
-  -- this might not ever be necessary
   if #tooltipData > 0 then
     contextAscensions[contexts.Tail](contexts.Tail, tooltipData, tooltipData[#tooltipData], tooltipData.context)
   end
@@ -643,4 +639,6 @@ function Addon:RecognizeLineTypes(tooltipData)
       end
     end
   end
+  
+  tooltipData.locs, tooltipData.embedLocs = tooltipData.embedLocs or tooltipData.locs, tooltipData.locs
 end
