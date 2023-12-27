@@ -1,5 +1,9 @@
 <h3>Fixes</h3>
 <ul>
-  <li>Restored Feral Attack Power in Classic Era.</li>
-  <li>Reputation text now accounts for human racial bonus.</li>
+  <li>Fix incompatibilty with other addons that hook tooltips a certain way (like Auctionator), which was causing tooltips to sometimes show the wrong item.</li>
+  <li>Fixed Season of Discovery runes not being recognized on chest items which are marked as "robe" items instead of "chest" items.</li>
+  <li>Fixed an issue when padding the end of the tooltip is disabled and Max Stack Size is visible.</li>
+  <li>ZeraTooltip will now try harder to avoid creating an empty line at the bottom of tooltips when padding the end of the tooltip. The padding should only happen when another addon is adding tooltip lines.</li>
+  <li>Recipes that embed item tooltips inside them now work a little better. Reordering lines in the embedded section should no longer hoist them to the recipe section at the top.</li>
+  <li>The white line at the top of recipes that tells you what you learn is now recognized as a "Use" line, so the prefix will be modified.</li>
 </ul>
