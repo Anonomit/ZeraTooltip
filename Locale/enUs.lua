@@ -59,10 +59,10 @@ L["Show item level on Waylaid Supplies and Supply Shipments."]                  
 L["Show this line where it was originally positioned in Wrath of The Lich King."] = true
 
 -- stack size
-L["Hide Single Stacks"]                                            = true
-L["Hide stack size on items that do not stack."]                   = true
-L["Hide Equipment"]                                                = true
-L["Hide stack size on items that can be equipped on a character."] = true
+L["Hide Single Stacks"]                                                        = true
+L["Hide stack size on unstackable items."]                                     = true
+L["Hide Equipment"]                                                            = true
+L["Hide stack size on unstackable items that can be equipped on a character."] = true
 
 -- trainable
 L["Trainable Equipment"]                             = true
