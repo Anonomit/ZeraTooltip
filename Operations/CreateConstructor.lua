@@ -59,6 +59,8 @@ function Addon:CreateConstructor(tooltipData)
   local fakeouts      = {}
   local extraMoves    = {}
   
+  local lastLineIsExtra = false
+  
   if tooltipData.extraLines then
     local slot = 1
     local lastDest
@@ -67,6 +69,9 @@ function Addon:CreateConstructor(tooltipData)
     for i = #tooltipData, 1, -1 do
       local line = tooltipData[i]
       if line.fake then
+        if i == #tooltipData then
+          lastLineIsExtra = true
+        end
         local before
         for j = i, 1, -1 do
           before = not tooltipData[j].hide and tooltipData[j].i
@@ -150,7 +155,7 @@ function Addon:CreateConstructor(tooltipData)
   end
   
   -- if the last line is being moved or padded, reanchor the line after it (should it exist and is not an extraLine)
-  if tooltipData[#tooltipData].i ~= tooltipData.numLines or tooltipData.padLast then
+  if tooltipData[#tooltipData].i ~= tooltipData.numLines or lastLineIsExtra or tooltipData.padLast then
     pads[tooltipData.numLines+1]     = tooltipData.padLast
     moves[tooltipData.numLines+1]    = tooltipData[#tooltipData].i
     fakeouts[tooltipData.numLines+1] = true

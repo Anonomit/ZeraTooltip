@@ -102,12 +102,15 @@ end
 function Addon:BumpLocationsRange(tooltipData, min, max, amount)
   amount = amount or 1
   for _, locType in ipairs{"locs", "embedLocs"} do
+    local new = {}
     for k, loc in pairs(tooltipData[locType]) do
+      new[k] = loc
       if not min or min <= loc then
         if not max or max >= loc then
-          tooltipData[locType][k] = loc + amount
+          new[k] = loc + amount
         end
       end
     end
+    tooltipData[locType] = new
   end
 end
