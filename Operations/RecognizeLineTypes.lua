@@ -111,6 +111,7 @@ local contexts = Addon:MakeLookupTable({
   "RequiredRep",
   "SecondaryStat",
   "LastSecondaryStat",
+  "RecipeUse",
   "Charges",
   "Embed",
   "EnchantOnUse",
@@ -503,6 +504,15 @@ contextActions = Addon:Map({
             return SetContext(i-1, tooltipData, line)
           end
         end
+      end
+    end
+  end,
+  RecipeUse = function(i, tooltipData, line)
+    if line.colorLeft == Addon.COLORS.WHITE then
+      local prefix = StartsWithAny(line.textLeftTextStripped, ITEM_SPELL_TRIGGER_ONUSE)
+      if prefix then
+        line.prefix = prefix
+        return SetContext(i, tooltipData, line)
       end
     end
   end,

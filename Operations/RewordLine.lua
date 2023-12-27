@@ -53,56 +53,76 @@ function Addon:RewordLine(tooltip, line, tooltipData)
       if self:GetOption("allow", "reword") and self:GetOption("doReword", line.stat) then
         text = line.normalForm
       end
-    elseif line.type == "Title" then
-      text = self:RewordTitle(text, tooltipData.icon)
-    elseif line.type == "Quality" then
-      text = self:RewordQuality(text, tooltipData)
-    elseif line.type == "Binding" then
-      text = self:RewordBinding(text, line.bindType)
-    elseif line.type == "Damage" then
-      text = self:ModifyWeaponDamage(text, tooltipData.dps, tooltipData.speed)
-      if not line.hideRight then
-        local rightText = self:ModifyWeaponSpeed(line.textRightText, tooltipData.speed, tooltipData.speedString)
-        if rightText ~= line.textRightText then
-          line.rewordRight = rightText
-        end
-      end
-    elseif line.type == "DamagePerSecond" then
-      text = self:ModifyWeaponDamagePerSecond(text)
-      if not line.hideRight and tooltipData.speed then
-        local rightText = self:ModifyWeaponSpeedbar(tooltipData.speed, tooltipData.speedString, tooltipData.speedStringFull)
-        if rightText then
-          line.rewordRight = rightText
-        end
-      end
-    elseif line.type == "Armor" then
-      text = self:RewordArmor(text)
-    elseif line.type == "BonusArmor" then
-      text = self:RewordBonusArmor(text)
-    elseif line.type == "Block" then
-      text = self:RewordBlock(text)
-    elseif line.type == "Enchant" then
-      text = self:ModifyEnchantment(text)
-    elseif line.type == "WeaponEnchant" then
-      text = self:ModifyWeaponEnchantment(text)
-    elseif line.type == "Rune" then
-      text = self:ModifyRune(text)
-    elseif line.type == "Durability" then
-      text = self:ModifyDurability(text)
-    elseif line.type == "RequiredClasses" then
-      text = self:ModifyRequiredClasses(text)
-    elseif line.type == "EnchantOnUse" then
-      -- Reworded after prefix rewording takes place
-    elseif line.type == "Refundable" then
-      if self:GetOption("doReword", line.type) then
-        text = self:RewordRefundable(text)
-      end
-    elseif line.type == "SoulboundTradeable" then
-      if self:GetOption("doReword", line.type) then
-        text = self:RewordTradeable(text)
-      end
-    elseif line.type == "SocketHint" then
-      text = self:RewordSocketHint(text)
+    else
+      Addon:Switch(line.type, {
+        Title = function()
+          text = self:RewordTitle(text, tooltipData.icon)
+        end,
+        Quality = function()
+          text = self:RewordQuality(text, tooltipData)
+        end,
+        Binding = function()
+          text = self:RewordBinding(text, line.bindType)
+        end,
+        Damage = function()
+          text = self:ModifyWeaponDamage(text, tooltipData.dps, tooltipData.speed)
+          if not line.hideRight then
+            local rightText = self:ModifyWeaponSpeed(line.textRightText, tooltipData.speed, tooltipData.speedString)
+            if rightText ~= line.textRightText then
+              line.rewordRight = rightText
+            end
+          end
+        end,
+        DamagePerSecond = function()
+          text = self:ModifyWeaponDamagePerSecond(text)
+          if not line.hideRight and tooltipData.speed then
+            local rightText = self:ModifyWeaponSpeedbar(tooltipData.speed, tooltipData.speedString, tooltipData.speedStringFull)
+            if rightText then
+              line.rewordRight = rightText
+            end
+          end
+        end,
+        Armor = function()
+          text = self:RewordArmor(text)
+        end,
+        BonusArmor = function()
+          text = self:RewordBonusArmor(text)
+        end,
+        Block = function()
+          text = self:RewordBlock(text)
+        end,
+        Enchant = function()
+          text = self:ModifyEnchantment(text)
+        end,
+        WeaponEnchant = function()
+          text = self:ModifyWeaponEnchantment(text)
+        end,
+        Rune = function()
+          text = self:ModifyRune(text)
+        end,
+        Durability = function()
+          text = self:ModifyDurability(text)
+        end,
+        RequiredClasses = function()
+          text = self:ModifyRequiredClasses(text)
+        end,
+        EnchantOnUse = function()
+          -- Reworded after prefix rewording takes place
+        end,
+        Refundable = function()
+          if self:GetOption("doReword", line.type) then
+            text = self:RewordRefundable(text)
+          end
+        end,
+        SoulboundTradeable = function()
+          if self:GetOption("doReword", line.type) then
+            text = self:RewordTradeable(text)
+          end
+        end,
+        SocketHint = function()
+          text = self:RewordSocketHint(text)
+        end,
+      })
     end
     if not line.stat and miscRewordLines[line.type] and self:GetOption("doReword", "Miscellaneous") then
       -- localeExtra replacements
