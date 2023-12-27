@@ -117,7 +117,8 @@ function Addon:ReadTooltip(tooltip, name, link, maxLines)
       realColor             = self:GetTextColorAsHex(realTextLeft),
     }
   end
-  tooltipData.numLines = #tooltipData
+  tooltipData.numLines     = #tooltipData
+  tooltipData.realNumLines = tooltip.tooltip:NumLines()
   
   -- tooltipData.name = name
   -- tooltipData.link = link
