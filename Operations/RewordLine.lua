@@ -44,7 +44,7 @@ function Addon:RewordLine(tooltip, line, tooltipData)
   
   local text = line.textLeftText
   
-  if self:GetGlobalOption("cache", "enabled") and self:GetGlobalOption("cache", "text") and textCache[line.type] and textCache[line.type][line.textLeftText] then
+  if self:GetGlobalOption("cache", "enabled") and self:GetGlobalOption("cache", "text") and not RatingBuster and textCache[line.type] and textCache[line.type][line.textLeftText] then
     text, line.rewordRight = unpack(textCache[line.type][line.textLeftText], 1, 2)
   else
     
