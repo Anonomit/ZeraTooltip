@@ -1131,8 +1131,8 @@ do
   end
   
   function Addon:Concatenate(t1, t2)
-    for _, v in ipairs(t2) do
-      t1[#t1+1] = v
+    for i = 1, #t2 do
+      t1[#t1+1] = t2[i]
     end
     for k, v in pairs(t2) do
       if type(k) ~= "number" then

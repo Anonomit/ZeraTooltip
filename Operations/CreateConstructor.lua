@@ -104,7 +104,11 @@ function Addon:CreateConstructor(tooltipData)
   if self:GetGlobalOption("constructor", "doValidation") then
     constructor.validation = {}
     for _, line in ipairs(tooltipData) do
-      constructor.validation[line.i] = line.realTextLeft
+      if line.type == "Cooldown" or line.oldType == "Cooldown" then
+        constructor.validation[line.i] = self:ReversePattern(ITEM_COOLDOWN_TIME)
+      else
+        constructor.validation[line.i] = line.realTextLeft
+      end
     end
   end
   

@@ -11,7 +11,8 @@ local strMatch = string.match
 local hiddenResists = Addon:MakeLookupTable{"Fire Resistance", "Nature Resistance", "Frost Resistance", "Shadow Resistance"}
 
 local function HideLeft(line)
-  line.type = "Padding"
+  line.oldType = line.type
+  line.type    = "Padding"
   
   local pre  = Addon:GetDebugView"tooltipLineNumbers" and format("[%d] ", line.i) or ""
   local text = Addon:GetDebugView"paddingConversionSuccesses" and ("[Padding Success] " .. line.textLeftText) or " "

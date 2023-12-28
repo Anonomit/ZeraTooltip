@@ -615,7 +615,8 @@ function Addon:RecognizeLineTypes(tooltipData)
   while i <= #tooltipData do
     local line = tooltipData[i]
     if line.textLeftTextStripped == "" and not line.texture and not line.moneyFrame then
-      line.type = "Padding"
+      line.oldType = line.type
+      line.type    = "Padding"
     else
       for j = tooltipData.context + 1, #contexts do
         if contextActions[j] then

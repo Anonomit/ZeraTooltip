@@ -302,7 +302,8 @@ function Addon:ValidateConstructor(tooltip, constructor)
       self:DebugfIfOutput("constructorValidationFail", "Constructor validation failed. Line %d, Expected '%s', Could not find %s", i, validation, tooltipName.."TextLeft"..i)
       return false
     end
-    if frame:GetText() ~= validation then
+    local text = frame:GetText()
+    if text ~= validation and not text:find(validation) then
       self:DebugfIfOutput("constructorValidationFail", "Constructor validation failed. Line %d, Expected '%s', Found '%s'", i, validation, frame:GetText())
       return false
     end
