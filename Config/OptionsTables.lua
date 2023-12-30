@@ -1851,6 +1851,8 @@ local function MakeDebugOptions(opts, categoryName)
   GUI:SetDBType"Global"
   local opts = GUI:CreateGroup(opts, categoryName, categoryName, nil, "tab")
   
+  GUI:CreateExecute(opts, "reload", self.L["Reload UI"], nil, ReloadUI)
+  
   -- Enable
   do
     local opts = GUI:CreateGroup(opts, GUI:Order(), self.L["Enable"])
@@ -1861,9 +1863,6 @@ local function MakeDebugOptions(opts, categoryName)
       GUI:CreateNewline(opts)
       
       GUI:CreateToggle(opts, {"debugShowLuaErrors"}, "Show Lua Errors", nil, disabled).width = 2
-      GUI:CreateNewline(opts)
-      
-      GUI:CreateExecute(opts, "reload", self.L["Reload UI"], nil, ReloadUI)
     end
   end
   
@@ -1884,30 +1883,32 @@ local function MakeDebugOptions(opts, categoryName)
       
       local disabled = disabled or self:GetGlobalOption("debugView", "suppressAll")
       
-      GUI:CreateToggle(opts, {"debugView", "tooltipLineNumbers"}, "Tooltip Line Numbers", nil, disabled).width = 2
-      GUI:CreateNewline(opts)
-      
-      GUI:CreateToggle(opts, {"debugView", "paddingConversionSuccesses"}, "Padding Conversion Successes", nil, disabled).width = 2
-      GUI:CreateNewline(opts)
-      
-      GUI:CreateToggle(opts, {"debugView", "paddingConversionFailures"}, "Padding Conversion Failures", nil, disabled).width = 2
+      for i, data in ipairs{
+        {"tooltipLineNumbers",         "Tooltip Line Numbers"},
+        {"paddingConversionSuccesses", "Padding Conversion Successes"},
+        {"paddingConversionFailures",  "Padding Conversion Failures"},
+      } do
+        if i ~= 1 then
+          GUI:CreateNewline(opts)
+        end
+        GUI:CreateToggle(opts, {"debugView", data[1]}, data[2], nil, disabled).width = 2
+      end
     end
     
     do
       local opts = GUI:CreateGroupBox(opts, "Scanner Tooltips")
       
-      GUI:CreateToggle(opts, {"debugView", "tooltip_GameTooltip"}, "GameTooltip", nil, disabled)
-      GUI:CreateNewline(opts)
-      
-      GUI:CreateToggle(opts, {"debugView", "tooltip_ItemRefTooltip"}, "ItemRefTooltip", nil, disabled)
-      GUI:CreateNewline(opts)
-      
-      GUI:CreateToggle(opts, {"debugView", "tooltip_ShoppingTooltip1"}, "ShoppingTooltip1", nil, disabled)
-      GUI:CreateNewline(opts)
-      
-      GUI:CreateToggle(opts, {"debugView", "tooltip_ShoppingTooltip2"}, "ShoppingTooltip2", nil, disabled)
-      GUI:CreateNewline(opts)
-      GUI:CreateExecute(opts, "reload", self.L["Reload UI"], nil, ReloadUI)
+      for i, data in ipairs{
+        {"tooltip_GameTooltip",      "GameTooltip"},
+        {"tooltip_ItemRefTooltip",   "ItemRefTooltip"},
+        {"tooltip_ShoppingTooltip1", "ShoppingTooltip1"},
+        {"tooltip_ShoppingTooltip2", "ShoppingTooltip2"},
+      } do
+        if i ~= 1 then
+          GUI:CreateNewline(opts)
+        end
+        GUI:CreateToggle(opts, {"debugView", data[1]}, data[2]).width = 2
+      end
     end
   end
   
@@ -1928,63 +1929,59 @@ local function MakeDebugOptions(opts, categoryName)
       
       local disabled = disabled or self:GetGlobalOption("debugOutput", "suppressAll")
       
-      GUI:CreateToggle(opts, {"debugOutput", "tooltipMethodHook"}, "Tooltip Method Hook", nil, disabled).width = 2
-      GUI:CreateNewline(opts)
-      
-      GUI:CreateToggle(opts, {"debugOutput", "tooltipOnSetItemHook"}, "Tooltip tooltipOnSetItem Hook", nil, disabled).width = 2
-      GUI:CreateNewline(opts)
-      
-      GUI:CreateToggle(opts, {"debugOutput", "tooltipHookFail"}, "Tooltip Hook Failure", nil, disabled).width = 2
-      GUI:CreateNewline(opts)
-      
-      GUI:CreateToggle(opts, {"debugOutput", "initialTooltipData"}, "Initial Tooltip Data", nil, disabled).width = 2
-      GUI:CreateNewline(opts)
-      
-      GUI:CreateToggle(opts, {"debugOutput", "finalTooltipData"}, "Final Tooltip Data", nil, disabled).width = 2
-      GUI:CreateNewline(opts)
-      
-      GUI:CreateToggle(opts, {"debugOutput", "constructorCreated"}, "Constructor Created", nil, disabled).width = 2
-      GUI:CreateNewline(opts)
-      
-      GUI:CreateToggle(opts, {"debugOutput", "constructorCached"}, "Constructor Cached", nil, disabled).width = 2
-      GUI:CreateNewline(opts)
-      
-      GUI:CreateToggle(opts, {"debugOutput", "constructorWiped"}, "Constructor Wiped", nil, disabled).width = 2
-      GUI:CreateNewline(opts)
-      
-      GUI:CreateToggle(opts, {"debugOutput", "constructorValidationFail"}, "Constructor Validation Failure", nil, disabled).width = 2
-      GUI:CreateNewline(opts)
-      
-      GUI:CreateToggle(opts, {"debugOutput", "constructorLineMove"}, "Constructor Moving Line", nil, disabled).width = 2
-      GUI:CreateNewline(opts)
-      
-      GUI:CreateToggle(opts, {"debugOutput", "paddingDecisions"}, "Padding Decisions", nil, disabled).width = 2
-      GUI:CreateNewline(opts)
-      
-      GUI:CreateToggle(opts, {"debugOutput", "optionSet"}, "Option Set", nil, disabled).width = 2
-      GUI:CreateNewline(opts)
-      
-      GUI:CreateToggle(opts, {"debugOutput", "cvarSet"}, "CVar Set", nil, disabled).width = 2
-      GUI:CreateNewline(opts)
-      
-      GUI:CreateToggle(opts, {"debugOutput", "InterfaceOptionsFrameFix"}, "Interface Options Patch", nil, disabled).width = 2
+      for i, data in ipairs{
+        {"tooltipMethodHook",         "Tooltip Method Hook"},
+        {"tooltipOnSetItemHook",      "Tooltip tooltipOnSetItem Hook"},
+        {"tooltipHookFail",           "Tooltip Hook Failure"},
+        {"initialTooltipData",        "Initial Tooltip Data"},
+        {"finalTooltipData",          "Final Tooltip Data"},
+        {"constructorCreated",        "Constructor Created"},
+        {"constructorCached",         "Constructor Cached"},
+        {"constructorWiped",          "Constructor Wiped"},
+        {"constructorValidationFail", "Constructor Validation Failure"},
+        {"constructorLineMove",       "Constructor Moving Line"},
+        {"paddingDecisions",          "Padding Decisions"},
+        {"optionSet",                 "Option Set"},
+        {"cvarSet",                   "CVar Set"},
+        {"InterfaceOptionsFrameFix",  "Interface Options Patch"},
+        {"throttlingStarted",         "Throttling Started"},
+      } do
+        if i ~= 1 then
+          GUI:CreateNewline(opts)
+        end
+        GUI:CreateToggle(opts, {"debugOutput", data[1]}, data[2], nil, disabled).width = 2
+      end
     end
     
     do
       local opts = GUI:CreateGroupBox(opts, "Scanner Tooltips")
       
-      GUI:CreateToggle(opts, {"debugOutput", "tooltip_GameTooltip"}, "GameTooltip", nil, disabled)
-      GUI:CreateNewline(opts)
+      local disabled = disabled or self:GetGlobalOption("debugOutput", "suppressAll")
       
-      GUI:CreateToggle(opts, {"debugOutput", "tooltip_ItemRefTooltip"}, "ItemRefTooltip", nil, disabled)
-      GUI:CreateNewline(opts)
+      for i, data in ipairs{
+        {"tooltip_GameTooltip",      "GameTooltip"},
+        {"tooltip_ItemRefTooltip",   "ItemRefTooltip"},
+        {"tooltip_ShoppingTooltip1", "ShoppingTooltip1"},
+        {"tooltip_ShoppingTooltip2", "ShoppingTooltip2"},
+      } do
+        if i ~= 1 then
+          GUI:CreateNewline(opts)
+        end
+        GUI:CreateToggle(opts, {"debugOutput", data[1]}, data[2], nil, disabled).width = 2
+      end
+    end
+  end
+  
+  -- Debug Output
+  do
+    local opts = GUI:CreateGroup(opts, GUI:Order(), "Output")
+    
+    local disabled = not self:GetGlobalOption"debug"
+    
+    do
+      local opts = GUI:CreateGroupBox(opts, "Suppress All")
       
-      GUI:CreateToggle(opts, {"debugOutput", "tooltip_ShoppingTooltip1"}, "ShoppingTooltip1", nil, disabled)
-      GUI:CreateNewline(opts)
-      
-      GUI:CreateToggle(opts, {"debugOutput", "tooltip_ShoppingTooltip2"}, "ShoppingTooltip2", nil, disabled)
-      GUI:CreateNewline(opts)
-      GUI:CreateExecute(opts, "reload", self.L["Reload UI"], nil, ReloadUI)
+      GUI:CreateToggle(opts, {"debugOutput", "suppressAll"}, self.debugPrefix .. " " .. self.L["Hide messages like this one."], nil, disabled).width = 2
     end
   end
   

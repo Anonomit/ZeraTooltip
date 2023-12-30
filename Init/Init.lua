@@ -277,6 +277,284 @@ end
 
 
 
+
+--  ████████╗ █████╗ ██████╗ ██╗     ███████╗███████╗
+--  ╚══██╔══╝██╔══██╗██╔══██╗██║     ██╔════╝██╔════╝
+--     ██║   ███████║██████╔╝██║     █████╗  ███████╗
+--     ██║   ██╔══██║██╔══██╗██║     ██╔══╝  ╚════██║
+--     ██║   ██║  ██║██████╔╝███████╗███████╗███████║
+--     ╚═╝   ╚═╝  ╚═╝╚═════╝ ╚══════╝╚══════╝╚══════╝
+
+do
+  do
+    local privates = setmetatable({}, {__mode = "k"})
+    function Addon.GetPrivate(obj)
+      return privates[obj]
+    end
+    function Addon.SetPrivate(obj, p)
+      privates[obj] = p
+      return obj
+    end
+  end
+  
+  do
+    local Link
+    do
+      local meta = {
+        __index = {
+          Get = function(self)
+            return Addon.GetPrivate(self).obj
+          end,
+        },
+      }
+      Link = function(obj)
+        return setmetatable(Addon.SetPrivate({}, {obj = obj}), meta)
+      end
+    end
+    
+    local funcs = {
+      Add = function(self, v)
+        local p = Addon.GetPrivate(self)
+        p.count = p.count + 1
+        
+        local id = p.next  + 1
+        p.next   = id
+        
+        local link = Link(v)
+        local prev = p.tail
+        if prev then
+          prev.next = link
+          link.prev = prev
+        end
+        p.indices[id] = link
+        p.tail = link
+        if not p.head then
+          p.head = link
+        end
+        
+        return id
+      end,
+      Remove = function(self, id)
+        local p = Addon.GetPrivate(self)
+        
+        local link = p.indices[id]
+        if not link then return false end
+        p.count = p.count - 1
+        
+        local prev = link.prev
+        local next = link.next
+        if prev and next then
+          prev.next = next
+          next.prev = prev
+        end
+        if p.head == link then
+          p.head = next
+        end
+        if p.tail == link then
+          p.tail = prev
+        end
+        p.indices[id] = nil
+        
+        return true
+      end,
+      Wipe = function(self)
+        local p = Addon.GetPrivate(self)
+        p.indices = {}
+        p.count   = 0
+        p.next    = 0
+        return self
+      end,
+      GetCount = function(self)
+        return Addon.GetPrivate(self).count
+      end,
+      iter = function(self)
+        local link
+        return function()
+          if link then
+            link = link.next
+          else
+            link = Addon.GetPrivate(self).head
+          end
+          return link and link:Get()
+        end
+      end,
+    }
+    local meta = {
+      __index = function(self, k)
+        if type(k) == "number" then
+          return Addon.GetPrivate(self)[k]
+        else
+          return funcs[k]
+        end
+      end,
+    }
+    
+    function Addon.IndexedLinkedList()
+      return setmetatable(Addon.SetPrivate({}, {}), meta):Wipe()
+    end
+  end
+  
+  function Addon:Map(t, ValMap, KeyMap)
+    if type(KeyMap) == "table" then
+      local keyTbl = KeyMap
+      KeyMap = function(v, k, self) return keyTbl[k] end
+    end
+    if type(ValMap) == "table" then
+      local valTbl = KeyMap
+      ValMap = function(v, k, self) return valTbl[k] end
+    end
+    local new = {}
+    for k, v in next, t, nil do
+      local key, val = k, v
+      if KeyMap then
+        key = KeyMap(v, k, t)
+      end
+      if ValMap then
+        val = ValMap(v, k, t)
+      end
+      if key then
+        new[key] = val
+      end
+    end
+    local meta = getmetatable(t)
+    if meta then
+      setmetatable(new, meta)
+    end
+    return new
+  end
+  
+  function Addon:Filter(t, ...)
+    local new = {}
+    
+    for i, v in pairs(t) do
+      local pass = true
+      for j = 1, select("#", ...) do
+        local filter = select(j, ...)
+        if not filter(v, i, t) then
+          pass = false
+          break
+        end
+      end
+      if pass then
+        tinsert(new, v)
+      end
+    end
+    
+    local meta = getmetatable(self)
+    if meta then
+      setmetatable(new, meta)
+    end
+    
+    return new
+  end
+  
+  function Addon:Squish(t)
+    local new = {}
+    for k in pairs(t) do
+      tinsert(new, k)
+    end
+    tblSort(new)
+    for i, k in ipairs(new) do
+      new[i] = t[k]
+    end
+    return new
+  end
+  
+  function Addon:Shuffle(t)
+    for i = #t, 2, -1 do
+      local j = math.random(i)
+      t[i], t[j] = t[j], t[i]
+    end
+  end
+  
+  
+  function Addon:MakeLookupTable(t, val, keepOrigVals)
+    local ValFunc
+    if val ~= nil then
+      if type(val) == "function" then
+        ValFunc = val
+      else
+        ValFunc = function() return val end
+      end
+    end
+    local new = {}
+    for k, v in next, t, nil do
+      if ValFunc then
+        new[v] = ValFunc(v, k, t)
+      else
+        new[v] = true
+      end
+      if keepOrigVals and new[k] == nil then
+        new[k] = v
+      end
+    end
+    return new
+  end
+  
+  function Addon:MakeBoolTable(t)
+    return setmetatable(self:MakeLookupTable(t), {__index = function() return false end})
+  end
+  
+  
+  function Addon:CheckTable(t, ...)
+    local val = t
+    for _, key in ipairs{...} do
+      val = (val or {})[key]
+    end
+    return val
+  end
+  
+  function Addon:Concatenate(t1, t2)
+    for i = 1, #t2 do
+      t1[#t1+1] = t2[i]
+    end
+    for k, v in pairs(t2) do
+      if type(k) ~= "number" then
+        t1[k] = v
+      end
+    end
+  end
+  
+  function Addon:Random(t)
+    return t[random(#t)]
+  end
+  
+  do
+    cycleMemory = setmetatable({}, {__mode = "k"})
+    function Addon:Cycle(t, offset)
+      if cycleMemory[t] then
+        cycleMemory[t] = next(t, cycleMemory[t]) or next(t)
+      else
+        cycleMemory[t] = offset or next(t)
+      end
+      return cycleMemory[t], t[cycleMemory[t]]
+    end
+  end
+  
+  do
+    cycleMemory = setmetatable({}, {__mode = "k"})
+    function Addon:ICycle(t, offset)
+      cycleMemory[t] = ((cycleMemory[t] or (offset - 1) or 0) % #t) + 1
+      return cycleMemory[t], t[cycleMemory[t]]
+    end
+  end
+  
+  
+  function Addon:Switch(val, t, fallback)
+    fallback = fallback or nop
+    if val == nil then
+      return fallback(val)
+    else
+      return setmetatable(t, {__index = function() return fallback end})[val](val)
+    end
+  end
+end
+
+
+
+
+
+
 --  ██████╗  █████╗ ████████╗ █████╗ ██████╗  █████╗ ███████╗███████╗
 --  ██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔════╝
 --  ██║  ██║███████║   ██║   ███████║██████╔╝███████║███████╗█████╗  
@@ -470,19 +748,19 @@ do
   local function OnEvent(event, ...)
     local t = onEventCallbacks[event]
     Addon:Assertf(t, "Event %s is registered, but no callbacks were found", event)
-    for i, func in ipairs(t) do
+    for func in t:iter() do
       Call(func, Addon, event, ...)
     end
   end
   
   function Addon:RegisterEventCallback(event, func)
-    local t = onEventCallbacks[event] or {}
-    tinsert(t, func)
-    if #t == 1 then
-      onEventCallbacks[event] = t
+    local callbacks = onEventCallbacks[event] or Addon.IndexedLinkedList()
+    local id = callbacks:Add(func)
+    if callbacks:GetCount() == 1 then
+      onEventCallbacks[event] = callbacks
       self:RegisterEvent(event, OnEvent)
     end
-    return #t
+    return id
   end
   function Addon:RegisterSingleEventCallback(event, ...)
     local id = self:RegisterEventCallback(event, ...)
@@ -496,52 +774,39 @@ do
     self:UnregisterEvent(event)
   end
   function Addon:UnregisterEventCallback(event, id)
-    local t = onEventCallbacks[event] or {}
-    self:Assertf(t[id], "Attempted to unregister callback %s from event %s, but it was not found", id, event)
-    tblRemove(t, id)
-    if #t == 0 then
+    local callbacks = onEventCallbacks[event] or Addon.IndexedLinkedList()
+    self:Assertf(callbacks:Remove(id), "Attempted to unregister callback %s from event %s, but it was not found", id, event)
+    if callbacks:GetCount() == 0 then
       self:UnregisterEventCallbacks(event)
     end
   end
   
   
-  local onInitializeCallbacks = {}
-  function Addon:RunInitializeCallbacks()
-    for i, func in ipairs(onInitializeCallbacks) do
-      Call(func, Addon)
+  do
+    local onInitializeCallbacks = Addon.IndexedLinkedList()
+    local onEnableCallbacks     = Addon.IndexedLinkedList()
+    local events = {}
+    
+    for _, event in ipairs{"Initialize", "Enable"} do
+      local callbacks = Addon.IndexedLinkedList()
+      events[event] = callbacks
+      
+      Addon["Run" .. event .. "Callbacks"] = function(self)
+        for func in callbacks:iter() do
+          Call(func, Addon)
+        end
+      end
+      Addon["Register" .. event .. "Callback"] = function(self, func)
+        return callbacks:Add(func)
+      end
+      Addon["Unregister" .. event .. "Callbacks"] = function(self)
+        self:Assert(callbacks:GetCount() > 0, "Attempted to unregister " .. event .. " callbacks, but none were found")
+        callbacks:Wipe()
+      end
+      Addon["Unregister" .. event .. "Callback"] = function(self, id)
+        self:Assertf(callbacks:Remove(id), "Attempted to unregister " .. event .. " callback %s, but it was not found", id)
+      end
     end
-  end
-  function Addon:RegisterInitializeCallback(func)
-    tinsert(onInitializeCallbacks, func)
-    return #onInitializeCallbacks
-  end
-  function Addon:UnregisterInitializeCallbacks()
-    self:Assert(#onInitializeCallbacks > 0, "Attempted to unregister initialize callbacks, but none were found")
-    wipe(onInitializeCallbacks)
-  end
-  function Addon:UnregisterInitializeCallback(id)
-    self:Assertf(onInitializeCallbacks[id], "Attempted to unregister initialize callback %s, but it was not found", id)
-    tblRemove(onInitializeCallbacks, id)
-  end
-  
-  
-  local onEnableCallbacks = {}
-  function Addon:RunEnableCallbacks()
-    for i, func in ipairs(onEnableCallbacks) do
-      Call(func, Addon)
-    end
-  end
-  function Addon:RegisterEnableCallback(func)
-    tinsert(onEnableCallbacks, func)
-    return #onEnableCallbacks
-  end
-  function Addon:UnregisterEnableCallbacks()
-    self:Assert(#onEnableCallbacks > 0, "Attempted to unregister enable callbacks, but none were found")
-    wipe(onEnableCallbacks)
-  end
-  function Addon:UnregisterEnableCallback(id)
-    self:Assertf(onEnableCallbacks[id], "Attempted to unregister enable callback %s, but it was not found", id)
-    tblRemove(onEnableCallbacks, id)
   end
   
   
@@ -1004,174 +1269,5 @@ do
       num = mathMin(num, max)
     end
     return num
-  end
-end
-
-
-
-
-
-
---  ████████╗ █████╗ ██████╗ ██╗     ███████╗███████╗
---  ╚══██╔══╝██╔══██╗██╔══██╗██║     ██╔════╝██╔════╝
---     ██║   ███████║██████╔╝██║     █████╗  ███████╗
---     ██║   ██╔══██║██╔══██╗██║     ██╔══╝  ╚════██║
---     ██║   ██║  ██║██████╔╝███████╗███████╗███████║
---     ╚═╝   ╚═╝  ╚═╝╚═════╝ ╚══════╝╚══════╝╚══════╝
-
-do
-  function Addon:Map(t, ValMap, KeyMap)
-    if type(KeyMap) == "table" then
-      local keyTbl = KeyMap
-      KeyMap = function(v, k, self) return keyTbl[k] end
-    end
-    if type(ValMap) == "table" then
-      local valTbl = KeyMap
-      ValMap = function(v, k, self) return valTbl[k] end
-    end
-    local new = {}
-    for k, v in next, t, nil do
-      local key, val = k, v
-      if KeyMap then
-        key = KeyMap(v, k, t)
-      end
-      if ValMap then
-        val = ValMap(v, k, t)
-      end
-      if key then
-        new[key] = val
-      end
-    end
-    local meta = getmetatable(t)
-    if meta then
-      setmetatable(new, meta)
-    end
-    return new
-  end
-  
-  function Addon:Filter(t, ...)
-    local new = {}
-    
-    for i, v in pairs(t) do
-      local pass = true
-      for j = 1, select("#", ...) do
-        local filter = select(j, ...)
-        if not filter(v, i, t) then
-          pass = false
-          break
-        end
-      end
-      if pass then
-        tinsert(new, v)
-      end
-    end
-    
-    local meta = getmetatable(self)
-    if meta then
-      setmetatable(new, meta)
-    end
-    
-    return new
-  end
-  
-  function Addon:Squish(t)
-    local new = {}
-    for k in pairs(t) do
-      tinsert(new, k)
-    end
-    tblSort(new)
-    for i, k in ipairs(new) do
-      new[i] = t[k]
-    end
-    return new
-  end
-  
-  function Addon:Shuffle(t)
-    for i = #t, 2, -1 do
-      local j = math.random(i)
-      t[i], t[j] = t[j], t[i]
-    end
-  end
-  
-  
-  function Addon:MakeLookupTable(t, val, keepOrigVals)
-    local ValFunc
-    if val ~= nil then
-      if type(val) == "function" then
-        ValFunc = val
-      else
-        ValFunc = function() return val end
-      end
-    end
-    local new = {}
-    for k, v in next, t, nil do
-      if ValFunc then
-        new[v] = ValFunc(v, k, t)
-      else
-        new[v] = true
-      end
-      if keepOrigVals and new[k] == nil then
-        new[k] = v
-      end
-    end
-    return new
-  end
-  
-  function Addon:MakeBoolTable(t)
-    return setmetatable(self:MakeLookupTable(t), {__index = function() return false end})
-  end
-  
-  
-  function Addon:CheckTable(t, ...)
-    local val = t
-    for _, key in ipairs{...} do
-      val = (val or {})[key]
-    end
-    return val
-  end
-  
-  function Addon:Concatenate(t1, t2)
-    for i = 1, #t2 do
-      t1[#t1+1] = t2[i]
-    end
-    for k, v in pairs(t2) do
-      if type(k) ~= "number" then
-        t1[k] = v
-      end
-    end
-  end
-  
-  function Addon:Random(t)
-    return t[random(#t)]
-  end
-  
-  do
-    cycleMemory = setmetatable({}, {__mode = "k"})
-    function Addon:Cycle(t, offset)
-      if cycleMemory[t] then
-        cycleMemory[t] = next(t, cycleMemory[t]) or next(t)
-      else
-        cycleMemory[t] = offset or next(t)
-      end
-      return cycleMemory[t], t[cycleMemory[t]]
-    end
-  end
-  
-  do
-    cycleMemory = setmetatable({}, {__mode = "k"})
-    function Addon:ICycle(t, offset)
-      cycleMemory[t] = ((cycleMemory[t] or (offset - 1) or 0) % #t) + 1
-      return cycleMemory[t], t[cycleMemory[t]]
-    end
-  end
-  
-  
-  function Addon:Switch(val, t, fallback)
-    fallback = fallback or nop
-    if val == nil then
-      return fallback(val)
-    else
-      return setmetatable(t, {__index = function() return fallback end})[val](val)
-    end
   end
 end

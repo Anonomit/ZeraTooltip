@@ -11,6 +11,8 @@ local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 
 
 local function Throttle()
+  Addon:DebugIfOutput("throttlingStarted", "Auction throttler loaded")
+  
   Addon.lastTooltipUpdate = -1 - TOOLTIP_UPDATE_TIME
   if not Addon.throttleRegistrationID then
     Addon.throttleRegistrationID = Addon:RegisterEventCallback("MODIFIER_STATE_CHANGED", function()
