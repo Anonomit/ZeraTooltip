@@ -21,14 +21,14 @@ local easyLines = {
   EnchantHint     = "Enchant",
   WeaponEnchant   = "WeaponEnchant",
   Rune            = "WeaponEnchant",
-  Socket          = "Socket",
-  RequiredSocket  = "Socket",
-  SocketBonus     = "SocketBonus",
+  -- Socket          = "Socket",
+  -- RequiredSocket  = "Socket",
+  -- SocketBonus     = "SocketBonus",
   SetName         = "SetBonus",
   SetPiece        = "SetBonus",
   SetBonus        = "SetBonus",
 }
-local hardLines = Addon:MakeLookupTable{"SecondaryStat", "EnchantOnUse", "RequiredEnchantOnUse", "Charges", "Cooldown", "SocketHint"}
+local hardLines = Addon:MakeLookupTable{"Socket", "RequiredSocket", "SocketBonus", "SecondaryStat", "EnchantOnUse", "RequiredEnchantOnUse", "Charges", "Cooldown", "SocketHint"}
 
 
 local function GetPadType(offset, lineType, lastUse)
@@ -41,7 +41,9 @@ local function GetPadType(offset, lineType, lastUse)
     return
   end
   
-  if lineType == "SecondaryStat" then
+  if lineType == "Socket" or lineType == "RequiredSocket" or lineType == "SocketBonus" then
+    return offset == -1 and "Socket" or "SocketBonus"
+  elseif lineType == "SecondaryStat" then
     if Addon:GetOption"combineStats" then
       return "BaseStat"
     end

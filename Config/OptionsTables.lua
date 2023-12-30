@@ -1972,19 +1972,6 @@ local function MakeDebugOptions(opts, categoryName)
     end
   end
   
-  -- Debug Output
-  do
-    local opts = GUI:CreateGroup(opts, GUI:Order(), "Output")
-    
-    local disabled = not self:GetGlobalOption"debug"
-    
-    do
-      local opts = GUI:CreateGroupBox(opts, "Suppress All")
-      
-      GUI:CreateToggle(opts, {"debugOutput", "suppressAll"}, self.debugPrefix .. " " .. self.L["Hide messages like this one."], nil, disabled).width = 2
-    end
-  end
-  
   -- Caches
   do
     local opts = GUI:CreateGroup(opts, GUI:Order(), "Cache")
