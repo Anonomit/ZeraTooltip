@@ -267,7 +267,7 @@ do
   Addon.isClassic = Addon.expansionName == "classic"
   
   Addon.isSeasonOfMastery   = Addon.season == Enum.SeasonID.SeasonOfMastery
-  Addon.isSeasonOfDiscovery = Addon.season == Enum.SeasonID.SeasonOfDiscovery or Enum.SeasonID.Placeholder
+  Addon.isSeasonOfDiscovery = Addon.season == (Enum.SeasonID.SeasonOfDiscovery or Enum.SeasonID.Placeholder)
   
   Addon.isSoM = Addon.isSeasonOfMastery
   Addon.isSoD = Addon.isSeasonOfDiscovery
