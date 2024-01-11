@@ -813,6 +813,7 @@ do
   function Addon:RegisterCVarCallback(cvar, func)
     return self:RegisterEventCallback("CVAR_UPDATE", function(self, event, ...)
       if cvar == ... then
+        self:DebugfIfOutput("cvarSet", "CVar set: %s = %s", cvar, tostring(C_CVar.GetCVar(cvar)))
         func(self, event, ...)
       end
     end)
