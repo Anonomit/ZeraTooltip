@@ -421,7 +421,7 @@ do
   
   self.statsInfo["Durability"]         = {color = self.COLORS.WHITE}
   
-  self.statsInfo["Reputation"]         = {color = self.COLORS.PURPLE}
+  self.statsInfo["Reputation"]         = {color = self.COLORS.REP}
   
   self.statsInfo["MadeBy"]             = {color = self.COLORS.GREEN}
   
