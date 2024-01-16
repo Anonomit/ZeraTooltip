@@ -9,6 +9,7 @@ local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 local strLower = string.lower
 local strMatch = string.match
 local strFind  = string.find
+local strGSub  = string.gsub
 
 local mathMin  = math.min
 
@@ -45,6 +46,17 @@ function Addon:PrepareTooltip(tooltip, link, methodName, ...)
       tooltip:SetOwner(WorldFrame, "ANCHOR_TOP")
     else
       tooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
+    end
+    if methodName == "SetCompareItem" and strFind(opt, "1$") then
+      local tooltipName = strGSub(tooltip:GetName(), "1$", "2")
+      local tooltip = _G[tooltipName]
+      local opt = strGSub(opt, "%d$", "2")
+      if tooltip then
+        if self:GetGlobalOption("debugView", opt) then
+          tooltip:SetOwner(WorldFrame, "ANCHOR_TOP")
+        end
+        self:DebugfIfOutput(opt, "Refreshing scanner tooltip: %s", tooltip.tooltip:GetName())
+      end
     end
     if methodName then
       tooltip[methodName](tooltip, unpack(args, 1, args.n))

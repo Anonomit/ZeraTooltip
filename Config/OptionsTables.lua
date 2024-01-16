@@ -1933,6 +1933,7 @@ local function MakeDebugOptions(opts, categoryName)
         {"tooltipMethodHook",         "Tooltip Method Hook"},
         {"tooltipOnSetItemHook",      "Tooltip tooltipOnSetItem Hook"},
         {"tooltipHookFail",           "Tooltip Hook Failure"},
+        {"tooltipHookMarked",         "Tooltip Hook Marked"},
         {"initialTooltipData",        "Initial Tooltip Data"},
         {"finalTooltipData",          "Final Tooltip Data"},
         {"constructorCreated",        "Constructor Created"},

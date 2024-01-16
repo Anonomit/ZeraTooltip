@@ -132,6 +132,7 @@ function Addon:WipeConstructor(tooltip, link, methodName, ...)
   if not hash then return end
   
   StartCleanup(hash)
+  Addon:DebugfIfOutput("constructorWiped", "Constructor wiped: %s", hash)
   
   if constructorCache[hash] then
     cacheSize = cacheSize - 1

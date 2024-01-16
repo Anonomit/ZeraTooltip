@@ -13,6 +13,10 @@ local tblConcat = table.concat
 
 
 
+local prepareAgain = false
+Addon:RegisterEventCallback("PLAYER_EQUIPMENT_CHANGED", function() prepareAgain = true end)
+
+
 local function RefreshDebugOptions()
   if ((Addon.AceConfigDialog:GetStatusTable(ADDON_NAME) or {}).groups or {}).selected == "Debug" then
     Addon.AceConfigRegistry:NotifyChange(ADDON_NAME)
@@ -48,14 +52,33 @@ end
 
 
 
-local tooltipScanners = {}
+
+local function ConvertArgs(...)
+  local args = {n = select("#", ...), ...}
+  for i = 1, args.n do
+    if type(args[i]) == "table" and args[i].GetName then
+      args[i] = args[i]:GetName()
+    else
+      args[i] = tostring(args[i])
+    end
+  end
+  return args
+end
 
 local function ScannerOnTooltipSetItem(scannerTooltip)
   if scannerTooltip.lengths then
     tinsert(scannerTooltip.lengths, scannerTooltip:NumLines())
   end
+  if Addon:GetGlobalOption("debugOutput", "tooltip_" .. scannerTooltip.tooltip:GetName()) then
+    local name, link = scannerTooltip:GetItem()
+    local methodName = scannerTooltip.lastCall[2]
+    local args = ConvertArgs(unpack(scannerTooltip.lastCall, 3, scannerTooltip.lastCall.n))
+    local methodName = scannerTooltip.lastCall[2]
+    Addon:Debugf("OnTooltipSetItem: %s:%s(%s) - %s", scannerTooltip:GetName(), methodName, tblConcat({unpack(args, 1, args.n)}, ", "), tostring(link))
+  end
 end
 
+local tooltipScanners = {}
 local function GetScanner(tooltip)
   local tooltipName = tooltip:GetName()
   local scannerTooltip = tooltipScanners[tooltipName]
@@ -101,18 +124,6 @@ local function GenerateConstructor(tooltip, scannerTooltip, name, link, maxLines
   return constructor
 end
 
-local function ConvertArgs(...)
-  local args = {n = select("#", ...), ...}
-  for i = 1, args.n do
-    if type(args[i]) == "table" and args[i].GetName then
-      args[i] = args[i]:GetName()
-    else
-      args[i] = tostring(args[i])
-    end
-  end
-  return args
-end
-
 local compareMethods = Addon:MakeLookupTable{"SetCompareItem", "SetHyperlinkCompareItem"}
 local recursion      = false -- used for shopping tooltips
 local alreadyPrepped = false -- used for shopping tooltips
@@ -135,15 +146,31 @@ local function OnTooltipItemMethod(tooltip, methodName, ...)
     end
     return
   end
+  
+  local isComparison = compareMethods[methodName]
+  
   if self:IsTooltipMarked(tooltip) then
-    if Addon:GetGlobalOption("debugOutput", "tooltipHookFail") then
+    if prepareAgain then
+      prepareAgain = false
+      if Addon:GetGlobalOption("debugOutput", "tooltipMethodHook") then
+        local args = ConvertArgs(...)
+        Addon:Debugf("Hook (early prep): %s:%s(%s) - %s", tooltip:GetName(), methodName, tblConcat({unpack(args, 1, args.n)}, ", "), link)
+      end
+      
+      if isComparison and not recursion then
+        ResetScanner(GetScanner((...)), nil, methodName, ...)
+      else
+        ResetScanner(GetScanner(tooltip), nil, methodName, ...)
+      end
+      self:PrepareTooltip(GetScanner(tooltip), link, methodName, ...)
+      
+    elseif Addon:GetGlobalOption("debugOutput", "tooltipHookMarked") then
       local args = ConvertArgs(...)
       Addon:Debugf("Hook already marked: %s:%s(%s) - %s", tooltip:GetName(), methodName, tblConcat({unpack(args, 1, args.n)}, ", "), link)
     end
     return
   end
-  
-  local isComparison = compareMethods[methodName]
+  prepareAgain = false
   
   if Addon:GetGlobalOption("debugOutput", "tooltipMethodHook") then
     local args = ConvertArgs(...)
@@ -249,12 +276,12 @@ local function OnTooltipSetItem(tooltip)
     if Addon:GetGlobalOption("debugOutput", "tooltipHookFail") then
       local args = ConvertArgs(unpack(scannerTooltip.lastCall, 3, scannerTooltip.lastCall.n))
       local methodName = scannerTooltip.lastCall[2]
-      Addon:Debugf("Bad OnSetItem Hook (link doesn't match): %s:%s(%s)", tooltip:GetName(), methodName, tblConcat({unpack(args, 1, args.n)}, ", "))
+      Addon:Debugf("Bad OnSetItem Hook (link doesn't match): %s:%s(%s) - %s - %s", tooltip:GetName(), methodName, tblConcat({unpack(args, 1, args.n)}, ", "), tostring(scannerTooltip.currentItem), tostring(link))
     end
     return
   end
   if self:IsTooltipMarked(tooltip) then
-    if Addon:GetGlobalOption("debugOutput", "tooltipHookFail") then
+    if Addon:GetGlobalOption("debugOutput", "tooltipHookMarked") then
       local methodName = scannerTooltip.lastCall[2]
       local args = ConvertArgs(unpack(scannerTooltip.lastCall, 3, scannerTooltip.lastCall.n))
       local methodName = scannerTooltip.lastCall[2]
@@ -276,7 +303,7 @@ local function OnTooltipSetItem(tooltip)
   if self:GetGlobalOption("debugOutput", "tooltipOnSetItemHook") then
     local methodName = scannerTooltip.lastCall[2]
     local args = ConvertArgs(unpack(scannerTooltip.lastCall, 3, scannerTooltip.lastCall.n))
-      local methodName = scannerTooltip.lastCall[2]
+    local methodName = scannerTooltip.lastCall[2]
     Addon:Debugf("OnTooltipSetItem: %s:%s(%s) - %s", tooltip:GetName(), methodName, tblConcat({unpack(args, 1, args.n)}, ", "), link)
   end
   
@@ -285,6 +312,9 @@ local function OnTooltipSetItem(tooltip)
     if constructor then
       self:WipeConstructor(tooltip, unpack(scannerTooltip.lastCall, 1, scannerTooltip.lastCall.n))
       constructor = nil
+      if tooltip == ShoppingTooltip2 then
+        self:WipeConstructor(ShoppingTooltip1, unpack(scannerTooltip.lastCall, 1, scannerTooltip.lastCall.n))
+      end
     end
     
     constructor = GenerateConstructor(tooltip, scannerTooltip, name, link, scannerTooltip.isRecipe and scannerTooltip.lengths[1] or nil)
