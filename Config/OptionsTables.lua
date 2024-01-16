@@ -1699,7 +1699,7 @@ local function MakeExtraOptions(opts, categoryName)
       local samples = {}
       for _, itemID in ipairs{211331, 211819} do
         local defaultText = Addon:RewordReputation(itemID)
-        local defaultText, formattedText = GetFormattedText(stat, self.COLORS.PURPLE, defaultText, defaultText)
+        local defaultText, formattedText = GetFormattedText(stat, self.COLORS.REP, defaultText, defaultText)
         tinsert(samples, {defaultText, formattedText})
       end
       
