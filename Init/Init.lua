@@ -496,6 +496,23 @@ do
   end
   
   
+  function Addon:MakeTable(t, ...)
+    local parent = t
+    
+    local keys = {...}
+    local val = tblRemove(keys)
+    local last = #keys
+    for i, key in ipairs(keys) do
+      if i == last then
+        t[key] = val
+      elseif not t[key] then
+        t[key] = {}
+      end
+      t = t[key]
+    end
+    return parent
+  end
+  
   function Addon:CheckTable(t, ...)
     local val = t
     for _, key in ipairs{...} do

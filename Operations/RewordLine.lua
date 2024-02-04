@@ -26,12 +26,12 @@ cacheLineTypes = setmetatable({
   Title = false,
 }, {__index = function() return true end})
 
-local miscRewordLines = {
-  SecondaryStat = true,
-  Enchant       = true,
-  EnchantOnUse  = true,
-  Socket        = true,
-  SetBonus      = true,
+local miscRewordLines = Addon:MakeLookupTable{
+  "SecondaryStat",
+  "Enchant",
+  "EnchantOnUse",
+  "Socket",
+  "SetBonus",
 }
 
 function Addon:RewordLine(tooltip, line, tooltipData)
@@ -44,8 +44,9 @@ function Addon:RewordLine(tooltip, line, tooltipData)
   
   local text = line.textLeftText
   
-  if self:GetGlobalOption("cache", "enabled") and self:GetGlobalOption("cache", "text") and not RatingBuster and textCache[line.type] and textCache[line.type][line.textLeftText] then
-    text, line.rewordRight = unpack(textCache[line.type][line.textLeftText], 1, 2)
+  local cache = self:GetGlobalOption("cache", "enabled") and self:GetGlobalOption("cache", "text") and not RatingBuster and Addon:CheckTable(textCache, line.type, line.textLeftText, line.textRightText or "")
+  if cache then
+    text, line.rewordRight = unpack(cache, 1, 2)
   else
     
     
@@ -180,8 +181,7 @@ function Addon:RewordLine(tooltip, line, tooltipData)
     end
     
     if self:GetGlobalOption("cache", "enabled") and self:GetGlobalOption("cache", "text") and cacheLineTypes[line.type] then
-      textCache[line.type] = textCache[line.type] or {}
-      textCache[line.type][line.textLeftText] = {text, line.rewordRight}
+      Addon:MakeTable(textCache, line.type, line.textLeftText, line.textRightText or "", {text, line.rewordRight})
       cacheSize = cacheSize + 1
     end
   end
