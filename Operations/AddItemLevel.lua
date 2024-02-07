@@ -29,6 +29,9 @@ end
 
 local tokenOverrides = {}
 for ids, ilvl in pairs{
+  [{215390, 215417, 215386, 215388, 215419, 215392, 215418}] = 30, -- Waylaid Supplies
+  [{215398, 215402, 215408, 215411, 215403}] = 35, -- Waylaid Supplies
+  
   [{209693, 211452}] = 33, -- Perfect Blackfathom Pearl
   
   [{18665, 18646}] = 75, -- Benediction / Anathema
@@ -181,9 +184,13 @@ function Addon:AddItemLevel(tooltipData)
   
   local tokenOverride = tokenOverrides[tooltipData.id]
   
-  if tokenOverride then
-    -- success
-  elseif Addon.waylaidSupplies[tooltipData.id] and self:GetOption("itemLevel", "showWaylaidSupplies") then
+  if Addon.waylaidSupplies[tooltipData.id] then
+    if self:GetOption("itemLevel", "showWaylaidSupplies") then
+      -- success
+    else
+      return
+    end
+  elseif tokenOverride then
     -- success
   elseif self:GetOption("hide", "nonEquipment") then
     local equipLoc = select(4, GetItemInfoInstant(tooltipData.id))
