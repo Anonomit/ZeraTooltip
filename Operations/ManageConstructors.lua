@@ -16,6 +16,8 @@ function Addon:WipeConstructorCache()
     Addon:DebugfIfOutput("constructorWiped", "Constructor wiped: %s", hash)
     timer:Cancel()
   end
+  wipe(constructorCount)
+  wipe(constructorClock)
   wipe(constructorCache)
   cacheSize = 0
 end

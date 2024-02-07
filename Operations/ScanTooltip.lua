@@ -53,7 +53,7 @@ function Addon:PrepareTooltip(tooltip, link, methodName, ...)
       local opt = strGSub(opt, "%d$", "2")
       if tooltip then
         if self:GetGlobalOption("debugView", opt) then
-          tooltip:SetOwner(WorldFrame, "ANCHOR_TOP")
+          tooltip:SetOwner(WorldFrame, "ANCHOR_TOPLEFT")
         end
         self:DebugfIfOutput(opt, "Refreshing scanner tooltip: %s", tooltip.tooltip:GetName())
       end

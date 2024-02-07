@@ -150,7 +150,7 @@ local function OnTooltipItemMethod(tooltip, methodName, ...)
   local isComparison = compareMethods[methodName]
   
   if self:IsTooltipMarked(tooltip) then
-    if prepareAgain then
+    if isComparison and prepareAgain then
       prepareAgain = false
       if Addon:GetGlobalOption("debugOutput", "tooltipMethodHook") then
         local args = ConvertArgs(...)
@@ -170,7 +170,6 @@ local function OnTooltipItemMethod(tooltip, methodName, ...)
     end
     return
   end
-  prepareAgain = false
   
   if Addon:GetGlobalOption("debugOutput", "tooltipMethodHook") then
     local args = ConvertArgs(...)
