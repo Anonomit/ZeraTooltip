@@ -848,8 +848,15 @@ local function MakeExtraOptions(opts, categoryName)
       local opts = GUI:CreateGroupBox(opts, L["Recolor"])
       
       local disabled = not self:GetOption("allow", "recolor")
-      GUI:CreateToggle(opts, {"doRecolor", stat}, self.L["Show Class Color"], nil, disabled).width = 1
+      local option = GUI:CreateToggle(opts, {"doRecolor", stat}, self.L["Show Class Color"], nil, disabled)
+      option.width = self.isEra and 1.5 or 1
       GUI:CreateReset(opts, {"doRecolor", stat})
+      
+      if self.isEra then
+        local disabled = not self:GetOption("allow", "recolor") or not self:GetOption("doRecolor", stat)
+        GUI:CreateToggle(opts, {"doRecolor", "RequiredClasses_shaman"}, self:MakeColorCode("F58CBA", C_CreatureInfo.GetClassInfo(7).className) .. " -> " .. self:MakeColorCode("2459FF", C_CreatureInfo.GetClassInfo(7).className), nil, disabled).width = 1.5
+        GUI:CreateReset(opts, {"doRecolor", "RequiredClasses_shaman"})
+      end
     end
     
     do

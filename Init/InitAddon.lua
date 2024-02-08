@@ -413,9 +413,10 @@ do
   
   Addon.sampleRequiredClassesString = format("%s" .. ITEM_CLASSES_ALLOWED, "", table.concat({C_CreatureInfo.GetClassInfo(5).className, C_CreatureInfo.GetClassInfo(9).className, C_CreatureInfo.GetClassInfo(2).className}, ", "))
   
-  Addon.classNames        = {}
-  Addon.classNamesColored = {}
-  Addon.classIconAtlases  = {}
+  Addon.classNames           = {}
+  Addon.classNamesColored    = {}
+  Addon.classNamesColoredEra = {}
+  Addon.classIconAtlases     = {}
   
   -- WARRIOR, PALADIN, HUNTER, ROGUE, PRIEST, DEATHKNIGHT, SHAMAN, MAGE, WARLOCK, MONK, DRUID, DEMONHUNTER
   local ID = {}
@@ -424,10 +425,14 @@ do
     if classInfo then
       ID[classInfo.classFile] = classInfo.classID
       
+      local color    = select(4, GetClassColor(classInfo.classFile))
+      local colorEra = classInfo.classFile == "SHAMAN" and "2459FF" or color
+      
       local matcher = "%f[%w%s] " .. classInfo.className
-      Addon.classNames[matcher]        = classInfo.className
-      Addon.classNamesColored[matcher] = Addon:MakeColorCode(Addon:TrimAlpha(select(4, GetClassColor(classInfo.classFile))), classInfo.className)
-      Addon.classIconAtlases[matcher]  = "groupfinder-icon-class-" .. classInfo.classFile:lower()
+      Addon.classNames[matcher]           = classInfo.className
+      Addon.classNamesColored[matcher]    = Addon:MakeColorCode(Addon:TrimAlpha(color), classInfo.className)
+      Addon.classNamesColoredEra[matcher] = Addon:MakeColorCode(Addon:TrimAlpha(colorEra), classInfo.className)
+      Addon.classIconAtlases[matcher]     = "groupfinder-icon-class-" .. classInfo.classFile:lower()
     end
   end
   

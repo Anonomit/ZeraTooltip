@@ -28,7 +28,11 @@ function Addon:ModifyRequiredClasses(text)
     
     if names then
       if recolor then
-        sub = Addon.classNamesColored[matcher]
+        if self.isEra and self:GetOption("doRecolor", "RequiredClasses_shaman") then
+          sub = Addon.classNamesColoredEra[matcher]
+        else
+          sub = Addon.classNamesColored[matcher]
+        end
       else
         sub = className
       end
