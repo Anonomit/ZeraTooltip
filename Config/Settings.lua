@@ -25,9 +25,9 @@ function Addon:MakeDefaultOptions()
         },
         
         order = {
-          [self.expansions.wrath]   = tblConcat(self.statList[self.expansions.wrath]  , ","),
-          [self.expansions.tbc]     = tblConcat(self.statList[self.expansions.tbc]    , ","),
-          [self.expansions.classic] = tblConcat(self.statList[self.expansions.classic], ","),
+          [self.expansions.wrath] = tblConcat(self.statList[self.expansions.wrath]  , ","),
+          [self.expansions.tbc]   = tblConcat(self.statList[self.expansions.tbc]    , ","),
+          [self.expansions.era]   = tblConcat(self.statList[self.expansions.era], ","),
         },
         hide = {
           ["*"]               = false,

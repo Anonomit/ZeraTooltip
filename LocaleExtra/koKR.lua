@@ -41,7 +41,7 @@ Addon:AddExtraStatCapture("Health Regeneration",
   {INPUT = "^5초당 생명력 회복 %+(%d+)$"})
 
 
-if Addon.isClassic then
+if Addon.isEra then
   Addon:AddExtraStatCapture("Defense Rating",
     {INPUT = "^방어 숙련도 %+(%d+)%.?$"})
   

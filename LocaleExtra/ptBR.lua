@@ -42,7 +42,7 @@ Addon:AddExtraStatCapture("Health Regeneration",
 Addon:AddExtraStatCapture("Mana Regeneration",
   {INPUT = "^Restaura (%d+) de mana a cada 5 s%.$"})
 
-if Addon.isClassic then
+if Addon.isEra then
   Addon:AddExtraStatCapture("Defense Rating",
     {INPUT = "^Defesa aumentada em (%d+)%.$"})
   

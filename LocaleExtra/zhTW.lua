@@ -38,7 +38,7 @@ Addon:AddExtraStatCapture("Holy Damage",
   {INPUT = "^%+(%d+)神聖法術傷害$"},
   {INPUT = "^%+(%d+) 神聖法術傷害$"})
 
-if Addon.isClassic then
+if Addon.isEra then
   Addon:AddExtraStatCapture("Defense Rating",
     {INPUT = "^防禦技能提高(%d+)點。$"})
   

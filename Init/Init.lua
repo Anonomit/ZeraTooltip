@@ -239,38 +239,25 @@ end
 
 do
   Addon.expansions = {
-    retail    = 10,
-    cataclysm = 4,
-    cata      = 4,
-    wrath     = 3,
-    wotlk     = 3,
-    tbc       = 2,
-    bcc       = 2,
-    classic   = 1,
-    era       = 1,
+    retail = 10,
+    cata   = 4,
+    wrath  = 3,
+    tbc    = 2,
+    era    = 1,
   }
   
-  Addon.season = ((C_Seasons or {}).GetActiveSeason or nop)() or 0
   Addon.expansionLevel = tonumber(GetBuildInfo():match"^(%d+)%.")
-  if Addon.expansionLevel >= Addon.expansions.retail then
-    Addon.expansionName = "retail"
-  elseif Addon.expansionLevel >= Addon.expansions.wrath then
-    Addon.expansionName = "wrath"
-  elseif Addon.expansionLevel == Addon.expansions.tbc then
-    Addon.expansionName = "tbc"
-  elseif Addon.expansionLevel == Addon.expansions.classic then
-    Addon.expansionName = "classic"
-  end
-  Addon.isRetail  = Addon.expansionName == "retail"
-  Addon.isWrath   = Addon.expansionName == "wrath"
-  Addon.isTBC     = Addon.expansionName == "tbc"
-  Addon.isClassic = Addon.expansionName == "classic"
   
-  Addon.isSeasonOfMastery   = Addon.season == Enum.SeasonID.SeasonOfMastery
-  Addon.isSeasonOfDiscovery = Addon.season == (Enum.SeasonID.SeasonOfDiscovery or Enum.SeasonID.Placeholder)
+  Addon.isRetail  = Addon.expansionLevel >= Addon.expansions.retail
+  Addon.isClassic = not Addon.isRetail
+  Addon.isCata    = Addon.expansionLevel == Addon.expansions.cata
+  Addon.isWrath   = Addon.expansionLevel == Addon.expansions.wrath
+  Addon.isTBC     = Addon.expansionLevel == Addon.expansions.tbc
+  Addon.isEra     = Addon.expansionLevel == Addon.expansions.era
   
-  Addon.isSoM = Addon.isSeasonOfMastery
-  Addon.isSoD = Addon.isSeasonOfDiscovery
+  local season = ((C_Seasons or {}).GetActiveSeason or nop)() or 0
+  Addon.isSoM = season == Enum.SeasonID.SeasonOfMastery
+  Addon.isSoD = season == (Enum.SeasonID.SeasonOfDiscovery or Enum.SeasonID.Placeholder)
 end
 
 

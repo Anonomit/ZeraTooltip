@@ -37,7 +37,7 @@ Addon:AddExtraStatCapture("Holy Damage",
   {INPUT = "^%+(%d+) Heiligzauberschaden$"})
 
 
-if Addon.isClassic then
+if Addon.isEra then
   Addon:AddExtraStatCapture("Defense Rating",
     {INPUT = "^Verteidigung %+(%d+)%.$"})
   

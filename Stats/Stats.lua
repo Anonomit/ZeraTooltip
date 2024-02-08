@@ -77,7 +77,7 @@ do
     Addon.ITEM_MOD_INTELLECT = Addon:ChainGsub(ITEM_MOD_INTELLECT, {SPELL_STAT4_NAME:lower(), SPELL_STAT4_NAME})
     Addon.ITEM_MOD_SPIRIT    = Addon:ChainGsub(ITEM_MOD_SPIRIT,    {SPELL_STAT5_NAME:lower(), SPELL_STAT5_NAME})
   elseif locale == "ruRU" then
-    if Addon.isClassic then
+    if Addon.isEra then
       Addon.DAMAGE_SCHOOL7 = SPELL_SCHOOL6_CAP
       Addon.DAMAGE_SCHOOL3 = SPELL_SCHOOL2_CAP
       Addon.DAMAGE_SCHOOL4 = SPELL_SCHOOL3_CAP
@@ -93,7 +93,7 @@ do
       Addon.DAMAGE_SCHOOL2 = "свету"
     end
   elseif locale == "zhTW" then
-    if Addon.isClassic then
+    if Addon.isEra then
       Addon.ITEM_MOD_STAMINA   = strGsub(ITEM_MOD_STAMINA  , " ", "", 1)
       Addon.ITEM_MOD_STRENGTH  = strGsub(ITEM_MOD_STRENGTH , " ", "", 1)
       Addon.ITEM_MOD_AGILITY   = strGsub(ITEM_MOD_AGILITY  , " ", "", 1)
@@ -250,9 +250,9 @@ do
     
     local expacs    = {}
     local isInExpac = data[2]
-    expacs[self.expansions.classic] = isInExpac[1]
-    expacs[self.expansions.tbc]     = isInExpac[2]
-    expacs[self.expansions.wrath]   = isInExpac[3]
+    expacs[self.expansions.era]   = isInExpac[1]
+    expacs[self.expansions.tbc]   = isInExpac[2]
+    expacs[self.expansions.wrath] = isInExpac[3]
     
     local stat = data[3]
     

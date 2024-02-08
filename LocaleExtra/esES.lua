@@ -18,7 +18,7 @@ end
 
 
 
-if Addon.isClassic then
+if Addon.isEra then
   Addon:AddExtraStatCapture("Stamina",
     {INPUT = "^(%+)(%d+) de aguante$"})
   

@@ -43,7 +43,7 @@ Addon:AddExtraStatCapture("Health Regeneration",
   {INPUT = "^%+(%d+) salud cada 5 s$"})
 
 
-if Addon.isClassic then
+if Addon.isEra then
   Addon:AddExtraStatCapture("Defense Rating",
     {INPUT = "^Aumenta (%d+) p%. el índice de defensa%.$"})
   

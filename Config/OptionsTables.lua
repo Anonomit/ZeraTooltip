@@ -329,7 +329,7 @@ local function CreateStatOption(opts, i, stat)
   local self = Addon
   local GUI  = self.GUI
   
-  local percent = Addon.isClassic and percentStats[stat] and "%" or ""
+  local percent = Addon.isEra and percentStats[stat] and "%" or ""
   
   local defaultText = GetDefaultStatText(sampleNumber .. percent, stat)
   local formattedText = GetFormattedStatText(sampleNumber .. percent, stat)

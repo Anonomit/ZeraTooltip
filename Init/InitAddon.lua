@@ -247,9 +247,9 @@ do
   
   
   Addon.statList = {
-    [Addon.expansions.classic] = {},
-    [Addon.expansions.tbc]     = {},
-    [Addon.expansions.wrath]   = {},
+    [Addon.expansions.era]   = {},
+    [Addon.expansions.tbc]   = {},
+    [Addon.expansions.wrath] = {},
   }
   Addon.statsInfo        = setmetatable({}, {__index = function() return {} end})
   Addon.statOrder        = {}
@@ -348,9 +348,9 @@ do
   
   -- Races: Human, Orc, Dwarf, Night Elf, Undead, Tauren, Gnome, Troll, Blood Elf, Draenei
   local raceIDs = {}
-  raceIDs[Addon.expansions.classic] = {1, 2, 3, 4, 5, 6, 7, 8}
-  raceIDs[Addon.expansions.tbc]     = {1, 2, 3, 4, 5, 6, 7, 8, 10, 11}
-  raceIDs[Addon.expansions.wrath]   = raceIDs[Addon.expansions.tbc]
+  raceIDs[Addon.expansions.era]   = {1, 2, 3, 4, 5, 6, 7, 8}
+  raceIDs[Addon.expansions.tbc]   = {1, 2, 3, 4, 5, 6, 7, 8, 10, 11}
+  raceIDs[Addon.expansions.wrath] = raceIDs[Addon.expansions.tbc]
   
   Addon.raceNames = {}
   
@@ -1164,7 +1164,7 @@ do
         33633,
       },
     } or nil,
-    [Addon.expansions.wotlk] = Addon.expansionLevel >= Addon.expansions.wotlk and {
+    [Addon.expansions.wrath] = Addon.expansionLevel >= Addon.expansions.wrath and {
       Socket_red = {
         39998,
         39996,

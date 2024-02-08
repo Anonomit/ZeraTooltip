@@ -99,7 +99,7 @@ Addon:AddExtraStatCapture("Health Regeneration",
 
 
 
-if Addon.isClassic then
+if Addon.isEra then
   Addon:AddExtraStatCapture("Defense Rating",
     {INPUT = "^Increased Defense %+(%d+)%.$"})
   
@@ -249,7 +249,7 @@ if Addon.isTBC then
     }
   )
 end
-if Addon.isClassic then
+if Addon.isEra then
   Addon:AddExtraReplacement("Mount Speed",
     {
       INPUT  = "^Mithril Spurs", -- Mithril Spurs Enchantment (Mithril Spurs (464))
