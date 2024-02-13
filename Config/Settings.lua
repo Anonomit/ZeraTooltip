@@ -30,11 +30,12 @@ function Addon:MakeDefaultOptions()
           [self.expansions.era]   = tblConcat(self.statList[self.expansions.era], ","),
         },
         hide = {
-          ["*"]               = false,
-          uselessRaces        = true,
-          nonEquipment        = true,
-          StackSize_single    = true,
-          StackSize_equipment = true,
+          ["*"]                           = false,
+          uselessRaces                    = true,
+          nonEquipment                    = true,
+          StackSize_single                = true,
+          StackSize_equipment             = true,
+          Reputation_waylaidSuppliesItems = true,
         },
         doReword = {
           ["*"]              = true,

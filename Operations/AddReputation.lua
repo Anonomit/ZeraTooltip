@@ -46,14 +46,14 @@ end
 Addon.waylaidSupplies = {}
 local reputationItems = {}
 for ids, repInfo in pairs{
-  [{211365, 211331, 210771, 211332, 211329, 211315, 211316, 211933, 211317, 211330}]                                 = {factionID = MERCHANT_FACTION_ID, rep = 300,  cutoff = 5},
-  [{211367, 211327, 211328, 211319, 211326, 211325, 211934, 211321, 211318, 211322, 211324, 211323, 211320}]         = {factionID = MERCHANT_FACTION_ID, rep = 450,  cutoff = 5},
-  [{211839, 211819, 211822, 211837, 211838, 211821, 211820, 211836, 211835, 211823}]                                 = {factionID = MERCHANT_FACTION_ID, rep = 500,  cutoff = 6},
-  [{211840, 211831, 211833, 211824, 211828, 211825, 211829}]                                                         = {factionID = MERCHANT_FACTION_ID, rep = 650,  cutoff = 6},
-  [{211841, 211935, 211832, 211830, 211834, 211827, 211826}]                                                         = {factionID = MERCHANT_FACTION_ID, rep = 800,  cutoff = 6},
-  [{217337, 215390, 215417, 215389, 215391, 215386, 215387, 215388, 215420, 215421, 215419, 215400, 215392, 215418}] = {factionID = MERCHANT_FACTION_ID, rep = 700,  cutoff = 7},
-  [{217338, 215393, 215385, 215398, 215415, 215401, 215402, 215407, 215408, 215414, 215411, 215399, 215395, 215403}] = {factionID = MERCHANT_FACTION_ID, rep = 850,  cutoff = 7},
-  [{217339, 215397, 215409, 215396, 215416, 215404}]                                                                 = {factionID = MERCHANT_FACTION_ID, rep = 1000, cutoff = 7},
+  [{211365, 211331, 210771, 211332, 211329, 211315, 211316, 211933, 211317, 211330}]                                         = {factionID = MERCHANT_FACTION_ID, rep = 300,  cutoff = 5},
+  [{211367, 211327, 211328, 211319, 211326, 211325, 211934, 211321, 211318, 211322, 211324, 211323, 211320}]                 = {factionID = MERCHANT_FACTION_ID, rep = 450,  cutoff = 5},
+  [{211839, 211819, 211822, 211837, 211838, 211821, 211820, 211836, 211835, 211823}]                                         = {factionID = MERCHANT_FACTION_ID, rep = 500,  cutoff = 6},
+  [{211840, 211831, 211833, 211824, 211828, 211825, 211829}]                                                                 = {factionID = MERCHANT_FACTION_ID, rep = 650,  cutoff = 6},
+  [{211841, 211935, 211832, 211830, 211834, 211827, 211826}]                                                                 = {factionID = MERCHANT_FACTION_ID, rep = 800,  cutoff = 6},
+  [{217337, 215390, 215417, 215389, 215391, 215386, 215387, 215388, 215413, 215420, 215421, 215419, 215400, 215392, 215418}] = {factionID = MERCHANT_FACTION_ID, rep = 700,  cutoff = 7},
+  [{217338, 215393, 215385, 215398, 215415, 215401, 215402, 215407, 215408, 215414, 215411, 215399, 215395, 215403}]         = {factionID = MERCHANT_FACTION_ID, rep = 850,  cutoff = 7},
+  [{217339, 215397, 215409, 215396, 215416, 215404}]                                                                         = {factionID = MERCHANT_FACTION_ID, rep = 1000, cutoff = 7},
   
   [{6290}]  = {factionID = MERCHANT_FACTION_ID, rep = 300, cutoff = 5, count = 20},  -- Brilliant Smallfish
   [{2840}]  = {factionID = MERCHANT_FACTION_ID, rep = 300, cutoff = 5, count = 20},  -- Copper Bar
@@ -109,7 +109,7 @@ for ids, repInfo in pairs{
   [{3860}]  = {factionID = MERCHANT_FACTION_ID, rep = 700, cutoff = 7, count = 6},   -- Mithril Bar
   [{4235}]  = {factionID = MERCHANT_FACTION_ID, rep = 700, cutoff = 7, count = 5},   -- Heavy Hide
   [{4304}]  = {factionID = MERCHANT_FACTION_ID, rep = 700, cutoff = 7, count = 10},  -- Thick Leather
-  -- [{4334}]  = {factionID = MERCHANT_FACTION_ID, rep = 700, cutoff = 7, count = 3},   -- Formal White Shirt
+  [{4334}]  = {factionID = MERCHANT_FACTION_ID, rep = 700, cutoff = 7, count = 3},   -- Formal White Shirt
   [{4594}]  = {factionID = MERCHANT_FACTION_ID, rep = 700, cutoff = 7, count = 40},  -- Rockscale Cod
   [{6371}]  = {factionID = MERCHANT_FACTION_ID, rep = 700, cutoff = 7, count = 10},  -- Fire Oil
   [{6451}]  = {factionID = MERCHANT_FACTION_ID, rep = 700, cutoff = 7, count = 10},  -- Heavy Silk Bandage
@@ -156,6 +156,16 @@ end
 
 
 local stat = "Reputation"
+function Addon:ShouldHideReputation(itemID)
+  if self:GetOption("hide", stat) then return true end
+  
+  local repInfo = reputationItems[itemID]
+  if not repInfo then return true end
+  if self:GetOption("hide", "Reputation_waylaidSuppliesItems") and repInfo.count then return true end
+  
+  return false
+end
+
 function Addon:RewordReputation(itemID)
   local repInfo = reputationItems[itemID]
   if not repInfo then return end
@@ -182,7 +192,7 @@ end
 
 
 function Addon:AddReputation(tooltipData)
-  if self:GetOption("hide", stat) then return end
+  if self:ShouldHideReputation(tooltipData.id) then return end
   
   local text = self:RewordReputation(tooltipData.id)
   if not text then return end

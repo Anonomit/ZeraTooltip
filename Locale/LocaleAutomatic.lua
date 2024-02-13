@@ -99,6 +99,8 @@ L["Equip:"]         = ITEM_SPELL_TRIGGER_ONEQUIP
 L["Chance on Hit:"] = ITEM_SPELL_TRIGGER_ONPROC
 L["Use:"]           = ITEM_SPELL_TRIGGER_ONUSE
 
+L["Items"] = ITEMS
+
 L["Me"]                         = COMBATLOG_FILTER_STRING_ME
 L["Max Level"]                  = GUILD_RECRUITMENT_MAXLEVEL
 L["Level %d"]                   = UNIT_LEVEL_TEMPLATE

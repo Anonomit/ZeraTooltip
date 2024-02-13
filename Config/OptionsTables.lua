@@ -1704,9 +1704,21 @@ local function MakeExtraOptions(opts, categoryName)
       local stat = "Reputation"
       
       local samples = {}
-      for _, itemID in ipairs{211331, 211819} do
+      for _, itemID in ipairs{211822, 2453} do
         local defaultText = Addon:RewordReputation(itemID)
-        local defaultText, formattedText = GetFormattedText(stat, self.COLORS.REP, defaultText, defaultText)
+        
+        local formattedText = defaultText
+        local originalColor = self.COLORS.REP
+        local color = self:GetOption("color", stat)
+        if self:ShouldHideReputation(itemID) then
+          formattedText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, formattedText)
+        elseif self:GetOption("allow", "recolor") and self:GetOption("doRecolor", stat) and color ~= originalColor then
+          formattedText = self:MakeColorCode(color, formattedText)
+        else
+          formattedText = self:MakeColorCode(originalColor, formattedText)
+        end
+        defaultText = self:MakeColorCode(originalColor, defaultText)
+        
         tinsert(samples, {defaultText, formattedText})
       end
       
@@ -1718,7 +1730,14 @@ local function MakeExtraOptions(opts, categoryName)
       
       CreateIcon(opts, stat)
       
-      CreateHide(opts, stat)
+      do
+        local opts = CreateHide(opts, stat)
+        GUI:CreateNewline(opts)
+        
+        local disabled = self:GetOption("hide", stat)
+        GUI:CreateToggle(opts, {"hide", "Reputation_waylaidSuppliesItems"}, self.L["Items"], nil, disabled).width = 0.6
+        GUI:CreateReset(opts, {"hide", "Reputation_waylaidSuppliesItems"})
+      end
     end
     
     GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
