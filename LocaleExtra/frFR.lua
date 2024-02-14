@@ -5,12 +5,17 @@ local ADDON_NAME, Data = ...
 local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 
 
+local strMatch = string.match
 
 -- override the default stat rewords for this locale
 do
   -- Addon:AddDefaultRewordByLocale(stat, val)
   
   if Addon.isSoD then
+    local ITEM_MOD_CRIT_RATING_SHORT = strMatch(ITEM_MOD_CRIT_RATING_SHORT, "^[^%.]*")
+    
+    Addon:AddDefaultRewordByLocale("Critical Strike Rating", ITEM_MOD_CRIT_RATING_SHORT)
+    
     Addon:AddDefaultRewordByLocale("Physical Hit Rating",             format("%s (%s)", ITEM_MOD_HIT_RATING_SHORT,  SPELL_SCHOOL0_NAME))
     Addon:AddDefaultRewordByLocale("Physical Critical Strike Rating", format("%s (%s)", ITEM_MOD_CRIT_RATING_SHORT, SPELL_SCHOOL0_NAME))
   end
@@ -84,7 +89,8 @@ if Addon.isEra then
     {INPUT = "^%+(%d+) à la puissance des attaques à distance%.$"})
   
   Addon:AddExtraStatCapture("Attack Power In Forms",
-    {INPUT = "^%+(%d+) à la puissance d'attaque pour les formes de félin, d'ours et d'ours redoutable uniquement%.$"})
+    {INPUT = "^%+(%d+) à la puissance d'attaque pour les formes de félin, d'ours et d'ours redoutable uniquement%.$"},
+    {INPUT = "^%+(%d+) à la puissance d’attaque pour les formes de félin, d’ours et d’ours redoutable uniquement%.$"})
   
   Addon:AddExtraStatCapture("Spell Power",
     {INPUT = "^Augmente les dégâts et les soins produits par les sorts et effets magiques de (%d+) au maximum%.$"},

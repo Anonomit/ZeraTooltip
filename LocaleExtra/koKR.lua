@@ -55,7 +55,8 @@ if Addon.isEra then
     {INPUT = "^방패로 적의 공격을 방어할 확률이 (%d+%%)만큼 증가합니다%.$"})
   
   Addon:AddExtraStatCapture("Attack Power In Forms",
-    {INPUT = "^표범, 광포한 곰, 곰 변신 상태일 때 전투력이 (%d+)만큼 증가합니다%.$"})
+    {INPUT = "^표범, 광포한 곰, 곰 변신 상태일 때 전투력이 (%d+)만큼 증가합니다%.$"},
+    {INPUT = "^표범, 곰, 광포한 곰 변신 상태일 때 전투력이 (%d+)만큼 증가합니다%.$"})
   
   Addon:AddExtraStatCapture("Spell Power",
     {INPUT = "^모든 주문 및 효과에 의한 피해와 치유량이 최대 (%d+)만큼 증가합니다%.$"},

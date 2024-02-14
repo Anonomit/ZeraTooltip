@@ -63,6 +63,7 @@ if Addon.isEra then
   
   Addon:AddExtraStatCapture("Spell Power",
     {INPUT = "^Aumenta el daño y la curación de los hechizos mágicos y los efectos hasta en (%d+) p%.$"},
+    {INPUT = "^Aumenta el daño y la sanación de los hechizos mágicos y los efectos hasta en (%d+) p%.$"},
     {INPUT = "^%+(%d+) de daño y Hechizos de curación$"})
   
   Addon:AddExtraStatCapture("Arcane Damage",
