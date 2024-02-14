@@ -323,7 +323,7 @@ end
 --  ███████║   ██║   ██║  ██║   ██║       ╚██████╔╝██║        ██║   ██║╚██████╔╝██║ ╚████║███████║
 --  ╚══════╝   ╚═╝   ╚═╝  ╚═╝   ╚═╝        ╚═════╝ ╚═╝        ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
 
-local percentStats = Addon:MakeLookupTable{"Dodge Rating", "Parry Rating", "Block Rating", "Hit Rating", "Physical Hit Rating", "Physical Critical Strike Rating", "Spell Hit Rating", "Spell Critical Strike Rating"}
+local percentStats = Addon:MakeLookupTable{"Dodge Rating", "Parry Rating", "Block Rating", "Hit Rating", "Critical Strike Rating", "Physical Hit Rating", "Physical Critical Strike Rating", "Spell Hit Rating", "Spell Critical Strike Rating"}
 local sampleNumber = 10
 local function CreateStatOption(opts, i, stat)
   local self = Addon

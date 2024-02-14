@@ -89,6 +89,9 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Hit Rating",
     {INPUT = "^使你的法术、近战和远程攻击的命中几率提高(%d+%%)。$"})
   
+  Addon:AddExtraStatCapture("Critical Strike Rating",
+    {INPUT = "^使你的近战攻击、远程攻击和法术造成爆击的几率提高(%d+%%)。$"})
+  
   Addon:AddExtraStatCapture("Physical Hit Rating",
     {INPUT = "^使你击中目标的几率提高(%d+%%)。$"})
   

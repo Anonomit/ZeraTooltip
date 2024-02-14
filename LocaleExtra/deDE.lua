@@ -86,6 +86,9 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Hit Rating",
     {INPUT = "^Erhöht Eure Trefferchance mit Zaubern sowie Nahkampf%- und Distanzangriffen um (%d+%%)%.$"})
   
+  Addon:AddExtraStatCapture("Critical Strike Rating",
+    {INPUT = "^Erhöht die Chance auf einen kritischen Treffer mit Nahkampf%- und Distanzangriffen sowie Zaubern um (%d+%%)%.$"})
+  
   Addon:AddExtraStatCapture("Physical Hit Rating",
     {INPUT = "^Verbessert Eure Trefferchance um (%d+%%)%.$"})
   

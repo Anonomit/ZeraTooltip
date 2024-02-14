@@ -99,6 +99,9 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Hit Rating",
     {INPUT = "^Aumenta en un (%d+%%) tu probabilidad de golpear con hechizos, ataques cuerpo a cuerpo y ataques a distancia%.$"})
   
+  Addon:AddExtraStatCapture("Critical Strike Rating",
+    {INPUT = "^Aumenta las probabilidades de conseguir un golpe crítico con ataques cuerpo a cuerpo, ataques a distancia y hechizos un (%d+%%)%.$"})
+  
   Addon:AddExtraStatCapture("Physical Hit Rating",
     {INPUT = "^Mejora tu probabilidad de alcanzar el objetivo en un (%d+%%)%.$"})
   

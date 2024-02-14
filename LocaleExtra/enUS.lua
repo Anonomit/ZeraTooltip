@@ -147,6 +147,9 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Hit Rating",
     {INPUT = "^Improves your chance to hit with spells and with melee and ranged attacks by (%d+%%)%.$"})
   
+  Addon:AddExtraStatCapture("Critical Strike Rating",
+    {INPUT = "^Improves your chance to get a critical strike with melee and ranged attacks and with spells by (%d+%%)%.$"})
+  
   Addon:AddExtraStatCapture("Physical Hit Rating",
     {INPUT = "^Improves your chance to hit by (%d+%%)%.$"})
   
