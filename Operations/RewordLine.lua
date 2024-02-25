@@ -23,7 +23,9 @@ Addon:RegisterCVarCallback("colorblindMode", Addon.WipeTextCache)
 
 
 cacheLineTypes = setmetatable({
-  Title = false,
+  Title           = false,
+  Damage          = false,
+  DamagePerSecond = false,
 }, {__index = function() return true end})
 
 local miscRewordLines = Addon:MakeLookupTable{
