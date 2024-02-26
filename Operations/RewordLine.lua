@@ -28,6 +28,10 @@ cacheLineTypes = setmetatable({
   DamagePerSecond = false,
 }, {__index = function() return true end})
 
+rewordBlacklist = setmetatable({
+  Cooldown = true,
+}, {__index = function() return false end})
+
 local miscRewordLines = Addon:MakeLookupTable{
   "SecondaryStat",
   "Enchant",
@@ -192,7 +196,7 @@ function Addon:RewordLine(tooltip, line, tooltipData)
     text = format("[%d] ", line.i) .. text
   end
   
-  if text ~= line.realTextLeft and (text ~= line.textLeftText or line.recolorLeft) then
+  if text ~= line.realTextLeft and (text ~= line.textLeftText or line.recolorLeft) and not rewordBlacklist[line.type] then
     line.rewordLeft = text
   end
 end
