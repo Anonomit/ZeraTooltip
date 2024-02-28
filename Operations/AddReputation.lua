@@ -46,14 +46,14 @@ end
 Addon.waylaidSupplies = {}
 local reputationItems = {}
 for ids, repInfo in pairs{
-  [{211365, 211331, 210771, 211332, 211329, 211315, 211316, 211933, 211317, 211330}]                                         = {factionID = MERCHANT_FACTION_ID, rep = 300,  cutoff = 5},
-  [{211367, 211327, 211328, 211319, 211326, 211325, 211934, 211321, 211318, 211322, 211324, 211323, 211320}]                 = {factionID = MERCHANT_FACTION_ID, rep = 450,  cutoff = 5},
-  [{211839, 211819, 211822, 211837, 211838, 211821, 211820, 211836, 211835, 211823}]                                         = {factionID = MERCHANT_FACTION_ID, rep = 500,  cutoff = 6},
-  [{211840, 211831, 211833, 211824, 211828, 211825, 211829}]                                                                 = {factionID = MERCHANT_FACTION_ID, rep = 650,  cutoff = 6},
-  [{211841, 211935, 211832, 211830, 211834, 211827, 211826}]                                                                 = {factionID = MERCHANT_FACTION_ID, rep = 800,  cutoff = 6},
-  [{217337, 215390, 215417, 215389, 215391, 215386, 215387, 215388, 215413, 215420, 215421, 215419, 215400, 215392, 215418}] = {factionID = MERCHANT_FACTION_ID, rep = 700,  cutoff = 7},
-  [{217338, 215393, 215385, 215398, 215415, 215401, 215402, 215407, 215408, 215414, 215411, 215399, 215395, 215403}]         = {factionID = MERCHANT_FACTION_ID, rep = 850,  cutoff = 7},
-  [{217339, 215397, 215409, 215396, 215416, 215404}]                                                                         = {factionID = MERCHANT_FACTION_ID, rep = 1000, cutoff = 7},
+  [{211365, 211331, 210771, 211332, 211329, 211315, 211316, 211933, 211317, 211330}]                                 = {factionID = MERCHANT_FACTION_ID, rep = 300,  cutoff = 5},
+  [{211367, 211327, 211328, 211319, 211326, 211325, 211934, 211321, 211318, 211322, 211324, 211323, 211320}]         = {factionID = MERCHANT_FACTION_ID, rep = 450,  cutoff = 5},
+  [{211839, 211819, 211822, 211837, 211838, 211821, 211820, 211836, 211835, 211823}]                                 = {factionID = MERCHANT_FACTION_ID, rep = 500,  cutoff = 6},
+  [{211840, 211831, 211833, 211824, 211828, 211825, 211829}]                                                         = {factionID = MERCHANT_FACTION_ID, rep = 650,  cutoff = 6},
+  [{211841, 211935, 211832, 211830, 211834, 211827, 211826}]                                                         = {factionID = MERCHANT_FACTION_ID, rep = 800,  cutoff = 6},
+  [{217337, 215390, 215417, 215389, 215391, 215386, 215387, 215388, 215413, 215420, 215421, 215419, 215400, 215392}] = {factionID = MERCHANT_FACTION_ID, rep = 700,  cutoff = 7},
+  [{217338, 215393, 215385, 215398, 215401, 215402, 215407, 215408, 215414, 215411, 215399, 215395, 215418}]         = {factionID = MERCHANT_FACTION_ID, rep = 850,  cutoff = 7},
+  [{217339, 215397, 215415, 215409, 215396, 215416, 215404, 215403}]                                                 = {factionID = MERCHANT_FACTION_ID, rep = 1000, cutoff = 7},
   
   [{6290}]  = {factionID = MERCHANT_FACTION_ID, rep = 300, cutoff = 5, count = 20},  -- Brilliant Smallfish
   [{2840}]  = {factionID = MERCHANT_FACTION_ID, rep = 300, cutoff = 5, count = 20},  -- Copper Bar
@@ -102,40 +102,40 @@ for ids, repInfo in pairs{
   [{6339}]  = {factionID = MERCHANT_FACTION_ID, rep = 800, cutoff = 6, count = 1},   -- Runed Silver Rod
   [{15869}] = {factionID = MERCHANT_FACTION_ID, rep = 800, cutoff = 6, count = 14},  -- Silver Skeleton Key
   
-  [{3358}]  = {factionID = MERCHANT_FACTION_ID, rep = 700, cutoff = 7, count = 20},  -- Khadgar's Whisker
+  [{3358}]  = {factionID = MERCHANT_FACTION_ID, rep = 700, cutoff = 7, count = 10},  -- Khadgar's Whisker
   [{3729}]  = {factionID = MERCHANT_FACTION_ID, rep = 700, cutoff = 7, count = 10},  -- Soothing Turtle Bisque
   [{3818}]  = {factionID = MERCHANT_FACTION_ID, rep = 700, cutoff = 7, count = 16},  -- Fadeleaf
-  [{3819}]  = {factionID = MERCHANT_FACTION_ID, rep = 700, cutoff = 7, count = 20},  -- Wintersbite
+  [{3819}]  = {factionID = MERCHANT_FACTION_ID, rep = 700, cutoff = 7, count = 8},   -- Wintersbite
   [{3860}]  = {factionID = MERCHANT_FACTION_ID, rep = 700, cutoff = 7, count = 6},   -- Mithril Bar
   [{4235}]  = {factionID = MERCHANT_FACTION_ID, rep = 700, cutoff = 7, count = 5},   -- Heavy Hide
   [{4304}]  = {factionID = MERCHANT_FACTION_ID, rep = 700, cutoff = 7, count = 10},  -- Thick Leather
   [{4334}]  = {factionID = MERCHANT_FACTION_ID, rep = 700, cutoff = 7, count = 3},   -- Formal White Shirt
   [{4594}]  = {factionID = MERCHANT_FACTION_ID, rep = 700, cutoff = 7, count = 40},  -- Rockscale Cod
-  [{6371}]  = {factionID = MERCHANT_FACTION_ID, rep = 700, cutoff = 7, count = 10},  -- Fire Oil
+  [{6371}]  = {factionID = MERCHANT_FACTION_ID, rep = 700, cutoff = 7, count = 7},   -- Fire Oil
   [{6451}]  = {factionID = MERCHANT_FACTION_ID, rep = 700, cutoff = 7, count = 10},  -- Heavy Silk Bandage
-  [{7966}]  = {factionID = MERCHANT_FACTION_ID, rep = 700, cutoff = 7, count = 10},  -- Solid Grinding Stone
+  [{7966}]  = {factionID = MERCHANT_FACTION_ID, rep = 700, cutoff = 7, count = 5},   -- Solid Grinding Stone
   [{8831}]  = {factionID = MERCHANT_FACTION_ID, rep = 700, cutoff = 7, count = 8},   -- Purple Lotus
-  [{17222}] = {factionID = MERCHANT_FACTION_ID, rep = 700, cutoff = 7, count = 10},  -- Spider Sausage
   
   [{1710}]  = {factionID = MERCHANT_FACTION_ID, rep = 850, cutoff = 7, count = 16},  -- Greater Healing Potion
   [{3577}]  = {factionID = MERCHANT_FACTION_ID, rep = 850, cutoff = 7, count = 4},   -- Gold Bar
   [{3835}]  = {factionID = MERCHANT_FACTION_ID, rep = 850, cutoff = 7, count = 5},   -- Green Iron Bracers
-  [{4335}]  = {factionID = MERCHANT_FACTION_ID, rep = 850, cutoff = 7, count = 5},   -- Rich Purple Silk Shirt
   [{4391}]  = {factionID = MERCHANT_FACTION_ID, rep = 850, cutoff = 7, count = 2},   -- Compact Harvest Reaper Kit
   [{4394}]  = {factionID = MERCHANT_FACTION_ID, rep = 850, cutoff = 7, count = 8},   -- Big Iron Bomb
   [{5964}]  = {factionID = MERCHANT_FACTION_ID, rep = 850, cutoff = 7, count = 4},   -- Barbaric Shoulders
-  [{5966}]  = {factionID = MERCHANT_FACTION_ID, rep = 850, cutoff = 7, count = 6},   -- Guardian Gloves
+  [{5966}]  = {factionID = MERCHANT_FACTION_ID, rep = 850, cutoff = 7, count = 5},   -- Guardian Gloves
   [{7062}]  = {factionID = MERCHANT_FACTION_ID, rep = 850, cutoff = 7, count = 4},   -- Crimson Silk Pantaloons
-  [{7377}]  = {factionID = MERCHANT_FACTION_ID, rep = 850, cutoff = 7, count = 3},   -- Frost Leather Cloak
-  [{7919}]  = {factionID = MERCHANT_FACTION_ID, rep = 850, cutoff = 7, count = 4},   -- Heavy Mithril Gauntlet
-  [{8949}]  = {factionID = MERCHANT_FACTION_ID, rep = 850, cutoff = 7, count = 12},  -- Elixir of Agility
-  [{10546}] = {factionID = MERCHANT_FACTION_ID, rep = 850, cutoff = 7, count = 4},   -- Deadly Scope
+  [{7377}]  = {factionID = MERCHANT_FACTION_ID, rep = 850, cutoff = 7, count = 2},   -- Frost Leather Cloak
+  [{7919}]  = {factionID = MERCHANT_FACTION_ID, rep = 850, cutoff = 7, count = 3},   -- Heavy Mithril Gauntlet
+  [{8949}]  = {factionID = MERCHANT_FACTION_ID, rep = 850, cutoff = 7, count = 6},   -- Elixir of Agility
+  [{17222}] = {factionID = MERCHANT_FACTION_ID, rep = 850, cutoff = 7, count = 5},   -- Spider Sausage
   
   [{3855}]  = {factionID = MERCHANT_FACTION_ID, rep = 1000, cutoff = 7, count = 2},  -- Massive Iron Axe
-  [{8198}]  = {factionID = MERCHANT_FACTION_ID, rep = 1000, cutoff = 7, count = 3},  -- Turtle Scale Bracers
+  [{4335}]  = {factionID = MERCHANT_FACTION_ID, rep = 1000, cutoff = 7, count = 5},  -- Rich Purple Silk Shirt
+  [{8198}]  = {factionID = MERCHANT_FACTION_ID, rep = 1000, cutoff = 7, count = 2},  -- Turtle Scale Bracers
   [{8951}]  = {factionID = MERCHANT_FACTION_ID, rep = 1000, cutoff = 7, count = 14}, -- Elixir of Greater Defense
-  [{10008}] = {factionID = MERCHANT_FACTION_ID, rep = 1000, cutoff = 7, count = 4},  -- White Bandit Mask
+  [{10008}] = {factionID = MERCHANT_FACTION_ID, rep = 1000, cutoff = 7, count = 3},  -- White Bandit Mask
   [{10508}] = {factionID = MERCHANT_FACTION_ID, rep = 1000, cutoff = 7, count = 2},  -- Mithril Blunderbuss
+  [{10546}] = {factionID = MERCHANT_FACTION_ID, rep = 1000, cutoff = 7, count = 2},  -- Deadly Scope
 } do
   local faction = GetFactionInfoByID(repInfo.factionID)
   if faction then

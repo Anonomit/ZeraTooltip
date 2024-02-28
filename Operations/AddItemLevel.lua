@@ -29,8 +29,9 @@ end
 
 local tokenOverrides = {}
 for ids, ilvl in pairs{
-  [{215390, 215417, 215386, 215388, 215419, 215392, 215418}] = 30, -- Waylaid Supplies
-  [{215398, 215402, 215408, 215411, 215403}] = 35, -- Waylaid Supplies
+  [{215390, 215417, 215386, 215388, 215419, 215392}] = 30, -- Waylaid Supplies
+  [{215398, 215402, 215408, 215411}] = 35, -- Waylaid Supplies
+  [{215415, 215403}] = 40, -- Waylaid Supplies
   [{217337}] = 30, -- Supply Shipment
   [{217338}] = 35, -- Supply Shipment
   
