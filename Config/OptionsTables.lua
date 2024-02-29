@@ -1080,13 +1080,40 @@ local function MakeExtraOptions(opts, categoryName)
   do
     local stat = "Damage"
     
-    local defaultText = format(DAMAGE_TEMPLATE, sampleDamage * (1-sampleVariance), sampleDamage * (1+sampleVariance))
-    local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.WHITE, defaultText, self:ModifyWeaponDamage(defaultText, sampleDamage, 1))
+    local samples = {}
+    do
+      local min, max = self:Round(sampleDamage * (1-sampleVariance)), self:Round(sampleDamage * (1+sampleVariance))
+      local default1 = format(DAMAGE_TEMPLATE, min, max)
+      local default2 = format(PLUS_DAMAGE_TEMPLATE, min, max)
+      
+      for _, v in ipairs{
+        {default1, self:ModifyWeaponDamage(default1, sampleDamage*2, 1, {min, max}), self:GetOption("hide", stat)},
+        {default2, self:ModifyWeaponDamageBonus(default2, {min, max}),               self:GetOption("hide", stat) or self:GetOption("hide", "DamageBonus")},
+      } do
+        local defaultText   = v[1]
+        local formattedText = v[2]
+        local hidden        = v[3]
+        
+        local originalColor = self.COLORS.WHITE
+        local color = self:GetOption("color", stat)
+        if hidden then
+          formattedText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, self:StripColorCode(formattedText))
+        elseif self:GetOption("allow", "recolor") and self:GetOption("doRecolor", stat) and color ~= originalColor then
+          formattedText = self:MakeColorCode(color, formattedText)
+        else
+          formattedText = self:MakeColorCode(originalColor, formattedText)
+        end
+        defaultText = self:MakeColorCode(originalColor, defaultText)
+        
+        tinsert(samples, {defaultText, formattedText})
+      end
+    end
     
-    local opts = GUI:CreateGroup(opts, stat, formattedText, self.L["Weapon Damage"])
+    local opts = GUI:CreateGroup(opts, stat, samples[1][2], self.L["Weapon Damage"])
     
     do
-      local opts = CreateTitle(opts, defaultText, formattedText, changed, 1)
+      local opts = CreateSamples(opts, samples)
+      GUI:CreateNewline(opts)
       
       -- Test
       local option = GUI:CreateRange(opts, {"sampleDamage"}, L["Test"], nil, 0, 1000000, 0.5)
@@ -1094,7 +1121,7 @@ local function MakeExtraOptions(opts, categoryName)
       option.bigStep = 10
       option.get = function(info)      return sampleDamage       end
       option.set = function(info, val)        sampleDamage = val end
-      local option = GUI:CreateRange(opts, {"sampleVariance"}, L["Test"], nil, 0, 1, 0.1)
+      local option = GUI:CreateRange(opts, {"sampleVariance"}, L["Test"], nil, 0, 1, 0.05)
       option.isPercent = true
       option.get = function(info)      return sampleVariance       end
       option.set = function(info, val)        sampleVariance = val end
@@ -1122,7 +1149,17 @@ local function MakeExtraOptions(opts, categoryName)
       GUI:CreateReset(opts, {"damage", "variancePrefix"})
     end
     
-    CreateHide(opts, stat)
+    do
+      local opts = GUI:CreateGroupBox(opts, self.L["Hide"])
+      
+      GUI:CreateToggle(opts, {"hide", stat}, self.L["Hide"], nil, disabled)
+      GUI:CreateReset(opts, {"hide", stat})
+      GUI:CreateNewline(opts)
+      
+      local disabled = self:GetOption("hide", stat)
+      GUI:CreateToggle(opts, {"hide", "DamageBonus"}, self.L["Bonus Damage"], L["Merge Bonus Damage into Weapon Damage"], disabled)
+      GUI:CreateReset(opts, {"hide", "DamageBonus"})
+    end
   end
   
   local speedString = strGsub(format("%.2f", sampleSpeed), "%.", DECIMAL_SEPERATOR)

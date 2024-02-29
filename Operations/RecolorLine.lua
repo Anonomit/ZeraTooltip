@@ -42,6 +42,8 @@ function Addon:RecolorLine(tooltip, line, tooltipData)
     elseif line.type == "Damage" then
       Recolor("left", "Damage")
       Recolor("right", "Speed")
+    elseif line.type == "DamageBonus" then
+      Recolor("left", "Damage")
     elseif line.type == "DamagePerSecond" then
       Recolor("left", "DamagePerSecond")
       -- Speed bar colored through rewording

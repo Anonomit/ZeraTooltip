@@ -72,13 +72,16 @@ function Addon:RewordLine(tooltip, line, tooltipData)
           text = self:RewordBinding(text, line.bindType)
         end,
         Damage = function()
-          text = self:ModifyWeaponDamage(text, tooltipData.dps, tooltipData.speed)
+          text = self:ModifyWeaponDamage(text, tooltipData.dps, tooltipData.speed, tooltipData.damageBonus)
           if not line.hideRight then
             local rightText = self:ModifyWeaponSpeed(line.textRightText, tooltipData.speed, tooltipData.speedString)
             if rightText ~= line.textRightText then
               line.rewordRight = rightText
             end
           end
+        end,
+        DamageBonus = function()
+          text = self:ModifyWeaponDamageBonus(text, tooltipData.damageBonus)
         end,
         DamagePerSecond = function()
           text = self:ModifyWeaponDamagePerSecond(text)

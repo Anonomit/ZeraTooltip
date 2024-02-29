@@ -69,11 +69,12 @@ L["Trainable Equipment"]                             = true
 L["Equipment that a trainer can teach you to wear."] = true
 
 -- weapon damage
-L["Show Minimum and Maximum"] = true
-L["Show Average"]             = true
-L["Show Variance"]            = true
-L["Variance Prefix"]          = true
-L["Show Percent"]             = true
+L["Show Minimum and Maximum"]              = true
+L["Show Average"]                          = true
+L["Show Variance"]                         = true
+L["Variance Prefix"]                       = true
+L["Show Percent"]                          = true
+L["Merge Bonus Damage into Weapon Damage"] = true
 
 -- dps
 L["Remove Brackets"] = true

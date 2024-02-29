@@ -9,9 +9,64 @@ local strMatch = string.match
 local strGsub  = string.gsub
 local strRep   = string.rep
 
+local defaultDamageBonus = {0, 0}
+
+function Addon:ModifyWeaponDamage(text, dps, speed, damageBonus)
+  damageBonus = damageBonus or defaultDamageBonus
+  
+  local showAverage  = self:GetOption("allow", "reword") and self:GetOption("damage", "showAverage")
+  local showVariance = self:GetOption("allow", "reword") and self:GetOption("damage", "showVariance")
+  local showMinMax   = self:GetOption("allow", "reword") and self:GetOption("damage", "showMinMax")
+  
+  local minMax, min, gap, max = strMatch(text, "((%d+)( ?%- ?)(%d+))")
+  if min then
+    min, max = tonumber(min), tonumber(max)
+    local mid = dps * speed
+    if self:GetOption("hide", "DamageBonus") then
+      min = min + (damageBonus[1])
+      max = max + (damageBonus[2])
+      minMax = min .. gap .. max
+    else
+      mid = mid - (damageBonus[1] + damageBonus[2]) / 2
+    end
+    
+    local average = showAverage and format("%d", mid) or nil
+    local usePercent = self:GetOption("damage", "variancePercent")
+    
+    local varianceDecimal
+    if mid == 0 then
+      varianceDecimal = 0
+    else
+      varianceDecimal = max/mid
+    end
+    local variance = showVariance and format("%s%d%s", self:GetOption("damage", "variancePrefix"), usePercent and self:Round((varianceDecimal-1)*100, 5) or self:Round(max-mid, 1), usePercent and "%%" or "") or nil
+    local minMax = showMinMax and minMax or nil
+    
+    local pattern
+    if average then
+      pattern = average
+      if variance then
+        pattern = format("%s %s", pattern, variance)
+      end
+      if minMax then
+        pattern = format("%s (%s)", pattern, minMax)
+      end
+    else
+      pattern = minMax
+      if variance then
+        pattern = format("%s (%s)", pattern, variance)
+      end
+    end
+    
+    return strGsub(text, "%d+ ?%- ?%d+", pattern)
+  end
+  return text
+end
 
 
-function Addon:ModifyWeaponDamage(text, dps, speed)
+function Addon:ModifyWeaponDamageBonus(text, damageBonus)
+  text = strGsub(text, " +", " ") -- Fix weird spacing (ex. 7730)
+  
   local showAverage  = self:GetOption("allow", "reword") and self:GetOption("damage", "showAverage")
   local showVariance = self:GetOption("allow", "reword") and self:GetOption("damage", "showVariance")
   if not (showAverage or showVariance) then return text end -- no changes to make
@@ -20,10 +75,17 @@ function Addon:ModifyWeaponDamage(text, dps, speed)
   local minMax, min, max = strMatch(text, "((%d+) ?%- ?(%d+))")
   if min then
     min, max = tonumber(min), tonumber(max)
-    local mid = dps * speed
+    local mid = (damageBonus[1] + damageBonus[2]) / 2
     local average = showAverage and format("%d", mid) or nil
     local usePercent = self:GetOption("damage", "variancePercent")
-    local variance = showVariance and format("%s%d%s", self:GetOption("damage", "variancePrefix"), usePercent and self:Round((max/mid-1)*100, 10) or self:Round(max-mid, 1), usePercent and "%%" or "") or nil
+    
+    local varianceDecimal
+    if mid == 0 then
+      varianceDecimal = 0
+    else
+      varianceDecimal = max/mid
+    end
+    local variance = showVariance and format("%s%d%s", self:GetOption("damage", "variancePrefix"), usePercent and self:Round((varianceDecimal-1)*100, 5) or self:Round(max-mid, 1), usePercent and "%%" or "") or nil
     local minMax = showMinMax and minMax or nil
     
     local pattern

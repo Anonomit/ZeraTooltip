@@ -84,6 +84,7 @@ local contexts = Addon:MakeLookupTable({
   "Type",
   "RedType",
   "Damage",
+  "DamageBonus",
   "DamagePerSecond",
   "Armor",
   "BonusArmor",
@@ -321,6 +322,18 @@ contextActions = Addon:Map({
         speed = strGsub(speed, "%"..DECIMAL_SEPERATOR, ".")
       end
       tooltipData.speed = tonumber(speed)
+      return SetContext(i, tooltipData, line)
+    end
+  end,
+  DamageBonus = function(i, tooltipData, line)
+    if MatchesAny(line.textLeftTextStripped, PLUS_SINGLE_DAMAGE_TEMPLATE, PLUS_DAMAGE_TEMPLATE, PLUS_SINGLE_DAMAGE_TEMPLATE_WITH_SCHOOL, PLUS_DAMAGE_TEMPLATE_WITH_SCHOOL) then
+      local min, max = strMatch(line.textLeftTextStripped, "%+ ?(%d+) ?%- ?(%d+)")
+      if min then
+        tooltipData.damageBonus = {tonumber(min), tonumber(max)}
+      else
+        local n = tonumber(strMatch(line.textLeftTextStripped, "%+ ?(%d+)"))
+        tooltipData.damageBonus = {n, n}
+      end
       return SetContext(i, tooltipData, line)
     end
   end,

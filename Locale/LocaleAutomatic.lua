@@ -70,6 +70,7 @@ L["End"]                = KEY_END
 L["Short Name"]        = COMMUNITIES_SETTINGS_SHORT_NAME_LABEL
 L["Show Item Level"]   = SHOW_ITEM_LEVEL
 L["Weapon Damage"]     = DAMAGE_TOOLTIP
+L["Bonus Damage"]      = BONUS_DAMAGE
 L["Speed"]             = SPEED
 L["Damage Per Second"] = ITEM_MOD_DAMAGE_PER_SECOND_SHORT
 L["Trade"]             = TRADE
