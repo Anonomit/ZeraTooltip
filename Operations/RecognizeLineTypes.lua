@@ -313,7 +313,7 @@ contextActions = Addon:Map({
     end
   end,
   Damage = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, DAMAGE_TEMPLATE, DAMAGE_TEMPLATE_WITH_SCHOOL, SINGLE_DAMAGE_TEMPLATE) then
+    if tooltipData.isWeapon and MatchesAny(line.textLeftTextStripped, DAMAGE_TEMPLATE, DAMAGE_TEMPLATE_WITH_SCHOOL, SINGLE_DAMAGE_TEMPLATE) then
       local speed = strMatch(line.textRightText or "", numberPattern)
       if not speed then return end -- SINGLE_DAMAGE_TEMPLATE can match unrelated lines, like in Chaotic gems
       tooltipData.speedStringFull = line.textRightText
@@ -326,7 +326,16 @@ contextActions = Addon:Map({
     end
   end,
   DamageBonus = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, PLUS_SINGLE_DAMAGE_TEMPLATE, PLUS_DAMAGE_TEMPLATE, PLUS_SINGLE_DAMAGE_TEMPLATE_WITH_SCHOOL, PLUS_DAMAGE_TEMPLATE_WITH_SCHOOL) then
+    if tooltipData.speed and line.colorLeft == Addon.COLORS.WHITE and MatchesAny(line.textLeftTextStripped, PLUS_SINGLE_DAMAGE_TEMPLATE, PLUS_DAMAGE_TEMPLATE, PLUS_SINGLE_DAMAGE_TEMPLATE_WITH_SCHOOL, PLUS_DAMAGE_TEMPLATE_WITH_SCHOOL) then
+      for _, alt in ipairs{
+        contexts.LastBaseStat,
+      } do
+        local increment = contextActions[alt](alt, tooltipData, line)
+        if increment then
+          return alt - i + increment
+        end
+      end
+      -- didn't match any other possible line
       local min, max = strMatch(line.textLeftTextStripped, "%+ ?(%d+) ?%- ?(%d+)")
       if min then
         tooltipData.damageBonus = {tonumber(min), tonumber(max)}
@@ -338,10 +347,12 @@ contextActions = Addon:Map({
     end
   end,
   DamagePerSecond = function(i, tooltipData, line)
-  local _, dps = MatchesAny(line.textLeftTextStripped, DPS_TEMPLATE)
-    if dps then
-      tooltipData.dps = tonumber(dps)
-      return SetContext(i, tooltipData, line)
+  if tooltipData.speed then
+    local _, dps = MatchesAny(line.textLeftTextStripped, DPS_TEMPLATE)
+      if dps then
+        tooltipData.dps = tonumber(dps)
+        return SetContext(i, tooltipData, line)
+      end
     end
   end,
   Armor = function(i, tooltipData, line)
