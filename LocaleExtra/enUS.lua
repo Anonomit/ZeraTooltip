@@ -145,10 +145,10 @@ if Addon.isEra then
     {INPUT = "^Decreases the magical resistances of your spell targets by (%d+)%.$"})
   
   Addon:AddExtraStatCapture("Hit Rating",
-    {INPUT = "^Improves your chance to hit with spells and with melee and ranged attacks by (%d+%%)%.$"})
+    {INPUT = "^Improves your chance to hit with all spells and attacks by (%d+%%)%.$"})
   
   Addon:AddExtraStatCapture("Critical Strike Rating",
-    {INPUT = "^Improves your chance to get a critical strike with melee and ranged attacks and with spells by (%d+%%)%.$"})
+    {INPUT = "^Improves your chance to get a critical strike with all spells and attacks by (%d+%%)%.$"})
   
   Addon:AddExtraStatCapture("Physical Hit Rating",
     {INPUT = "^Improves your chance to hit by (%d+%%)%.$"})

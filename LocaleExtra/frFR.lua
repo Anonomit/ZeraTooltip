@@ -123,12 +123,12 @@ if Addon.isEra then
     {INPUT = "^Diminue les résistances magiques des cibles de vos sorts de (%d+)%.$"})
   
   Addon:AddExtraStatCapture("Hit Rating", {
-    INPUT  = "^Augmente les chances de toucher avec les sorts et les attaques en mêlée et à distance de (%d+)",
+    INPUT  = "^Augmente de (%d+).*%% les chances de toucher avec tous les sorts et attaques%.",
     OUTPUT = function(n) if n then return n .. "%" end end,
   })
   
   Addon:AddExtraStatCapture("Critical Strike Rating", {
-    INPUT = "^Augmente de (%d+%%) vos chances d’infliger un coup critique avec vos attaques en mêlée et à distance et vos sorts%.$",
+    INPUT = "^Augmente de (%d+).*%% les chances d’infliger un coup critique avec tous les sorts et attaques%.$",
     OUTPUT = function(n) if n then return n .. "%" end end,
   })
   

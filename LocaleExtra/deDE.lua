@@ -96,10 +96,10 @@ if Addon.isEra then
     {INPUT = "^Erhöht Eure Chance, einen kritischen Treffer zu erzielen, um (%d+%%)%.$"})
   
   Addon:AddExtraStatCapture("Spell Hit Rating",
-    {INPUT = "^Erhöht Eure Chance mit Zaubern zu treffen um (%d+%%)%.$"})
+    {INPUT = "^Erhöht Eure Trefferchance mit allen Angriffen und Zaubern um (%d+%%)%.$"})
   
   Addon:AddExtraStatCapture("Spell Critical Strike Rating",
-    {INPUT = "^Erhöht Eure Chance, einen kritischen Treffer durch Zauber zu erzielen, um (%d+%%)%.$"})
+    {INPUT = "^Erhöht Eure kritische Trefferchance mit allen Angriffen und Zaubern um (%d+%%)%.$"})
   
   Addon:AddExtraStatCapture("Health Regeneration",
     {INPUT = "^%+(%d+) Gesundheit alle 5 Sek%.$"})

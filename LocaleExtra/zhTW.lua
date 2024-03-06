@@ -59,7 +59,8 @@ if Addon.isEra then
     {INPUT = "^%+(%d+)遠程攻擊強度。$"})
   
   Addon:AddExtraStatCapture("Attack Power In Forms",
-    {INPUT = "^在獵豹、熊或巨熊形態下的攻擊強度提高(%d+)點。$"})
+    {INPUT = "^在獵豹、熊或巨熊形態下的攻擊強度提高(%d+)點。$"},
+    {INPUT = "^在獵豹、熊和巨熊形態下的攻擊強度提高(%d+)點。$"})
   
   Addon:AddExtraStatCapture("Spell Power",
     {INPUT = "^提高法術和魔法效果所造成的傷害和治療效果，最多(%d+)點。$"},
@@ -92,10 +93,10 @@ if Addon.isEra then
     {INPUT = "^使你法術目標的魔法抗性降低(%d+)點。$"})
   
   Addon:AddExtraStatCapture("Hit Rating",
-    {INPUT = "^使你以法術與近戰及遠程攻擊的命中率提高(%d+%%)。$"})
+    {INPUT = "^使你的所有攻擊和法術命中的機率提高(%d+%%)。$"})
   
   Addon:AddExtraStatCapture("Critical Strike Rating",
-    {INPUT = "^使你近戰攻擊、遠程攻擊和法術的致命一擊機率提高(%d+%%)。$"})
+    {INPUT = "^使你的所有攻擊和法術造成致命一擊的機率提高(%d+%%)。$"})
   
   Addon:AddExtraStatCapture("Physical Hit Rating",
     {INPUT = "^使你擊中目標的機率提高(%d+%%)。$"})

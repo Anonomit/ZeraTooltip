@@ -92,10 +92,10 @@ if Addon.isEra then
     {INPUT = "^Las resistencias mágicas de los objetivos de tus hechizos se reducen (%d+) p%.$"})
   
   Addon:AddExtraStatCapture("Hit Rating",
-    {INPUT = "^Aumenta un (%d+%%) tu probabilidad de golpear con hechizos y con ataques cuerpo a cuerpo y a distancia%.$"})
+    {INPUT = "^Mejora un (%d+%%) tu probabilidad de golpear con todos tus hechizos y ataques%.$"})
   
   Addon:AddExtraStatCapture("Critical Strike Rating",
-    {INPUT = "^Aumenta un (%d+%%) tu probabilidad de golpe crítico con hechizos y ataques cuerpo a cuerpo y a distancia%.$"})
+    {INPUT = "^Mejora un (%d+%%) tu probabilidad de obtener un golpe crítico con todos tus hechizos y ataques%.$"})
   
   Addon:AddExtraStatCapture("Physical Hit Rating",
     {INPUT = "^Mejora tu probabilidad de golpear un (%d+%%)%.$"})
