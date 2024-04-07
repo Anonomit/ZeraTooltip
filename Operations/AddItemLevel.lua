@@ -34,6 +34,7 @@ for ids, ilvl in pairs{
   [{215415, 215403}] = 40, -- Waylaid Supplies
   [{217337}] = 30, -- Supply Shipment
   [{217338}] = 35, -- Supply Shipment
+  [{281008, 281009, 281010}] = 45, -- Supply Shipment
   
   [{209693, 211452}] = 33, -- Perfect Blackfathom Pearl
   

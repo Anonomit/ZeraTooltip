@@ -54,6 +54,9 @@ for ids, repInfo in pairs{
   [{217337, 215390, 215417, 215389, 215391, 215386, 215387, 215388, 215413, 215420, 215421, 215419, 215400, 215392}] = {factionID = MERCHANT_FACTION_ID, rep = 700,  cutoff = 7},
   [{217338, 215393, 215385, 215398, 215401, 215402, 215407, 215408, 215414, 215411, 215399, 215395, 215418}]         = {factionID = MERCHANT_FACTION_ID, rep = 850,  cutoff = 7},
   [{217339, 215397, 215415, 215409, 215396, 215416, 215404, 215403}]                                                 = {factionID = MERCHANT_FACTION_ID, rep = 1000, cutoff = 7},
+  [{220924, 220927, 220926, 220921, 220922, 220925, 220923, 220919, 220918, 220920}]                                 = {factionID = MERCHANT_FACTION_ID, rep = 950,  cutoff = 8},
+  [{220934, 220940, 220942, 220931, 220935, 220928, 220929, 220930, 220938, 220937, 220932}]                         = {factionID = MERCHANT_FACTION_ID, rep = 1300, cutoff = 8},
+  [{220936, 220941, 220939, 220933}]                                                                                 = {factionID = MERCHANT_FACTION_ID, rep = 1850, cutoff = 8},
   
   [{6290}]  = {factionID = MERCHANT_FACTION_ID, rep = 300, cutoff = 5, count = 20},  -- Brilliant Smallfish
   [{2840}]  = {factionID = MERCHANT_FACTION_ID, rep = 300, cutoff = 5, count = 20},  -- Copper Bar
@@ -136,6 +139,34 @@ for ids, repInfo in pairs{
   [{10008}] = {factionID = MERCHANT_FACTION_ID, rep = 1000, cutoff = 7, count = 3},  -- White Bandit Mask
   [{10508}] = {factionID = MERCHANT_FACTION_ID, rep = 1000, cutoff = 7, count = 2},  -- Mithril Blunderbuss
   [{10546}] = {factionID = MERCHANT_FACTION_ID, rep = 1000, cutoff = 7, count = 2},  -- Deadly Scope
+  
+  [{6037}]  = {factionID = MERCHANT_FACTION_ID, rep = 950, cutoff = 8, count = 12},  -- Truesilver Bar
+  [{8169}]  = {factionID = MERCHANT_FACTION_ID, rep = 950, cutoff = 8, count = 8},   -- Thick Hide
+  [{8170}]  = {factionID = MERCHANT_FACTION_ID, rep = 950, cutoff = 8, count = 14},  -- Rugged Leather
+  [{8545}]  = {factionID = MERCHANT_FACTION_ID, rep = 950, cutoff = 8, count = 14},  -- Heavy Mageweave Bandage
+  [{8838}]  = {factionID = MERCHANT_FACTION_ID, rep = 950, cutoff = 8, count = 15},  -- Sungrass
+  [{12359}] = {factionID = MERCHANT_FACTION_ID, rep = 950, cutoff = 8, count = 16},  -- Thorium Bar
+  [{13463}] = {factionID = MERCHANT_FACTION_ID, rep = 950, cutoff = 8, count = 6},   -- Dreamfoil
+  [{13931}] = {factionID = MERCHANT_FACTION_ID, rep = 950, cutoff = 8, count = 8},   -- Nightfin Soup
+  [{16766}] = {factionID = MERCHANT_FACTION_ID, rep = 950, cutoff = 8, count = 16},  -- Undermine Clam Chowder
+  [{18045}] = {factionID = MERCHANT_FACTION_ID, rep = 950, cutoff = 8, count = 12},  -- Tender Wolf Steak
+  
+  [{7931}]  = {factionID = MERCHANT_FACTION_ID, rep = 1300, cutoff = 8, count = 3},  -- Mithril Coif
+  [{10024}] = {factionID = MERCHANT_FACTION_ID, rep = 1300, cutoff = 8, count = 5},  -- Black Mageweave Headband
+  [{10034}] = {factionID = MERCHANT_FACTION_ID, rep = 1300, cutoff = 8, count = 4},  -- Tuxedo Shirt
+  [{10562}] = {factionID = MERCHANT_FACTION_ID, rep = 1300, cutoff = 8, count = 16},  -- Hi-Explosive Bomb
+  [{12406}] = {factionID = MERCHANT_FACTION_ID, rep = 1300, cutoff = 8, count = 5},  -- Thorium Belt
+  [{12655}] = {factionID = MERCHANT_FACTION_ID, rep = 1300, cutoff = 8, count = 4},  -- Enchanted Thorium Bar
+  [{13443}] = {factionID = MERCHANT_FACTION_ID, rep = 1300, cutoff = 8, count = 6},  -- Superior Mana Potion
+  [{13446}] = {factionID = MERCHANT_FACTION_ID, rep = 1300, cutoff = 8, count = 8},  -- Major Healing Potion
+  [{15084}] = {factionID = MERCHANT_FACTION_ID, rep = 1300, cutoff = 8, count = 6},  -- Wicked Leather Bracers
+  [{15564}] = {factionID = MERCHANT_FACTION_ID, rep = 1300, cutoff = 8, count = 12},  -- Rugged Armor Kit
+  [{15993}] = {factionID = MERCHANT_FACTION_ID, rep = 1300, cutoff = 8, count = 3},  -- Thorium Grenade
+  
+  [{7938}]  = {factionID = MERCHANT_FACTION_ID, rep = 1850, cutoff = 8, count = 2},  -- Truesilver Gauntlets
+  [{13856}] = {factionID = MERCHANT_FACTION_ID, rep = 1850, cutoff = 8, count = 6},  -- Runecloth Belt
+  [{15092}] = {factionID = MERCHANT_FACTION_ID, rep = 1850, cutoff = 8, count = 5},  -- Runic Leather Bracers
+  [{15995}] = {factionID = MERCHANT_FACTION_ID, rep = 1850, cutoff = 8, count = 2},  -- Thorium Rifle
 } do
   local faction = GetFactionInfoByID(repInfo.factionID)
   if faction then
