@@ -1061,20 +1061,22 @@ local function MakeExtraOptions(opts, categoryName)
   if self:GetOption("doReorder", "SoulboundTradeable") then MakeTradeableOption() end
   
   -- Trainable
-  do
-    local stat = "Trainable"
-    
-    local defaultText = self.L["Weapon"]
-    local _, name = GetFormattedText(stat, self.COLORS.RED, L["Trainable Equipment"], L["Trainable Equipment"])
-    local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.RED, defaultText, defaultText)
-    
-    local opts = GUI:CreateGroup(opts, stat, name, L["Equipment that a trainer can teach you to wear."])
-    
-    CreateTitle(opts, defaultText, formattedText, changed)
-    
-    CreateColor(opts, stat)
+  if self.expansionLevel < self.expansions.cata then
+    do
+      local stat = "Trainable"
+      
+      local defaultText = self.L["Weapon"]
+      local _, name = GetFormattedText(stat, self.COLORS.RED, L["Trainable Equipment"], L["Trainable Equipment"])
+      local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.RED, defaultText, defaultText)
+      
+      local opts = GUI:CreateGroup(opts, stat, name, L["Equipment that a trainer can teach you to wear."])
+      
+      CreateTitle(opts, defaultText, formattedText, changed)
+      
+      CreateColor(opts, stat)
+    end
+    GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
   end
-  GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
   
   -- Weapon Damage
   do
