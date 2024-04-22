@@ -552,6 +552,15 @@ do
       return setmetatable(t, {__index = function() return fallback end})[val](val)
     end
   end
+  
+  
+  function Addon:ShortCircuit(expression, trueVal, falseVal)
+    if expression then
+      return trueVal
+    else
+      return falseVal
+    end
+  end
 end
 
 

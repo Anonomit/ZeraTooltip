@@ -245,12 +245,10 @@ do
   }
   
   
-  
-  Addon.statList = {
-    [Addon.expansions.era]   = {},
-    [Addon.expansions.tbc]   = {},
-    [Addon.expansions.wrath] = {},
-  }
+  Addon.statList = {}
+  for i = 1, Addon.expansionLevel do
+    Addon.statList[i] = {}
+  end
   Addon.statsInfo        = setmetatable({}, {__index = function() return {} end})
   Addon.statOrder        = {}
   Addon.statDefaultList  = {}
@@ -347,17 +345,20 @@ do
   Addon.MY_RACE_LOCALNAME, Addon.MY_RACE_FILENAME = UnitRace"player"
   
   -- Races: Human, Orc, Dwarf, Night Elf, Undead, Tauren, Gnome, Troll, Blood Elf, Draenei
-  local raceIDs = {}
-  raceIDs[Addon.expansions.era]   = {1, 2, 3, 4, 5, 6, 7, 8}
-  raceIDs[Addon.expansions.tbc]   = {1, 2, 3, 4, 5, 6, 7, 8, 10, 11}
-  raceIDs[Addon.expansions.wrath] = raceIDs[Addon.expansions.tbc]
+  local raceIDs = {1, 2, 3, 4, 5, 6, 7, 8}
+  if Addon.expansionLevel >= Addon.expansions.tbc then
+    Addon:Concatenate(raceIDs, {10, 11})
+  end
+  if Addon.expansionLevel >= Addon.expansions.cata then
+    Addon:Concatenate(raceIDs, {9, 22})
+  end
   
   Addon.raceNames = {}
   
   local allRaces     = {}
   local factionRaces = {Alliance = {}, Horde = {}}
   
-  for _, raceID in ipairs(raceIDs[Addon.expansionLevel]) do
+  for _, raceID in ipairs(raceIDs) do
     local raceName = C_CreatureInfo.GetRaceInfo(raceID).raceName
     local factionTag = C_CreatureInfo.GetFactionInfo(raceID).groupTag
     Addon.raceNames[raceID] = raceName

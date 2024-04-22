@@ -24,11 +24,13 @@ function Addon:MakeDefaultOptions()
           recolor = true,
         },
         
-        order = {
-          [self.expansions.wrath] = tblConcat(self.statList[self.expansions.wrath]  , ","),
-          [self.expansions.tbc]   = tblConcat(self.statList[self.expansions.tbc]    , ","),
-          [self.expansions.era]   = tblConcat(self.statList[self.expansions.era], ","),
-        },
+        order = (function()
+          local order={}
+          for i = 1, self.expansionLevel do
+            order[i] = tblConcat(self.statList[i], ",")
+          end
+          return order
+        end)(),
         hide = {
           ["*"]                           = false,
           uselessRaces                    = true,

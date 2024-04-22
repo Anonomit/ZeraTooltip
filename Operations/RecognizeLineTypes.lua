@@ -13,15 +13,14 @@ local strMatch = string.match
 local tinsert = tinsert
 
 
-local ITEM_CREATED_BY    = Addon.ITEM_CREATED_BY
-local ITEM_WRAPPED_BY    = Addon.ITEM_WRAPPED_BY
-local ITEM_MOD_STAMINA   = Addon.ITEM_MOD_STAMINA
-local ITEM_MOD_STRENGTH  = Addon.ITEM_MOD_STRENGTH
-local ITEM_MOD_AGILITY   = Addon.ITEM_MOD_AGILITY
-local ITEM_MOD_INTELLECT = Addon.ITEM_MOD_INTELLECT
-local ITEM_MOD_SPIRIT    = Addon.ITEM_MOD_SPIRIT
-
-
+local ITEM_CREATED_BY         = Addon.ITEM_CREATED_BY
+local ITEM_WRAPPED_BY         = Addon.ITEM_WRAPPED_BY
+local ITEM_MOD_STAMINA        = Addon.ITEM_MOD_STAMINA
+local ITEM_MOD_STRENGTH       = Addon.ITEM_MOD_STRENGTH
+local ITEM_MOD_AGILITY        = Addon.ITEM_MOD_AGILITY
+local ITEM_MOD_INTELLECT      = Addon.ITEM_MOD_INTELLECT
+local ITEM_MOD_SPIRIT         = Addon.ITEM_MOD_SPIRIT
+local ITEM_MOD_MASTERY_RATING = Addon.ITEM_MOD_MASTERY_RATING
 
 
 local numberPattern = "[%d%"..DECIMAL_SEPERATOR.."]+"
@@ -70,12 +69,11 @@ local function StartsWithAny(text, ...)
   return nil
 end
 
-local contexts = Addon:MakeLookupTable({
+local contexts = Addon:MakeLookupTable(Addon:Squish{
   "Init",
   "PreTitle",
   "Title",
   "Quality",
-  "Heroic",
   "Binding",
   "Unique",
   "LastUnique",
@@ -94,14 +92,14 @@ local contexts = Addon:MakeLookupTable({
   "Enchant",
   "RequiredEnchant",
   "WeaponEnchant",
-  "Rune",
-  "Socket",
-  "RequiredSocket",
-  "LastSocket",
-  "LastRequiredSocket",
+  Addon:ShortCircuit(Addon.isSoD, "Rune", nil),
+  Addon:ShortCircuit(Addon.expansionLevel >= Addon.expansions.tbc, "Socket",             nil),
+  Addon:ShortCircuit(Addon.expansionLevel >= Addon.expansions.tbc, "RequiredSocket",     nil),
+  Addon:ShortCircuit(Addon.expansionLevel >= Addon.expansions.tbc, "LastSocket",         nil),
+  Addon:ShortCircuit(Addon.expansionLevel >= Addon.expansions.tbc, "LastRequiredSocket", nil),
   "ProposedEnchant",
   "EnchantHint",
-  "SocketBonus",
+  Addon:ShortCircuit(Addon.expansionLevel >= Addon.expansions.tbc, "SocketBonus", nil),
   "Durability",
   "RequiredRaces",
   "RequiredClasses",
@@ -115,8 +113,8 @@ local contexts = Addon:MakeLookupTable({
   "RecipeUse",
   "Charges",
   "Embed",
-  "EnchantOnUse",
-  "RequiredEnchantOnUse",
+  Addon:ShortCircuit(Addon.expansionLevel >= Addon.expansions.wrath, "EnchantOnUse",         nil),
+  Addon:ShortCircuit(Addon.expansionLevel >= Addon.expansions.wrath, "RequiredEnchantOnUse", nil),
   "SetName",
   "setPiece",
   "LastSetPiece",
@@ -125,7 +123,7 @@ local contexts = Addon:MakeLookupTable({
   "Cooldown",
   "Description",
   "MadeBy",
-  "SocketHint",
+  Addon:ShortCircuit(Addon.expansionLevel >= Addon.expansions.tbc, "SocketHint", nil),
   "Refundable",
   "SoulboundTradeable",
   "Delta",
@@ -370,26 +368,32 @@ contextActions = Addon:Map({
     end
   end,
   LastBaseStat = function(i, tooltipData, line)
-    if not line.texture and line.colorLeft == Addon.COLORS.WHITE and strFind(line.textLeftTextStripped, "[%+%-5]") then
-      local stat = MatchesAny(line.textLeftTextStripped, ITEM_MOD_STAMINA, ITEM_MOD_STRENGTH, ITEM_MOD_AGILITY, ITEM_MOD_INTELLECT, ITEM_MOD_SPIRIT, ITEM_RESIST_SINGLE)
-      if stat then
-        if stat == ITEM_RESIST_SINGLE then
-          local n = strMatch(line.textLeftTextStripped, "(%d+)")
-          tooltipData.resistN = tooltipData.resistN or n
-          if tooltipData.resistN == n then
-            tooltipData.resists = tooltipData.resists + 1
+    if not line.texture then
+      if line.colorLeft == Addon.COLORS.WHITE and strFind(line.textLeftTextStripped, "[%+%-5]") then
+        local stat = MatchesAny(line.textLeftTextStripped, ITEM_MOD_STAMINA, ITEM_MOD_STRENGTH, ITEM_MOD_AGILITY, ITEM_MOD_INTELLECT, ITEM_MOD_SPIRIT, ITEM_RESIST_SINGLE)
+        if stat then
+          if stat == ITEM_RESIST_SINGLE then
+            local n = strMatch(line.textLeftTextStripped, "(%d+)")
+            tooltipData.resistN = tooltipData.resistN or n
+            if tooltipData.resistN == n then
+              tooltipData.resists = tooltipData.resists + 1
+            end
+          end
+          return SetContext(i-1, tooltipData, line)
+        else
+          for stat, statInfo in pairs(Addon.statsInfo) do
+            local normalForm = statInfo.ConvertToNormalForm and statInfo:ConvertToNormalForm(line.textLeftTextStripped)
+            if normalForm then
+              line.stat       = stat
+              line.normalForm = normalForm
+              return SetContext(i-1, tooltipData, line)
+            end
           end
         end
+      elseif line.colorLeft == Addon.COLORS.GREEN and MatchesAny(line.textLeftTextStripped, ITEM_MOD_MASTERY_RATING) then
+        line.stat       = "Mastery Rating"
+        line.normalForm = line.textLeftText
         return SetContext(i-1, tooltipData, line)
-      else
-        for stat, statInfo in pairs(Addon.statsInfo) do
-          local normalForm = statInfo.ConvertToNormalForm and statInfo:ConvertToNormalForm(line.textLeftTextStripped)
-          if normalForm then
-            line.stat       = stat
-            line.normalForm = normalForm
-            return SetContext(i-1, tooltipData, line)
-          end
-        end
       end
     end
   end,
