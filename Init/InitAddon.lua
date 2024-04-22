@@ -594,6 +594,7 @@ do
     REEF                 = rgb(201, 255, 162),
     PALE_LIGHT_GREEN     = rgb(177, 252, 153),
     FOAM_GREEN           = rgb(144, 253, 169),
+    GREEN_GAS            = rgb(  0, 255, 148),
     PARIS_GREEN          = rgb( 80, 200, 120),
     LEMON_LIME           = rgb(191, 254,  40),
 

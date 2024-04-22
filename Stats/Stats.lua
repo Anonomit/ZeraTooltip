@@ -203,7 +203,7 @@ do
   end
   -- {true, true, true, "Holy Resistance"  , RESISTANCE1_NAME, format(self:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), self.DAMAGE_SCHOOL2), self.COLORS.WHITE, self.COLORS.HOLY},
   
-  tinsert(statsData, {0, { nil,  nil,  nil, true}, "Mastery Rating"   , ITEM_MOD_MASTERY_RATING_SHORT, ITEM_MOD_MASTERY_RATING, self.COLORS.GREEN, self.COLORS.YELLOW})
+  tinsert(statsData, {0, { nil,  nil,  nil, true}, "Mastery Rating"   , ITEM_MOD_MASTERY_RATING_SHORT, ITEM_MOD_MASTERY_RATING, self.COLORS.GREEN, self.COLORS.GREEN_GAS})
   
   tinsert(statsData, {1, {true, true, true,  nil}, "Defense Rating"   , ITEM_MOD_DEFENSE_SKILL_RATING_SHORT, ITEM_MOD_DEFENSE_SKILL_RATING, self.COLORS.GREEN, self.COLORS.YELLOW})
   tinsert(statsData, {1, {true, true, true, true}, "Dodge Rating"     , ITEM_MOD_DODGE_RATING_SHORT        , ITEM_MOD_DODGE_RATING        , self.COLORS.GREEN, self.COLORS.YELLOW})
