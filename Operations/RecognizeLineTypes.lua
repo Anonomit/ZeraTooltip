@@ -116,7 +116,7 @@ local contexts = Addon:MakeLookupTable(Addon:Squish{
   Addon:ShortCircuit(Addon.expansionLevel >= Addon.expansions.wrath, "EnchantOnUse",         nil),
   Addon:ShortCircuit(Addon.expansionLevel >= Addon.expansions.wrath, "RequiredEnchantOnUse", nil),
   "SetName",
-  "setPiece",
+  "SetPiece",
   "LastSetPiece",
   "SetBonus",
   "LastSetBonus",
@@ -574,7 +574,7 @@ contextActions = Addon:Map({
     end
   end,
   LastSetBonus = function(i, tooltipData, line)
-    local prefix = (line.colorLeft == Addon.COLORS.GRAY or line.colorLeft == Addon.COLORS.GREEN) and MatchesAny(line.textLeftTextStripped, ITEM_SET_BONUS_GRAY, ITEM_SET_BONUS)
+    local prefix = (line.colorLeft == Addon.COLORS.GRAY or line.colorLeft == Addon.COLORS.GREEN) and MatchesAny(line.textLeftTextStripped, ITEM_SET_BONUS_GRAY, ITEM_SET_BONUS, ITEM_SET_BONUS_NO_VALID_SPEC)
     if prefix then
       line.prefix = prefix
       return SetContext(i-1, tooltipData, line)
