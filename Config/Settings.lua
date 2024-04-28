@@ -84,6 +84,7 @@ function Addon:MakeDefaultOptions()
           Socket_orange          = false,
           Socket_prismatic       = false,
           Socket_meta            = false,
+          Socket_cogwheel        = false,
           Equip                  = false, -- just to match Use
           ChanceOnHit            = false, -- just to match Use
           Use                    = false, -- because of EnchantOnUse

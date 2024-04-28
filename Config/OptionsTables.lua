@@ -1521,15 +1521,16 @@ local function MakeExtraOptions(opts, categoryName)
   if self.expansionLevel >= self.expansions.tbc then
     local stat = "Socket"
     
-    local sockets = {
-      {"Socket_red",       GEM_TEXT_RED},
-      {"Socket_blue",      GEM_TEXT_BLUE},
-      {"Socket_yellow",    GEM_TEXT_YELLOW},
+    local sockets = Addon:Squish{
+      {"Socket_red",       EMPTY_SOCKET_RED},
+      {"Socket_blue",      EMPTY_SOCKET_BLUE},
+      {"Socket_yellow",    EMPTY_SOCKET_YELLOW},
       {"Socket_purple",    GEM_TEXT_PURPLE},
       {"Socket_green",     GEM_TEXT_GREEN},
       {"Socket_orange",    GEM_TEXT_ORANGE},
-      {"Socket_prismatic", GEM_TEXT_PRISMATIC},
-      {"Socket_meta",      GEM_TEXT_META},
+      {"Socket_prismatic", EMPTY_SOCKET_PRISMATIC},
+      {"Socket_meta",      EMPTY_SOCKET_META},
+      Addon:ShortCircuit(Addon.expansionLevel >= Addon.expansions.cata, {"Socket_cogwheel", EMPTY_SOCKET_COGWHEEL}, nil),
     }
     
     local samples = {}

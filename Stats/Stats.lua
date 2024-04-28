@@ -421,6 +421,7 @@ do
   self.statsInfo["Socket_orange"]      = {color = self.COLORS.ORANGE}
   self.statsInfo["Socket_prismatic"]   = {color = self.COLORS.WHITE}
   self.statsInfo["Socket_meta"]        = {color = self.COLORS.WHITE}
+  self.statsInfo["Socket_cogwheel"]    = {color = self.COLORS.WHITE}
   
   self.statsInfo["Charges"]            = {color = self.COLORS.ORANGE}
   self.statsInfo["NoCharges"]          = {color = self.COLORS.RED}
