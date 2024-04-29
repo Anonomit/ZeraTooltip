@@ -11,7 +11,7 @@ local tinsert  = table.insert
 
 local mathMax = math.max
 
-local invTypeBlacklist = Addon:MakeLookupTable{"", "INVTYPE_BAG", "INVTYPE_TABARD", "INVTYPE_BODY"}
+local invTypeBlacklist = Addon:MakeLookupTable{"", "INVTYPE_NON_EQUIP_IGNORE", "INVTYPE_BAG", "INVTYPE_TABARD", "INVTYPE_BODY"}
 
 
 local function TableMax(t)
