@@ -654,14 +654,20 @@ local function MakeExtraOptions(opts, categoryName)
   local function MakeItemLevelOptions()
     local stat = "ItemLevel"
     
+    local sampleItemLevel = random(1, self.MAX_ITEMLEVEL)
+    
     local samples = {}
-    local defaultText = format(self:GetOption("itemLevel", "useShortName") and GARRISON_FOLLOWER_ITEM_LEVEL or ITEM_LEVEL, random(1, self.MAX_ITEMLEVEL))
-    local _, formattedText = GetFormattedText(stat, self.COLORS.DEFAULT, defaultText, self:RewordItemLevel(defaultText))
-    defaultText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, defaultText)
+    local defaultText   = format(ITEM_LEVEL, sampleItemLevel)
+    local itemLevelText = format(self:GetOption("itemLevel", "useShortName") and GARRISON_FOLLOWER_ITEM_LEVEL or ITEM_LEVEL, sampleItemLevel)
+    local defaultText, _             = GetFormattedText(stat, self.COLORS.WHITE, defaultText,   defaultText)
+    local _,           formattedText = GetFormattedText(stat, self.COLORS.WHITE, itemLevelText, self:RewordItemLevel(itemLevelText))
+    if self.expansionLevel < self.expansions.cata then
+      defaultText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, self:StripColorCode(defaultText))
+    end
     tinsert(samples, {defaultText, formattedText})
     
     local opts = GUI:CreateGroup(opts, stat, samples[1][2], nil, nil, disabled)
-      
+    
     CreateSamples(opts, samples)
     
     CreateReorder(opts, stat, L["Show this line where it was originally positioned in Wrath of The Lich King."])

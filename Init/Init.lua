@@ -543,13 +543,19 @@ do
     end
   end
   
-  
+  local function SwitchHelper(result, val)
+    if type(result) == "function" then
+      return result(val)
+    else
+      return result
+    end
+  end
   function Addon:Switch(val, t, fallback)
     fallback = fallback or nop
     if val == nil then
-      return fallback(val)
+      return SwitchHelper(fallback, val)
     else
-      return setmetatable(t, {__index = function() return fallback end})[val](val)
+      return SwitchHelper(setmetatable(t, {__index = function() return fallback end})[val], val)
     end
   end
   

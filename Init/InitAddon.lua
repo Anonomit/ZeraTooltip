@@ -503,13 +503,18 @@ end
 --  ╚══════╝╚══════╝  ╚═══╝  ╚══════╝╚══════╝╚══════╝
 
 do
-  Addon.MAX_ITEMLEVEL = 284
+  Addon.MAX_ITEMLEVEL = Addon:Switch(Addon.expansionLevel, {
+    [Addon.expansions.era]   = 92,
+    [Addon.expansions.tbc]   = 159,
+    [Addon.expansions.wrath] = 284,
+    [Addon.expansions.cata]  = 416,
+  }, 1)
   
-  Addon.MAX_LEVEL = MAX_PLAYER_LEVEL_TABLE[GetExpansionLevel()]
+  Addon.MAX_LEVEL = MAX_PLAYER_LEVEL_TABLE[GetExpansionLevel()] or 200
   
   Addon.MY_LEVEL = UnitLevel"player"
   
-  Addon:RegisterEvent("PLAYER_LEVEL_UP", function(_, level) Addon.MY_LEVEL = UnitLevel"player" end)
+  Addon:RegisterEventCallback("PLAYER_LEVEL_UP", function(self, event, level) self.MY_LEVEL = UnitLevel"player" end)
 end
 
 
@@ -540,11 +545,12 @@ do
   Addon.SAMPLE_TITLE_ID = 6948
   Addon.SAMPLE_TITLE_NAME = GetItemInfo(Addon.SAMPLE_TITLE_ID)
   if not Addon.SAMPLE_TITLE_NAME then
-    Addon:RegisterEvent("GET_ITEM_INFO_RECEIVED", function(_, id)
-      if id == Addon.SAMPLE_TITLE_ID then
-        Addon.SAMPLE_TITLE_NAME = GetItemInfo(Addon.SAMPLE_TITLE_ID)
-        if Addon.SAMPLE_TITLE_NAME then
-          Addon:UnregisterEvent("GET_ITEM_INFO_RECEIVED")
+    local eventID
+    eventID = Addon:RegisterEventCallback("GET_ITEM_INFO_RECEIVED", function(self, event, id)
+      if id == self.SAMPLE_TITLE_ID then
+        self.SAMPLE_TITLE_NAME = GetItemInfo(self.SAMPLE_TITLE_ID)
+        if self.SAMPLE_TITLE_NAME then
+          self:UnregisterEventCallback("GET_ITEM_INFO_RECEIVED", eventID)
         end
       end
     end)

@@ -495,6 +495,11 @@ contextActions = Addon:Map({
       return SetContext(i, tooltipData, line)
     end
   end,
+  ItemLevel = function(i, tooltipData, line)
+    if MatchesAny(line.textLeftTextStripped, ITEM_LEVEL) then
+      return SetContext(i, tooltipData, line)
+    end
+  end,
   RequiredSkill = function(i, tooltipData, line)
     if MatchesAny(line.textLeftTextStripped, ITEM_MIN_SKILL) then
       return SetContext(i, tooltipData, line)
