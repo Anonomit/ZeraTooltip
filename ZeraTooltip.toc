@@ -1,6 +1,6 @@
-## Interface: 30403
-## Interface-Wrath: 30403
-## Interface-Classic: 11501
+## Interface: 40400
+## Interface-Wrath: 40400
+## Interface-Classic: 11502
 ## Version: 2.14.2
 
 ## X-Curse-Project-ID: 533049
