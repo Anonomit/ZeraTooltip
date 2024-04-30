@@ -148,7 +148,8 @@ if Addon.isEra then
     {INPUT = "^Improves your chance to hit with all spells and attacks by (%d+%%)%.$"})
   
   Addon:AddExtraStatCapture("Critical Strike Rating",
-    {INPUT = "^Improves your chance to get a critical strike with all spells and attacks by (%d+%%)%.$"})
+    {INPUT = "^Improves your chance to get a critical strike with all spells and attacks by (%d+%%)%.$"},
+    {INPUT = "^Improves your chance to get a critical strike with melee and ranged attacks and with spells by (%d+%%)%.$"})
   
   Addon:AddExtraStatCapture("Physical Hit Rating",
     {INPUT = "^Improves your chance to hit by (%d+%%)%.$"})
@@ -161,6 +162,9 @@ if Addon.isEra then
   
   Addon:AddExtraStatCapture("Spell Critical Strike Rating",
     {INPUT = "^Improves your chance to get a critical strike with spells by (%d+%%)%.$"})
+  
+  Addon:AddExtraStatCapture("Health Regeneration",
+    {INPUT = "^Restores (%d+) health every 5 sec%.$"})
   
   Addon:AddExtraStatCapture("Mana Regeneration",
     {INPUT = "^%+(%d+) mana every 5 sec%.$"})

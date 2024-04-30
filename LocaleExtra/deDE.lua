@@ -87,7 +87,8 @@ if Addon.isEra then
     {INPUT = "^Erhöht Eure Trefferchance mit Zaubern sowie Nahkampf%- und Distanzangriffen um (%d+%%)%.$"})
   
   Addon:AddExtraStatCapture("Critical Strike Rating",
-    {INPUT = "^Erhöht die Chance auf einen kritischen Treffer mit Nahkampf%- und Distanzangriffen sowie Zaubern um (%d+%%)%.$"})
+    {INPUT = "^Erhöht die Chance auf einen kritischen Treffer mit Nahkampf%- und Distanzangriffen sowie Zaubern um (%d+%%)%.$"},
+    {INPUT = "^Erhöht Eure kritische Trefferchance aller Eurer Angriffe und Zauber um (%d+%%)%.$"})
   
   Addon:AddExtraStatCapture("Physical Hit Rating",
     {INPUT = "^Verbessert Eure Trefferchance um (%d+%%)%.$"})
@@ -96,12 +97,15 @@ if Addon.isEra then
     {INPUT = "^Erhöht Eure Chance, einen kritischen Treffer zu erzielen, um (%d+%%)%.$"})
   
   Addon:AddExtraStatCapture("Spell Hit Rating",
+    {INPUT = "^Erhöht Eure Chance mit Zaubern zu treffen um (%d+%%)%.$"},
     {INPUT = "^Erhöht Eure Trefferchance mit allen Angriffen und Zaubern um (%d+%%)%.$"})
   
   Addon:AddExtraStatCapture("Spell Critical Strike Rating",
+    {INPUT = "^Erhöht Eure Chance, einen kritischen Treffer durch Zauber zu erzielen, um (%d+%%)%.$"},
     {INPUT = "^Erhöht Eure kritische Trefferchance mit allen Angriffen und Zaubern um (%d+%%)%.$"})
   
   Addon:AddExtraStatCapture("Health Regeneration",
+    {INPUT = "^Stellt alle 5 Sek%. (%d+) Punkt%(e%) Gesundheit wieder her%.$"},
     {INPUT = "^%+(%d+) Gesundheit alle 5 Sek%.$"})
   
   Addon:AddExtraStatCapture("Mana Regeneration",
@@ -110,9 +114,6 @@ if Addon.isEra then
 else
   Addon:AddExtraStatCapture("Defense Rating",
     {INPUT = "^Erhöht Verteidigungswertung um (%d+)%.$"})
-  
-  Addon:AddExtraStatCapture("Ranged Attack Power",
-    {INPUT = "^Erhöht Eure kritische Trefferwertung um (%d+)%.$"})
   
   Addon:AddExtraStatCapture("Attack Power In Forms",
     {INPUT = "^Erhöht die Angriffskraft um (%d+) nur in Katzen%-, Bären%-, Terrorbären%- und Mondkingestalt%.$"})

@@ -18,6 +18,10 @@ end
 
 
 
+Addon:AddExtraStatCapture("Arcane Damage",
+  {INPUT = "^%+(%d+)秘法法術傷害$"},
+  {INPUT = "^%+(%d+) 秘法法術傷害$"})
+
 Addon:AddExtraStatCapture("Fire Damage",
   {INPUT = "^%+(%d+)火焰法術傷害$"},
   {INPUT = "^%+(%d+) 火焰法術傷害$"})
@@ -39,6 +43,9 @@ Addon:AddExtraStatCapture("Holy Damage",
   {INPUT = "^%+(%d+) 神聖法術傷害$"})
 
 if Addon.isEra then
+  Addon:AddExtraStatCapture("Shadow Resistance",
+    {INPUT = "^(%+)(%d+) 陰影抗性$"})
+  
   Addon:AddExtraStatCapture("Defense Rating",
     {INPUT = "^防禦技能提高(%d+)點。$"})
   
@@ -67,6 +74,7 @@ if Addon.isEra then
     {INPUT = "^%+(%d+) 傷害及治療法術$"})
   
   Addon:AddExtraStatCapture("Arcane Damage",
+    {INPUT = "^秘法法術和效果造成的傷害提高最多(%d+)點。$"},
     {INPUT = "^祕法法術和效果造成的傷害提高最多(%d+)點。$"},
     {INPUT = "^%+(%d+) 祕法法術傷害$"})
   
@@ -96,7 +104,9 @@ if Addon.isEra then
     {INPUT = "^使你的所有攻擊和法術命中的機率提高(%d+%%)。$"})
   
   Addon:AddExtraStatCapture("Critical Strike Rating",
-    {INPUT = "^使你的所有攻擊和法術造成致命一擊的機率提高(%d+%%)。$"})
+    {INPUT = "^使你的所有攻擊和法術造成致命一擊的機率提高(%d+%%)。$"},
+    {INPUT = "^使你的所有法術和攻擊造成致命一擊的機率提高(%d+%%)。$"},
+    {INPUT = "^使你近戰攻擊、遠程攻擊和法術的致命一擊機率提高(%d+%%)。$"})
   
   Addon:AddExtraStatCapture("Physical Hit Rating",
     {INPUT = "^使你擊中目標的機率提高(%d+%%)。$"})

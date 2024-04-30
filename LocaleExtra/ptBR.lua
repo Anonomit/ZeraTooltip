@@ -97,6 +97,8 @@ if Addon.isEra then
     {INPUT = "^Melhora em (%d+%%) sua chance de acerto com todos os feitiços e ataques%.$"})
   
   Addon:AddExtraStatCapture("Critical Strike Rating",
+    {INPUT = "^Aumenta em (%d+%%) a chance de obter um acerto crítico com ataques de longo alcance, corpo a corpo e feitiços%.$"},
+    {INPUT = "^Aumenta em (%d+%%) sua chance de obter acerto crítico com todos os feitiços e ataques%.$"},
     {INPUT = "^Melhora em (%d+%%) sua chance de receber um acerto crítico com todos os feitiços e ataques%.$"})
   
   Addon:AddExtraStatCapture("Physical Hit Rating",

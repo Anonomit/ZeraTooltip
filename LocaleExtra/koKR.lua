@@ -91,7 +91,8 @@ if Addon.isEra then
     {INPUT = "^모든 주문과 공격의 적중률이 (%d+%%)만큼 증가합니다.$"})
   
   Addon:AddExtraStatCapture("Critical Strike Rating",
-    {INPUT = "^모든 주문과 공격의 주문 극대화 확률과 치명타 적중도가 (%d+%%)만큼 증가합니다%.$"})
+    {INPUT = "^모든 주문과 공격의 주문 극대화 확률과 치명타 적중도가 (%d+%%)만큼 증가합니다%.$"},
+    {INPUT = "^근접 및 원거리 공격과 주문 사용 시 치명타 및 극대화 효과를 낼 확률이 (%d+%%)만큼 증가합니다%.$"})
   
   Addon:AddExtraStatCapture("Physical Hit Rating",
     {INPUT = "^무기의 적중률이 (%d+%%)만큼 증가합니다%.$"})
