@@ -22,43 +22,56 @@ local function HideLeft(line)
 end
 
 function Addon:HideLine(line, allResist)
-  if line.type == "Binding" then
-    if self:GetOption("hide", line.bindType) then
+  self:Switch(line.type, {
+    Binding = function()
+      if self:GetOption("hide", line.bindType) then
+        return HideLeft(line)
+      end
+    end,
+    Damage = function()
+      if self:GetOption("hide", "Speed") then
+        line.hideRight = true
+      end
+    end,
+    DamagePerSecond = function()
+      if self:GetOption("hide", "Speedbar") then
+        line.hideRight = true
+      end
+    end,
+    RequiredRaces = function()
+      if line.colorLeft == self.COLORS.WHITE and self:GetOption("hide", "uselessRaces") and self.uselessRaceStrings[line.textLeftText] then
+        return HideLeft(line)
+      end
+    end,
+    RequiredClasses = function()
+      if line.colorLeft == self.COLORS.WHITE and self:GetOption("hide", "myClass") and line.textLeftText == self.myClassString then
+        return HideLeft(line)
+      end
+    end,
+    RequiredLevel = function()
+      local level = tonumber(strMatch(line.textLeftText, self:ReversePattern(ITEM_MIN_LEVEL)))
+      if level <= self.MY_LEVEL and self:GetOption("hide", "requiredLevelMet") or UnitLevel"player" == self.MAX_LEVEL and level == self.MAX_LEVEL and self:GetOption("hide", "requiredLevelMax") then
+        return HideLeft(line)
+      end
+    end,
+    ItemLevel = function()
       return HideLeft(line)
-    end
-  elseif line.type == "Damage" then
-    if self:GetOption("hide", "Speed") then
-      line.hideRight = true
-    end
-  elseif line.type == "DamagePerSecond" then
-    if self:GetOption("hide", "Speedbar") then
-      line.hideRight = true
-    end
-  elseif allResist and line.stat and hiddenResists[line.stat] then
-    return HideLeft(line)
-  elseif line.type == "RequiredRaces" then
-    if line.colorLeft == self.COLORS.WHITE and self:GetOption("hide", "uselessRaces") and self.uselessRaceStrings[line.textLeftText] then
+    end,
+    MadeBy = function()
+      if self:ShouldHideMadeBy(line.textLeftText, line.madeType) then
+        return HideLeft(line)
+      end
+    end,
+  }, function()
+    if allResist and line.stat and hiddenResists[line.stat] then
       return HideLeft(line)
+    elseif line.prefix and not line.stat then
+      local stat = self.prefixStats[line.prefix]
+      if stat and self:GetOption("hide", stat) then
+        return HideLeft(line)
+      end
     end
-  elseif line.type == "RequiredClasses" then
-    if line.colorLeft == self.COLORS.WHITE and self:GetOption("hide", "myClass") and line.textLeftText == self.myClassString then
-      return HideLeft(line)
-    end
-  elseif line.type == "RequiredLevel" then
-    local level = tonumber(strMatch(line.textLeftText, self:ReversePattern(ITEM_MIN_LEVEL)))
-    if level <= self.MY_LEVEL and self:GetOption("hide", "requiredLevelMet") or UnitLevel"player" == self.MAX_LEVEL and level == self.MAX_LEVEL and self:GetOption("hide", "requiredLevelMax") then
-      return HideLeft(line)
-    end
-  elseif line.type == "MadeBy" then
-    if self:ShouldHideMadeBy(line.textLeftText, line.madeType) then
-      return HideLeft(line)
-    end
-  elseif line.prefix and not line.stat then
-    local stat = self.prefixStats[line.prefix]
-    if stat and self:GetOption("hide", stat) then
-      return HideLeft(line)
-    end
-  end
+  end)
   if line.type and self:GetOption("hide", line.type) or (line.type == "BaseStat" or line.type == "SecondaryStat") and line.stat and self:GetOption("hide", line.stat) then
     return HideLeft(line)
   end

@@ -31,12 +31,14 @@ function Addon:RecolorLine(tooltip, line, tooltipData)
     elseif line.type == "Binding" then
       Recolor("left", line.bindType)
     elseif line.type == "RedType" then
-      if IsEquippableItem(tooltipData.id) and self:IsItemUsable(tooltipData.id) then
-        if line.colorLeft == self.COLORS.RED then
-          Recolor("left", "Trainable")
-        end
-        if line.colorRight == self.COLORS.RED then
-          Recolor("right", "Trainable")
+      if self.expansionLevel < self.expansions.cata then
+        if IsEquippableItem(tooltipData.id) and self:IsItemUsable(tooltipData.id) then
+          if line.colorLeft == self.COLORS.RED then
+            Recolor("left", "Trainable")
+          end
+          if line.colorRight == self.COLORS.RED then
+            Recolor("right", "Trainable")
+          end
         end
       end
     elseif line.type == "Damage" then
@@ -49,13 +51,13 @@ function Addon:RecolorLine(tooltip, line, tooltipData)
       -- Speed bar colored through rewording
     elseif line.stat and (line.type == "BaseStat" or line.type == "SecondaryStat") then
       Recolor("left", line.stat)
-    -- elseif line.type == "Socket" then
-    --   if line.colorLeft == self.COLORS.WHITE then
-    --     local socketType = line.socketType
-    --     if socketType then
-    --       Recolor("left", socketType)
-    --     end
-    --   end
+    elseif line.type == "Socket" then
+      if line.colorLeft == self.COLORS.WHITE then
+        local socketType = line.socketType
+        if socketType then
+          Recolor("left", socketType)
+        end
+      end
     elseif line.prefix and not line.stat then
       local stat = self.prefixStats[line.prefix]
       if stat then

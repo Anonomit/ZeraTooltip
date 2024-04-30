@@ -654,14 +654,20 @@ local function MakeExtraOptions(opts, categoryName)
   local function MakeItemLevelOptions()
     local stat = "ItemLevel"
     
+    local sampleItemLevel = random(1, self.MAX_ITEMLEVEL)
+    
     local samples = {}
-    local defaultText = format(self:GetOption("itemLevel", "useShortName") and GARRISON_FOLLOWER_ITEM_LEVEL or ITEM_LEVEL, random(1, self.MAX_ITEMLEVEL))
-    local _, formattedText = GetFormattedText(stat, self.COLORS.DEFAULT, defaultText, self:RewordItemLevel(defaultText))
-    defaultText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, defaultText)
+    local defaultText   = format(ITEM_LEVEL, sampleItemLevel)
+    local itemLevelText = format(self:GetOption("itemLevel", "useShortName") and GARRISON_FOLLOWER_ITEM_LEVEL or ITEM_LEVEL, sampleItemLevel)
+    local defaultText, _             = GetFormattedText(stat, self.COLORS.WHITE, defaultText,   defaultText)
+    local _,           formattedText = GetFormattedText(stat, self.COLORS.WHITE, itemLevelText, self:RewordItemLevel(itemLevelText))
+    if self.expansionLevel < self.expansions.cata then
+      defaultText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, self:StripColorCode(defaultText))
+    end
     tinsert(samples, {defaultText, formattedText})
     
     local opts = GUI:CreateGroup(opts, stat, samples[1][2], nil, nil, disabled)
-      
+    
     CreateSamples(opts, samples)
     
     CreateReorder(opts, stat, L["Show this line where it was originally positioned in Wrath of The Lich King."])
@@ -1061,20 +1067,22 @@ local function MakeExtraOptions(opts, categoryName)
   if self:GetOption("doReorder", "SoulboundTradeable") then MakeTradeableOption() end
   
   -- Trainable
-  do
-    local stat = "Trainable"
-    
-    local defaultText = self.L["Weapon"]
-    local _, name = GetFormattedText(stat, self.COLORS.RED, L["Trainable Equipment"], L["Trainable Equipment"])
-    local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.RED, defaultText, defaultText)
-    
-    local opts = GUI:CreateGroup(opts, stat, name, L["Equipment that a trainer can teach you to wear."])
-    
-    CreateTitle(opts, defaultText, formattedText, changed)
-    
-    CreateColor(opts, stat)
+  if self.expansionLevel < self.expansions.cata then
+    do
+      local stat = "Trainable"
+      
+      local defaultText = self.L["Weapon"]
+      local _, name = GetFormattedText(stat, self.COLORS.RED, L["Trainable Equipment"], L["Trainable Equipment"])
+      local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.RED, defaultText, defaultText)
+      
+      local opts = GUI:CreateGroup(opts, stat, name, L["Equipment that a trainer can teach you to wear."])
+      
+      CreateTitle(opts, defaultText, formattedText, changed)
+      
+      CreateColor(opts, stat)
+    end
+    GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
   end
-  GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
   
   -- Weapon Damage
   do
@@ -1519,15 +1527,16 @@ local function MakeExtraOptions(opts, categoryName)
   if self.expansionLevel >= self.expansions.tbc then
     local stat = "Socket"
     
-    local sockets = {
-      {"Socket_red",       GEM_TEXT_RED},
-      {"Socket_blue",      GEM_TEXT_BLUE},
-      {"Socket_yellow",    GEM_TEXT_YELLOW},
+    local sockets = Addon:Squish{
+      {"Socket_red",       EMPTY_SOCKET_RED},
+      {"Socket_blue",      EMPTY_SOCKET_BLUE},
+      {"Socket_yellow",    EMPTY_SOCKET_YELLOW},
       {"Socket_purple",    GEM_TEXT_PURPLE},
       {"Socket_green",     GEM_TEXT_GREEN},
       {"Socket_orange",    GEM_TEXT_ORANGE},
-      {"Socket_prismatic", GEM_TEXT_PRISMATIC},
-      {"Socket_meta",      GEM_TEXT_META},
+      {"Socket_prismatic", EMPTY_SOCKET_PRISMATIC},
+      {"Socket_meta",      EMPTY_SOCKET_META},
+      Addon:ShortCircuit(Addon.expansionLevel >= Addon.expansions.cata, {"Socket_cogwheel", EMPTY_SOCKET_COGWHEEL}, nil),
     }
     
     local samples = {}
