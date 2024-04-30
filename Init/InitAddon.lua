@@ -636,6 +636,7 @@ do
     FRENCH_PASS          = rgb(189, 237, 253),
     BABY_BLUE            = rgb(162, 207, 254),
     JORDY_BLUE           = rgb(138, 185, 241),
+    CANDID_BLUE          = rgb(100, 200, 228),
     DENIM_BLUE           = rgb(121, 186, 236),
     CRYSTAL_BLUE         = rgb( 92, 179, 255),
   }

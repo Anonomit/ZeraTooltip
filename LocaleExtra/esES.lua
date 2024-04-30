@@ -59,7 +59,8 @@ if Addon.isEra then
     {INPUT = "^%+(%d+) p%. de poder de ataque a distancia%.$"})
   
   Addon:AddExtraStatCapture("Attack Power In Forms",
-    {INPUT = "^%+(%d+) p%. de poder de ataque solo bajo formas felinas, de oso y de oso nefasto%.$"})
+    {INPUT = "^%+(%d+) p%. de poder de ataque solo bajo formas felinas, de oso y de oso nefasto%.$"},
+    {INPUT = "^%+(%d+) p%. de poder de ataque solo en las formas de oso, oso temible y felina%.$"})
   
   Addon:AddExtraStatCapture("Spell Power",
     {INPUT = "^Aumenta el daño y la curación de los hechizos mágicos y los efectos hasta en (%d+) p%.$"},
@@ -101,7 +102,9 @@ if Addon.isEra then
     {INPUT = "^Mejora un (%d+%%) tu probabilidad de golpear con todos los hechizos y ataques%.$"})
   
   Addon:AddExtraStatCapture("Critical Strike Rating",
-    {INPUT = "^Mejora un (%d+%%) tu probabilidad de conseguir un golpe crítico con todos los hechizos y ataques%.$"})
+    {INPUT = "^Mejora un (%d+%%) tu probabilidad de conseguir un golpe crítico con todos los hechizos y ataques%.$"},
+    {INPUT = "^Mejora tu probabilidad de conseguir un golpe crítico con todos los hechizos y ataques un (%d+%%)%.$"},
+    {INPUT = "^Aumenta las probabilidades de conseguir un golpe crítico con ataques cuerpo a cuerpo, ataques a distancia y hechizos un (%d+%%)%.$"})
   
   Addon:AddExtraStatCapture("Physical Hit Rating",
     {INPUT = "^Mejora tu probabilidad de alcanzar el objetivo en un (%d+%%)%.$"})

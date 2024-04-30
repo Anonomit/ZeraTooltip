@@ -127,10 +127,20 @@ if Addon.isEra then
     OUTPUT = function(n) if n then return n .. "%" end end,
   })
   
-  Addon:AddExtraStatCapture("Critical Strike Rating", {
-    INPUT = "^Augmente de (%d+).*%% les chances d’infliger un coup critique avec tous les sorts et attaques%.$",
-    OUTPUT = function(n) if n then return n .. "%" end end,
-  })
+  Addon:AddExtraStatCapture("Critical Strike Rating",
+    {
+      INPUT = "^Augmente de (%d+).*%% les chances d’infliger un coup critique avec tous les sorts et attaques%.$",
+      OUTPUT = function(n) if n then return n .. "%" end end,
+    },
+    {
+      INPUT = "^Augmente de (%d+).*%% vos chances d’infliger un coup critique avec tous les sorts et attaques%.$",
+      OUTPUT = function(n) if n then return n .. "%" end end,
+    },
+    {
+      INPUT = "^Augmente de (%d+).*%% vos chances d’infliger un coup critique avec les attaques en mêlée et à distance et les sorts%.$",
+      OUTPUT = function(n) if n then return n .. "%" end end,
+    }
+  )
   
   Addon:AddExtraStatCapture("Physical Hit Rating",
     {INPUT = "^Augmente vos chances de toucher de (%d+%%)%.$"})

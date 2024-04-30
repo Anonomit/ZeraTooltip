@@ -393,7 +393,7 @@ do
   
   self.statsInfo["AlreadyBound"]       = {color = self.COLORS.WHITE}
   self.statsInfo["CharacterBound"]     = {color = self.COLORS.WHITE}
-  self.statsInfo["AccountBound"]       = {color = self.COLORS.WHITE}
+  self.statsInfo["AccountBound"]       = {color = self.COLORS.CANDID_BLUE}
   self.statsInfo["Tradeable"]          = {color = self.COLORS.WHITE}
   
   self.statsInfo["Trainable"]          = {color = self.COLORS.ORANGE}
