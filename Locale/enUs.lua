@@ -113,6 +113,7 @@ L["Whether to show this line much higher up on the tooltip rather than its usual
 
 -- races
 L["Hide Pointless Lines"]              = true
+L["Hide lines that contain my race."]  = true
 L["Hide lines which list every race."] = true
 
 -- classes

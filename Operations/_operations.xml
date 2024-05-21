@@ -13,6 +13,7 @@
   <Script file="ModifyBinding.lua"/>
   <Script file="ModifyMadeBy.lua"/>
   <Script file="ModifyRequiredClasses.lua"/>
+  <Script file="ModifyRequiredRaces.lua"/>
   <Script file="ModifyTitle.lua"/>
   <Script file="ModifyTooltipData.lua"/>
   <Script file="RebuildTooltip.lua"/>

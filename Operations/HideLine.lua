@@ -39,7 +39,10 @@ function Addon:HideLine(line, allResist)
       end
     end,
     RequiredRaces = function()
-      if line.colorLeft == self.COLORS.WHITE and self:GetOption("hide", "uselessRaces") and self.uselessRaceStrings[line.textLeftText] then
+      if line.colorLeft ~= self.COLORS.WHITE then return end
+      if self:GetOption("hide", "RequiredRaces_allowedLines") then
+        return HideLeft(line)
+      elseif line.textLeftText == self.raceStrings.useless and self:GetOption("hide", "uselessRaces") then
         return HideLeft(line)
       end
     end,

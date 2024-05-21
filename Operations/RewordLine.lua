@@ -113,6 +113,9 @@ function Addon:RewordLine(tooltip, line, tooltipData)
         Durability = function()
           text = self:ModifyDurability(text)
         end,
+        RequiredRaces = function()
+          text = self:ModifyRequiredRaces(text)
+        end,
         RequiredClasses = function()
           text = self:ModifyRequiredClasses(text)
         end,

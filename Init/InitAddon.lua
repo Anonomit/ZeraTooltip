@@ -21,6 +21,7 @@ local strMatch  = string.match
 local tinsert   = table.insert
 local tblConcat = table.concat
 local tblRemove = table.remove
+local tblSort   = table.sort
 
 local tostring = tostring
 
@@ -352,6 +353,7 @@ do
   if Addon.expansionLevel >= Addon.expansions.cata then
     Addon:Concatenate(raceIDs, {9, 22})
   end
+  tblSort(raceIDs)
   
   Addon.raceNames = {}
   
@@ -366,13 +368,11 @@ do
     tinsert(allRaces, raceName)
     tinsert(factionRaces[factionTag], raceName)
   end
-  Addon.uselessRaceStrings = {}
-  local sample = format(ITEM_RACES_ALLOWED, tblConcat(allRaces, ", "))
-  Addon.uselessRaceStrings[1] = sample -- used as an example in config
+  Addon.raceStrings = {}
   
-  Addon.uselessRaceStrings[sample] = true
-  Addon.uselessRaceStrings[format(ITEM_RACES_ALLOWED, tblConcat(factionRaces.Alliance, ", "))] = true
-  Addon.uselessRaceStrings[format(ITEM_RACES_ALLOWED, tblConcat(factionRaces.Horde, ", "))] = true
+  Addon.raceStrings.useless  = format(ITEM_RACES_ALLOWED, tblConcat(allRaces, ", "))
+  Addon.raceStrings.alliance = format(ITEM_RACES_ALLOWED, tblConcat(factionRaces.Alliance, ", "))
+  Addon.raceStrings.horde    = format(ITEM_RACES_ALLOWED, tblConcat(factionRaces.Horde, ", "))
 end
 
 

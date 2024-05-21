@@ -732,7 +732,7 @@ local function MakeExtraOptions(opts, categoryName)
     tinsert(samples, {defaultText, formattedText})
     
     local opts = GUI:CreateGroup(opts, stat, samples[1][2], nil, nil, disabled)
-      
+    
     CreateSamples(opts, samples)
     
     CreateReorder(opts, stat, L["Whether to show this line much higher up on the tooltip rather than its usual location."])
@@ -763,37 +763,47 @@ local function MakeExtraOptions(opts, categoryName)
   local function MakeRequiredRacesOption()
     local stat = "RequiredRaces"
     
-    local defaultText = format(ITEM_RACES_ALLOWED, self.MY_RACE_LOCALNAME)
-    local formattedText = defaultText
-    local changed
-    if self:GetOption("hide", stat) then
-      formattedText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, formattedText)
-      changed = true
-    else
-      formattedText = self:MakeColorCode(self.COLORS.WHITE, formattedText)
-    end
-    
-    local sampleText = self.uselessRaceStrings[1]
-    if self:GetOption("hide", stat) or self:GetOption("hide", "uselessRaces") then
-      sampleText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, sampleText)
-    else
-      self:MakeColorCode(self.COLORS.WHITE, sampleText)
-    end
-    
-    local opts = GUI:CreateGroup(opts, stat, formattedText)
-    
-    do
-      local opts = CreateTitle(opts, defaultText, formattedText, changed)
-      GUI:CreateDivider(opts)
+    local samples = {}
+    for _, sample in ipairs{format(ITEM_RACES_ALLOWED, self.MY_RACE_LOCALNAME), self.raceStrings.alliance, self.raceStrings.horde} do
+      local otherFaction = sample == self.raceStrings.alliance and self.MY_FACTION == "Horde" or sample == self.raceStrings.horde and self.MY_FACTION == "Alliance"
+      local defaultColor = otherFaction and self.COLORS.RED or self.COLORS.WHITE
       
-      GUI:CreateDescription(opts, L["Test"], "small")
-      GUI:CreateDescription(opts, sampleText)
+      local defaultText = sample
+      local defaultText, formattedText = GetFormattedText(stat, defaultColor, defaultText, self:ModifyRequiredRaces(defaultText))
+      if self:GetOption("hide", stat) then
+        samples[#samples+1] = {defaultText, formattedText}
+      elseif not otherFaction and self:GetOption("hide", "RequiredRaces_allowedLines") then
+        samples[#samples+1] = {defaultText, self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, self:StripColorCode(formattedText))}
+      else
+        samples[#samples+1] = {defaultText, self:MakeColorCode(defaultColor, self:StripColorCode(formattedText))}
+      end
     end
+    
+    local sampleText = self.raceStrings.useless
+    if self:GetOption("hide", stat) or self:GetOption("hide", "uselessRaces") or not otherFaction and self:GetOption("hide", "RequiredRaces_allowedLines") then
+      samples[#samples+1] = {sampleText, self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, sampleText)}
+    else
+      samples[#samples+1] = {sampleText, self:MakeColorCode(self.COLORS.WHITE, sampleText)}
+    end
+    
+    local opts = GUI:CreateGroup(opts, stat, samples[1][1])
+    
+    CreateSamples(opts, samples)
     
     CreateReorder(opts, stat, L["Whether to show this line much higher up on the tooltip rather than its usual location."])
     
     do
+      local opts = GUI:CreateGroupBox(opts, self.L["Rename"])
+      GUI:CreateToggle(opts, {"doReword", stat}, self.L["Enable"], nil, not Addon:GetOption("allow", "reword")).width = 0.6
+      GUI:CreateReset(opts, {"reword", stat}, function() self:ResetReword(stat) end)
+    end
+    
+    do
       local opts = CreateHide(opts, stat)
+      GUI:CreateNewline(opts)
+      
+      GUI:CreateToggle(opts, {"hide", "RequiredRaces_allowedLines"}, self.L["Me"], L["Hide lines that contain my race."]).width = 0.6
+      GUI:CreateReset(opts, {"hide", "RequiredRaces_allowedLines"})
       GUI:CreateNewline(opts)
       
       GUI:CreateToggle(opts, {"hide", "uselessRaces"}, L["Hide Pointless Lines"], L["Hide lines which list every race."])

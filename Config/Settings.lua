@@ -76,6 +76,7 @@ function Addon:MakeDefaultOptions()
           Enchant                = false,
           EnchantOnUse           = false, -- no GUI option, should not be enabled. inherits from Use
           RequiredClasses_shaman = true,
+          RequiredRaces          = false,
           Socket_red             = false,
           Socket_blue            = false,
           Socket_yellow          = false,
