@@ -74,6 +74,7 @@ local contexts = Addon:MakeLookupTable(Addon:Squish{
   "PreTitle",
   "Title",
   "Quality",
+  "Heroic", -- Don't need to match this, but leave the category in
   "Binding",
   "Unique",
   "LastUnique",
