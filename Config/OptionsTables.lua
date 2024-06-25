@@ -779,7 +779,7 @@ local function MakeExtraOptions(opts, categoryName)
       end
     end
     
-    local sampleText = self.raceStrings.useless
+    local sampleText = self.raceStrings.all
     if self:GetOption("hide", stat) or self:GetOption("hide", "uselessRaces") or not otherFaction and self:GetOption("hide", "RequiredRaces_allowedLines") then
       samples[#samples+1] = {sampleText, self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, sampleText)}
     else

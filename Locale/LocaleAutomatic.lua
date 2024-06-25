@@ -111,6 +111,8 @@ L["All"] = ALL
 
 L["Heroic"] = ITEM_HEROIC
 
+
+
 L["ERROR"] = ERROR_CAPS
 
 
@@ -126,3 +128,7 @@ L["Clear Cache"]                  = BROWSER_CLEAR_CACHE
 -- L["Test"]        = TEST_BUILD
 
 
+L["Faction"] = FACTION
+L["Alliance"] = FACTION_ALLIANCE
+L["Horde"] = FACTION_HORDE
+L["Races: %s"] = ITEM_RACES_ALLOWED

@@ -368,9 +368,16 @@ do
     tinsert(allRaces, raceName)
     tinsert(factionRaces[factionTag], raceName)
   end
+  
+  Addon.raceNames = {}
+  
+  Addon.raceNames.all      = Addon:MakeLookupTable(allRaces, nil, true)
+  Addon.raceNames.Alliance = Addon:MakeLookupTable(factionRaces.Alliance, nil, true)
+  Addon.raceNames.Horde    = Addon:MakeLookupTable(factionRaces.Horde, nil, true)
+  
   Addon.raceStrings = {}
   
-  Addon.raceStrings.useless  = format(ITEM_RACES_ALLOWED, tblConcat(allRaces, ", "))
+  Addon.raceStrings.all      = format(ITEM_RACES_ALLOWED, tblConcat(allRaces, ", "))
   Addon.raceStrings.alliance = format(ITEM_RACES_ALLOWED, tblConcat(factionRaces.Alliance, ", "))
   Addon.raceStrings.horde    = format(ITEM_RACES_ALLOWED, tblConcat(factionRaces.Horde, ", "))
 end
@@ -573,7 +580,7 @@ do
   
   
   -- https://colornamer.robertcooper.me/
-  Addon.COLORS = {
+  Addon.colors = {
     DEFAULT   = rgb(255, 215,   6), -- used by default font
     SKY_BLUE  = rgb(  0, 204, 255), -- used by BIND_TRADE_TIME_REMAINING
     PURE_RED  = rgb(255,   0,   0), -- used by ITEM_ENCHANT_DISCLAIMER
