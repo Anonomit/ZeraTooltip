@@ -221,7 +221,7 @@ do
   -- tinsert(statsData, {1, {true, true, true, true}, "Spell Damage" , ITEM_MOD_SPELL_DAMAGE_DONE_SHORT, ITEM_MOD_SPELL_DAMAGE_DONE, self.COLORS.GREEN, self.COLORS.PERIWINKLE})
   for i, stat in ipairs{"Arcane Damage", "Fire Damage", "Nature Damage", "Frost Damage", "Shadow Damage", "Holy Damage"} do
     if Addon.SPELL_DAMAGE_STATS[stat] then
-      tinsert(statsData, {(i == 1 and 1 or 0), {true, true, true} , stat, format(SINGLE_DAMAGE_TEMPLATE, elementNames[i]), Addon.SPELL_DAMAGE_STATS[stat], self.COLORS.GREEN, elementColors[i]})
+      tinsert(statsData, {(i == 1 and 1 or 0), {true, true, true, true} , stat, format(SINGLE_DAMAGE_TEMPLATE, elementNames[i]), Addon.SPELL_DAMAGE_STATS[stat], self.COLORS.GREEN, elementColors[i]})
     end
   end
   
