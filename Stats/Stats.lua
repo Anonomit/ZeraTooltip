@@ -304,10 +304,11 @@ do
       local function ApplyMod(text, normalForm)
         local match1, match2 = strMatch(normalForm, normalFormCapture)
         local origStrNumber = match1 .. (match2 or "")
-        local strNumber, percent = strMatch(origStrNumber, "(%-?%d+)(%%?)")
+        local strNumber, percent = strMatch(origStrNumber, "(%-?[%d,]+)(%%?)")
         if DECIMAL_SEPERATOR ~= "." then
           strNumber = strGsub(strNumber, "%"..DECIMAL_SEPERATOR, ".")
         end
+        strNumber, commas = strGsub(strNumber, "(%d),(%d)", "%1%2")
         local number = self:Round(tonumber(strNumber) * self:GetOption("mod", stat), 1 / 10^self:GetOption("precision", stat))
         strNumber = tostring(number)
         if DECIMAL_SEPERATOR ~= "." then
@@ -315,6 +316,12 @@ do
         end
         if isBaseStat and number > 0 then
           strNumber = "+" .. strNumber
+        end
+        if commas > 0 then
+          local count = 1
+          while count > 0 do
+            strNumber, count = strGsub(strNumber, "^(-?%d+)(%d%d%d)", "%1,%2")
+          end
         end
         return strGsub(text, self:CoverSpecialCharacters(origStrNumber), self:CoverSpecialCharacters(strNumber .. percent))
       end
@@ -339,7 +346,7 @@ do
         if isBaseStat then
           strNumber = match2
         end
-        return tonumber((strGsub(strNumber, "%%", "")))
+        return tonumber((self:ChainGsub(strNumber, {"%%", ""}, {"(%d),(%d)", "%1%2"})))
       end
       
       function StatInfo:ConvertToNormalForm(text)
