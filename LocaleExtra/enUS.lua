@@ -289,59 +289,59 @@ Addon:AddExtraReplacement("Mana Regen",
 -- Food and Drink
 Addon:AddExtraReplacement("Food And Drink",
   {
-    INPUT  = "Restores? (%d+) health and (%d+) mana over (%d+) sec%.%s+Must remain seated while eating", -- Conjured Mana Biscuit
-    OUTPUT = function(healthAmount, manaAmount, duration) return ("+%d health (+%s/s) and +%d mana (+%s/s) over %ds while seated"):format(healthAmount, Addon:Round(healthAmount/duration, 1), manaAmount, Addon:Round(manaAmount/duration, 1), duration) end,
+    INPUT  = "Restores? ([%d,]+) health and ([%d,]+) mana over (%d+) sec%.%s+Must remain seated while eating", -- Conjured Mana Biscuit
+    OUTPUT = function(healthAmount, manaAmount, duration) return format("+%s health (+%s/s) and +%s mana (+%s/s) over %ds while seated", Addon:ToFormattedNumber(healthAmount), Addon:ToFormattedNumber(Addon:Round(Addon:ToNumber(healthAmount)/duration, 1)), Addon:ToFormattedNumber(manaAmount), Addon:ToFormattedNumber(Addon:Round(Addon:ToNumber(manaAmount)/duration, 1)), duration) end,
   }
 )
 
 Addon:AddExtraReplacement("Buff Food",
   {
-    INPUT  = "Restores? (%d+) health over (%d+) sec%.%s+Must remain seated while eating.%s+If you spend at least 10 seconds eating you will become well fed and (.+) for (%d+) min", -- Golden Fish Sticks
-    OUTPUT = function(amount, duration, buff, buffDuration) return ("+%d health (+%s/s) over %ds while seated. After 10s, %s for %dm"):format(amount, Addon:Round(amount/duration, 1), duration, buff, buffDuration) end,
+    INPUT  = "Restores? ([%d,]+) health over (%d+) sec%.%s+Must remain seated while eating.%s+If you spend at least 10 seconds eating you will become well fed and (.+) for (%d+) min", -- Golden Fish Sticks
+    OUTPUT = function(amount, duration, buff, buffDuration) return format("+%s health (+%s/s) over %ds while seated. After 10s, %s for %dm", Addon:ToFormattedNumber(amount), Addon:ToFormattedNumber(Addon:Round(Addon:ToNumber(amount)/duration, 1)), duration, buff, buffDuration) end,
   }
 )
 
 Addon:AddExtraReplacement("Food",
   {
-    INPUT  = "Restores? (%d+) health over (%d+) sec%.%s+Must remain seated while eating", -- Telaari Grapes
-    OUTPUT = function(amount, duration) return ("+%d health (+%s/s) over %ds while seated"):format(amount, Addon:Round(amount/duration, 1), duration) end,
+    INPUT  = "Restores? ([%d,]+) health over (%d+) sec%.%s+Must remain seated while eating", -- Telaari Grapes
+    OUTPUT = function(amount, duration) return format("+%s health (+%s/s) over %ds while seated", Addon:ToFormattedNumber(amount), Addon:ToFormattedNumber(Addon:Round(Addon:ToNumber(amount)/duration, 1)), duration) end,
   }
 )
 
 Addon:AddExtraReplacement("Buff Drink",
   {
-    INPUT  = "Restores? (%d+) mana over (%d+) sec%.%s+Must remain seated while drinking.%s+If you spend at least 10 seconds drinking you will become well fed and (.+) for (%d+) min", -- Hot Apple Cider
-    OUTPUT = function(amount, duration, buff, buffDuration) return ("+%d mana (+%s/s) over %ds while seated. After 10s, %s for %dm"):format(amount, Addon:Round(amount/duration, 1), duration, buff, buffDuration) end,
+    INPUT  = "Restores? ([%d,]+) mana over (%d+) sec%.%s+Must remain seated while drinking.%s+If you spend at least 10 seconds drinking you will become well fed and (.+) for (%d+) min", -- Hot Apple Cider
+    OUTPUT = function(amount, duration, buff, buffDuration) return format("+%s mana (+%s/s) over %ds while seated. After 10s, %s for %dm", Addon:ToFormattedNumber(amount), Addon:ToFormattedNumber(Addon:Round(Addon:ToNumber(amount)/duration, 1)), duration, buff, buffDuration) end,
   },
   {
-    INPUT  = "Restores? (%d+) mana over (%d+) sec%.%s+Must remain seated while drinking.%s+If you spend at least 10 seconds drinking you will become enlightened and (.+) for (%d+) min", -- Skullfish Soup
-    OUTPUT = function(amount, duration, buff, buffDuration) return ("+%d mana (+%s/s) over %ds while seated. After 10s, %s for %dm"):format(amount, Addon:Round(amount/duration, 1), duration, buff, buffDuration) end,
+    INPUT  = "Restores? ([%d,]+) mana over (%d+) sec%.%s+Must remain seated while drinking.%s+If you spend at least 10 seconds drinking you will become enlightened and (.+) for (%d+) min", -- Skullfish Soup
+    OUTPUT = function(amount, duration, buff, buffDuration) return format("+%s mana (+%s/s) over %ds while seated. After 10s, %s for %dm", Addon:ToFormattedNumber(amount), Addon:ToFormattedNumber(Addon:Round(Addon:ToNumber(amount)/duration, 1)), duration, buff, buffDuration) end,
   }
   -- {
-  --   INPUT  = "Restores? (%d+) mana over (%d+) sec%.%s+Must remain seated while drinking.%s+ Also (.+) for (%d+) min",
-  --   OUTPUT = function(amount, duration, buff, buffDuration) return ("+%d mana (+%s/s) over %ds while seated. Also %s for %dm"):format(amount, Addon:Round(amount/duration, 1), duration, buff, buffDuration) end,
+  --   INPUT  = "Restores? ([%d,]+) mana over (%d+) sec%.%s+Must remain seated while drinking.%s+ Also (.+) for (%d+) min",
+  --   OUTPUT = function(amount, duration, buff, buffDuration) return format("+%s mana (+%s/s) over %ds while seated. Also %s for %dm", Addon:ToFormattedNumber(amount), Addon:ToFormattedNumber(Addon:Round(Addon:ToNumber(amount)/duration, 1)), duration, buff, buffDuration) end,
   -- }
 )
 
 Addon:AddExtraReplacement("Drink",
   {
-    INPUT  = "Restores (%d+) mana over (%d+) sec%.%s+Must remain seated while drinking", -- Purified Draenic Water
-    OUTPUT = function(amount, duration) return ("+%d mana (+%s/s) over %ds while seated"):format(amount, Addon:Round(amount/duration, 1), duration) end,
+    INPUT  = "Restores ([%d,]+) mana over (%d+) sec%.%s+Must remain seated while drinking", -- Purified Draenic Water
+    OUTPUT = function(amount, duration) return format("+%s mana (+%s/s) over %ds while seated", Addon:ToFormattedNumber(amount), Addon:ToFormattedNumber(Addon:Round(Addon:ToNumber(amount)/duration, 1)), duration) end,
   }
 )
 
 Addon:AddExtraReplacement("Bandage",
   {
-    INPUT  = "Heals (%d+) damage over (%d+) sec",
-    OUTPUT = function(amount, duration) return ("+%d health (+%s/s) over %ds"):format(amount, Addon:Round(amount/duration, 1), duration) end,
+    INPUT  = "Heals ([%d,]+) damage over (%d+) sec",
+    OUTPUT = function(amount, duration) return format("+%s health (+%s/s) over %ds", Addon:ToFormattedNumber(amount), Addon:ToFormattedNumber(Addon:Round(Addon:ToNumber(amount)/duration, 1)), duration) end,
   }
 )
 
 
 Addon:AddExtraReplacement("Average Range",
   {
-    INPUT  = "(%d+) to (%d+)",
-    OUTPUT = function(amount1, amount2) return ("%s (%d-%d)"):format(Addon:Round((amount1+amount2)/2, 1), amount1, amount2) end, -- Health/mana Potions, Demonic Rune
+    INPUT  = "([%d,]+) to ([%d,]+)",
+    OUTPUT = function(amount1, amount2) return format("%s (%s-%s)", Addon:ToFormattedNumber(Addon:Round((Addon:ToNumber(amount1)+Addon:ToNumber(amount2))/2, 1)), Addon:ToFormattedNumber(amount1), Addon:ToFormattedNumber(amount2)) end, -- Health/mana Potions, Demonic Rune
   }
 )
 
@@ -349,11 +349,11 @@ Addon:AddExtraReplacement("Average Range",
 -- Temp Stat Buff
 Addon:AddExtraReplacement("Temp Stat Buff",
   {
-    INPUT  = "Increases ?y?o?u?r? ([^%d]-) by (%d+%%?) (for %d+ sec%.?)", -- Shadowmoon Insignia, Steely Naaru Sliver
+    INPUT  = "Increases ?y?o?u?r? ([^%d]-) by ([%d,]+%%?) (for %d+ sec%.?)", -- Shadowmoon Insignia, Steely Naaru Sliver
     OUTPUT = "+%2 %1 %3",
   },
   {
-    INPUT  = "Increases ?y?o?u?r? ([^%d]-) by up to (%d+%%?) (for %d+ sec%.?)", -- Dark Iron Smoking Pipe
+    INPUT  = "Increases ?y?o?u?r? ([^%d]-) by up to ([%d,]+%%?) (for %d+ sec%.?)", -- Dark Iron Smoking Pipe
     OUTPUT = "+%2 %1 %3",
   }
 )

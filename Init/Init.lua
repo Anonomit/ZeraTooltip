@@ -19,6 +19,7 @@ Addon.SemVer = LibStub"SemVer"
 
 local strMatch     = string.match
 local strSub       = string.sub
+local strGsub      = string.gsub
 
 local tblConcat    = table.concat
 local tblSort      = table.sort
@@ -1272,6 +1273,41 @@ end
 --  ╚═╝  ╚═══╝ ╚═════╝ ╚═╝     ╚═╝╚═════╝ ╚══════╝╚═╝  ╚═╝╚══════╝
 
 do
+  function Addon:ToNumber(text)
+    if type(text) == "number" then
+      return text
+    end
+    if type(text) ~= "string" then return nil end
+    
+    -- strip comma separators, convert decimal separator into period
+    if DECIMAL_SEPERATOR == "." then
+      text = strGsub(text, "(%d),(%d)", "%1%2")
+    else
+      text = self:ChainGsub(text, {"(%d)%.(%d)", "%1%2"}, {"%"..DECIMAL_SEPERATOR, "."})
+    end
+    
+    return tonumber(text)
+  end
+  
+  function Addon:ToFormattedNumber(text)
+    text = tostring(self:ToNumber(text))
+    
+    if DECIMAL_SEPERATOR == "." then
+      local count = 1
+      while count > 0 do
+        text, count = strGsub(text, "^(-?%d+)(%d%d%d)", "%1,%2")
+      end
+    else
+      text = strGsub(text, "(%d)%.(%d)", "%1,%2")
+      local count = 1
+      while count > 0 do
+        text, count = strGsub(text, "^(-?%d+)(%d%d%d)", "%1.%2")
+      end
+    end
+    
+    return tonumber(text) or text
+  end
+  
   function Addon:Round(num, nearest)
     nearest = nearest or 1
     local lower = mathFloor(num / nearest) * nearest
