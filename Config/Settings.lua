@@ -42,6 +42,7 @@ function Addon:MakeDefaultOptions()
         doReword = {
           ["*"]              = true,
           ItemLevel          = false,
+          TransmogHeader     = false,
           Armor              = false,
           BonusArmor         = false,
           Block              = false,
@@ -147,6 +148,7 @@ function Addon:MakeDefaultOptions()
         doIcon = {
           ["*"]           = false,
           Title           = true,
+          Transmog        = true,
           Enchant         = true,
           EnchantOnUse    = false,
           WeaponEnchant   = true,
@@ -157,6 +159,8 @@ function Addon:MakeDefaultOptions()
           ["*"]          = "Interface\\AddOns\\" .. ADDON_NAME .. "\\Assets\\Textures\\Samwise",
           Title          = "Interface\\ICONS\\INV_Misc_Wrench_01", -- should only show up when an item doesn't exist
           ItemLevel      = "Interface\\Transmogrify\\transmog-tooltip-arrow",
+          TransmogHeader = "Interface\\MINIMAP\\TRACKING\\Transmogrifier",
+          Transmog       = "Interface\\MINIMAP\\TRACKING\\Transmogrifier",
           AlreadyBound   = "Interface\\PetBattles\\PetBattle-LockIcon",
           CharacterBound = "Interface\\PetBattles\\PetBattle-LockIcon",
           AccountBound   = "Interface\\PetBattles\\PetBattle-LockIcon",

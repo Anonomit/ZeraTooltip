@@ -65,6 +65,12 @@ function Addon:RewordLine(tooltip, line, tooltipData)
         Title = function()
           text = self:RewordTitle(text, tooltipData.icon)
         end,
+        TransmogHeader = function()
+          text = self:RewordTransmogHeader(text)
+        end,
+        Transmog = function()
+          text = self:RewordTransmog(text)
+        end,
         Quality = function()
           text = self:RewordQuality(text, tooltipData)
         end,

@@ -473,12 +473,12 @@ end
 
 
 
---  ███████╗ █████╗ ███╗   ███╗██████╗ ██╗     ███████╗    ████████╗██╗████████╗██╗     ███████╗
---  ██╔════╝██╔══██╗████╗ ████║██╔══██╗██║     ██╔════╝    ╚══██╔══╝██║╚══██╔══╝██║     ██╔════╝
---  ███████╗███████║██╔████╔██║██████╔╝██║     █████╗         ██║   ██║   ██║   ██║     █████╗  
---  ╚════██║██╔══██║██║╚██╔╝██║██╔═══╝ ██║     ██╔══╝         ██║   ██║   ██║   ██║     ██╔══╝  
---  ███████║██║  ██║██║ ╚═╝ ██║██║     ███████╗███████╗       ██║   ██║   ██║   ███████╗███████╗
---  ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝     ╚══════╝╚══════╝       ╚═╝   ╚═╝   ╚═╝   ╚══════╝╚══════╝
+--  ███████╗ █████╗ ███╗   ███╗██████╗ ██╗     ███████╗███████╗
+--  ██╔════╝██╔══██╗████╗ ████║██╔══██╗██║     ██╔════╝██╔════╝
+--  ███████╗███████║██╔████╔██║██████╔╝██║     █████╗  ███████╗
+--  ╚════██║██╔══██║██║╚██╔╝██║██╔═══╝ ██║     ██╔══╝  ╚════██║
+--  ███████║██║  ██║██║ ╚═╝ ██║██║     ███████╗███████╗███████║
+--  ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝     ╚══════╝╚══════╝╚══════╝
 
 do
   Addon.sampleTitleID = 6948
@@ -493,6 +493,22 @@ do
         end
       end
     end)
+  end
+  
+  if Addon.expansionLevel >= Addon.expansions.cata then
+    local sampleTransmogID = 1728
+    Addon.sampleTransmogName = GetItemInfo(sampleTransmogID)
+    if not Addon.sampleTransmogName then
+      local eventID
+      eventID = Addon:RegisterEventCallback("GET_ITEM_INFO_RECEIVED", function(self, event, id)
+        if id == sampleTransmogID then
+          self.sampleTransmogName = GetItemInfo(sampleTransmogID)
+          if self.sampleTransmogName then
+            self:UnregisterEventCallback("GET_ITEM_INFO_RECEIVED", eventID)
+          end
+        end
+      end)
+    end
   end
 end
 
@@ -630,6 +646,9 @@ do
     -- "Interface\\COMMON\\Indicator-Yellow",
     -- "Interface\\COMMON\\Indicator-Red",
     "Interface\\COMMON\\RingBorder",
+    
+    "Interface\\MINIMAP\\TRACKING\\Transmogrifier",
+    "Interface\\Cursor\\Transmogrify",
     
     "Interface\\ContainerFrame\\KeyRing-Bag-Icon",
     "Interface\\ICONS\\INV_Misc_Key_01",

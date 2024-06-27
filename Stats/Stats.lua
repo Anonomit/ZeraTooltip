@@ -379,6 +379,9 @@ do
   self.statsInfo["Heroic"]             = {color = self.colors.GREEN}
   self.statsInfo["ItemLevel"]          = {color = self.colors.DEFAULT}
   
+  self.statsInfo["TransmogHeader"]     = {color = self.colors.TRANSMOG}
+  self.statsInfo["Transmog"]           = {color = self.colors.TRANSMOG}
+  
   self.statsInfo["AlreadyBound"]       = {color = self.colors.WHITE}
   self.statsInfo["CharacterBound"]     = {color = self.colors.WHITE}
   self.statsInfo["AccountBound"]       = {color = self.colors.CANDID_BLUE}

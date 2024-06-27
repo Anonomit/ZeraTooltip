@@ -66,6 +66,9 @@ L["Hide stack size on unstackable items."]                                     =
 L["Hide Equipment"]                                                            = true
 L["Hide stack size on unstackable items that can be equipped on a character."] = true
 
+-- transmog
+L["Teebu's Blazing Longsword"] = true
+
 -- trainable
 L["Trainable Equipment"]                             = true
 L["Equipment that a trainer can teach you to wear."] = true

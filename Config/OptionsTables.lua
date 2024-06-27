@@ -780,6 +780,49 @@ local function MakeExtraOptions(opts, categoryName)
   
   GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
   
+  -- TransmogHeader
+  if self.expansionLevel >= self.expansions.cata then
+    local stat = "TransmogHeader"
+    
+    local samples = {}
+    local defaultText = self.L["Transmogrified to:"]
+    local defaultText, formattedText, changed = GetFormattedText(stat, self.colors.TRANSMOG, defaultText, self:RewordTransmogHeader(defaultText))
+    tinsert(samples, {defaultText, formattedText})
+    
+    local opts = GUI:CreateGroup(opts, stat, samples[1][2], nil, nil, disabled)
+      
+    CreateSamples(opts, samples)
+    
+    CreateColor(opts, stat)
+    
+    CreateReword(opts, stat)
+    
+    CreateIcon(opts, stat)
+    
+    CreateHide(opts, stat)
+  end
+  
+  -- Transmog
+  if self.expansionLevel >= self.expansions.cata then
+    local stat = "Transmog"
+    
+    local samples = {}
+    local defaultText = self.sampleTransmogName or L["Teebu's Blazing Longsword"]
+    local defaultText, formattedText, changed = GetFormattedText(stat, self.colors.TRANSMOG, defaultText, self:RewordTransmog(defaultText))
+    tinsert(samples, {defaultText, formattedText})
+    
+    local opts = GUI:CreateGroup(opts, stat, samples[1][2], nil, nil, disabled)
+      
+    CreateSamples(opts, samples)
+    
+    CreateColor(opts, stat)
+    
+    CreateIcon(opts, stat)
+    
+    CreateHide(opts, stat)
+  end
+  if self.expansionLevel >= self.expansions.cata then GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true) end
+  
   -- Races
   local function MakeRequiredRacesOption()
     local stat = "RequiredRaces"
