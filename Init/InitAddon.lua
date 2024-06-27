@@ -514,6 +514,7 @@ do
   -- https://colornamer.robertcooper.me/
   Addon.colors = {
     DEFAULT   = rgb(255, 215,   6), -- used by default font
+    TRANSMOG  = rgb(255, 128, 255), -- used by TRANSMOGRIFIED
     SKY_BLUE  = rgb(  0, 204, 255), -- used by BIND_TRADE_TIME_REMAINING
     PURE_RED  = rgb(255,   0,   0), -- used by ITEM_ENCHANT_DISCLAIMER
     FLAVOR    = rgb(255, 209,   0), -- used by item description text

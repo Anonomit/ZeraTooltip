@@ -133,7 +133,7 @@ function Addon:ReadTooltip(tooltip, name, link, maxLines)
   tooltipData.realNumLines = tooltip.tooltip:NumLines()
   
   -- tooltipData.name = name
-  -- tooltipData.link = link
+  tooltipData.link = link
   tooltipData.id = tonumber(strMatch(link, "item:(%d+):"))
   if strFind(link, "item:%d+:%d+") then
     tooltipData.hasEnchant = true

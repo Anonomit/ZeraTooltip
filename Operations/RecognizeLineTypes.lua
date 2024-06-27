@@ -25,6 +25,8 @@ local L_ITEM_MOD_MASTERY_RATING = Addon.L["%c%d Mastery"]
 local L_CURRENTLY_EQUIPPED = Addon.L["Currently Equipped"]
 local L_DESTROY_GEM        = Addon.L["Gem to be destroyed"]
 
+local L_TRANSMOGRIFIED = Addon.L["Transmogrified to:"]
+
 local L_ITEM_HEROIC = Addon.L["Heroic"]
 
 local L_ITEM_CREATED_BY = Addon.L["<Made by %s>"]
@@ -182,6 +184,8 @@ local contexts = Addon:MakeLookupTable(Addon:Squish{
   "Title",
   "Quality",
   "Heroic", -- Don't need to match this, but leave the category in
+  Addon:ShortCircuit(Addon.expansionLevel >= Addon.expansions.cata, "TransmogHeader", nil),
+  Addon:ShortCircuit(Addon.expansionLevel >= Addon.expansions.cata, "Transmog",       nil),
   "Binding",
   "Unique",
   "LastUnique",
@@ -371,6 +375,17 @@ contextActions = Addon:Map({
         return SetContext(i, tooltipData, line)
       else
         return SetContext(i+1, tooltipData, line)
+      end
+    end
+  end,
+  Transmog = function(i, tooltipData, line)
+    if line.colorLeft == Addon.colors.TRANSMOG then
+      if tooltipData.seekingTransmog then
+        tooltipData.seekingTransmog = nil
+        return SetContext(i, tooltipData, line)
+      elseif MatchesAny(line.textLeftTextStripped, L_TRANSMOGRIFIED) then
+        tooltipData.seekingTransmog = true
+        return SetContext(i-1, tooltipData, line)
       end
     end
   end,
@@ -783,6 +798,11 @@ function Addon:RecognizeLineTypes(tooltipData)
         end
       end
     end
+  end
+  
+  -- should have found the second transmog line
+  if tooltipData.seekingTransmog then
+    self:Warnf("Didn't find second transmog line on %s", tooltipData.link)
   end
   
   tooltipData.locs, tooltipData.embedLocs = tooltipData.embedLocs or tooltipData.locs, tooltipData.locs

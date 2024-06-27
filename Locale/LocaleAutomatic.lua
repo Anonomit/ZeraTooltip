@@ -229,6 +229,8 @@ L["DPS"]                                                                        
 
 L["Locked"] = LOCKED
 
+L["Transmogrified to:"] = TRANSMOGRIFIED_HEADER
+
 L["Soulbound"]                 = ITEM_SOULBOUND
 L["Binds when equipped"]       = ITEM_BIND_ON_EQUIP
 L["Binds when used"]           = ITEM_BIND_ON_USE
