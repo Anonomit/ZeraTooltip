@@ -33,10 +33,10 @@ function Addon:RecolorLine(tooltip, line, tooltipData)
     elseif line.type == "RedType" then
       if self.expansionLevel < self.expansions.cata then
         if IsEquippableItem(tooltipData.id) and self:IsItemUsable(tooltipData.id) then
-          if line.colorLeft == self.COLORS.RED then
+          if line.colorLeft == self.colors.RED then
             Recolor("left", "Trainable")
           end
-          if line.colorRight == self.COLORS.RED then
+          if line.colorRight == self.colors.RED then
             Recolor("right", "Trainable")
           end
         end
@@ -52,7 +52,7 @@ function Addon:RecolorLine(tooltip, line, tooltipData)
     elseif line.stat and (line.type == "BaseStat" or line.type == "SecondaryStat") then
       Recolor("left", line.stat)
     elseif line.type == "Socket" then
-      if line.colorLeft == self.COLORS.WHITE then
+      if line.colorLeft == self.colors.WHITE then
         local socketType = line.socketType
         if socketType then
           Recolor("left", socketType)
@@ -71,7 +71,7 @@ function Addon:RecolorLine(tooltip, line, tooltipData)
       Recolor("left", line.type)
     end
   elseif line.type == "DamagePerSecond" and line.rewordRight then
-    line.recolorRight = self.COLORS.WHITE -- the speedbar default tooltip color is yellow but let's pretend it's white
+    line.recolorRight = self.colors.WHITE -- the speedbar default tooltip color is yellow but let's pretend it's white
   end
   
   if sides.left ~= line.realColor then

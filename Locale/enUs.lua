@@ -25,6 +25,8 @@ L["If a tooltip appears to be formatted incorrectly, hide it for %d seconds to c
 L["Multiply"]   = true
 L["Multiplier"] = true
 
+L["Number of decimal places."] = true
+L["Use thousands separator."] = true
 
 L["Group Secondary Stats with Base Stats"] = true
 L["Add Space Above Bonus Effects"]         = true

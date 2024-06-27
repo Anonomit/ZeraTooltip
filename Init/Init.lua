@@ -152,7 +152,7 @@ do
   end
   
   local function DebugIfOutput(self, methodName, key, ...)
-    if self.GetGlobalOption and self:GetGlobalOption("debugOutput", key) then
+    if self.GetGlobalOption and self:GetGlobalOptionSafe("debugOutput", key) then
       return self[methodName](self, ...)
     end
   end
@@ -240,17 +240,33 @@ end
 
 do
   Addon.expansions = {
-    retail = 10,
-    cata   = 4,
-    wrath  = 3,
-    tbc    = 2,
-    era    = 1,
+    retail  = 11,
+    tww     = 11,
+    df      = 10,
+    sl      = 9,
+    bfa     = 8,
+    legion  = 7,
+    wod     = 6,
+    mop     = 5,
+    cata    = 4,
+    wrath   = 3,
+    tbc     = 2,
+    era     = 1,
+    vanilla = 1,
   }
   
   Addon.expansionLevel = tonumber(GetBuildInfo():match"^(%d+)%.")
   
   Addon.isRetail  = Addon.expansionLevel >= Addon.expansions.retail
   Addon.isClassic = not Addon.isRetail
+  
+  Addon.isTWW     = Addon.expansionLevel == Addon.expansions.tww
+  Addon.isDF      = Addon.expansionLevel == Addon.expansions.df
+  Addon.isSL      = Addon.expansionLevel == Addon.expansions.sl
+  Addon.isBfA     = Addon.expansionLevel == Addon.expansions.bfa
+  Addon.isLegion  = Addon.expansionLevel == Addon.expansions.legion
+  Addon.isWoD     = Addon.expansionLevel == Addon.expansions.wod
+  Addon.isMoP     = Addon.expansionLevel == Addon.expansions.mop
   Addon.isCata    = Addon.expansionLevel == Addon.expansions.cata
   Addon.isWrath   = Addon.expansionLevel == Addon.expansions.wrath
   Addon.isTBC     = Addon.expansionLevel == Addon.expansions.tbc
@@ -258,7 +274,7 @@ do
   
   local season = ((C_Seasons or {}).GetActiveSeason or nop)() or 0
   Addon.isSoM = season == Enum.SeasonID.SeasonOfMastery
-  Addon.isSoD = season == (Enum.SeasonID.SeasonOfDiscovery or Enum.SeasonID.Placeholder)
+  Addon.isSoD = season == Enum.SeasonID.SeasonOfDiscovery
 end
 
 
@@ -961,7 +977,18 @@ do
     local option = self:CreateEntry(opts, keys, name, desc, "select", disabled)
     option.values  = values
     option.sorting = sorting
-    option.style   = "dropdown"
+    return option
+  end
+  
+  function GUI:CreateDropdown(...)
+    local option = self:CreateSelect(...)
+    option.style = "dropdown"
+    return option
+  end
+  
+  function GUI:CreateRadio(...)
+    local option = self:CreateSelect(...)
+    option.style = "radio"
     return option
   end
   
@@ -1289,23 +1316,27 @@ do
     return tonumber(text)
   end
   
-  function Addon:ToFormattedNumber(text)
+  function Addon:ToFormattedNumber(text, noThousandsSeparator)
     text = tostring(self:ToNumber(text))
     
     if DECIMAL_SEPERATOR == "." then
-      local count = 1
-      while count > 0 do
-        text, count = strGsub(text, "^(-?%d+)(%d%d%d)", "%1,%2")
+      if not noThousandsSeparator then
+        local count = 1
+        while count > 0 do
+          text, count = strGsub(text, "^(-?%d+)(%d%d%d)", "%1,%2")
+        end
       end
     else
       text = strGsub(text, "(%d)%.(%d)", "%1,%2")
-      local count = 1
-      while count > 0 do
-        text, count = strGsub(text, "^(-?%d+)(%d%d%d)", "%1.%2")
+      if not noThousandsSeparator then
+        local count = 1
+        while count > 0 do
+          text, count = strGsub(text, "^(-?%d+)(%d%d%d)", "%1.%2")
+        end
       end
     end
     
-    return tonumber(text) or text
+    return text
   end
   
   function Addon:Round(num, nearest)

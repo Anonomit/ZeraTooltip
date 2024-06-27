@@ -211,68 +211,6 @@ end
 
 
 
---  ███╗   ███╗██╗███████╗ ██████╗
---  ████╗ ████║██║██╔════╝██╔════╝
---  ██╔████╔██║██║███████╗██║     
---  ██║╚██╔╝██║██║╚════██║██║     
---  ██║ ╚═╝ ██║██║███████║╚██████╗
---  ╚═╝     ╚═╝╚═╝╚══════╝ ╚═════╝
-
-do
-  Addon.ITEM_QUALITY_DESCRIPTIONS = Addon:MakeLookupTable((function()
-    local t = {}
-    local function iter(globalstring)
-      local i = 0
-      return function()
-        i = i + 1
-        return _G[format(globalstring, i)]
-      end
-    end
-    for key in iter"ITEM_QUALITY%d_DESC" do
-      tinsert(t, key)
-    end
-    if Addon.expansionLevel >= Addon.expansions.wrath then
-      for key in iter"ITEM_HEROIC_QUALITY%d_DESC" do
-        tinsert(t, key)
-      end
-    end
-    return t
-  end)(), nil, true)
-  
-  Addon.prefixStats = {
-    [ITEM_SPELL_TRIGGER_ONEQUIP] = "Equip",
-    [ITEM_SPELL_TRIGGER_ONPROC]  = "ChanceOnHit",
-    [ITEM_SPELL_TRIGGER_ONUSE]   = "Use",
-  }
-  
-  
-  Addon.statList = {}
-  for i = 1, Addon.expansionLevel do
-    Addon.statList[i] = {}
-  end
-  Addon.statsInfo        = setmetatable({}, {__index = function() return {} end})
-  Addon.statOrder        = {}
-  Addon.statDefaultList  = {}
-  Addon.statDefaultOrder = {}
-  Addon.statPrefOrder    = {}
-  
-  
-  
-  -- Strip text recoloring
-  Addon.ITEM_CREATED_BY = ITEM_CREATED_BY
-  Addon.ITEM_WRAPPED_BY = ITEM_WRAPPED_BY
-  do
-    local hex, text = strMatch(Addon.ITEM_CREATED_BY, "^|c%x%x(%x%x%x%x%x%x)(.*)|r$")
-    Addon.ITEM_CREATED_BY = text or Addon.ITEM_CREATED_BY
-  end
-  do
-    local hex, text = strMatch(Addon.ITEM_WRAPPED_BY, "^|c%x%x(%x%x%x%x%x%x)(.*)|r$")
-    Addon.ITEM_WRAPPED_BY = text or Addon.ITEM_WRAPPED_BY
-  end
-end
-
-
-
 --  ███╗   ██╗ █████╗ ███╗   ███╗███████╗███████╗
 --  ████╗  ██║██╔══██╗████╗ ████║██╔════╝██╔════╝
 --  ██╔██╗ ██║███████║██╔████╔██║█████╗  ███████╗
@@ -281,7 +219,7 @@ end
 --  ╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝╚══════╝
 
 do
-  Addon.MY_NAME = UnitName"player"
+  Addon.MY_NAME = UnitNameUnmodified"player"
   
   Addon.SAMPLE_NAMES = {
     -- "Activision",
@@ -374,12 +312,6 @@ do
   Addon.raceNames.all      = Addon:MakeLookupTable(allRaces, nil, true)
   Addon.raceNames.Alliance = Addon:MakeLookupTable(factionRaces.Alliance, nil, true)
   Addon.raceNames.Horde    = Addon:MakeLookupTable(factionRaces.Horde, nil, true)
-  
-  Addon.raceStrings = {}
-  
-  Addon.raceStrings.all      = format(ITEM_RACES_ALLOWED, tblConcat(allRaces, ", "))
-  Addon.raceStrings.alliance = format(ITEM_RACES_ALLOWED, tblConcat(factionRaces.Alliance, ", "))
-  Addon.raceStrings.horde    = format(ITEM_RACES_ALLOWED, tblConcat(factionRaces.Horde, ", "))
 end
 
 
@@ -549,14 +481,14 @@ end
 --  ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝     ╚══════╝╚══════╝       ╚═╝   ╚═╝   ╚═╝   ╚══════╝╚══════╝
 
 do
-  Addon.SAMPLE_TITLE_ID = 6948
-  Addon.SAMPLE_TITLE_NAME = GetItemInfo(Addon.SAMPLE_TITLE_ID)
-  if not Addon.SAMPLE_TITLE_NAME then
+  Addon.sampleTitleID = 6948
+  Addon.sampleTitleName = GetItemInfo(Addon.sampleTitleID)
+  if not Addon.sampleTitleName then
     local eventID
     eventID = Addon:RegisterEventCallback("GET_ITEM_INFO_RECEIVED", function(self, event, id)
-      if id == self.SAMPLE_TITLE_ID then
-        self.SAMPLE_TITLE_NAME = GetItemInfo(self.SAMPLE_TITLE_ID)
-        if self.SAMPLE_TITLE_NAME then
+      if id == self.sampleTitleID then
+        self.sampleTitleName = GetItemInfo(self.sampleTitleID)
+        if self.sampleTitleName then
           self:UnregisterEventCallback("GET_ITEM_INFO_RECEIVED", eventID)
         end
       end
@@ -948,6 +880,7 @@ do
     [458977] = "Socket_prismatic",
     [136257] = "Socket_meta",
     [407324] = "Socket_cogwheel",
+    [407325] = "Socket_hydraulic"
   }
   for color, ids in pairs(gemIDs) do
     for _, id in ipairs(ids) do

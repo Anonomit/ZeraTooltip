@@ -26,105 +26,24 @@ local tostring = tostring
 
 
 
-
-
-
-
---  ██╗      ██████╗  ██████╗ █████╗ ██╗     ███████╗
---  ██║     ██╔═══██╗██╔════╝██╔══██╗██║     ██╔════╝
---  ██║     ██║   ██║██║     ███████║██║     █████╗  
---  ██║     ██║   ██║██║     ██╔══██║██║     ██╔══╝  
---  ███████╗╚██████╔╝╚██████╗██║  ██║███████╗███████╗
---  ╚══════╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝╚══════╝╚══════╝
+--  ██╗  ██╗███████╗██╗     ██████╗ ███████╗██████╗ ███████╗
+--  ██║  ██║██╔════╝██║     ██╔══██╗██╔════╝██╔══██╗██╔════╝
+--  ███████║█████╗  ██║     ██████╔╝█████╗  ██████╔╝███████╗
+--  ██╔══██║██╔══╝  ██║     ██╔═══╝ ██╔══╝  ██╔══██╗╚════██║
+--  ██║  ██║███████╗███████╗██║     ███████╗██║  ██║███████║
+--  ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝╚══════╝
 
 do
-  Addon.ITEM_RESIST_ALL = ITEM_RESIST_ALL
-  
-  Addon.DAMAGE_SCHOOL7 = DAMAGE_SCHOOL7
-  Addon.DAMAGE_SCHOOL3 = DAMAGE_SCHOOL3
-  Addon.DAMAGE_SCHOOL4 = DAMAGE_SCHOOL4
-  Addon.DAMAGE_SCHOOL5 = DAMAGE_SCHOOL5
-  Addon.DAMAGE_SCHOOL6 = DAMAGE_SCHOOL6
-  Addon.DAMAGE_SCHOOL2 = DAMAGE_SCHOOL2
-  
-  Addon.ITEM_MOD_STAMINA   = ITEM_MOD_STAMINA
-  Addon.ITEM_MOD_STRENGTH  = ITEM_MOD_STRENGTH
-  Addon.ITEM_MOD_AGILITY   = ITEM_MOD_AGILITY
-  Addon.ITEM_MOD_INTELLECT = ITEM_MOD_INTELLECT
-  Addon.ITEM_MOD_SPIRIT    = ITEM_MOD_SPIRIT
-  
-  do
-    local head, single, plural, tail = strMatch(ITEM_SPELL_CHARGES, "(.*)|4([^:]+):([^;]+);(.*)")
-    if single then
-      Addon.ITEM_SPELL_CHARGES1 = head .. single .. tail
-      Addon.ITEM_SPELL_CHARGES2 = head .. plural .. tail
-    else
-      Addon.ITEM_SPELL_CHARGES1 = ITEM_SPELL_CHARGES
-    end
+  Addon.statList = {}
+  for i = 1, Addon.expansionLevel do
+    Addon.statList[i] = {}
   end
+  Addon.statsInfo        = setmetatable({}, {__index = function() return {} end})
+  Addon.statOrder        = {}
+  Addon.statDefaultList  = {}
+  Addon.statDefaultOrder = {}
+  Addon.statPrefOrder    = {}
   
-  local locale = GetLocale()
-  if locale == "esES" then
-    Addon.ITEM_MOD_STAMINA   = ITEM_MOD_STAMINA  :lower()
-    Addon.ITEM_MOD_STRENGTH  = ITEM_MOD_STRENGTH :lower()
-    Addon.ITEM_MOD_AGILITY   = ITEM_MOD_AGILITY  :lower()
-    Addon.ITEM_MOD_INTELLECT = ITEM_MOD_INTELLECT:lower()
-    Addon.ITEM_MOD_SPIRIT    = ITEM_MOD_SPIRIT   :lower()
-  elseif locale == "esMX" then
-    Addon.ITEM_MOD_STAMINA   = Addon:ChainGsub(ITEM_MOD_STAMINA,   {SPELL_STAT3_NAME:lower(), SPELL_STAT3_NAME})
-    Addon.ITEM_MOD_STRENGTH  = Addon:ChainGsub(ITEM_MOD_STRENGTH,  {SPELL_STAT1_NAME:lower(), SPELL_STAT1_NAME})
-    Addon.ITEM_MOD_AGILITY   = Addon:ChainGsub(ITEM_MOD_AGILITY,   {SPELL_STAT2_NAME:lower(), SPELL_STAT2_NAME})
-    Addon.ITEM_MOD_INTELLECT = Addon:ChainGsub(ITEM_MOD_INTELLECT, {SPELL_STAT4_NAME:lower(), SPELL_STAT4_NAME})
-    Addon.ITEM_MOD_SPIRIT    = Addon:ChainGsub(ITEM_MOD_SPIRIT,    {SPELL_STAT5_NAME:lower(), SPELL_STAT5_NAME})
-  elseif locale == "ruRU" then
-    if Addon.isEra then
-      Addon.DAMAGE_SCHOOL7 = SPELL_SCHOOL6_CAP
-      Addon.DAMAGE_SCHOOL3 = SPELL_SCHOOL2_CAP
-      Addon.DAMAGE_SCHOOL4 = SPELL_SCHOOL3_CAP
-      Addon.DAMAGE_SCHOOL5 = SPELL_SCHOOL4_CAP
-      Addon.DAMAGE_SCHOOL6 = SPELL_SCHOOL5_CAP
-      Addon.DAMAGE_SCHOOL2 = SPELL_SCHOOL1_CAP
-    else
-      Addon.DAMAGE_SCHOOL7 = "тайной магии"
-      Addon.DAMAGE_SCHOOL3 = "огню"
-      Addon.DAMAGE_SCHOOL4 = "силам природы"
-      Addon.DAMAGE_SCHOOL5 = "магии льда"
-      Addon.DAMAGE_SCHOOL6 = "темной магии"
-      Addon.DAMAGE_SCHOOL2 = "свету"
-    end
-  elseif locale == "zhTW" then
-    if Addon.isEra then
-      Addon.ITEM_MOD_STAMINA   = strGsub(ITEM_MOD_STAMINA  , " ", "", 1)
-      Addon.ITEM_MOD_STRENGTH  = strGsub(ITEM_MOD_STRENGTH , " ", "", 1)
-      Addon.ITEM_MOD_AGILITY   = strGsub(ITEM_MOD_AGILITY  , " ", "", 1)
-      Addon.ITEM_MOD_INTELLECT = strGsub(ITEM_MOD_INTELLECT, " ", "", 1)
-      Addon.ITEM_MOD_SPIRIT    = strGsub(ITEM_MOD_SPIRIT   , " ", "", 1)
-    else
-      Addon.ITEM_RESIST_ALL = strGsub(ITEM_RESIST_ALL, "(%%d)", "%1 ")
-    end
-  end
-  
-  Addon.SPELL_DAMAGE_STATS = {}
-  for _, stat in ipairs{"Arcane Damage", "Fire Damage", "Nature Damage", "Frost Damage", "Shadow Damage", "Holy Damage"} do
-    local rules = Addon:GetExtraStatCapture(stat)
-    if rules then
-      Addon.SPELL_DAMAGE_STATS[stat] = Addon:ChainGsub(rules[1].INPUT, {"%(%%d%+%)", "%%s"}, {"^%^", "%$$", ""}, {"%%([^s])", "%1"})
-    end
-  end
-end
-
-
-
-
---  ███████╗████████╗ █████╗ ████████╗███████╗
---  ██╔════╝╚══██╔══╝██╔══██╗╚══██╔══╝██╔════╝
---  ███████╗   ██║   ███████║   ██║   ███████╗
---  ╚════██║   ██║   ██╔══██║   ██║   ╚════██║
---  ███████║   ██║   ██║  ██║   ██║   ███████║
---  ╚══════╝   ╚═╝   ╚═╝  ╚═╝   ╚═╝   ╚══════╝
-
-do
-  local self = Addon
   
   function Addon:RegenerateStatOrder()
     wipe(self.statList[self.expansionLevel])
@@ -156,97 +75,149 @@ do
     self:ResetOption("precision", stat)
     self:SetDefaultPrecisionByLocale(stat)
   end
+end
+
+
+
+--  ██╗      ██████╗  ██████╗ █████╗ ██╗     ███████╗
+--  ██║     ██╔═══██╗██╔════╝██╔══██╗██║     ██╔════╝
+--  ██║     ██║   ██║██║     ███████║██║     █████╗  
+--  ██║     ██║   ██║██║     ██╔══██║██║     ██╔══╝  
+--  ███████╗╚██████╔╝╚██████╗██║  ██║███████╗███████╗
+--  ╚══════╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝╚══════╝╚══════╝
+
+do
+  local self = Addon
   
+  Addon.itemQualityDescriptions = Addon:MakeLookupTable((function()
+    local t = {}
+    local function iter(globalstring)
+      local i = 0
+      return function()
+        i = i + 1
+        return _G[format(globalstring, i)]
+      end
+    end
+    for key in iter"ITEM_QUALITY%d_DESC" do
+      tinsert(t, key)
+    end
+    if Addon.expansionLevel >= Addon.expansions.wrath then
+      for key in iter"ITEM_HEROIC_QUALITY%d_DESC" do
+        tinsert(t, key)
+      end
+    end
+    return t
+  end)(), nil, true)
   
-  local elementResistances = {
-    RESISTANCE6_NAME,
-    RESISTANCE2_NAME,
-    RESISTANCE3_NAME,
-    RESISTANCE4_NAME,
-    RESISTANCE5_NAME,
-    RESISTANCE1_NAME,
+  Addon.prefixStats = {
+    [Addon.L["Equip:"]]         = "Equip",
+    [Addon.L["Chance on hit:"]] = "ChanceOnHit",
+    [Addon.L["Use:"]]           = "Use",
   }
-  local elementNames = {
-    self.DAMAGE_SCHOOL7,
-    self.DAMAGE_SCHOOL3,
-    self.DAMAGE_SCHOOL4,
-    self.DAMAGE_SCHOOL5,
-    self.DAMAGE_SCHOOL6,
-    self.DAMAGE_SCHOOL2,
-  }
-  local elementColors = {
-    self.COLORS.ARCANE,
-    self.COLORS.FIRE,
-    self.COLORS.NATURE,
-    self.COLORS.FROST,
-    self.COLORS.SHADOW,
-    self.COLORS.HOLY,
-  }
+end
+
+
+
+--  ███████╗████████╗ █████╗ ████████╗███████╗
+--  ██╔════╝╚══██╔══╝██╔══██╗╚══██╔══╝██╔════╝
+--  ███████╗   ██║   ███████║   ██║   ███████╗
+--  ╚════██║   ██║   ██╔══██║   ██║   ╚════██║
+--  ███████║   ██║   ██║  ██║   ██║   ███████║
+--  ╚══════╝   ╚═╝   ╚═╝  ╚═╝   ╚═╝   ╚══════╝
+
+do
+  local self = Addon
   
-  local ITEM_MOD_MASTERY_RATING = "%c%d " .. ITEM_MOD_MASTERY_RATING_SHORT
-  Addon.ITEM_MOD_MASTERY_RATING = ITEM_MOD_MASTERY_RATING
-  
-  local ITEM_MOD_HASTE_SPELL_RATING_SHORT = ITEM_MOD_HASTE_SPELL_RATING_SHORT or strGsub(ITEM_MOD_CRIT_SPELL_RATING_SHORT, self:CoverSpecialCharacters(ITEM_MOD_CRIT_RATING_SHORT), self:CoverSpecialCharacters(ITEM_MOD_HASTE_RATING_SHORT))
-  local ITEM_MOD_HASTE_SPELL_RATING       = ITEM_MOD_HASTE_SPELL_RATING       or strGsub(ITEM_MOD_CRIT_SPELL_RATING,       self:CoverSpecialCharacters(ITEM_MOD_CRIT_RATING),       self:CoverSpecialCharacters(ITEM_MOD_HASTE_RATING))
-  
-  local statsData = {}
-  tinsert(statsData, {1, {true, true, true, true}, "Stamina",   SPELL_STAT3_NAME, self.ITEM_MOD_STAMINA,   self.COLORS.WHITE, self.COLORS.PALE_LIGHT_GREEN})
-  tinsert(statsData, {1, {true, true, true, true}, "Strength",  SPELL_STAT1_NAME, self.ITEM_MOD_STRENGTH,  self.COLORS.WHITE, self.COLORS.TUMBLEWEED})
-  tinsert(statsData, {0, {true, true, true, true}, "Agility",   SPELL_STAT2_NAME, self.ITEM_MOD_AGILITY,   self.COLORS.WHITE, self.COLORS.PUMPKIN_ORANGE})
-  tinsert(statsData, {1, {true, true, true, true}, "Intellect", SPELL_STAT4_NAME, self.ITEM_MOD_INTELLECT, self.COLORS.WHITE, self.COLORS.JORDY_BLUE})
-  tinsert(statsData, {0, {true, true, true, true}, "Spirit",    SPELL_STAT5_NAME, self.ITEM_MOD_SPIRIT,    self.COLORS.WHITE, self.COLORS.LIGHT_AQUA})
-    
-  tinsert(statsData, {1, {true, true, true, true}, "All Resistance", self:ChainGsub(Addon.ITEM_RESIST_ALL, {"%%%d%$", "%%"}, {"%%.", "^ *", " *$", ""}), self:ChainGsub(Addon.ITEM_RESIST_ALL, {"%%%d+%$", "%%"}), self.COLORS.WHITE, self.COLORS.YELLOW})
-  
-  for i, stat in ipairs{"Arcane Resistance", "Fire Resistance", "Nature Resistance", "Frost Resistance", "Shadow Resistance"} do
-    tinsert(statsData, {(i == 1 and 1 or 0), {true, true, true, true}, stat, elementResistances[i], format(self:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), elementNames[i]), self.COLORS.WHITE, elementColors[i]})
-  end
-  -- {true, true, true, "Holy Resistance"  , RESISTANCE1_NAME, format(self:ChainGsub(ITEM_RESIST_SINGLE, {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), self.DAMAGE_SCHOOL2), self.COLORS.WHITE, self.COLORS.HOLY},
-  
-  tinsert(statsData, {1, {true, true, true,  nil}, "Defense Rating"   , ITEM_MOD_DEFENSE_SKILL_RATING_SHORT, ITEM_MOD_DEFENSE_SKILL_RATING, self.COLORS.GREEN, self.COLORS.YELLOW})
-  tinsert(statsData, {1, {true, true, true, true}, "Dodge Rating"     , ITEM_MOD_DODGE_RATING_SHORT        , ITEM_MOD_DODGE_RATING        , self.COLORS.GREEN, self.COLORS.YELLOW})
-  tinsert(statsData, {0, {true, true, true, true}, "Parry Rating"     , ITEM_MOD_PARRY_RATING_SHORT        , ITEM_MOD_PARRY_RATING        , self.COLORS.GREEN, self.COLORS.YELLOW})
-  tinsert(statsData, {1, {true, true, true, true}, "Block Rating"     , ITEM_MOD_BLOCK_RATING_SHORT        , ITEM_MOD_BLOCK_RATING        , self.COLORS.GREEN, self.COLORS.YELLOW})
-  tinsert(statsData, {0, {true, true, true,  nil}, "Block Value"      , ITEM_MOD_BLOCK_VALUE_SHORT         , ITEM_MOD_BLOCK_VALUE         , self.COLORS.GREEN, self.COLORS.YELLOW})
-  tinsert(statsData, {0, {nil , true, true, true}, "Resilience Rating", ITEM_MOD_RESILIENCE_RATING_SHORT   , ITEM_MOD_RESILIENCE_RATING   , self.COLORS.GREEN, self.COLORS.YELLOW})
-    
-  tinsert(statsData, {1, {nil , true, true, true}, "Expertise Rating"        , ITEM_MOD_EXPERTISE_RATING_SHORT        , ITEM_MOD_EXPERTISE_RATING        , self.COLORS.GREEN, self.COLORS.TUMBLEWEED})
-  tinsert(statsData, {1, {true, true, true,  nil}, "Attack Power"            , ITEM_MOD_ATTACK_POWER_SHORT            , ITEM_MOD_ATTACK_POWER            , self.COLORS.GREEN, self.COLORS.TUMBLEWEED})
-  tinsert(statsData, {0, {true, true, true,  nil}, "Ranged Attack Power"     , ITEM_MOD_RANGED_ATTACK_POWER_SHORT     , ITEM_MOD_RANGED_ATTACK_POWER     , self.COLORS.GREEN, self.COLORS.TUMBLEWEED})
-  tinsert(statsData, {0, {true, true, true,  nil}, "Attack Power In Forms"   , ITEM_MOD_FERAL_ATTACK_POWER_SHORT      , ITEM_MOD_FERAL_ATTACK_POWER      , self.COLORS.GREEN, self.COLORS.TUMBLEWEED})
-  tinsert(statsData, {0, {true, true, true,  nil}, "Armor Penetration Rating", ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT, ITEM_MOD_ARMOR_PENETRATION_RATING, self.COLORS.GREEN, self.COLORS.TUMBLEWEED})
-    
-  tinsert(statsData, {1, {true, true, true, true}, "Spell Power", ITEM_MOD_SPELL_POWER_SHORT, ITEM_MOD_SPELL_POWER, self.COLORS.GREEN, self.COLORS.LILAC_GEODE})
-    
-  -- tinsert(statsData, {1, {true, true, true, true}, "Spell Damage" , ITEM_MOD_SPELL_DAMAGE_DONE_SHORT, ITEM_MOD_SPELL_DAMAGE_DONE, self.COLORS.GREEN, self.COLORS.PERIWINKLE})
-  for i, stat in ipairs{"Arcane Damage", "Fire Damage", "Nature Damage", "Frost Damage", "Shadow Damage", "Holy Damage"} do
-    if Addon.SPELL_DAMAGE_STATS[stat] then
-      tinsert(statsData, {(i == 1 and 1 or 0), {true, true, true, true} , stat, format(SINGLE_DAMAGE_TEMPLATE, elementNames[i]), Addon.SPELL_DAMAGE_STATS[stat], self.COLORS.GREEN, elementColors[i]})
+  local spellDamageStats = {}
+  for _, stat in ipairs{"Arcane Damage", "Fire Damage", "Nature Damage", "Frost Damage", "Shadow Damage", "Holy Damage"} do
+    local rules = Addon:GetExtraStatCapture(stat)
+    if rules then
+      spellDamageStats[stat] = Addon:ChainGsub(rules[1].INPUT, {"%(%%d%+%)", "%%s"}, {"^%^", "%$$", ""}, {"%%([^s])", "%1"})
     end
   end
   
-  tinsert(statsData, {0, {true, true, nil , true}, "Healing", ITEM_MOD_SPELL_HEALING_DONE_SHORT, ITEM_MOD_SPELL_HEALING_DONE, self.COLORS.GREEN, self.COLORS.LIGHT_CYAN})
+  
+  local elementResistances = {
+    self.L["Arcane Resistance"],
+    self.L["Fire Resistance"],
+    self.L["Nature Resistance"],
+    self.L["Frost Resistance"],
+    self.L["Shadow Resistance"],
+    self.L["Holy Resistance"],
+  }
+  local elementNames = {
+    self.L["Arcane"],
+    self.L["Fire"],
+    self.L["Nature"],
+    self.L["Frost"],
+    self.L["Shadow"],
+    self.L["Holy"],
+  }
+  local elementColors = {
+    self.colors.ARCANE,
+    self.colors.FIRE,
+    self.colors.NATURE,
+    self.colors.FROST,
+    self.colors.SHADOW,
+    self.colors.HOLY,
+  }
+  
+  local statsData = {}
+  tinsert(statsData, {1, {true, true, true, true}, "Stamina",   self.L["Stamina"],   self.L["%c%d Stamina"],   self.colors.WHITE, self.colors.PALE_LIGHT_GREEN})
+  tinsert(statsData, {1, {true, true, true, true}, "Strength",  self.L["Strength"],  self.L["%c%d Strength"],  self.colors.WHITE, self.colors.TUMBLEWEED})
+  tinsert(statsData, {0, {true, true, true, true}, "Agility",   self.L["Agility"],   self.L["%c%d Agility"],   self.colors.WHITE, self.colors.PUMPKIN_ORANGE})
+  tinsert(statsData, {1, {true, true, true, true}, "Intellect", self.L["Intellect"], self.L["%c%d Intellect"], self.colors.WHITE, self.colors.JORDY_BLUE})
+  tinsert(statsData, {0, {true, true, true, true}, "Spirit",    self.L["Spirit"],    self.L["%c%d Spirit"],    self.colors.WHITE, self.colors.LIGHT_AQUA})
     
-  tinsert(statsData, {0, {true, true, true, true}, "Spell Penetration", ITEM_MOD_SPELL_PENETRATION_SHORT, ITEM_MOD_SPELL_PENETRATION, self.COLORS.GREEN, self.COLORS.VENUS_SLIPPER_ORCHID})
+  tinsert(statsData, {1, {true, true, true, true}, "All Resistance", self:ChainGsub(self.L["%c%d to All Resistances"], {"%%%d%$", "%%"}, {"%%.", "^ *", " *$", ""}), self:ChainGsub(self.L["%c%d to All Resistances"], {"%%%d+%$", "%%"}), self.colors.WHITE, self.colors.YELLOW})
+  
+  for i, stat in ipairs{"Arcane Resistance", "Fire Resistance", "Nature Resistance", "Frost Resistance", "Shadow Resistance"} do
+    tinsert(statsData, {(i == 1 and 1 or 0), {true, true, true, true}, stat, elementResistances[i], format(self:ChainGsub(Addon.L["%c%d %s Resistance"], {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), elementNames[i]), self.colors.WHITE, elementColors[i]})
+  end
+  
+  tinsert(statsData, {1, {true, true, true, nil},  "Defense Rating",    self.L["Defense Rating"],    self.L["Increases defense rating by %s."],                 self.colors.GREEN, self.colors.YELLOW})
+  tinsert(statsData, {1, {true, true, true, true}, "Dodge Rating",      self.L["Dodge Rating"],      self.L["Increases your dodge rating by %s."],              self.colors.GREEN, self.colors.YELLOW})
+  tinsert(statsData, {0, {true, true, true, true}, "Parry Rating",      self.L["Parry Rating"],      self.L["Increases your parry rating by %s."],              self.colors.GREEN, self.colors.YELLOW})
+  tinsert(statsData, {1, {true, true, true, true}, "Block Rating",      self.L["Block Rating"],      self.L["Increases your shield block rating by %s."],       self.colors.GREEN, self.colors.YELLOW})
+  tinsert(statsData, {0, {true, true, true, nil},  "Block Value",       self.L["Block Value"],       self.L["Increases the block value of your shield by %s."], self.colors.GREEN, self.colors.YELLOW})
+  tinsert(statsData, {0, {nil , true, true, true}, "Resilience Rating", self.L["Resilience Rating"], self.L["Improves your resilience rating by %s."],          self.colors.GREEN, self.colors.YELLOW})
     
-  tinsert(statsData, {1, {Addon.isSoD, nil , true, true}, "Hit Rating"                     , ITEM_MOD_HIT_RATING_SHORT        , ITEM_MOD_HIT_RATING        , self.COLORS.GREEN, self.COLORS.PINK_SHERBET})
-  tinsert(statsData, {0, {Addon.isSoD, nil , true, true}, "Critical Strike Rating"         , ITEM_MOD_CRIT_RATING_SHORT       , ITEM_MOD_CRIT_RATING       , self.COLORS.GREEN, self.COLORS.PARIS_GREEN})
-  tinsert(statsData, {0, {nil ,        nil , true, true}, "Haste Rating"                   , ITEM_MOD_HASTE_RATING_SHORT      , ITEM_MOD_HASTE_RATING      , self.COLORS.GREEN, self.COLORS.LEMON_LIME})
-  tinsert(statsData, {1, {true,        true,  nil,  nil}, "Physical Hit Rating"            , ITEM_MOD_HIT_RATING_SHORT        , ITEM_MOD_HIT_RATING        , self.COLORS.GREEN, self.COLORS.PINK_SHERBET})
-  tinsert(statsData, {0, {true,        true,  nil,  nil}, "Physical Critical Strike Rating", ITEM_MOD_CRIT_RATING_SHORT       , ITEM_MOD_CRIT_RATING       , self.COLORS.GREEN, self.COLORS.PARIS_GREEN})
-  tinsert(statsData, {0, {nil ,        true,  nil,  nil}, "Physical Haste Rating"          , ITEM_MOD_HASTE_RATING_SHORT      , ITEM_MOD_HASTE_RATING      , self.COLORS.GREEN, self.COLORS.LEMON_LIME})
-  tinsert(statsData, {1, {true,        true,  nil,  nil}, "Spell Hit Rating"               , ITEM_MOD_HIT_SPELL_RATING_SHORT  , ITEM_MOD_HIT_SPELL_RATING  , self.COLORS.GREEN, self.COLORS.PINK_SHERBET})
-  tinsert(statsData, {0, {true,        true,  nil,  nil}, "Spell Critical Strike Rating"   , ITEM_MOD_CRIT_SPELL_RATING_SHORT , ITEM_MOD_CRIT_SPELL_RATING , self.COLORS.GREEN, self.COLORS.PARIS_GREEN})
-  tinsert(statsData, {0, {nil ,        true,  nil,  nil}, "Spell Haste Rating"             , ITEM_MOD_HASTE_SPELL_RATING_SHORT, ITEM_MOD_HASTE_SPELL_RATING, self.COLORS.GREEN, self.COLORS.LEMON_LIME})
-  
-  tinsert(statsData, {0, { nil,  nil,  nil, true}, "Mastery Rating"   , ITEM_MOD_MASTERY_RATING_SHORT, ITEM_MOD_MASTERY_RATING, self.COLORS.GREEN, self.COLORS.GREEN_GAS})
+  tinsert(statsData, {1, {nil , true, true, true}, "Expertise Rating",         self.L["Expertise Rating"],         self.L["Increases your expertise rating by %s."],  self.colors.GREEN, self.colors.TUMBLEWEED})
+  tinsert(statsData, {1, {true, true, true, true}, "Attack Power",             self.L["Attack Power"],             self.L["Increases attack power by %s."],           self.colors.GREEN, self.colors.TUMBLEWEED})
+  tinsert(statsData, {0, {true, true, true, nil},  "Ranged Attack Power",      self.L["Ranged Attack Power"],      self.L["Increases ranged attack power by %s."],    self.colors.GREEN, self.colors.TUMBLEWEED})
+  tinsert(statsData, {0, {true, true, true, nil},  "Attack Power In Forms",    self.L["Attack Power In Forms"],    self.L["Increases attack power by %s in Cat, Bear, Dire Bear, and Moonkin forms only."], self.colors.GREEN, self.colors.TUMBLEWEED})
+  tinsert(statsData, {0, {true, true, true, nil},  "Armor Penetration Rating", self.L["Armor Penetration Rating"], self.L["Increases your armor penetration by %s."], self.colors.GREEN, self.colors.TUMBLEWEED})
     
-  tinsert(statsData, {1, {true, true, true, true}, "Health Regeneration", ITEM_MOD_HEALTH_REGENERATION_SHORT, ITEM_MOD_HEALTH_REGEN     , self.COLORS.GREEN, self.COLORS.PALE_LIGHT_GREEN})
-  tinsert(statsData, {0, {true, true, true,  nil}, "Mana Regeneration"  , ITEM_MOD_MANA_REGENERATION_SHORT  , ITEM_MOD_MANA_REGENERATION, self.COLORS.GREEN, self.COLORS.JORDY_BLUE})
+  tinsert(statsData, {1, {true, true, true, true}, "Spell Power", self.L["Spell Power"], self.L["Increases spell power by %s."], self.colors.GREEN, self.colors.LILAC_GEODE})
+    
+  -- tinsert(statsData, {1, {true, true, true, true}, "Spell Damage" , ITEM_MOD_SPELL_DAMAGE_DONE_SHORT, ITEM_MOD_SPELL_DAMAGE_DONE, self.colors.GREEN, self.colors.PERIWINKLE})
+  for i, stat in ipairs{"Arcane Damage", "Fire Damage", "Nature Damage", "Frost Damage", "Shadow Damage", "Holy Damage"} do
+    if spellDamageStats[stat] then
+      tinsert(statsData, {(i == 1 and 1 or 0), {true, true, true, true} , stat, format(self.L["%s Damage"], elementNames[i]), spellDamageStats[stat], self.colors.GREEN, elementColors[i]})
+    end
+  end
+  
+  tinsert(statsData, {0, {true, true, nil , true}, "Healing",           self.L["Bonus Healing"],     self.L["Increases healing done by magical spells and effects by up to %s."], self.colors.GREEN, self.colors.LIGHT_CYAN})
+    
+  tinsert(statsData, {0, {true, true, true, true}, "Spell Penetration", self.L["Spell Penetration"], self.L["Increases spell penetration by %s."],                                self.colors.GREEN, self.colors.VENUS_SLIPPER_ORCHID})
+    
+  tinsert(statsData, {1, {self.isSoD, nil , true, true}, "Hit Rating",                      self.L["Hit Rating"],                      self.L["Improves hit rating by %s."],                    self.colors.GREEN, self.colors.PINK_SHERBET})
+  tinsert(statsData, {0, {self.isSoD, nil , true, true}, "Critical Strike Rating",          self.L["Critical Strike Rating"],          self.L["Improves critical strike rating by %s."],        self.colors.GREEN, self.colors.PARIS_GREEN})
+  tinsert(statsData, {0, {nil ,       nil , true, true}, "Haste Rating",                    self.L["Haste Rating"],                    self.L["Improves haste rating by %s."],                  self.colors.GREEN, self.colors.LEMON_LIME})
+  tinsert(statsData, {1, {true,       true, nil,  nil},  "Physical Hit Rating",             self.L["Hit Rating"],                      self.L["Improves hit rating by %s."],                    self.colors.GREEN, self.colors.PINK_SHERBET})
+  tinsert(statsData, {0, {true,       true, nil,  nil},  "Physical Critical Strike Rating", self.L["Critical Strike Rating"],          self.L["Improves critical strike rating by %s."],        self.colors.GREEN, self.colors.PARIS_GREEN})
+  tinsert(statsData, {0, {nil ,       true, nil,  nil},  "Physical Haste Rating",           self.L["Haste Rating"],                    self.L["Improves haste rating by %s."],                  self.colors.GREEN, self.colors.LEMON_LIME})
+  tinsert(statsData, {1, {true,       true, nil,  nil},  "Spell Hit Rating",                self.L["Hit Rating (Spell)"],              self.L["Improves spell hit rating by %s."],              self.colors.GREEN, self.colors.PINK_SHERBET})
+  tinsert(statsData, {0, {true,       true, nil,  nil},  "Spell Critical Strike Rating",    self.L["Critical Strike Rating (Spell)"] , self.L["Improves spell critical strike rating by %s."] , self.colors.GREEN, self.colors.PARIS_GREEN})
+  tinsert(statsData, {0, {nil ,       true, nil,  nil},  "Spell Haste Rating",              self.L["Haste Rating (Spell)"],            self.L["Improves spell haste rating by %s."],            self.colors.GREEN, self.colors.LEMON_LIME})
+  tinsert(statsData, {0, { nil,       nil,  nil,  true}, "Mastery Rating",                  self.L["Mastery"],                         self.L["%c%d Mastery"],                                  self.colors.GREEN, self.colors.GREEN_GAS})
+    
+  tinsert(statsData, {1, {true, true, true, true}, "Health Regeneration", self.L["Health Regeneration"], self.L["Restores %s health per 5 sec."], self.colors.GREEN, self.colors.PALE_LIGHT_GREEN})
+  tinsert(statsData, {0, {true, true, true, nil},  "Mana Regeneration",   self.L["Mana Regeneration"],   self.L["Restores %s mana per 5 sec."],   self.colors.GREEN, self.colors.JORDY_BLUE})
   
   
   
-  local isReversedLocale = not ITEM_MOD_STAMINA:find"^%%"
+  local isReversedLocale = not strFind(self.L["%c%d Stamina"], "^%%")
   local GetLocaleStatFormat = isReversedLocale and function(pre, suf, capture) return format("%s %s%s", suf, capture and "?" or "", pre) end or function(pre, suf, capture) return format("%s %s%s", pre, capture and "?" or "", suf) end
   -- instead of flipping them, mess with the normal form pattern instead. format("%s %s", isBaseStat and sign or "+", normalName) vs format("%2$s %1$s", isBaseStat and sign or "+", normalName)
   
@@ -305,24 +276,26 @@ do
         local match1, match2 = strMatch(normalForm, normalFormCapture)
         local origStrNumber = match1 .. (match2 or "")
         local strNumber, percent = strMatch(origStrNumber, "(%-?[%d,]+)(%%?)")
-        if DECIMAL_SEPERATOR ~= "." then
-          strNumber = strGsub(strNumber, "%"..DECIMAL_SEPERATOR, ".")
-        end
-        strNumber, commas = strGsub(strNumber, "(%d),(%d)", "%1%2")
-        local number = self:Round(tonumber(strNumber) * self:GetOption("mod", stat), 1 / 10^self:GetOption("precision", stat))
-        strNumber = tostring(number)
-        if DECIMAL_SEPERATOR ~= "." then
-          strNumber = strGsub(strNumber, "%.", DECIMAL_SEPERATOR)
-        end
+        -- if DECIMAL_SEPERATOR ~= "." then
+        --   strNumber = strGsub(strNumber, "%"..DECIMAL_SEPERATOR, ".")
+        -- end
+        -- strNumber, commas = strGsub(strNumber, "(%d),(%d)", "%1%2")
+        -- local number = self:Round(tonumber(strNumber) * self:GetOption("mod", stat), 1 / 10^self:GetOption("precision", stat))
+        local number = self:Round(self:ToNumber(strNumber) * self:GetOption("mod", stat), 1 / 10^self:GetOption("precision", stat))
+        -- strNumber = tostring(number)
+        -- if DECIMAL_SEPERATOR ~= "." then
+        --   strNumber = strGsub(strNumber, "%.", DECIMAL_SEPERATOR)
+        -- end
+        strNumber = self:ToFormattedNumber(number, not self:GetOption("separateThousands", stat))
         if isBaseStat and number > 0 then
           strNumber = "+" .. strNumber
         end
-        if commas > 0 then
-          local count = 1
-          while count > 0 do
-            strNumber, count = strGsub(strNumber, "^(-?%d+)(%d%d%d)", "%1,%2")
-          end
-        end
+        -- if commas > -1 then
+        --   local count = 1
+        --   while count > 0 do
+        --     strNumber, count = strGsub(strNumber, "^(-?%d+)(%d%d%d)", "%1,%2")
+        --   end
+        -- end
         return strGsub(text, self:CoverSpecialCharacters(origStrNumber), self:CoverSpecialCharacters(strNumber .. percent))
       end
       
@@ -346,7 +319,8 @@ do
         if isBaseStat then
           strNumber = match2
         end
-        return tonumber((self:ChainGsub(strNumber, {"%%", ""}, {"(%d),(%d)", "%1%2"})))
+        return self:ToNumber(strGsub(strNumber, "%%", ""))
+        -- return tonumber((self:ChainGsub(strNumber, {"%%", ""}, {"(%d),(%d)", "%1%2"})))
       end
       
       function StatInfo:ConvertToNormalForm(text)
@@ -373,12 +347,19 @@ do
       end
       
       function StatInfo:GetDefaultForm(number)
-        local strNumber = tostring(number)
-        if type(number) == "string" then
-          number = tonumber(strMatch(number, "%d+"))
-        end
-        if DECIMAL_SEPERATOR ~= "." then
-          strNumber = strGsub(strNumber, "%.", DECIMAL_SEPERATOR)
+        -- local strNumber = tostring(number)
+        -- if type(number) == "string" then
+        --   number = tonumber(strMatch(number, "%d+"))
+        -- end
+        -- if DECIMAL_SEPERATOR ~= "." then
+        --   strNumber = strGsub(strNumber, "%.", DECIMAL_SEPERATOR)
+        -- end
+        number = Addon:ToNumber(number)
+        local strNumber
+        if isBaseStat then
+          strNumber = tostring(number)
+        else
+          strNumber = Addon:ToFormattedNumber(number)
         end
         return format(tooltipPattern2, isBaseStat and (number < 0 and "" or "+") or strNumber, isBaseStat and strNumber or nil)
       end
@@ -392,59 +373,60 @@ do
   
   -- Default color settings
   
-  self.statsInfo["Title"]              = {color = self.COLORS.WHITE}
+  self.statsInfo["Title"]              = {color = self.colors.WHITE}
   
-  self.statsInfo["Quality"]            = {color = self.COLORS.WHITE}
-  self.statsInfo["Heroic"]             = {color = self.COLORS.GREEN}
-  self.statsInfo["ItemLevel"]          = {color = self.COLORS.DEFAULT}
+  self.statsInfo["Quality"]            = {color = self.colors.WHITE}
+  self.statsInfo["Heroic"]             = {color = self.colors.GREEN}
+  self.statsInfo["ItemLevel"]          = {color = self.colors.DEFAULT}
   
-  self.statsInfo["AlreadyBound"]       = {color = self.COLORS.WHITE}
-  self.statsInfo["CharacterBound"]     = {color = self.COLORS.WHITE}
-  self.statsInfo["AccountBound"]       = {color = self.COLORS.CANDID_BLUE}
-  self.statsInfo["Tradeable"]          = {color = self.COLORS.WHITE}
+  self.statsInfo["AlreadyBound"]       = {color = self.colors.WHITE}
+  self.statsInfo["CharacterBound"]     = {color = self.colors.WHITE}
+  self.statsInfo["AccountBound"]       = {color = self.colors.CANDID_BLUE}
+  self.statsInfo["Tradeable"]          = {color = self.colors.WHITE}
   
-  self.statsInfo["Trainable"]          = {color = self.COLORS.ORANGE}
+  self.statsInfo["Trainable"]          = {color = self.colors.ORANGE}
   
-  self.statsInfo["Damage"]             = {color = self.COLORS.WHITE}
-  self.statsInfo["DamageBonus"]        = {color = self.COLORS.WHITE}
-  self.statsInfo["Speed"]              = {color = self.COLORS.WHITE}
+  self.statsInfo["Damage"]             = {color = self.colors.WHITE}
+  self.statsInfo["DamageBonus"]        = {color = self.colors.WHITE}
+  self.statsInfo["Speed"]              = {color = self.colors.WHITE}
   
-  self.statsInfo["DamagePerSecond"]    = {color = self.COLORS.WHITE}
-  self.statsInfo["Speedbar"]           = {color = self.COLORS.WHITE}
+  self.statsInfo["DamagePerSecond"]    = {color = self.colors.WHITE}
+  self.statsInfo["Speedbar"]           = {color = self.colors.WHITE}
   
-  self.statsInfo["Armor"]              = {color = self.COLORS.WHITE}
-  self.statsInfo["BonusArmor"]         = {color = self.COLORS.GREEN}
-  self.statsInfo["Block"]              = {color = self.COLORS.WHITE}
+  self.statsInfo["Armor"]              = {color = self.colors.WHITE}
+  self.statsInfo["BonusArmor"]         = {color = self.colors.GREEN}
+  self.statsInfo["Block"]              = {color = self.colors.WHITE}
   
-  self.statsInfo["Enchant"]            = {color = self.COLORS.GREEN}
-  self.statsInfo["WeaponEnchant"]      = {color = self.COLORS.GREEN}
-  self.statsInfo["Rune"]               = {color = self.COLORS.GREEN}
+  self.statsInfo["Enchant"]            = {color = self.colors.GREEN}
+  self.statsInfo["WeaponEnchant"]      = {color = self.colors.GREEN}
+  self.statsInfo["Rune"]               = {color = self.colors.GREEN}
   
-  self.statsInfo["Socket_red"]         = {color = self.COLORS.RED}
-  self.statsInfo["Socket_blue"]        = {color = self.COLORS.BLUE}
-  self.statsInfo["Socket_yellow"]      = {color = self.COLORS.YELLOW}
-  self.statsInfo["Socket_purple"]      = {color = self.COLORS.PURPLE}
-  self.statsInfo["Socket_green"]       = {color = self.COLORS.GREEN}
-  self.statsInfo["Socket_orange"]      = {color = self.COLORS.ORANGE}
-  self.statsInfo["Socket_prismatic"]   = {color = self.COLORS.WHITE}
-  self.statsInfo["Socket_meta"]        = {color = self.COLORS.WHITE}
-  self.statsInfo["Socket_cogwheel"]    = {color = self.COLORS.WHITE}
+  self.statsInfo["Socket_red"]         = {color = self.colors.RED}
+  self.statsInfo["Socket_blue"]        = {color = self.colors.BLUE}
+  self.statsInfo["Socket_yellow"]      = {color = self.colors.YELLOW}
+  self.statsInfo["Socket_purple"]      = {color = self.colors.PURPLE}
+  self.statsInfo["Socket_green"]       = {color = self.colors.GREEN}
+  self.statsInfo["Socket_orange"]      = {color = self.colors.ORANGE}
+  self.statsInfo["Socket_prismatic"]   = {color = self.colors.WHITE}
+  self.statsInfo["Socket_meta"]        = {color = self.colors.WHITE}
+  self.statsInfo["Socket_cogwheel"]    = {color = self.colors.WHITE}
+  self.statsInfo["Socket_hydraulic"]   = {color = self.colors.WHITE}
   
-  self.statsInfo["Charges"]            = {color = self.COLORS.ORANGE}
-  self.statsInfo["NoCharges"]          = {color = self.COLORS.RED}
-  self.statsInfo["Cooldown"]           = {color = self.COLORS.RED}
+  self.statsInfo["Charges"]            = {color = self.colors.ORANGE}
+  self.statsInfo["NoCharges"]          = {color = self.colors.RED}
+  self.statsInfo["Cooldown"]           = {color = self.colors.RED}
   
-  self.statsInfo["Durability"]         = {color = self.COLORS.WHITE}
+  self.statsInfo["Durability"]         = {color = self.colors.WHITE}
   
-  self.statsInfo["Reputation"]         = {color = self.COLORS.REP}
+  self.statsInfo["Reputation"]         = {color = self.colors.REP}
   
-  self.statsInfo["MadeBy"]             = {color = self.COLORS.GREEN}
+  self.statsInfo["MadeBy"]             = {color = self.colors.GREEN}
   
-  self.statsInfo["SocketHint"]         = {color = self.COLORS.GREEN}
+  self.statsInfo["SocketHint"]         = {color = self.colors.GREEN}
   
-  self.statsInfo["Refundable"]         = {color = self.COLORS.SKY_BLUE}
-  self.statsInfo["SoulboundTradeable"] = {color = self.COLORS.SKY_BLUE}
+  self.statsInfo["Refundable"]         = {color = self.colors.SKY_BLUE}
+  self.statsInfo["SoulboundTradeable"] = {color = self.colors.SKY_BLUE}
   
-  self.statsInfo["StackSize"]          = {color = self.COLORS.DEFAULT}
+  self.statsInfo["StackSize"]          = {color = self.colors.DEFAULT}
 end
 

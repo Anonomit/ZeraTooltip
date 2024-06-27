@@ -11,6 +11,7 @@ local strGsub   = string.gsub
 local strByte   = string.byte
 
 local tinsert   = table.insert
+local tblConcat = table.concat
 
 local mathMin   = math.min
 local mathMax   = math.max
@@ -49,7 +50,7 @@ local OpenColorblindOptions
 Addon:xpcall(function()
   if SettingsPanel then
     for _, category in ipairs(SettingsPanel:GetCategoryList().allCategories) do
-      if category.categorySet == 1 and category:GetName() == COLORBLIND_LABEL then
+      if category.categorySet == 1 and category:GetName() == self.L["Colorblind Mode"] then
         local id = category:GetID()
         OpenColorblindOptions = function() Settings.OpenToCategory(category:GetID()) self.AceConfigDialog:Close(ADDON_NAME) end
         break
@@ -72,7 +73,7 @@ local function GetFormattedStatText(number, stat)
   end
   local color = StatInfo.tooltipColor
   if hidden then
-    color = Addon.COLORS.GRAY
+    color = Addon.colors.GRAY
   elseif Addon:GetOption("allow", "recolor") and Addon:GetOption("doRecolor", stat) then
     color = Addon:GetOption("color", stat)
   end
@@ -86,7 +87,7 @@ local function GetFormattedText(stat, originalColor, defaultText, formattedText)
   
   local color = Addon:GetOption("color", stat)
   if Addon:GetOption("hide", stat) then
-    formattedText = Addon.stealthIcon .. Addon:MakeColorCode(Addon.COLORS.GRAY, Addon:StripColorCode(formattedText))
+    formattedText = Addon.stealthIcon .. Addon:MakeColorCode(Addon.colors.GRAY, Addon:StripColorCode(formattedText))
     changed = true
   elseif Addon:GetOption("allow", "recolor") and Addon:GetOption("doRecolor", stat) and color ~= originalColor then
     formattedText = Addon:MakeColorCode(color, formattedText)
@@ -179,6 +180,18 @@ local function CreateReword(opts, stat, disabled)
   
   return opts
 end
+local function CreateThousandsSeparator(opts, stat, disabled)
+  local self = Addon
+  local GUI  = self.GUI
+  
+  local opts = GUI:CreateGroupBox(opts, self.L["Formatting"])
+  
+  local disabled = disabled or not self:GetOption("allow", "reword")
+  GUI:CreateDropdown(opts, {"separateThousands", stat}, self.L["Formatting"], self.L["Formatting"], {[true] = self:ToFormattedNumber(1000, false), [false] = self:ToFormattedNumber(1000, true)}, {true, false}, disabled).width = 0.5
+  GUI:CreateReset(opts, {"separateThousands", stat}, function() self:ResetOption("separateThousands", stat) end)
+  
+  return opts
+end
 local function CreateHide(opts, stat, disabled)
   local self = Addon
   local GUI  = self.GUI
@@ -211,7 +224,7 @@ local function CreateIcon(opts, stat)
   
   local disabled = not self:GetOption("allow", "reword")
   GUI:CreateToggle(opts, {"doIcon", stat}, self.L["Icon"], nil, disabled).width = 0.6
-  local option = GUI:CreateSelect(opts, {"icon", stat}, self.L["Choose an Icon:"], nil, iconsDropdown, icons, disabled or not self:GetOption("doIcon", stat))
+  local option = GUI:CreateDropdown(opts, {"icon", stat}, self.L["Choose an Icon:"], nil, iconsDropdown, icons, disabled or not self:GetOption("doIcon", stat))
   option.width = 0.7
   option.get   = function(info)    return self:MakeIcon(self:GetOption("icon", stat), 16) end
   option.set   = function(info, v) self:SetOption(self:UnmakeIcon(v), "icon", stat)   end
@@ -278,7 +291,7 @@ local function MakeGeneralOptions(opts)
     do
       local opts = GUI:CreateGroupBox(opts, self.L["Modifiers:"])
       
-      GUI:CreateSelect(opts, {"invertMode"}, self:GetOption"enabled" and self.L["Disable"] or self.L["Enable"], L["Reverse behavior when modifier keys are held."], {none = self.L["never"], any = self.L["any"], all = self.L["all"]}, {"none", "any", "all"}).width = 0.7
+      GUI:CreateDropdown(opts, {"invertMode"}, self:GetOption"enabled" and self.L["Disable"] or self.L["Enable"], L["Reverse behavior when modifier keys are held."], {none = self.L["never"], any = self.L["any"], all = self.L["all"]}, {"none", "any", "all"}).width = 0.7
       GUI:CreateNewline(opts)
       
       local disabled = self:GetOption"invertMode" == "none"
@@ -305,7 +318,7 @@ local function MakeGeneralOptions(opts)
       GUI:CreateNewline(opts)
       
       GUI:SetDBType"Global"
-      GUI:CreateToggle(opts, {"cache", "enabled"}, L["Cache"], L["Greatly speeds up processing, but may occasionally cause tooltip formatting issues."] .. "|n|n" .. Addon:MakeColorCode(Addon.COLORS.RED, format(L["If a tooltip appears to be formatted incorrectly, hide it for %d seconds to clear the cache."], Addon:GetGlobalOption("cache", "constructorWipeDelay"))))
+      GUI:CreateToggle(opts, {"cache", "enabled"}, L["Cache"], L["Greatly speeds up processing, but may occasionally cause tooltip formatting issues."] .. "|n|n" .. Addon:MakeColorCode(Addon.colors.RED, format(L["If a tooltip appears to be formatted incorrectly, hide it for %d seconds to clear the cache."], Addon:GetGlobalOption("cache", "constructorWipeDelay"))))
       GUI:CreateReset(opts, {"cache", "enabled"})
       GUI:ResetDBType()
     end
@@ -324,7 +337,12 @@ end
 --  ╚══════╝   ╚═╝   ╚═╝  ╚═╝   ╚═╝        ╚═════╝ ╚═╝        ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
 
 local percentStats = Addon:MakeLookupTable{"Dodge Rating", "Parry Rating", "Block Rating", "Hit Rating", "Critical Strike Rating", "Physical Hit Rating", "Physical Critical Strike Rating", "Spell Hit Rating", "Spell Critical Strike Rating"}
-local sampleNumber = 10
+local sampleNumber = Addon:Switch(Addon.expansionLevel, {
+  [Addon.expansions.cata] = 1000,
+  [Addon.expansions.wrath] = 100,
+  [Addon.expansions.tbc] = 10,
+  [Addon.expansions.era] = 10,
+}, 10)
 local function CreateStatOption(opts, i, stat)
   local self = Addon
   local GUI  = self.GUI
@@ -342,7 +360,7 @@ local function CreateStatOption(opts, i, stat)
     -- Test
     local option = GUI:CreateRange(opts, {"sampleNumber"}, L["Test"], nil, -1000000, 1000000, 1)
     option.softMin = 0
-    option.softMax = 100
+    option.softMax = 1000
     option.get = function(info)      return sampleNumber       end
     option.set = function(info, val)        sampleNumber = val end
   end
@@ -362,6 +380,8 @@ local function CreateStatOption(opts, i, stat)
   
   CreateReword(opts, stat)
   
+  CreateThousandsSeparator(opts, stat)
+  
   do -- Multiply
     local opts = GUI:CreateGroupBox(opts, L["Multiply"])
     
@@ -372,7 +392,8 @@ local function CreateStatOption(opts, i, stat)
     option.isPercent = true
     GUI:CreateReset(opts, {"mod", stat}, function() self:ResetMod(stat) end)
     GUI:CreateNewline(opts)
-    GUI:CreateRange(opts, {"precision", stat}, L["Precision"], nil, 0, 5, 1, disabled).width = 1.5
+    
+    GUI:CreateRange(opts, {"precision", stat}, L["Precision"], L["Number of decimal places."], 0, 5, 1, disabled).width = 1.5
     GUI:CreateReset(opts, {"precision", stat}, function() self:ResetPrecision(stat) end)
   end
   
@@ -468,30 +489,30 @@ local function MakePaddingOptions(opts, categoryName)
   GUI:CreateGroup(opts, GUI:Order(), "------------------", nil, nil, true)
   
   -- Base Stats
-  local name, beforeStat, afterStat, sample = self.L["Base Stats"], {"pad", "before", "BaseStat"}, {"pad", "after", "BaseStat"}, format(self.ITEM_MOD_STAMINA, strByte"+", 10)
+  local name, beforeStat, afterStat, sample = self.L["Base Stats"], {"pad", "before", "BaseStat"}, {"pad", "after", "BaseStat"}, format(self.L["%c%d Stamina"], strByte"+", 10)
   if beforeStat and self:GetOption(unpack(beforeStat)) and not paddedAfterPrevious then CreateGroupGap(opts, "before" .. name) end
   CreatePaddingOption(opts, name, beforeStat, afterStat, sample)
   if combineStats then
     -- Secondary Stats
-    local name, beforeStat, afterStat, sample = L["Secondary Stats"], {"pad", "before", "SecondaryStat"}, {"pad", "after", "SecondaryStat"}, self:MakeColorCode(self.COLORS.GREEN, self.L["Equip:"] .. " " .. format(ITEM_MOD_MANA_REGENERATION, "10"))
+    local name, beforeStat, afterStat, sample = L["Secondary Stats"], {"pad", "before", "SecondaryStat"}, {"pad", "after", "SecondaryStat"}, self:MakeColorCode(self.colors.GREEN, self.L["Equip:"] .. " " .. format(self.L["Increases spell power by %s."], "10"))
     CreatePaddingOption(opts, name, beforeStat, afterStat, sample, true)
   end
   paddedAfterPrevious = self:GetOption(unpack(afterStat))
   if paddedAfterPrevious then CreateGroupGap(opts, "after" .. name) end
   
   -- Enchant
-  local name, beforeStat, afterStat, sample = self.L["Enchant"], {"pad", "before", "Enchant"}, {"pad", "after", "Enchant"}, self:MakeColorCode(self.COLORS.GREEN, format(ENCHANTED_TOOLTIP_LINE, self.L["Enchant"]))
+  local name, beforeStat, afterStat, sample = self.L["Enchant"], {"pad", "before", "Enchant"}, {"pad", "after", "Enchant"}, self:MakeColorCode(self.colors.GREEN, format(self.L["Enchanted: %s"], self.L["Enchant"]))
   paddedAfterPrevious = CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, paddedAfterPrevious)
   
   -- Weapon Enchant
-  local name, beforeStat, afterStat, sample = self.L["Weapon Enchantment"], {"pad", "before", "WeaponEnchant"}, {"pad", "after", "WeaponEnchant"}, self:MakeColorCode(self.COLORS.GREEN, format(ENCHANTED_TOOLTIP_LINE, self.L["Weapon Enchantment"]))
+  local name, beforeStat, afterStat, sample = self.L["Weapon Enchantment"], {"pad", "before", "WeaponEnchant"}, {"pad", "after", "WeaponEnchant"}, self:MakeColorCode(self.colors.GREEN, format(self.L["Enchanted: %s"], self.L["Weapon Enchantment"]))
   CreatePaddingOption(opts, name, beforeStat, afterStat, sample)
   paddedAfterPrevious = false
   -- paddedAfterPrevious = CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, paddedAfterPrevious)
   
   -- Rune
   if Addon.isSoD then
-    local name, beforeStat, afterStat, sample = self.L["Equipped Runes"], {"pad", "before", "WeaponEnchant"}, {"pad", "after", "WeaponEnchant"}, self:MakeColorCode(self.COLORS.GREEN, self.L["Equipped Runes"])
+    local name, beforeStat, afterStat, sample = self.L["Equipped Runes"], {"pad", "before", "WeaponEnchant"}, {"pad", "after", "WeaponEnchant"}, self:MakeColorCode(self.colors.GREEN, self.L["Equipped Runes"])
     CreatePaddingOption(opts, name, beforeStat, afterStat, sample, true)
   end
   
@@ -501,17 +522,17 @@ local function MakePaddingOptions(opts, categoryName)
   end
   
   -- Sockets
-  local name, beforeStat, afterStat, sample = L["Sockets"], {"pad", "before", "Socket"}, {"pad", "after", "SocketBonus"}, {self.socketIcon .. " " .. self:MakeColorCode(self.COLORS.GRAY, self.L["Meta Socket"]), self:MakeColorCode(self.COLORS.GRAY, format(ITEM_SOCKET_BONUS, format(ITEM_MOD_MANA_REGENERATION, "10")))}
+  local name, beforeStat, afterStat, sample = L["Sockets"], {"pad", "before", "Socket"}, {"pad", "after", "SocketBonus"}, {self.socketIcon .. " " .. self:MakeColorCode(self.colors.GRAY, self.L["Meta Socket"]), self:MakeColorCode(self.colors.GRAY, format(self.L["Socket Bonus: %s"], format(self.L["Increases spell power by %s."], "10")))}
   paddedAfterPrevious = CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, paddedAfterPrevious)
   
   if not combineStats then
     -- Secondary Stats
-    local name, beforeStat, afterStat, sample = L["Secondary Stats"], {"pad", "before", "SecondaryStat"}, {"pad", "after", "SecondaryStat"}, self:MakeColorCode(self.COLORS.GREEN, self.L["Equip:"] .. " " .. format(ITEM_MOD_MANA_REGENERATION, "10"))
+    local name, beforeStat, afterStat, sample = L["Secondary Stats"], {"pad", "before", "SecondaryStat"}, {"pad", "after", "SecondaryStat"}, self:MakeColorCode(self.colors.GREEN, self.L["Equip:"] .. " " .. format(self.L["Increases spell power by %s."], "10"))
     paddedAfterPrevious = CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, paddedAfterPrevious)
   end
   
   -- Set Bonus
-  local name, beforeStat, afterStat, sample = L["Set List"], {"pad", "before", "SetBonus"}, {"pad", "after", "SetBonus"}, self:MakeColorCode(self.COLORS.GREEN, format(ITEM_SET_BONUS, self.L["Effects"]))
+  local name, beforeStat, afterStat, sample = L["Set List"], {"pad", "before", "SetBonus"}, {"pad", "after", "SetBonus"}, self:MakeColorCode(self.colors.GREEN, format(self.L["Set: %s"], self.L["Effects"]))
   paddedAfterPrevious = CreateStandardPaddingMenu(opts, name, beforeStat, afterStat, sample, paddedAfterPrevious)
   
   -- End
@@ -535,7 +556,7 @@ end
 --  ██║ ╚═╝ ██║██║███████║╚██████╗    ╚██████╔╝██║        ██║   ██║╚██████╔╝██║ ╚████║███████║
 --  ╚═╝     ╚═╝╚═╝╚══════╝ ╚═════╝     ╚═════╝ ╚═╝        ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
 
-local hearthstoneIcon = select(5, GetItemInfoInstant(Addon.SAMPLE_TITLE_ID))
+local hearthstoneIcon = select(5, GetItemInfoInstant(Addon.sampleTitleID))
 local sampleDamage   = 20
 local sampleVariance = 0.5
 local sampleSpeed    = 2.6
@@ -553,8 +574,8 @@ local function MakeExtraOptions(opts, categoryName)
   do
     local stat = "Title"
     
-    local defaultText = self.SAMPLE_TITLE_NAME or L["Hearthstone"]
-    local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.WHITE, defaultText, self:RewordTitle(defaultText, hearthstoneIcon))
+    local defaultText = self.sampleTitleName or L["Hearthstone"]
+    local defaultText, formattedText, changed = GetFormattedText(stat, self.colors.WHITE, defaultText, self:RewordTitle(defaultText, hearthstoneIcon))
     
     local opts = GUI:CreateGroup(opts, stat, formattedText)
     
@@ -589,10 +610,10 @@ local function MakeExtraOptions(opts, categoryName)
     
     local samples = {}
     local hiddenText
-    for _, sample in ipairs(self.ITEM_QUALITY_DESCRIPTIONS) do
+    for _, sample in ipairs(self.itemQualityDescriptions) do
       local defaultText = sample
-      hiddenText = hiddenText or (self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, defaultText))
-      local defaultText, formattedText = GetFormattedText(stat, self.COLORS.WHITE, defaultText, defaultText)
+      hiddenText = hiddenText or (self.stealthIcon .. self:MakeColorCode(self.colors.GRAY, defaultText))
+      local defaultText, formattedText = GetFormattedText(stat, self.colors.WHITE, defaultText, defaultText)
       tinsert(samples, {defaultText, formattedText})
     end
     
@@ -622,8 +643,8 @@ local function MakeExtraOptions(opts, categoryName)
     local stat = "Heroic"
     
     local samples = {}
-    local defaultText = ITEM_HEROIC
-    local defaultText, formattedText = GetFormattedText(stat, self.COLORS.GREEN, defaultText, self:RewordHeroic(defaultText))
+    local defaultText = self.L["Heroic"]
+    local defaultText, formattedText = GetFormattedText(stat, self.colors.GREEN, defaultText, self:RewordHeroic(defaultText))
     tinsert(samples, {defaultText, formattedText})
     
     local opts = GUI:CreateGroup(opts, "Quality", samples[1][2], nil, nil, disabled)
@@ -657,12 +678,12 @@ local function MakeExtraOptions(opts, categoryName)
     local sampleItemLevel = random(1, self.MAX_ITEMLEVEL)
     
     local samples = {}
-    local defaultText   = format(ITEM_LEVEL, sampleItemLevel)
-    local itemLevelText = format(self:GetOption("itemLevel", "useShortName") and GARRISON_FOLLOWER_ITEM_LEVEL or ITEM_LEVEL, sampleItemLevel)
-    local defaultText, _             = GetFormattedText(stat, self.COLORS.WHITE, defaultText,   defaultText)
-    local _,           formattedText = GetFormattedText(stat, self.COLORS.WHITE, itemLevelText, self:RewordItemLevel(itemLevelText))
+    local defaultText   = format(self.L["Item Level %d"], sampleItemLevel)
+    local itemLevelText = format(self:GetOption("itemLevel", "useShortName") and self.L["iLvl %d"] or self.L["Item Level %d"], sampleItemLevel)
+    local defaultText, _             = GetFormattedText(stat, self.colors.WHITE, defaultText,   defaultText)
+    local _,           formattedText = GetFormattedText(stat, self.colors.WHITE, itemLevelText, self:RewordItemLevel(itemLevelText))
     if self.expansionLevel < self.expansions.cata then
-      defaultText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, self:StripColorCode(defaultText))
+      defaultText = self.stealthIcon .. self:MakeColorCode(self.colors.GRAY, self:StripColorCode(defaultText))
     end
     tinsert(samples, {defaultText, formattedText})
     
@@ -677,7 +698,7 @@ local function MakeExtraOptions(opts, categoryName)
     do
       local opts = GUI:CreateGroupBox(opts, self.L["Rename"])
       
-      GUI:CreateToggle(opts, {"itemLevel", "useShortName"}, self.L["Short Name"], format(L["Show %s instead of %s."], self:MakeColorCode(self.COLORS.DEFAULT, self.itemLevelTexts[true].iLvlText), self:MakeColorCode(self.COLORS.DEFAULT, self.itemLevelTexts[false].iLvlText)), disabled)
+      GUI:CreateToggle(opts, {"itemLevel", "useShortName"}, self.L["Short Name"], format(L["Show %s instead of %s."], self:MakeColorCode(self.colors.DEFAULT, self.itemLevelTexts[true].iLvlText), self:MakeColorCode(self.colors.DEFAULT, self.itemLevelTexts[false].iLvlText)), disabled)
       GUI:CreateReset(opts, {"itemLevel", "useShortName"})
       GUI:CreateNewline(opts)
       
@@ -725,10 +746,10 @@ local function MakeExtraOptions(opts, categoryName)
     local stat = "StackSize"
     
     local samples = {}
-    local defaultText = format(AUCTION_STACK_SIZE .. ": %d", self:Random{5, 20, 80, 200, 1000})
+    local defaultText = format(self.L["Stack Size"] .. ": %d", self:Random{5, 20, 80, 200, 1000})
     
-    local _, formattedText = GetFormattedText(stat, self.COLORS.DEFAULT, defaultText, self:RewordStackSize(defaultText))
-    defaultText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, defaultText)
+    local _, formattedText = GetFormattedText(stat, self.colors.DEFAULT, defaultText, self:RewordStackSize(defaultText))
+    defaultText = self.stealthIcon .. self:MakeColorCode(self.colors.GRAY, defaultText)
     tinsert(samples, {defaultText, formattedText})
     
     local opts = GUI:CreateGroup(opts, stat, samples[1][2], nil, nil, disabled)
@@ -764,26 +785,26 @@ local function MakeExtraOptions(opts, categoryName)
     local stat = "RequiredRaces"
     
     local samples = {}
-    for _, sample in ipairs{format(ITEM_RACES_ALLOWED, self.MY_RACE_LOCALNAME), self.raceStrings.alliance, self.raceStrings.horde} do
-      local otherFaction = sample == self.raceStrings.alliance and self.MY_FACTION == "Horde" or sample == self.raceStrings.horde and self.MY_FACTION == "Alliance"
-      local defaultColor = otherFaction and self.COLORS.RED or self.COLORS.WHITE
+    for i, sample in ipairs{format(self.L["Races: %s"], self.MY_RACE_LOCALNAME), format(self.L["Races: %s"], tblConcat(self.raceNames.Alliance, ", ")), format(self.L["Races: %s"], tblConcat(self.raceNames.Horde, ", "))} do
+      local otherFaction = i == 2 and self.MY_FACTION == "Horde" or i == 3 and self.MY_FACTION == "Alliance"
+      local defaultColor = otherFaction and self.colors.RED or self.colors.WHITE
       
       local defaultText = sample
       local defaultText, formattedText = GetFormattedText(stat, defaultColor, defaultText, self:ModifyRequiredRaces(defaultText))
       if self:GetOption("hide", stat) then
         samples[#samples+1] = {defaultText, formattedText}
       elseif not otherFaction and self:GetOption("hide", "RequiredRaces_allowedLines") then
-        samples[#samples+1] = {defaultText, self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, self:StripColorCode(formattedText))}
+        samples[#samples+1] = {defaultText, self.stealthIcon .. self:MakeColorCode(self.colors.GRAY, self:StripColorCode(formattedText))}
       else
         samples[#samples+1] = {defaultText, self:MakeColorCode(defaultColor, self:StripColorCode(formattedText))}
       end
     end
     
-    local sampleText = self.raceStrings.all
+    local sampleText = format(self.L["Races: %s"], tblConcat(self.raceNames.all, ", "))
     if self:GetOption("hide", stat) or self:GetOption("hide", "uselessRaces") or not otherFaction and self:GetOption("hide", "RequiredRaces_allowedLines") then
-      samples[#samples+1] = {sampleText, self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, sampleText)}
+      samples[#samples+1] = {sampleText, self.stealthIcon .. self:MakeColorCode(self.colors.GRAY, sampleText)}
     else
-      samples[#samples+1] = {sampleText, self:MakeColorCode(self.COLORS.WHITE, sampleText)}
+      samples[#samples+1] = {sampleText, self:MakeColorCode(self.colors.WHITE, sampleText)}
     end
     
     local opts = GUI:CreateGroup(opts, stat, samples[1][1])
@@ -834,7 +855,7 @@ local function MakeExtraOptions(opts, categoryName)
         local formattedText = self:ModifyRequiredClasses(defaultText)
         local changed
         if self:GetOption("hide", stat) then
-          formattedText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, self:StripColorCode(formattedText))
+          formattedText = self.stealthIcon .. self:MakeColorCode(self.colors.GRAY, self:StripColorCode(formattedText))
         end
         changed = formattedText ~= defaultText
         
@@ -851,7 +872,7 @@ local function MakeExtraOptions(opts, categoryName)
       local formattedText = self:ModifyRequiredClasses(defaultText)
       local changed
       if self:GetOption("hide", stat) or self:GetOption("hide", "myClass") then
-        formattedText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, self:StripColorCode(formattedText))
+        formattedText = self.stealthIcon .. self:MakeColorCode(self.colors.GRAY, self:StripColorCode(formattedText))
       end
       changed = formattedText ~= defaultText
       GUI:CreateDescription(opts, changed and formattedText or " ")
@@ -931,7 +952,7 @@ local function MakeExtraOptions(opts, categoryName)
       
       GUI:CreateDescription(opts, self.L["Default"], "small")
       for i, level in ipairs(sampleLevels) do
-        local defaultText = format("|cffff%s%s", level > self.MY_LEVEL and "0000" or "ffff", format(ITEM_MIN_LEVEL, level))
+        local defaultText = format("|cffff%s%s", level > self.MY_LEVEL and "0000" or "ffff", format(self.L["Requires Level %d"], level))
         GUI:CreateDescription(opts, defaultText)
       end
       GUI:CreateDivider(opts)
@@ -940,11 +961,11 @@ local function MakeExtraOptions(opts, categoryName)
       local anyChangedOpt = GUI:CreateDescription(opts, " ", "small")
       
       for i, level in ipairs(sampleLevels) do
-        local defaultText = format("|cffff%s%s", level > self.MY_LEVEL and "0000" or "ffff", format(ITEM_MIN_LEVEL, level))
+        local defaultText = format("|cffff%s%s", level > self.MY_LEVEL and "0000" or "ffff", format(self.L["Requires Level %d"], level))
         local formattedText = defaultText
         local changed = self:GetOption("hide", stat) or self:GetOption("hide", "requiredLevelMet") and level <= self.MY_LEVEL or self:GetOption("hide", "requiredLevelMax") and UnitLevel"player" == self.MAX_LEVEL and level == self.MAX_LEVEL
         if changed then
-          formattedText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, strGsub(formattedText, "|c%x%x%x%x%x%x%x%x", ""))
+          formattedText = self.stealthIcon .. self:MakeColorCode(self.colors.GRAY, strGsub(formattedText, "|c%x%x%x%x%x%x%x%x", ""))
         end
         
         if changed then anyChanged = true end
@@ -984,17 +1005,17 @@ local function MakeExtraOptions(opts, categoryName)
   
   -- Binding
   for _, data in ipairs{
-    {"AlreadyBound",   ITEM_SOULBOUND},
-    {"CharacterBound", ITEM_BIND_ON_PICKUP},
-    {"AccountBound",   ITEM_BIND_TO_ACCOUNT, ITEM_BIND_TO_BNETACCOUNT},
-    {"Tradeable",      ITEM_BIND_ON_EQUIP,   ITEM_BIND_ON_USE},
+    {"AlreadyBound",   self.L["Soulbound"]},
+    {"CharacterBound", self.L["Binds when picked up"]},
+    {"AccountBound",   self.L["Binds to account"],      self.L["Binds to Blizzard account"]},
+    {"Tradeable",      self.L["Binds when equipped"],   self.L["Binds when used"]},
   } do
     local stat = data[1]
     
     local samples = {}
     for i = 2, #data do
       local defaultText = data[i]
-      local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.WHITE, defaultText, self:RewordBinding(defaultText, stat))
+      local defaultText, formattedText, changed = GetFormattedText(stat, self.colors.WHITE, defaultText, self:RewordBinding(defaultText, stat))
       tinsert(samples, {defaultText, formattedText})
     end
     
@@ -1015,9 +1036,9 @@ local function MakeExtraOptions(opts, categoryName)
     local stat = "Refundable"
     
     do
-      local defaultText = format(REFUND_TIME_REMAINING, format(INT_SPELL_DURATION_HOURS, 2))
+      local defaultText = format(self.L["You may sell this item to a vendor within %s for a full refund."], format(self.L["%d |4hour:hrs;"], 2))
       local formattedText = self:RewordRefundable(defaultText)
-      local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.SKY_BLUE, defaultText, formattedText)
+      local defaultText, formattedText, changed = GetFormattedText(stat, self.colors.SKY_BLUE, defaultText, formattedText)
       
       local opts = GUI:CreateGroup(opts, stat, formattedText)
       
@@ -1048,9 +1069,9 @@ local function MakeExtraOptions(opts, categoryName)
     local stat = "SoulboundTradeable"
     
     do
-      local defaultText = format(BIND_TRADE_TIME_REMAINING, format(INT_SPELL_DURATION_HOURS, 2))
+      local defaultText = format(self.L["You may trade this item with players that were also eligible to loot this item for the next %s."], format(self.L["%d |4hour:hrs;"], 2))
       local formattedText = self:RewordTradeable(defaultText)
-      local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.SKY_BLUE, defaultText, formattedText)
+      local defaultText, formattedText, changed = GetFormattedText(stat, self.colors.SKY_BLUE, defaultText, formattedText)
       
       local opts = GUI:CreateGroup(opts, stat, formattedText)
       
@@ -1082,8 +1103,8 @@ local function MakeExtraOptions(opts, categoryName)
       local stat = "Trainable"
       
       local defaultText = self.L["Weapon"]
-      local _, name = GetFormattedText(stat, self.COLORS.RED, L["Trainable Equipment"], L["Trainable Equipment"])
-      local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.RED, defaultText, defaultText)
+      local _, name = GetFormattedText(stat, self.colors.RED, L["Trainable Equipment"], L["Trainable Equipment"])
+      local defaultText, formattedText, changed = GetFormattedText(stat, self.colors.RED, defaultText, defaultText)
       
       local opts = GUI:CreateGroup(opts, stat, name, L["Equipment that a trainer can teach you to wear."])
       
@@ -1101,8 +1122,8 @@ local function MakeExtraOptions(opts, categoryName)
     local samples = {}
     do
       local min, max = self:Round(sampleDamage * (1-sampleVariance)), self:Round(sampleDamage * (1+sampleVariance))
-      local default1 = format(DAMAGE_TEMPLATE, min, max)
-      local default2 = format(PLUS_DAMAGE_TEMPLATE, min, max)
+      local default1 = format(self.L["%s - %s Damage"], self:ToFormattedNumber(min), self:ToFormattedNumber(max))
+      local default2 = format(self.L["+ %s - %s Damage"], self:ToFormattedNumber(min), self:ToFormattedNumber(max))
       
       for _, v in ipairs{
         {default1, self:ModifyWeaponDamage(default1, sampleDamage*2, 1, {min, max}), self:GetOption("hide", stat)},
@@ -1112,10 +1133,10 @@ local function MakeExtraOptions(opts, categoryName)
         local formattedText = v[2]
         local hidden        = v[3]
         
-        local originalColor = self.COLORS.WHITE
+        local originalColor = self.colors.WHITE
         local color = self:GetOption("color", stat)
         if hidden then
-          formattedText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, self:StripColorCode(formattedText))
+          formattedText = self.stealthIcon .. self:MakeColorCode(self.colors.GRAY, self:StripColorCode(formattedText))
         elseif self:GetOption("allow", "recolor") and self:GetOption("doRecolor", stat) and color ~= originalColor then
           formattedText = self:MakeColorCode(color, formattedText)
         else
@@ -1134,8 +1155,8 @@ local function MakeExtraOptions(opts, categoryName)
       GUI:CreateNewline(opts)
       
       -- Test
-      local option = GUI:CreateRange(opts, {"sampleDamage"}, L["Test"], nil, 0, 1000000, 0.5)
-      option.softMax = 1000
+      local option = GUI:CreateRange(opts, {"sampleDamage"}, L["Test"], nil, 0, 1000000, 0.01)
+      option.softMax = 10000
       option.bigStep = 10
       option.get = function(info)      return sampleDamage       end
       option.set = function(info, val)        sampleDamage = val end
@@ -1168,6 +1189,15 @@ local function MakeExtraOptions(opts, categoryName)
     end
     
     do
+      local opts = CreateThousandsSeparator(opts, stat)
+      GUI:CreateNewline(opts)
+      
+      local disabled = not self:GetOption("allow", "reword")
+      GUI:CreateRange(opts, {"precision", stat}, L["Precision"], L["Number of decimal places."], 0, 5, 1, disabled)
+      GUI:CreateReset(opts, {"precision", stat}, function() self:ResetOption("precision", stat) end)
+    end
+    
+    do
       local opts = GUI:CreateGroupBox(opts, self.L["Hide"])
       
       GUI:CreateToggle(opts, {"hide", stat}, self.L["Hide"], nil, disabled)
@@ -1181,7 +1211,7 @@ local function MakeExtraOptions(opts, categoryName)
   end
   
   local speedString = strGsub(format("%.2f", sampleSpeed), "%.", DECIMAL_SEPERATOR)
-  local speedStringFull = SPEED .. " " .. speedString
+  local speedStringFull = self.L["Speed"] .. " " .. speedString
   -- Weapon Speed
   do
     local stat = "Speed"
@@ -1189,10 +1219,10 @@ local function MakeExtraOptions(opts, categoryName)
     local defaultSpeedString = speedString
     local defaultText = speedStringFull
     local formattedTextOriginal = self:ModifyWeaponSpeed(defaultText, sampleSpeed, defaultSpeedString)
-    local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.WHITE, defaultText, formattedTextOriginal)
+    local defaultText, formattedText, changed = GetFormattedText(stat, self.colors.WHITE, defaultText, formattedTextOriginal)
     local disabled
     if self:GetOption("hide", "Damage") then
-      formattedText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, formattedTextOriginal)
+      formattedText = self.stealthIcon .. self:MakeColorCode(self.colors.GRAY, formattedTextOriginal)
       changed = true
       disabled = true
     end
@@ -1215,7 +1245,7 @@ local function MakeExtraOptions(opts, categoryName)
     do -- Precision
       local opts = GUI:CreateGroupBox(opts, L["Precision"])
       
-      GUI:CreateRange(opts, {"precision", stat}, L["Precision"], nil, 0, 5, 1, disabled)
+      GUI:CreateRange(opts, {"precision", stat}, L["Precision"], L["Number of decimal places."], 0, 5, 1, disabled)
       GUI:CreateReset(opts, {"precision", stat}, function() self:ResetOption("precision", stat) end)
     end
     
@@ -1228,12 +1258,12 @@ local function MakeExtraOptions(opts, categoryName)
   do
     local stat = "DamagePerSecond"
     
-    local defaultText = format(DPS_TEMPLATE, sampleDPS)
+    local defaultText = format(self.L["(%s damage per second)"], sampleDPS)
     local formattedText = self:ModifyWeaponDamagePerSecond(defaultText)
     -- if self:GetOption("dps", "removeBrackets") then
     --   formattedText = self:ChainGsub(formattedText, {"^%(", "%)$", ""})
     -- end
-    local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.WHITE, defaultText, formattedText)
+    local defaultText, formattedText, changed = GetFormattedText(stat, self.colors.WHITE, defaultText, formattedText)
     
     if self:GetOption("dps", "removeBrackets") then
       -- defaultText   = self:ChainGsub(defaultText  , {"^%(", "%)$", ""})
@@ -1251,8 +1281,13 @@ local function MakeExtraOptions(opts, categoryName)
     
     CreateReword(opts, stat)
     
-    do -- Remove Brackers
-      local opts = GUI:CreateGroupBox(opts, L["Remove Brackets"])
+    do
+      local opts = CreateThousandsSeparator(opts, stat)
+      GUI:CreateNewline(opts)
+      
+      local disabled = not self:GetOption("allow", "reword")
+      GUI:CreateRange(opts, {"precision", stat}, L["Precision"], L["Number of decimal places."], 0, 5, 1, disabled)
+      GUI:CreateReset(opts, {"precision", stat}, function() self:ResetOption("precision", stat) end)
       
       GUI:CreateToggle(opts, {"dps", "removeBrackets"}, L["Remove Brackets"], nil, disabled)
       GUI:CreateReset(opts, {"dps", "removeBrackets"})
@@ -1268,10 +1303,10 @@ local function MakeExtraOptions(opts, categoryName)
     local defaultSpeed = sampleSpeed
     local defaultText = self:ModifyWeaponSpeedbar(defaultSpeed, speedString, speedStringFull) or ""
     local formattedTextOriginal = defaultText == "" and L["Speed Bar"] or defaultText
-    local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.WHITE, formattedTextOriginal, formattedTextOriginal)
+    local defaultText, formattedText, changed = GetFormattedText(stat, self.colors.WHITE, formattedTextOriginal, formattedTextOriginal)
     local name, disabled
     if self:GetOption("hide", "DamagePerSecond") then
-      name     = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, defaultText == "" and L["Speed Bar"] or formattedText)
+      name     = self.stealthIcon .. self:MakeColorCode(self.colors.GRAY, defaultText == "" and L["Speed Bar"] or formattedText)
       disabled = true
     end
     
@@ -1305,10 +1340,10 @@ local function MakeExtraOptions(opts, categoryName)
           local formattedText = self:ModifyWeaponSpeed(defaultText, sampleSpeed, defaultSpeedString)
           
           local color = self:GetOption("color", "Speed")
-          if self:GetOption("allow", "recolor") and self:GetOption("doRecolor", "Speed") and color ~= self.COLORS.WHITE then
+          if self:GetOption("allow", "recolor") and self:GetOption("doRecolor", "Speed") and color ~= self.colors.WHITE then
             formattedText = self:MakeColorCode(color, formattedText)
           else
-            formattedText = self:MakeColorCode(self.COLORS.WHITE, formattedText)
+            formattedText = self:MakeColorCode(self.colors.WHITE, formattedText)
           end
           GUI:CreateExecute(opts, {"goto", "Speed"}, formattedText, nil, function() self:OpenConfig("Miscellaneous", "Speed") end)
           GUI:CreateNewline(opts)
@@ -1341,11 +1376,11 @@ local function MakeExtraOptions(opts, categoryName)
   do
     local stat = "Armor"
     
-    local sample = 10
+    local sample = 1000
     
     local samples = {}
-    local defaultText = format(ARMOR_TEMPLATE, sample)
-    local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.WHITE, defaultText, self:RewordArmor(defaultText))
+    local defaultText = format(self.L["%s Armor"], self:ToFormattedNumber(sample))
+    local defaultText, formattedText, changed = GetFormattedText(stat, self.colors.WHITE, defaultText, self:RewordArmor(defaultText))
     tinsert(samples, {defaultText, formattedText})
     
     local opts = GUI:CreateGroup(opts, stat, samples[1][2], nil, nil, disabled)
@@ -1364,6 +1399,8 @@ local function MakeExtraOptions(opts, categoryName)
       GUI:CreateReset(opts, {"trimSpace", stat}, function() self:ResetOption("trimSpace", stat) end)
       GUI:CreateNewline(opts)
     end
+    
+    CreateThousandsSeparator(opts, stat)
     
     CreateIcon(opts, stat)
     
@@ -1374,11 +1411,11 @@ local function MakeExtraOptions(opts, categoryName)
   do
     local stat = "BonusArmor"
     
-    local sample = 20
+    local sample = 2000
     
     local samples = {}
-    local defaultText = format(ARMOR_TEMPLATE, sample)
-    local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.GREEN, defaultText, self:RewordBonusArmor(defaultText))
+    local defaultText = format(self.L["%s Armor"], self:ToFormattedNumber(sample))
+    local defaultText, formattedText, changed = GetFormattedText(stat, self.colors.GREEN, defaultText, self:RewordBonusArmor(defaultText))
     tinsert(samples, {defaultText, formattedText})
     
     local opts = GUI:CreateGroup(opts, stat, samples[1][2], nil, nil, disabled)
@@ -1398,18 +1435,20 @@ local function MakeExtraOptions(opts, categoryName)
       GUI:CreateNewline(opts)
     end
     
+    CreateThousandsSeparator(opts, stat)
+    
     CreateIcon(opts, stat)
     
     CreateHide(opts, stat)
   end
   
   -- Block
-  do
+  if self.expansionLevel < self.expansions.cata then
     local stat = "Block"
     
-    local sample = 10
-    local defaultText = format(SHIELD_BLOCK_TEMPLATE, sample)
-    local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.WHITE, defaultText, self:RewordBlock(defaultText))
+    local sample = 1000
+    local defaultText = format(self.L["%d Block"], sample)
+    local defaultText, formattedText, changed = GetFormattedText(stat, self.colors.WHITE, defaultText, self:RewordBlock(defaultText))
     
     local opts = GUI:CreateGroup(opts, stat, formattedText, nil, nil, disabled)
       
@@ -1439,7 +1478,7 @@ local function MakeExtraOptions(opts, categoryName)
     local stat = "Enchant"
     
     local defaultText = self.L["Enchant"]
-    local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.GREEN, defaultText, self:ModifyEnchantment(defaultText))
+    local defaultText, formattedText, changed = GetFormattedText(stat, self.colors.GREEN, defaultText, self:ModifyEnchantment(defaultText))
     
     local opts = GUI:CreateGroup(opts, stat, formattedText, L["This applies to most enchantments."])
     
@@ -1458,15 +1497,15 @@ local function MakeExtraOptions(opts, categoryName)
   local function MakeEnchantOnUseOptions()
     local stat = "EnchantOnUse"
     
-    local originalColor = self.COLORS.GREEN
+    local originalColor = self.colors.GREEN
     local defaultText = self.L["Use:"] .. " " .. self.L["Enchant"]
-    local prefixModifiedText = self:ModifyPrefix(defaultText, ITEM_SPELL_TRIGGER_ONUSE)
+    local prefixModifiedText = self:ModifyPrefix(defaultText, self.L["Use:"])
     local _, prefixFormattedText = GetFormattedText("Use", originalColor, defaultText, prefixModifiedText)
     local formattedText = self:ModifyOnUseEnchantment(prefixModifiedText)
     
     local color = self:GetOption("color", "Use")
     if self:GetOption("hide", stat) or self:GetOption("hide", "Use") then
-      formattedText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, formattedText)
+      formattedText = self.stealthIcon .. self:MakeColorCode(self.colors.GRAY, formattedText)
     elseif self:GetOption("allow", "recolor") and self:GetOption("doRecolor", "Use") and color ~= originalColor then
       formattedText = self:MakeColorCode(color, formattedText)
     else
@@ -1497,7 +1536,7 @@ local function MakeExtraOptions(opts, categoryName)
     local stat = "WeaponEnchant"
     
     local defaultText = self.L["Weapon Enchantment"]
-    local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.GREEN, defaultText, self:ModifyWeaponEnchantment(defaultText))
+    local defaultText, formattedText, changed = GetFormattedText(stat, self.colors.GREEN, defaultText, self:ModifyWeaponEnchantment(defaultText))
     
     local opts = GUI:CreateGroup(opts, stat, formattedText, L["This applies to temporary weapon enchantments."])
     
@@ -1517,7 +1556,7 @@ local function MakeExtraOptions(opts, categoryName)
     local stat = "Rune"
     
     local defaultText = self.L["All Runes"]
-    local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.GREEN, defaultText, self:ModifyRune(defaultText))
+    local defaultText, formattedText, changed = GetFormattedText(stat, self.colors.GREEN, defaultText, self:ModifyRune(defaultText))
     
     local opts = GUI:CreateGroup(opts, stat, formattedText, L["This applies to runes."])
     
@@ -1538,21 +1577,22 @@ local function MakeExtraOptions(opts, categoryName)
     local stat = "Socket"
     
     local sockets = Addon:Squish{
-      {"Socket_red",       EMPTY_SOCKET_RED},
-      {"Socket_blue",      EMPTY_SOCKET_BLUE},
-      {"Socket_yellow",    EMPTY_SOCKET_YELLOW},
-      {"Socket_purple",    GEM_TEXT_PURPLE},
-      {"Socket_green",     GEM_TEXT_GREEN},
-      {"Socket_orange",    GEM_TEXT_ORANGE},
-      {"Socket_prismatic", EMPTY_SOCKET_PRISMATIC},
-      {"Socket_meta",      EMPTY_SOCKET_META},
-      Addon:ShortCircuit(Addon.expansionLevel >= Addon.expansions.cata, {"Socket_cogwheel", EMPTY_SOCKET_COGWHEEL}, nil),
+      {"Socket_red",       self.L["Red Socket"]},
+      {"Socket_blue",      self.L["Blue Socket"]},
+      {"Socket_yellow",    self.L["Yellow Socket"]},
+      {"Socket_purple",    self.L["Matches a Red or Blue Socket."]},
+      {"Socket_green",     self.L["Matches a Blue or Yellow Socket."]},
+      {"Socket_orange",    self.L["Matches a Red or Yellow Socket."]},
+      {"Socket_prismatic", self.L["Prismatic Socket"]},
+      {"Socket_meta",      self.L["Meta Socket"]},
+      Addon:ShortCircuit(Addon.expansionLevel >= Addon.expansions.cata, {"Socket_cogwheel", self.L["Cogwheel Socket"]}, nil),
+      Addon:ShortCircuit(Addon.expansionLevel >= Addon.expansions.mop, {"Socket_hydraulic", self.L["Hydraulic Socket"]}, nil),
     }
     
     local samples = {}
     for _, socket in ipairs(sockets) do
       local socketType, defaultText = unpack(socket, 1, 2)
-      local defaultText, formattedText = GetFormattedText(socketType, self.COLORS.WHITE, defaultText, defaultText)
+      local defaultText, formattedText = GetFormattedText(socketType, self.colors.WHITE, defaultText, defaultText)
       tinsert(samples, {defaultText, formattedText})
     end
     
@@ -1578,8 +1618,8 @@ local function MakeExtraOptions(opts, categoryName)
     do
       local stat = "SocketHint"
       
-      local defaultText = ITEM_SOCKETABLE
-      local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.GREEN, defaultText, self:RewordSocketHint(defaultText))
+      local defaultText = self.L["<Shift Right Click to Socket>"]
+      local defaultText, formattedText, changed = GetFormattedText(stat, self.colors.GREEN, defaultText, self:RewordSocketHint(defaultText))
       
       local opts = GUI:CreateGroup(opts, stat, formattedText)
       
@@ -1602,8 +1642,8 @@ local function MakeExtraOptions(opts, categoryName)
     local stat = "Durability"
     
     local defaultDurability, defaultDurabilityFull = 5, 50
-    local defaultText = format(DURABILITY_TEMPLATE, defaultDurability, defaultDurabilityFull)
-    local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.WHITE, defaultText, self:ModifyDurability(defaultText))
+    local defaultText = format(self.L["Durability %d / %d"], defaultDurability, defaultDurabilityFull)
+    local defaultText, formattedText, changed = GetFormattedText(stat, self.colors.WHITE, defaultText, self:ModifyDurability(defaultText))
     
     local opts = GUI:CreateGroup(opts, stat, formattedText, nil, nil, disabled)
       
@@ -1647,15 +1687,15 @@ local function MakeExtraOptions(opts, categoryName)
   
   -- Prefixes
   for _, data in ipairs{
-    {"Equip",       ITEM_SPELL_TRIGGER_ONEQUIP},
-    {"ChanceOnHit", ITEM_SPELL_TRIGGER_ONPROC},
-    {"Use",         ITEM_SPELL_TRIGGER_ONUSE},
+    {"Equip",       self.L["Equip:"]},
+    {"ChanceOnHit", self.L["Chance on hit:"]},
+    {"Use",         self.L["Use:"]},
   } do
     local stat   = data[1]
     local prefix = data[2]
     
     local defaultText = format("%s %s", prefix, self.L["Effects"])
-    local defaultText, formattedText, changed = GetFormattedText(stat, self.COLORS.GREEN, defaultText, self:ModifyPrefix(defaultText, prefix))
+    local defaultText, formattedText, changed = GetFormattedText(stat, self.colors.GREEN, defaultText, self:ModifyPrefix(defaultText, prefix))
     
     local opts = GUI:CreateGroup(opts, stat, formattedText, prefix)
     
@@ -1687,23 +1727,23 @@ local function MakeExtraOptions(opts, categoryName)
     local stat = "Charges"
     
     local sampleCharges = 10
-    local someCharges   = format(ITEM_SPELL_CHARGES, sampleCharges)
-    local noCharges     = ITEM_SPELL_CHARGES_NONE
+    local someCharges   = format(self.L["%d |4Charge:Charges;"], sampleCharges)
+    local noCharges     = self.L["No charges"]
     
     local samples = {}
     do
       local defaultText = someCharges
-      local defaultText, formattedText = GetFormattedText(stat, self.COLORS.WHITE, defaultText, defaultText)
+      local defaultText, formattedText = GetFormattedText(stat, self.colors.WHITE, defaultText, defaultText)
       tinsert(samples, {defaultText, formattedText})
     end
     do
       local defaultText = noCharges
       local formattedText = defaultText
-      local originalColor = self.COLORS.WHITE
+      local originalColor = self.colors.WHITE
       local color = self:GetOption("color", "NoCharges")
       
       if self:GetOption("hide", stat) then
-        formattedText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, self:StripColorCode(formattedText))
+        formattedText = self.stealthIcon .. self:MakeColorCode(self.colors.GRAY, self:StripColorCode(formattedText))
       elseif self:GetOption("allow", "recolor") and self:GetOption("doRecolor", "NoCharges") and color ~= originalColor then
         formattedText = self:MakeColorCode(color, formattedText)
       else
@@ -1738,10 +1778,10 @@ local function MakeExtraOptions(opts, categoryName)
     local stat = "Cooldown"
     
     local sampleCooldown = 10
-    local defaultText = format(ITEM_COOLDOWN_TIME_MIN, sampleCooldown)
+    local defaultText = format(self.L["Cooldown remaining: %d min"], sampleCooldown)
     
     local samples = {}
-    local defaultText, formattedText = GetFormattedText(stat, self.COLORS.WHITE, defaultText, defaultText)
+    local defaultText, formattedText = GetFormattedText(stat, self.colors.WHITE, defaultText, defaultText)
     tinsert(samples, {defaultText, formattedText})
     
     local opts = GUI:CreateGroup(opts, stat, samples[1][2], nil, nil, disabled)
@@ -1764,10 +1804,10 @@ local function MakeExtraOptions(opts, categoryName)
         local defaultText = Addon:RewordReputation(itemID)
         
         local formattedText = defaultText
-        local originalColor = self.COLORS.REP
+        local originalColor = self.colors.REP
         local color = self:GetOption("color", stat)
         if self:ShouldHideReputation(itemID) then
-          formattedText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, formattedText)
+          formattedText = self.stealthIcon .. self:MakeColorCode(self.colors.GRAY, formattedText)
         elseif self:GetOption("allow", "recolor") and self:GetOption("doRecolor", stat) and color ~= originalColor then
           formattedText = self:MakeColorCode(color, formattedText)
         else
@@ -1804,17 +1844,17 @@ local function MakeExtraOptions(opts, categoryName)
     local stat = "MadeBy"
     
     local samples = {}
-    local secondName = UnitExists"target" and UnitName"target" or nil
+    local secondName = UnitExists"target" and UnitNameUnmodified"target" or nil
     secondName = secondName and secondName ~= self.MY_NAME and secondName or self:Random(self.SAMPLE_NAMES)
     for _, name in ipairs{self.MY_NAME, secondName} do
-      for _, pattern in ipairs{self.ITEM_CREATED_BY, self.ITEM_WRAPPED_BY, ITEM_WRITTEN_BY} do
+      for _, pattern in ipairs{self.L["<Made by %s>"], self.L["<Gift from %s>"], self.L["Written by %s"]} do
         local defaultText = format(pattern, name)
         
         local formattedText = defaultText
-        local originalColor = self.COLORS.GREEN
+        local originalColor = self.colors.GREEN
         local color = self:GetOption("color", stat)
         if self:ShouldHideMadeBy(defaultText, pattern) then
-          formattedText = self.stealthIcon .. self:MakeColorCode(self.COLORS.GRAY, formattedText)
+          formattedText = self.stealthIcon .. self:MakeColorCode(self.colors.GRAY, formattedText)
         elseif self:GetOption("allow", "recolor") and self:GetOption("doRecolor", stat) and color ~= originalColor then
           formattedText = self:MakeColorCode(color, formattedText)
         else
@@ -1857,7 +1897,7 @@ local function MakeExtraOptions(opts, categoryName)
   -- Misc locale rewording
   if #self:GetExtraReplacements() > 0 then
     local stat = "Miscellaneous"
-    local name = self:MakeColorCode(self.COLORS.WHITE, self.L["Miscellaneous"])
+    local name = self:MakeColorCode(self.colors.WHITE, self.L["Miscellaneous"])
     
     local opts = GUI:CreateGroup(opts, stat, name, L["Reword some various small things, such as mana potions and speed enchantments. This option is different for each locale."])
     
@@ -1944,7 +1984,11 @@ local function MakeDebugOptions(opts, categoryName)
       GUI:CreateToggle(opts, {"debug"}, self.L["Enable"])
       GUI:CreateNewline(opts)
       
-      GUI:CreateToggle(opts, {"debugShowLuaErrors"}, "Show Lua Errors", nil, disabled).width = 2
+      GUI:CreateToggle(opts, {"debugShowLuaErrors"}, self.L["Display Lua Errors"], nil, disabled).width = 2
+      GUI:CreateNewline(opts)
+      
+      local disabled = not self:GetGlobalOption"debugShowLuaErrors"
+      GUI:CreateToggle(opts, {"debugShowLuaWarnings"}, self.L["Lua Warning"], nil, disabled).width = 2
     end
   end
   

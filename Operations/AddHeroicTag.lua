@@ -115,11 +115,11 @@ local heroicItems = Addon:MakeLookupTable{
 
 
 local stat = "Quality"
-local defaultText = ITEM_HEROIC_QUALITY4_DESC
+local defaultText = Addon.L["Heroic Epic"]
 local coveredDefaultText = Addon:CoverSpecialCharacters(defaultText)
 function Addon:RewordQuality(text, tooltipData)
   if not self:GetOption("hide", stat) and heroicItems[tooltipData.id] then
-    text = ITEM_HEROIC_QUALITY4_DESC
+    text = defaultText
   end
   return text
 end
@@ -127,7 +127,7 @@ end
 
 
 local stat = "Heroic"
-local defaultText = ITEM_HEROIC
+local defaultText = Addon.L["Heroic"]
 local coveredDefaultText = Addon:CoverSpecialCharacters(defaultText)
 function Addon:RewordHeroic(text)
   if self:GetOption("allow", "reword") and self:GetOption("doReword", stat) then

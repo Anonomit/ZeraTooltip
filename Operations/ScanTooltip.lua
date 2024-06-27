@@ -140,6 +140,7 @@ function Addon:ReadTooltip(tooltip, name, link, maxLines)
   end
   local _, _, _, itemEquipLoc, icon = GetItemInfoInstant(tooltipData.id)
   tooltipData.isWeapon     = weaponInvTypes[itemEquipLoc]
+  tooltipData.isGem = select(6, GetItemInfoInstant(tooltipData.id)) == Enum.ItemClass.Gem
   tooltipData.isEngravable = Addon.isSoD and engravableInvTypes[itemEquipLoc] or nil
   tooltipData.icon         = icon
   

@@ -153,10 +153,10 @@ local stat = "ItemLevel"
 
 Addon.itemLevelTexts = {
   [true] = {
-    iLvlFormat = GARRISON_FOLLOWER_ITEM_LEVEL,
+    iLvlFormat = Addon.L["iLvl %d"],
   },
   [false] = {
-    iLvlFormat = ITEM_LEVEL,
+    iLvlFormat = Addon.L["Item Level %d"],
   },
 }
 for bool, t in pairs(Addon.itemLevelTexts) do

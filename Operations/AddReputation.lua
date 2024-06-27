@@ -208,7 +208,7 @@ function Addon:RewordReputation(itemID)
   local text = repInfo.faction
   if repInfo.cutoff then
     local standingID = select(3, GetFactionInfoByID(repInfo.factionID))
-    text = text .. format(REPUTATION_CUTOFF_PATTERN, standingID < repInfo.cutoff and Addon.COLORS.GREEN or Addon.COLORS.RED, reputationStandings[standingID], reputationStandings[repInfo.cutoff])
+    text = text .. format(REPUTATION_CUTOFF_PATTERN, standingID < repInfo.cutoff and Addon.colors.GREEN or Addon.colors.RED, reputationStandings[standingID], reputationStandings[repInfo.cutoff])
   end
   if repInfo.count then
     text = text .. format(REP_COUNT_PATTERN, Addon:Round(repInfo.rep/repInfo.count, 1), repInfo.count, repInfo.rep)

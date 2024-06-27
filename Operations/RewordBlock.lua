@@ -8,7 +8,7 @@ local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 local strGsub = string.gsub
 
 
-local blockText   = BLOCK
+local blockText   = Addon.L["Block"]
 local coveredText = Addon:CoverSpecialCharacters(blockText)
 local emptyText   = blockText .. " *"
 

@@ -11,26 +11,32 @@ local strRep   = string.rep
 
 local defaultDamageBonus = {0, 0}
 
+local stat = "Damage"
 function Addon:ModifyWeaponDamage(text, dps, speed, damageBonus)
+  if not self:GetOption("allow", "reword") then return text end
+  
   damageBonus = damageBonus or defaultDamageBonus
   
   local showAverage  = self:GetOption("allow", "reword") and self:GetOption("damage", "showAverage")
   local showVariance = self:GetOption("allow", "reword") and self:GetOption("damage", "showVariance")
   local showMinMax   = self:GetOption("allow", "reword") and self:GetOption("damage", "showMinMax")
   
-  local minMax, min, gap, max = strMatch(text, "((%d+)( ?%- ?)(%d+))")
+  local noThousandsSeparator = self:GetOption("allow", "reword") and not self:GetOption("separateThousands", stat)
+  local precision = self:GetOption("allow", "reword") and (1 / 10^self:GetOption("precision", stat)) or 1
+  
+  local minMax, min, gap, max = strMatch(text, "(([%d,]+)( ?%- ?)([%d,]+))")
   if min then
-    min, max = tonumber(min), tonumber(max)
+    min, max = self:ToNumber(min), self:ToNumber(max)
     local mid = dps * speed
     if self:GetOption("hide", "DamageBonus") then
       min = min + (damageBonus[1])
       max = max + (damageBonus[2])
-      minMax = min .. gap .. max
     else
       mid = mid - (damageBonus[1] + damageBonus[2]) / 2
     end
+    minMax = self:ToFormattedNumber(min, noThousandsSeparator) .. gap .. self:ToFormattedNumber(max, noThousandsSeparator)
     
-    local average = showAverage and format("%d", mid) or nil
+    local average = showAverage and self:ToFormattedNumber(self:Round(mid, precision), noThousandsSeparator) or nil
     local usePercent = self:GetOption("damage", "variancePercent")
     
     local varianceDecimal
@@ -40,7 +46,7 @@ function Addon:ModifyWeaponDamage(text, dps, speed, damageBonus)
       varianceDecimal = max/mid
     end
     local variance = showVariance and format("%s%d%s", self:GetOption("damage", "variancePrefix"), usePercent and self:Round((varianceDecimal-1)*100, 5) or self:Round(max-mid, 1), usePercent and "%%" or "") or nil
-    local minMax = showMinMax and minMax or nil
+    minMax = showMinMax and minMax or nil
     
     local pattern
     if average then
@@ -58,7 +64,7 @@ function Addon:ModifyWeaponDamage(text, dps, speed, damageBonus)
       end
     end
     
-    return strGsub(text, "%d+ ?%- ?%d+", pattern)
+    return strGsub(text, "[%d,]+ ?%- ?[%d,]+", pattern)
   end
   return text
 end
@@ -70,13 +76,17 @@ function Addon:ModifyWeaponDamageBonus(text, damageBonus)
   local showAverage  = self:GetOption("allow", "reword") and self:GetOption("damage", "showAverage")
   local showVariance = self:GetOption("allow", "reword") and self:GetOption("damage", "showVariance")
   if not (showAverage or showVariance) then return text end -- no changes to make
-  local showMinMax   = self:GetOption("allow", "reword") and self:GetOption("damage", "showMinMax")
   
-  local minMax, min, max = strMatch(text, "((%d+) ?%- ?(%d+))")
+  local showMinMax = self:GetOption("allow", "reword") and self:GetOption("damage", "showMinMax")
+  
+  local noThousandsSeparator = self:GetOption("allow", "reword") and not self:GetOption("separateThousands", stat)
+  local precision = self:GetOption("allow", "reword") and (1 / 10^self:GetOption("precision", stat)) or 1
+  
+  local minMax, min, gap, max = strMatch(text, "(([%d,]+)( ?%- ?)([%d,]+))")
   if min then
-    min, max = tonumber(min), tonumber(max)
+    min, max = self:ToNumber(min), self:ToNumber(max)
     local mid = (damageBonus[1] + damageBonus[2]) / 2
-    local average = showAverage and format("%d", mid) or nil
+    local average = showAverage and self:ToFormattedNumber(self:Round(mid, precision), noThousandsSeparator) or nil
     local usePercent = self:GetOption("damage", "variancePercent")
     
     local varianceDecimal
@@ -86,7 +96,9 @@ function Addon:ModifyWeaponDamageBonus(text, damageBonus)
       varianceDecimal = max/mid
     end
     local variance = showVariance and format("%s%d%s", self:GetOption("damage", "variancePrefix"), usePercent and self:Round((varianceDecimal-1)*100, 5) or self:Round(max-mid, 1), usePercent and "%%" or "") or nil
-    local minMax = showMinMax and minMax or nil
+    
+    minMax = self:ToFormattedNumber(min, noThousandsSeparator) .. gap .. self:ToFormattedNumber(max, noThousandsSeparator)
+    minMax = showMinMax and minMax or nil
     
     local pattern
     if average then
@@ -104,7 +116,7 @@ function Addon:ModifyWeaponDamageBonus(text, damageBonus)
       end
     end
     
-    return strGsub(text, "%d+ ?%- ?%d+", pattern)
+    return strGsub(text, "[%d,]+ ?%- ?[%d,]+", pattern)
   end
   return text
 end
@@ -138,15 +150,30 @@ function Addon:ModifyWeaponSpeed(text, speed, speedString)
 end
 
 
+local dpsPattern = Addon:ReversePattern(Addon.L["(%s damage per second)"])
+local dpsText = Addon.L["DPS"]
+
 local stat = "DamagePerSecond"
 function Addon:ModifyWeaponDamagePerSecond(text)
-  if self:GetOption("allow", "reword") then
-    if self:GetOption("doReword", stat) then
-      text = format("(%s %s)", strMatch(text, self:ReversePattern(DPS_TEMPLATE)), STAT_DPS_SHORT)
+  if not self:GetOption("allow", "reword") then return text end
+  
+  local origNumber = strMatch(text, "[%d+,%.]+")
+  if not origNumber then return text end
+  
+  local noThousandsSeparator = not self:GetOption("separateThousands", stat)
+  local precision = (1 / 10^self:GetOption("precision", stat)) or 1
+  
+  local strNumber = self:ToFormattedNumber(self:Round(self:ToNumber(origNumber), precision), noThousandsSeparator)
+  text = strGsub(text, self:CoverSpecialCharacters(origNumber), strNumber)
+  
+  if self:GetOption("doReword", stat) then
+    local alias = self:GetOption("reword", stat)
+    if alias and alias ~= "" then
+      text = format("(%s %s)", strMatch(text, dpsPattern), alias)
     end
-    if self:GetOption("dps", "removeBrackets") then
-      text = self:ChainGsub(text, {"^%(", "%)$", ""})
-    end
+  end
+  if self:GetOption("dps", "removeBrackets") then
+    text = self:ChainGsub(text, {"^%(", "%)$", ""})
   end
   return text
 end

@@ -13,7 +13,7 @@ local invTypeWhitelist = Addon:MakeLookupTable{""}
 
 local stat = "StackSize"
 
-local stackSizeText = AUCTION_STACK_SIZE
+local stackSizeText = Addon.L["Stack Size"]
 local coveredText   = Addon:CoverSpecialCharacters(stackSizeText)
 
 function Addon:RewordStackSize(text)

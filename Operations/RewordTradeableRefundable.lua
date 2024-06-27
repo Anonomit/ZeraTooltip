@@ -8,6 +8,9 @@ local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 
 local strMatch = string.match
 
+local refundPattern = Addon:ReversePattern(Addon.L["You may sell this item to a vendor within %s for a full refund."])
+local tradePattern  = Addon:ReversePattern(Addon.L["You may trade this item with players that were also eligible to loot this item for the next %s."])
+
 
 local stat = "Refundable"
 function Addon:RewordRefundable(text)
@@ -16,7 +19,7 @@ function Addon:RewordRefundable(text)
   if not self:GetOption("allow", "reword") then return text end
   
   if self:GetOption("doReword", stat) then
-    local time = strMatch(text, self:ReversePattern(REFUND_TIME_REMAINING))
+    local time = strMatch(text, refundPattern)
     if time then
       text = format("%s: %s", L["Refund"], time)
     end
@@ -32,7 +35,7 @@ function Addon:RewordTradeable(text)
   if not self:GetOption("allow", "reword") then return text end
   
   if self:GetOption("doReword", stat) then
-    local time = strMatch(text, self:ReversePattern(BIND_TRADE_TIME_REMAINING))
+    local time = strMatch(text, tradePattern)
     if time then
       text = format("%s: %s", self.L["Trade"], time)
     end

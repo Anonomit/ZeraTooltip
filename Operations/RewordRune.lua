@@ -5,13 +5,16 @@ local ADDON_NAME, Data = ...
 local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 
 
+if not Addon.isSoD then return end
+
+
 
 local strMatch = string.match
 local strGsub  = string.gsub
 
 
 
-local defaultPrefix = EQUIPPED_RUNES or "Equipped Runes"
+local defaultPrefix = Addon.L["Equipped Runes"]
 local coveredDefaultPrefix = Addon:CoverSpecialCharacters(defaultPrefix)
 local prefixPattern = strGsub(ENCHANTED_TOOLTIP_LINE, "^[^:]+", coveredDefaultPrefix)
 

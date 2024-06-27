@@ -58,14 +58,19 @@ function Addon:MakeDefaultOptions()
           SoulboundTradeable = false,
         },
         reword = {
-          ["*"] = "",
+          ["*"]           = "",
+          DamagePerSecond = Addon.L["DPS"],
+        },
+        separateThousands = {
+          ["*"] = true,
         },
         mod = {
           ["*"] = 1,
         },
         precision = {
-          ["*"] = 0,
-          Speed = 1,
+          ["*"]           = 0,
+          DamagePerSecond = 1,
+          Speed           = 1,
         },
         doRecolor = {
           ["*"]                  = true,
@@ -86,6 +91,7 @@ function Addon:MakeDefaultOptions()
           Socket_prismatic       = false,
           Socket_meta            = false,
           Socket_cogwheel        = false,
+          Socket_hydraulic       = false,
           Equip                  = false, -- just to match Use
           ChanceOnHit            = false, -- just to match Use
           Use                    = false, -- because of EnchantOnUse
@@ -212,8 +218,9 @@ function Addon:MakeDefaultOptions()
         -- Debug options
         debug = false,
         
-        debugShowLuaErrors = true,
-          
+        debugShowLuaErrors   = true,
+        debugShowLuaWarnings = true,
+        
         debugView = {
           ["*"] = false,
         },

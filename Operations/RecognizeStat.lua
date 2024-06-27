@@ -110,7 +110,7 @@ do
       if line.stat == "Arcane Resistance" then
         local n         = strMatch(line.normalForm, "(%d+)")
         line.stat       = "All Resistance"
-        line.normalForm = format(Addon.ITEM_RESIST_ALL, strByte"+", n)
+        line.normalForm = format(self.L["%c%d to All Resistances"], strByte"+", n)
       end
     end
   end

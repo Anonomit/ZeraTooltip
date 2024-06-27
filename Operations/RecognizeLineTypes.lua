@@ -13,29 +13,136 @@ local strMatch = string.match
 local tinsert = tinsert
 
 
-local ITEM_CREATED_BY         = Addon.ITEM_CREATED_BY
-local ITEM_WRAPPED_BY         = Addon.ITEM_WRAPPED_BY
-local ITEM_MOD_STAMINA        = Addon.ITEM_MOD_STAMINA
-local ITEM_MOD_STRENGTH       = Addon.ITEM_MOD_STRENGTH
-local ITEM_MOD_AGILITY        = Addon.ITEM_MOD_AGILITY
-local ITEM_MOD_INTELLECT      = Addon.ITEM_MOD_INTELLECT
-local ITEM_MOD_SPIRIT         = Addon.ITEM_MOD_SPIRIT
-local ITEM_MOD_MASTERY_RATING = Addon.ITEM_MOD_MASTERY_RATING
+local L_ITEM_MOD_STAMINA        = Addon.L["%c%d Stamina"]
+local L_ITEM_MOD_STRENGTH       = Addon.L["%c%d Strength"]
+local L_ITEM_MOD_AGILITY        = Addon.L["%c%d Agility"]
+local L_ITEM_MOD_INTELLECT      = Addon.L["%c%d Intellect"]
+local L_ITEM_MOD_SPIRIT         = Addon.L["%c%d Spirit"]
+local L_ITEM_RESIST_SINGLE      = Addon.L["%c%d %s Resistance"]
+
+local L_ITEM_MOD_MASTERY_RATING = Addon.L["%c%d Mastery"]
+
+local L_CURRENTLY_EQUIPPED = Addon.L["Currently Equipped"]
+local L_DESTROY_GEM        = Addon.L["Gem to be destroyed"]
+
+local L_ITEM_HEROIC = Addon.L["Heroic"]
+
+local L_ITEM_CREATED_BY = Addon.L["<Made by %s>"]
+local L_ITEM_WRAPPED_BY = Addon.L["<Gift from %s>"]
+local L_ITEM_WRITTEN_BY = Addon.L["Written by %s"]
+
+local L_ITEM_UNIQUE                  = Addon.L["Unique"]
+local L_ITEM_UNIQUE_MULTIPLE         = Addon.L["Unique (%d)"]
+local L_ITEM_UNIQUE_EQUIPPABLE       = Addon.L["Unique-Equipped"]
+local L_ITEM_LIMIT_CATEGORY_MULTIPLE = Addon.L["Unique-Equipped: %s (%d)"]
+local L_ITEM_LIMIT_CATEGORY          = Addon.L["Unique: %s (%d)"]
+
+local L_ITEM_MIN_SKILL = Addon.L["Requires %s (%d)"]
+
+local L_DAMAGE_TEMPLATE             = Addon.L["%s - %s Damage"]
+local L_DAMAGE_TEMPLATE_WITH_SCHOOL = Addon.L["%s - %s %s Damage"]
+local L_SINGLE_DAMAGE_TEMPLATE      = Addon.L["%s Damage"]
+
+local L_PLUS_SINGLE_DAMAGE_TEMPLATE             = Addon.L["+ %s Damage"]
+local L_PLUS_DAMAGE_TEMPLATE                    = Addon.L["+ %s - %s Damage"]
+local L_PLUS_SINGLE_DAMAGE_TEMPLATE_WITH_SCHOOL = Addon.L["+%s %s Damage"]
+local L_PLUS_DAMAGE_TEMPLATE_WITH_SCHOOL        = Addon.L["+ %s - %s %s Damage"]
+
+local L_DPS_TEMPLATE = Addon.L["(%s damage per second)"]
+
+local L_ARMOR_TEMPLATE = Addon.L["%s Armor"]
+
+local L_SHIELD_BLOCK_TEMPLATE = Addon.L["%d Block"]
+
+local L_ENCHANT_ITEM_REQ_SKILL = Addon.L["Enchantment Requires %s"]
+local L_ENCHANT_ITEM_MIN_SKILL = Addon.L["Enchantment Requires %s (%d)"]
+local L_ENCHANT_ITEM_REQ_LEVEL = Addon.L["Enchantment Requires Level %d"]
+
+local L_SOCKET_ITEM_REQ_SKILL = Addon.L["Socket Requires %s"]
+
+local L_ITEM_PROPOSED_ENCHANT = Addon.L["Will receive %s."]
+
+local L_ITEM_ENCHANT_DISCLAIMER = Addon.L["Item will not be traded!"]
+
+local L_ITEM_SOCKET_BONUS = Addon.L["Socket Bonus: %s"]
+
+local L_DURABILITY_TEMPLATE = Addon.L["Durability %d / %d"]
+
+local L_ITEM_RACES_ALLOWED = Addon.L["Races: %s"]
+
+local L_ITEM_CLASSES_ALLOWED = Addon.L["Classes: %s"]
+
+local L_ITEM_MIN_LEVEL = Addon.L["Requires Level %d"]
+
+local L_ITEM_LEVEL = Addon.L["Item Level %d"]
+
+local L_ITEM_SPELL_KNOWN = Addon.L["Already known"]
+
+local L_ITEM_REQ_REPUTATION = Addon.L["Requires %s - %s"]
+
+local L_ITEM_SPELL_TRIGGER_ONEQUIP = Addon.L["Equip:"]
+local L_ITEM_SPELL_TRIGGER_ONUSE   = Addon.L["Use:"]
+local L_ITEM_SPELL_TRIGGER_ONPROC  = Addon.L["Chance on hit:"]
+
+local L_ITEM_RANDOM_ENCHANT         = Addon.L["<Random enchantment>"]
+local L_ITEM_MOD_FERAL_ATTACK_POWER = Addon.L["Increases attack power by %s in Cat, Bear, Dire Bear, and Moonkin forms only."]
+
+
+local L_ITEM_SPELL_CHARGES_1
+local L_ITEM_SPELL_CHARGES_2
+do
+  local head, single, plural, tail = strMatch(Addon.L["%d |4Charge:Charges;"], "(.*)|4([^:]+):([^;]+);(.*)")
+  if single then
+    L_ITEM_SPELL_CHARGES_1 = head .. single .. tail
+    L_ITEM_SPELL_CHARGES_2 = head .. plural .. tail
+  else
+    L_ITEM_SPELL_CHARGES_1 = Addon.L["%d |4Charge:Charges;"]
+  end
+end
+local L_ITEM_SPELL_CHARGES_NONE = Addon.L["No charges"]
+
+
+local L_ITEM_SET_NAME = Addon.L["%s (%d/%d)"]
+
+local L_ITEM_SET_BONUS_GRAY          = Addon.L["(%d) Set: %s"]
+local L_ITEM_SET_BONUS               = Addon.L["Set: %s"]
+local L_ITEM_SET_BONUS_NO_VALID_SPEC = Addon.L["Bonus effects vary based on the player's specialization."]
+
+local L_ITEM_COOLDOWN_TIME = Addon.L["Cooldown remaining: %s"]
+
+local L_ITEM_SOCKETABLE = Addon.L["<Shift Right Click to Socket>"]
+
+local L_REFUND_TIME_REMAINING     = Addon.L["You may sell this item to a vendor within %s for a full refund."]
+local L_BIND_TRADE_TIME_REMAINING = Addon.L["You may trade this item with players that were also eligible to loot this item for the next %s."]
+
+local L_ITEM_DELTA_DESCRIPTION                     = Addon.L["If you replace this item, the following stat changes will occur:"]
+local L_ITEM_DELTA_MULTIPLE_COMPARISON_DESCRIPTION = Addon.L["If you replace these items, the following stat changes will occur:"]
+
+local L_LOCKED_WITH_ITEM = Addon.L["Requires %s"]
+
+
+local L_ITEM_SOULBOUND           = Addon.L["Soulbound"]
+local L_ITEM_BIND_ON_EQUIP       = Addon.L["Binds when equipped"]
+local L_ITEM_BIND_ON_USE         = Addon.L["Binds when used"]
+local L_ITEM_BIND_ON_PICKUP      = Addon.L["Binds when picked up"]
+local L_ITEM_BIND_TO_ACCOUNT     = Addon.L["Binds to account"]
+local L_ITEM_BIND_TO_BNETACCOUNT = Addon.L["Binds to Blizzard account"]
+
+local bindTypes = {
+  [L_ITEM_SOULBOUND]           = "AlreadyBound",
+  [L_ITEM_BIND_ON_EQUIP]       = "Tradeable",
+  [L_ITEM_BIND_ON_USE]         = "Tradeable",
+  [L_ITEM_BIND_ON_PICKUP]      = "CharacterBound",
+  [L_ITEM_BIND_TO_ACCOUNT]     = "AccountBound",
+  [L_ITEM_BIND_TO_BNETACCOUNT] = "AccountBound",
+}
 
 
 local numberPattern = "[%d%"..DECIMAL_SEPERATOR.."]+"
+local lockedPattern = "%s" .. Addon.L["Locked"]
 
-local LOCKED_PATTERN = "%s" .. LOCKED
 
 
-local bindTypes = {
-  [ITEM_SOULBOUND]           = "AlreadyBound",
-  [ITEM_BIND_ON_EQUIP]       = "Tradeable",
-  [ITEM_BIND_ON_USE]         = "Tradeable",
-  [ITEM_BIND_ON_PICKUP]      = "CharacterBound",
-  [ITEM_BIND_TO_ACCOUNT]     = "AccountBound",
-  [ITEM_BIND_TO_BNETACCOUNT] = "AccountBound",
-}
 
 local function strStarts(text, matchStr)
   return strFind(text, matchStr) == 1
@@ -191,7 +298,7 @@ local contextAscensions = Addon:Map({
     if currentContext == contexts.RequiredEnchantOnUse then
       local lastLine = tooltipData[line.i-1]
       lastLine.type = "EnchantOnUse"
-      lastLine.prefix = ITEM_SPELL_TRIGGER_ONUSE
+      lastLine.prefix = Addon.L["Use:"]
       tooltipData.foundEnchant = true
     end
   end,
@@ -249,7 +356,7 @@ end
 local contextActions
 contextActions = Addon:Map({
   PreTitle = function(i, tooltipData, line)
-    if line.textLeftText == CURRENTLY_EQUIPPED or line.textLeftText == DESTROY_GEM  then
+    if line.textLeftText == L_CURRENTLY_EQUIPPED or line.textLeftText == L_DESTROY_GEM  then
       return SetContext(i, tooltipData, line)
     end
   end,
@@ -258,7 +365,7 @@ contextActions = Addon:Map({
     return SetContext(i, tooltipData, line)
   end,
   Quality = function(i, tooltipData, line)
-    if line.colorLeft == Addon.COLORS.WHITE and Addon.ITEM_QUALITY_DESCRIPTIONS[line.textLeftText] or line.colorLeft == Addon.COLORS.GREEN and MatchesAny(line.textLeftTextStripped, ITEM_HEROIC) then
+    if line.colorLeft == Addon.colors.WHITE and Addon.itemQualityDescriptions[line.textLeftText] or line.colorLeft == Addon.colors.GREEN and MatchesAny(line.textLeftTextStripped, L_ITEM_HEROIC) then
       tooltipData.locs.quality = line.i
       if GetCVarBool"colorblindMode" then
         return SetContext(i, tooltipData, line)
@@ -268,7 +375,7 @@ contextActions = Addon:Map({
     end
   end,
   Binding = function(i, tooltipData, line)
-    local bindType = MatchesAny(line.textLeftTextStripped, ITEM_SOULBOUND, ITEM_BIND_ON_EQUIP, ITEM_BIND_ON_USE, ITEM_BIND_ON_PICKUP, ITEM_BIND_TO_ACCOUNT, ITEM_BIND_TO_BNETACCOUNT)
+    local bindType = MatchesAny(line.textLeftTextStripped, L_ITEM_SOULBOUND, L_ITEM_BIND_ON_EQUIP, L_ITEM_BIND_ON_USE, L_ITEM_BIND_ON_PICKUP, L_ITEM_BIND_TO_ACCOUNT, L_ITEM_BIND_TO_BNETACCOUNT)
     if bindType then
       tooltipData.locs.binding = line.i
       line.bindType            = bindTypes[bindType]
@@ -276,24 +383,24 @@ contextActions = Addon:Map({
     end
   end,
   LastUnique = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, ITEM_UNIQUE, ITEM_UNIQUE_MULTIPLE, ITEM_UNIQUE_EQUIPPABLE, ITEM_LIMIT_CATEGORY_MULTIPLE, ITEM_LIMIT_CATEGORY) then
+    if MatchesAny(line.textLeftTextStripped, L_ITEM_UNIQUE, L_ITEM_UNIQUE_MULTIPLE, L_ITEM_UNIQUE_EQUIPPABLE, L_ITEM_LIMIT_CATEGORY_MULTIPLE, L_ITEM_LIMIT_CATEGORY) then
       return SetContext(i-1, tooltipData, line)
     end
   end,
   Locked = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, LOCKED_PATTERN) then -- text isn't always red
+    if MatchesAny(line.textLeftTextStripped, lockedPattern) then -- text isn't always red
       return SetContext(i, tooltipData, line)
     end
   end,
   LockedWithProfession = function(i, tooltipData, line)
-    if line.colorLeft == Addon.COLORS.RED and MatchesAny(line.textLeftTextStripped, ITEM_MIN_SKILL) then
+    if line.colorLeft == Addon.colors.RED and MatchesAny(line.textLeftTextStripped, L_ITEM_MIN_SKILL) then
       return SetContext(i, tooltipData, line)
     end
   end,
   RedType = function(i, tooltipData, line)
-    if line.colorRight == Addon.COLORS.RED then
+    if line.colorRight == Addon.colors.RED then
       return SetContext(i, tooltipData, line)
-    elseif line.colorLeft == Addon.COLORS.RED then
+    elseif line.colorLeft == Addon.colors.RED then
       for _, alt in ipairs(Addon:Squish{
         contexts.RequiredEnchant,
         contexts.RequiredClasses,
@@ -312,7 +419,7 @@ contextActions = Addon:Map({
     end
   end,
   Damage = function(i, tooltipData, line)
-    if tooltipData.isWeapon and MatchesAny(line.textLeftTextStripped, DAMAGE_TEMPLATE, DAMAGE_TEMPLATE_WITH_SCHOOL, SINGLE_DAMAGE_TEMPLATE) then
+    if tooltipData.isWeapon and MatchesAny(line.textLeftTextStripped, L_DAMAGE_TEMPLATE, L_DAMAGE_TEMPLATE_WITH_SCHOOL, L_SINGLE_DAMAGE_TEMPLATE) then
       local speed = strMatch(line.textRightText or "", numberPattern)
       if not speed then return end -- SINGLE_DAMAGE_TEMPLATE can match unrelated lines, like in Chaotic gems
       tooltipData.speedStringFull = line.textRightText
@@ -325,7 +432,7 @@ contextActions = Addon:Map({
     end
   end,
   DamageBonus = function(i, tooltipData, line)
-    if tooltipData.speed and line.colorLeft == Addon.COLORS.WHITE and MatchesAny(line.textLeftTextStripped, PLUS_SINGLE_DAMAGE_TEMPLATE, PLUS_DAMAGE_TEMPLATE, PLUS_SINGLE_DAMAGE_TEMPLATE_WITH_SCHOOL, PLUS_DAMAGE_TEMPLATE_WITH_SCHOOL) then
+    if tooltipData.speed and line.colorLeft == Addon.colors.WHITE and MatchesAny(line.textLeftTextStripped, L_PLUS_SINGLE_DAMAGE_TEMPLATE, L_PLUS_DAMAGE_TEMPLATE, L_PLUS_SINGLE_DAMAGE_TEMPLATE_WITH_SCHOOL, L_PLUS_DAMAGE_TEMPLATE_WITH_SCHOOL) then
       for _, alt in ipairs(Addon:Squish{
         contexts.LastBaseStat,
       }) do
@@ -347,7 +454,7 @@ contextActions = Addon:Map({
   end,
   DamagePerSecond = function(i, tooltipData, line)
   if tooltipData.speed then
-    local _, dps = MatchesAny(line.textLeftTextStripped, DPS_TEMPLATE)
+    local _, dps = MatchesAny(line.textLeftTextStripped, L_DPS_TEMPLATE)
       if dps then
         tooltipData.dps = tonumber(dps)
         return SetContext(i, tooltipData, line)
@@ -355,8 +462,8 @@ contextActions = Addon:Map({
     end
   end,
   Armor = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, ARMOR_TEMPLATE) then
-      if line.colorLeft == Addon.COLORS.GREEN then
+    if MatchesAny(line.textLeftTextStripped, L_ARMOR_TEMPLATE) then
+      if line.colorLeft == Addon.colors.GREEN then
         return SetContext(contexts.BonusArmor, tooltipData, line)
       else
         return SetContext(i, tooltipData, line)
@@ -364,16 +471,16 @@ contextActions = Addon:Map({
     end
   end,
   Block = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, SHIELD_BLOCK_TEMPLATE) then
+    if MatchesAny(line.textLeftTextStripped, L_SHIELD_BLOCK_TEMPLATE) then
       return SetContext(i, tooltipData, line)
     end
   end,
   LastBaseStat = function(i, tooltipData, line)
     if not line.texture then
-      if line.colorLeft == Addon.COLORS.WHITE and strFind(line.textLeftTextStripped, "[%+%-5]") then
-        local stat = MatchesAny(line.textLeftTextStripped, ITEM_MOD_STAMINA, ITEM_MOD_STRENGTH, ITEM_MOD_AGILITY, ITEM_MOD_INTELLECT, ITEM_MOD_SPIRIT, ITEM_RESIST_SINGLE)
+      if line.colorLeft == Addon.colors.WHITE and strFind(line.textLeftTextStripped, "[%+%-5]") then
+        local stat = MatchesAny(line.textLeftTextStripped, L_ITEM_MOD_STAMINA, L_ITEM_MOD_STRENGTH, L_ITEM_MOD_AGILITY, L_ITEM_MOD_INTELLECT, L_ITEM_MOD_SPIRIT, L_ITEM_RESIST_SINGLE)
         if stat then
-          if stat == ITEM_RESIST_SINGLE then
+          if stat == L_ITEM_RESIST_SINGLE then
             local n = strMatch(line.textLeftTextStripped, "(%d+)")
             tooltipData.resistN = tooltipData.resistN or n
             if tooltipData.resistN == n then
@@ -391,7 +498,7 @@ contextActions = Addon:Map({
             end
           end
         end
-      elseif line.colorLeft == Addon.COLORS.GREEN and MatchesAny(line.textLeftTextStripped, ITEM_MOD_MASTERY_RATING) then
+      elseif line.colorLeft == Addon.colors.GREEN and MatchesAny(line.textLeftTextStripped, L_ITEM_MOD_MASTERY_RATING) then
         line.stat       = "Mastery Rating"
         line.normalForm = line.textLeftText
         return SetContext(i-1, tooltipData, line)
@@ -399,19 +506,19 @@ contextActions = Addon:Map({
     end
   end,
   Enchant = function(i, tooltipData, line)
-    if tooltipData.hasEnchant and not tooltipData.foundEnchant and line.colorLeft == Addon.COLORS.GREEN then
+    if tooltipData.hasEnchant and not tooltipData.foundEnchant and line.colorLeft == Addon.colors.GREEN then
       tooltipData.locs.enchant = line.i
       tooltipData.foundEnchant = true
       return SetContext(i, tooltipData, line)
     end
   end,
   RequiredEnchant = function(i, tooltipData, line)
-    if tooltipData.hasEnchant and not tooltipData.foundEnchant and line.colorLeft == Addon.COLORS.RED and MatchesAny(line.textLeftTextStripped, ENCHANT_ITEM_REQ_SKILL, ENCHANT_ITEM_MIN_SKILL, ENCHANT_ITEM_REQ_LEVEL) then
+    if tooltipData.hasEnchant and not tooltipData.foundEnchant and line.colorLeft == Addon.colors.RED and MatchesAny(line.textLeftTextStripped, L_ENCHANT_ITEM_REQ_SKILL, L_ENCHANT_ITEM_MIN_SKILL, L_ENCHANT_ITEM_REQ_LEVEL) then
       return SetContext(i, tooltipData, line)
     end
   end,
   WeaponEnchant = function(i, tooltipData, line)
-    if tooltipData.isWeapon and line.colorLeft == Addon.COLORS.GREEN then
+    if tooltipData.isWeapon and line.colorLeft == Addon.colors.GREEN then
       for _, alt in ipairs(Addon:Squish{
         contexts.ProposedEnchant,
         contexts.LastSecondaryStat,
@@ -428,7 +535,7 @@ contextActions = Addon:Map({
     end
   end,
   Rune = function(i, tooltipData, line)
-    if tooltipData.isEngravable and line.colorLeft == Addon.COLORS.GREEN then
+    if tooltipData.isEngravable and line.colorLeft == Addon.colors.GREEN then
       for _, alt in ipairs(Addon:Squish{
         contexts.ProposedEnchant,
         contexts.LastSecondaryStat,
@@ -446,7 +553,7 @@ contextActions = Addon:Map({
   end,
   LastSocket = function(i, tooltipData, line)
     if line.texture then
-      if line.colorLeft == Addon.COLORS.RED then
+      if line.colorLeft == Addon.colors.RED then
         tooltipData.unmatchedRedSockets = (tooltipData.unmatchedRedSockets or 0) + 1
       end
       line.socketType = Addon:GetGemColor(line.texture[1], line.textLeftText)
@@ -454,22 +561,22 @@ contextActions = Addon:Map({
     end
   end,
   LastRequiredSocket = function(i, tooltipData, line)
-    if (tooltipData.unmatchedRedSockets or 0) > 0 and line.colorLeft == Addon.COLORS.RED and MatchesAny(line.textLeftTextStripped, SOCKET_ITEM_REQ_SKILL, ENCHANT_ITEM_REQ_SKILL, ENCHANT_ITEM_MIN_SKILL, ENCHANT_ITEM_REQ_LEVEL) then
+    if (tooltipData.unmatchedRedSockets or 0) > 0 and line.colorLeft == Addon.colors.RED and MatchesAny(line.textLeftTextStripped, L_SOCKET_ITEM_REQ_SKILL, L_ENCHANT_ITEM_REQ_SKILL, L_ENCHANT_ITEM_MIN_SKILL, L_ENCHANT_ITEM_REQ_LEVEL) then
       return SetContext(i-2, tooltipData, line)
     end
   end,
   ProposedEnchant = function(i, tooltipData, line)
-    if line.colorLeft == Addon.COLORS.GREEN and MatchesAny(line.textLeftTextStripped, ITEM_PROPOSED_ENCHANT) then
+    if line.colorLeft == Addon.colors.GREEN and MatchesAny(line.textLeftTextStripped, L_ITEM_PROPOSED_ENCHANT) then
       return SetContext(i, tooltipData, line)
     end
   end,
   EnchantHint = function(i, tooltipData, line)
-    if line.colorLeft == Addon.COLORS.PURE_RED and MatchesAny(line.textLeftTextStripped, ITEM_ENCHANT_DISCLAIMER) then
+    if line.colorLeft == Addon.colors.PURE_RED and MatchesAny(line.textLeftTextStripped, L_ITEM_ENCHANT_DISCLAIMER) then
       return SetContext(i, tooltipData, line)
     end
   end,
   SocketBonus = function(i, tooltipData, line)
-    local prefix = MatchesAny(line.textLeftTextStripped, ITEM_SOCKET_BONUS)
+    local prefix = MatchesAny(line.textLeftTextStripped, L_ITEM_SOCKET_BONUS)
     if prefix then
       line.prefix                  = prefix
       tooltipData.locs.socketBonus = line.i
@@ -477,52 +584,52 @@ contextActions = Addon:Map({
     end
   end,
   Durability = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, DURABILITY_TEMPLATE) then
+    if MatchesAny(line.textLeftTextStripped, L_DURABILITY_TEMPLATE) then
       return SetContext(i, tooltipData, line)
     end
   end,
   RequiredRaces = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, ITEM_RACES_ALLOWED) then
+    if MatchesAny(line.textLeftTextStripped, L_ITEM_RACES_ALLOWED) then
       return SetContext(i, tooltipData, line)
     end
   end,
   RequiredClasses = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, ITEM_CLASSES_ALLOWED) then
+    if MatchesAny(line.textLeftTextStripped, L_ITEM_CLASSES_ALLOWED) then
       return SetContext(i, tooltipData, line)
     end
   end,
   RequiredLevel = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, ITEM_MIN_LEVEL) then
+    if MatchesAny(line.textLeftTextStripped, L_ITEM_MIN_LEVEL) then
       return SetContext(i, tooltipData, line)
     end
   end,
   ItemLevel = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, ITEM_LEVEL) then
+    if MatchesAny(line.textLeftTextStripped, L_ITEM_LEVEL) then
       return SetContext(i, tooltipData, line)
     end
   end,
   RequiredSkill = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, ITEM_MIN_SKILL) then
+    if MatchesAny(line.textLeftTextStripped, L_ITEM_MIN_SKILL) then
       return SetContext(i, tooltipData, line)
     end
   end,
   AlreadyKnown = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, ITEM_SPELL_KNOWN) then
+    if MatchesAny(line.textLeftTextStripped, L_ITEM_SPELL_KNOWN) then
       return SetContext(i, tooltipData, line)
     end
   end,
   RequiredRep = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, ITEM_REQ_REPUTATION) then
+    if MatchesAny(line.textLeftTextStripped, L_ITEM_REQ_REPUTATION) then
       return SetContext(i, tooltipData, line)
     end
   end,
   LastSecondaryStat = function(i, tooltipData, line)
-    if line.colorLeft == Addon.COLORS.GREEN then
-      local prefix = StartsWithAny(line.textLeftTextStripped, ITEM_SPELL_TRIGGER_ONEQUIP, ITEM_SPELL_TRIGGER_ONUSE, ITEM_SPELL_TRIGGER_ONPROC)
+    if line.colorLeft == Addon.colors.GREEN then
+      local prefix = StartsWithAny(line.textLeftTextStripped, L_ITEM_SPELL_TRIGGER_ONEQUIP, L_ITEM_SPELL_TRIGGER_ONUSE, L_ITEM_SPELL_TRIGGER_ONPROC)
       if prefix then
         line.prefix = prefix
         return SetContext(i-1, tooltipData, line)
-      elseif MatchesAny(line.textLeftTextStripped, ITEM_RANDOM_ENCHANT, ITEM_MOD_FERAL_ATTACK_POWER) then
+      elseif MatchesAny(line.textLeftTextStripped, L_ITEM_RANDOM_ENCHANT, L_ITEM_MOD_FERAL_ATTACK_POWER) then
         return SetContext(i-1, tooltipData, line)
       else -- check for extra stat captures
         for _, stat in ipairs{"Attack Power In Forms"} do
@@ -538,8 +645,8 @@ contextActions = Addon:Map({
     end
   end,
   RecipeUse = function(i, tooltipData, line)
-    if line.colorLeft == Addon.COLORS.WHITE then
-      local prefix = StartsWithAny(line.textLeftTextStripped, ITEM_SPELL_TRIGGER_ONUSE)
+    if line.colorLeft == Addon.colors.WHITE then
+      local prefix = StartsWithAny(line.textLeftTextStripped, L_ITEM_SPELL_TRIGGER_ONUSE)
       if prefix then
         line.prefix = prefix
         return SetContext(i, tooltipData, line)
@@ -547,7 +654,7 @@ contextActions = Addon:Map({
     end
   end,
   Charges = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, Addon.ITEM_SPELL_CHARGES1, ITEM_SPELL_CHARGES_NONE) or Addon.ITEM_SPELL_CHARGES2 and MatchesAny(line.textLeftTextStripped, Addon.ITEM_SPELL_CHARGES2) then
+    if MatchesAny(line.textLeftTextStripped, L_ITEM_SPELL_CHARGES_1, L_ITEM_SPELL_CHARGES_NONE) or L_ITEM_SPELL_CHARGES_2 and MatchesAny(line.textLeftTextStripped, L_ITEM_SPELL_CHARGES_2) then
       return SetContext(i, tooltipData, line)
     end
   end,
@@ -557,70 +664,70 @@ contextActions = Addon:Map({
     end
   end,
   EnchantOnUse = function(i, tooltipData, line)
-    if tooltipData.hasEnchant and not tooltipData.foundEnchant and line.colorLeft == Addon.COLORS.GREEN and StartsWithAny(line.textLeftTextStripped, ITEM_SPELL_TRIGGER_ONUSE) then
+    if tooltipData.hasEnchant and not tooltipData.foundEnchant and line.colorLeft == Addon.colors.GREEN and StartsWithAny(line.textLeftTextStripped, L_ITEM_SPELL_TRIGGER_ONUSE) then
       tooltipData.locs.enchant = line.i
-      line.prefix              = ITEM_SPELL_TRIGGER_ONUSE
+      line.prefix              = L_ITEM_SPELL_TRIGGER_ONUSE
       tooltipData.foundEnchant = true
       return SetContext(i, tooltipData, line)
     end
   end,
   RequiredEnchantOnUse = function(i, tooltipData, line)
-    if tooltipData.hasEnchant and not tooltipData.foundEnchant and line.colorLeft == Addon.COLORS.RED and MatchesAny(line.textLeftTextStripped, ENCHANT_ITEM_REQ_SKILL, ENCHANT_ITEM_MIN_SKILL, ENCHANT_ITEM_REQ_LEVEL) then
+    if tooltipData.hasEnchant and not tooltipData.foundEnchant and line.colorLeft == Addon.colors.RED and MatchesAny(line.textLeftTextStripped, L_ENCHANT_ITEM_REQ_SKILL, L_ENCHANT_ITEM_MIN_SKILL, L_ENCHANT_ITEM_REQ_LEVEL) then
       return SetContext(i, tooltipData, line)
     end
   end,
   SetName = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, ITEM_SET_NAME) then
+    if MatchesAny(line.textLeftTextStripped, L_ITEM_SET_NAME) then
       return SetContext(i, tooltipData, line)
     end
   end,
   LastSetPiece = function(i, tooltipData, line)
-    if strStarts(line.textLeftText, "  ") then
+    if not tooltipData.isGem and strStarts(line.textLeftText, "  ") then
       return SetContext(i-1, tooltipData, line)
     end
   end,
   LastSetBonus = function(i, tooltipData, line)
-    local prefix = (line.colorLeft == Addon.COLORS.GRAY or line.colorLeft == Addon.COLORS.GREEN) and MatchesAny(line.textLeftTextStripped, ITEM_SET_BONUS_GRAY, ITEM_SET_BONUS, ITEM_SET_BONUS_NO_VALID_SPEC)
+    local prefix = (line.colorLeft == Addon.colors.GRAY or line.colorLeft == Addon.colors.GREEN) and MatchesAny(line.textLeftTextStripped, L_ITEM_SET_BONUS_GRAY, L_ITEM_SET_BONUS, L_ITEM_SET_BONUS_NO_VALID_SPEC)
     if prefix then
       line.prefix = prefix
       return SetContext(i-1, tooltipData, line)
     end
   end,
   Cooldown = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, ITEM_COOLDOWN_TIME) then
+    if MatchesAny(line.textLeftTextStripped, L_ITEM_COOLDOWN_TIME) then
       return SetContext(i, tooltipData, line)
     end
   end,
   Description = function(i, tooltipData, line)
-    if line.colorLeft == Addon.COLORS.FLAVOR and MatchesAny(line.textLeftTextStripped, "\"%s\"") then
+    if line.colorLeft == Addon.colors.FLAVOR and MatchesAny(line.textLeftTextStripped, "\"%s\"") then
       tooltipData.locs.description = line.i
       return SetContext(i, tooltipData, line)
     end
   end,
   MadeBy = function(i, tooltipData, line)
-    local madeType = line.colorLeft == Addon.COLORS.GREEN and MatchesAny(line.textLeftTextStripped, ITEM_CREATED_BY, ITEM_WRAPPED_BY, ITEM_WRITTEN_BY)
+    local madeType = line.colorLeft == Addon.colors.GREEN and MatchesAny(line.textLeftTextStripped, L_ITEM_CREATED_BY, L_ITEM_WRAPPED_BY, L_ITEM_WRITTEN_BY)
     if madeType then
       line.madeType = madeType
       return SetContext(i, tooltipData, line)
     end
   end,
   SocketHint = function(i, tooltipData, line)
-    if line.colorLeft == Addon.COLORS.GREEN and StartsWithAny(line.textLeftTextStripped, ITEM_SOCKETABLE) then
+    if line.colorLeft == Addon.colors.GREEN and StartsWithAny(line.textLeftTextStripped, L_ITEM_SOCKETABLE) then
       return SetContext(i, tooltipData, line)
     end
   end,
   Refundable = function(i, tooltipData, line)
-    if line.colorLeft == Addon.COLORS.SKY_BLUE and MatchesAny(line.textLeftTextStripped, REFUND_TIME_REMAINING) then
+    if line.colorLeft == Addon.colors.SKY_BLUE and MatchesAny(line.textLeftTextStripped, L_REFUND_TIME_REMAINING) then
       return SetContext(i, tooltipData, line)
     end
   end,
   SoulboundTradeable = function(i, tooltipData, line)
-    if line.colorLeft == Addon.COLORS.SKY_BLUE and MatchesAny(line.textLeftTextStripped, BIND_TRADE_TIME_REMAINING) then
+    if line.colorLeft == Addon.colors.SKY_BLUE and MatchesAny(line.textLeftTextStripped, L_BIND_TRADE_TIME_REMAINING) then
       return SetContext(i, tooltipData, line)
     end
   end,
   Delta = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, ITEM_DELTA_DESCRIPTION, ITEM_DELTA_MULTIPLE_COMPARISON_DESCRIPTION) then
+    if MatchesAny(line.textLeftTextStripped, L_ITEM_DELTA_DESCRIPTION, L_ITEM_DELTA_MULTIPLE_COMPARISON_DESCRIPTION) then
       -- crop the tooltip here
       tooltipData.numLines = line.i - 2
       for i = #tooltipData, tooltipData.numLines + 1, -1 do
@@ -630,7 +737,7 @@ contextActions = Addon:Map({
     end
   end,
   RecipeMats = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, "\n" .. LOCKED_WITH_ITEM) then
+    if MatchesAny(line.textLeftTextStripped, "\n" .. L_LOCKED_WITH_ITEM) then
       return SetContext(i, tooltipData, line)
     end
   end,
@@ -667,7 +774,7 @@ function Addon:RecognizeLineTypes(tooltipData)
   if tooltipData.hasEnchant and not tooltipData.foundEnchant then
     for i = #tooltipData, 1, -1 do
       local line = tooltipData[i]
-      if line.type == "SecondaryStat" and line.prefix == ITEM_SPELL_TRIGGER_ONUSE then
+      if line.type == "SecondaryStat" and line.prefix == L_ITEM_SPELL_TRIGGER_ONUSE then
         local lastLine = tooltipData[i-1]
         if lastLine and lastLine.type == "Padding" then
           line.type = "EnchantOnUse"

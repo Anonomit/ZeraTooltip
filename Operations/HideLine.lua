@@ -38,8 +38,14 @@ function Addon:HideLine(line, allResist)
         line.hideRight = true
       end
     end,
+    Block = function()
+      -- Block is removed and does nothing in Cata, but the line still appears sometimes
+      if self:GetOption("hide", line.type) or self.expansionLevel >= self.expansions.cata then
+        return HideLeft(line)
+      end
+    end,
     RequiredRaces = function()
-      if line.colorLeft ~= self.COLORS.WHITE then return end
+      if line.colorLeft ~= self.colors.WHITE then return end
       if self:GetOption("hide", "RequiredRaces_allowedLines") then
         return HideLeft(line)
       elseif self:GetOption("hide", "uselessRaces") and self:IsUselessRaceLine(line.textLeftText) then
@@ -47,7 +53,7 @@ function Addon:HideLine(line, allResist)
       end
     end,
     RequiredClasses = function()
-      if line.colorLeft == self.COLORS.WHITE and self:GetOption("hide", "myClass") and line.textLeftText == self.myClassString then
+      if line.colorLeft == self.colors.WHITE and self:GetOption("hide", "myClass") and line.textLeftText == self.myClassString then
         return HideLeft(line)
       end
     end,

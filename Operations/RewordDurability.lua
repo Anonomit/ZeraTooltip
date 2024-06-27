@@ -11,7 +11,7 @@ local strRep   = string.rep
 
 
 
-local durabilityText = strMatch(DURABILITY_TEMPLATE, "(.-) *%%")
+local durabilityText = strMatch(Addon.L["Durability %d / %d"], "(.-) *%%")
 local coveredText    = Addon:CoverSpecialCharacters(durabilityText)
 local emptyText      = durabilityText .. " *"
 

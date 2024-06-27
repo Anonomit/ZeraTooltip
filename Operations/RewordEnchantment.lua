@@ -10,7 +10,8 @@ local strMatch = string.match
 local strGsub  = string.gsub
 
 
-local defaultPrefix = strMatch(ENCHANTED_TOOLTIP_LINE, "^[^:]+")
+local enchantedPattern = Addon.L["Enchanted: %s"]
+local defaultPrefix = strMatch(enchantedPattern, "^[^:]+")
 local coveredDefaultPrefix = Addon:CoverSpecialCharacters(defaultPrefix)
 
 local function ModifyEnchant(text, stat)
@@ -19,7 +20,7 @@ local function ModifyEnchant(text, stat)
   if not self:GetOption("allow", "reword") then return text end
   
   if self:GetOption("doReword", stat) then -- whether to add a prefix
-    local prefix = ENCHANTED_TOOLTIP_LINE
+    local prefix = enchantedPattern
     local alias = self:GetOption("reword", stat)
     if alias and alias ~= "" and alias ~= coveredDefaultPrefix then
       prefix = strGsub(prefix, coveredDefaultPrefix, alias)
