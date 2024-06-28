@@ -67,7 +67,17 @@ function Addon:HideLine(line, allResist)
       return HideLeft(line)
     end,
     MadeBy = function()
-      if self:ShouldHideMadeBy(line.textLeftText, line.madeType) then
+      if self:ShouldHideMadeBy(line.textLeftText) then
+        return HideLeft(line)
+      end
+    end,
+    GiftFrom = function()
+      if self:ShouldHideGiftFrom(line.textLeftText) then
+        return HideLeft(line)
+      end
+    end,
+    WrittenBy = function()
+      if self:ShouldHideWrittenBy(line.textLeftText) then
         return HideLeft(line)
       end
     end,

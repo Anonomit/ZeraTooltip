@@ -137,6 +137,14 @@ L["Icon Space"]   = true
 L["Made by myself."] = true
 L["Made by others."] = true
 
+-- gift from
+L["Gift from myself."] = true
+L["Gift from others."] = true
+
+-- written by
+L["Written by myself."] = true
+L["Written by others."] = true
+
 -- socket hint
 L["Move this line to the socket bonus."] = true
 

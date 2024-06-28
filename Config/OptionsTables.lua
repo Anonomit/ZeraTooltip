@@ -1882,21 +1882,26 @@ local function MakeExtraOptions(opts, categoryName)
     GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
   end
   
-  -- Made By
+  -- MadeBy / GiftFrom / WrittenBy
   do
-    local stat = "MadeBy"
-    
-    local samples = {}
-    local secondName = UnitExists"target" and UnitNameUnmodified"target" or nil
-    secondName = secondName and secondName ~= self.MY_NAME and secondName or self:Random(self.SAMPLE_NAMES)
-    for _, name in ipairs{self.MY_NAME, secondName} do
-      for _, pattern in ipairs{self.L["<Made by %s>"], self.L["<Gift from %s>"], self.L["Written by %s"]} do
+    for _, data in ipairs{
+      {"MadeBy",    self.L["<Made by %s>"],   "ShouldHideMadeBy",    "MadeByMe",    L["Made by myself."],    "MadeByOther",    L["Made by others."]},
+      {"GiftFrom",  self.L["<Gift from %s>"], "ShouldHideGiftFrom",  "GiftFromMe",  L["Gift from myself."],  "GiftFromOther",  L["Gift from others."]},
+      {"WrittenBy", self.L["Written by %s"],  "ShouldHideWrittenBy", "WrittenByMe", L["Written by myself."], "WrittenByOther", L["Written by others."]},
+    } do
+      
+      local stat, pattern, ShouldHide, hideMe, hideMeDesc, hideOther, hideOtherDesc = unpack(data)
+      
+      local samples = {}
+      local secondName = UnitExists"target" and UnitNameUnmodified"target" or nil
+      secondName = secondName and secondName ~= self.MY_NAME and secondName or self:Random(self.SAMPLE_NAMES)
+      for _, name in ipairs{self.MY_NAME, secondName} do
         local defaultText = format(pattern, name)
         
         local formattedText = defaultText
         local originalColor = self.colors.GREEN
         local color = self:GetOption("color", stat)
-        if self:ShouldHideMadeBy(defaultText, pattern) then
+        if self[ShouldHide](self, defaultText, pattern) then
           formattedText = self.stealthIcon .. self:MakeColorCode(self.colors.GRAY, formattedText)
         elseif self:GetOption("allow", "recolor") and self:GetOption("doRecolor", stat) and color ~= originalColor then
           formattedText = self:MakeColorCode(color, formattedText)
@@ -1907,25 +1912,25 @@ local function MakeExtraOptions(opts, categoryName)
         
         tinsert(samples, {defaultText, formattedText})
       end
-    end
-    
-    local opts = GUI:CreateGroup(opts, stat, samples[1][2], nil, nil, disabled)
       
-    CreateSamples(opts, samples)
-    
-    CreateColor(opts, stat)
-    
-    do
-      local opts = CreateHide(opts, stat)
-      GUI:CreateNewline(opts)
+      local opts = GUI:CreateGroup(opts, stat, samples[1][2], nil, nil, disabled)
+        
+      CreateSamples(opts, samples)
       
-      local disabled = self:GetOption("hide", stat)
-      GUI:CreateToggle(opts, {"hide", "MadeByMe"}, self.L["Me"], L["Made by myself."], disabled).width = 0.6
-      GUI:CreateReset(opts, {"hide", "MadeByMe"})
-      GUI:CreateNewline(opts)
+      CreateColor(opts, stat)
       
-      GUI:CreateToggle(opts, {"hide", "MadeByOther"}, self.L["Other"], L["Made by others."], disabled).width = 0.6
-      GUI:CreateReset(opts, {"hide", "MadeByOther"})
+      do
+        local opts = CreateHide(opts, stat)
+        GUI:CreateNewline(opts)
+        
+        local disabled = self:GetOption("hide", stat)
+        GUI:CreateToggle(opts, {"hide", hideMe}, self.L["Me"], hideMeDesc, disabled).width = 0.6
+        GUI:CreateReset(opts, {"hide", hideMe})
+        GUI:CreateNewline(opts)
+        
+        GUI:CreateToggle(opts, {"hide", hideOther}, self.L["Other"], hideOtherDesc, disabled).width = 0.6
+        GUI:CreateReset(opts, {"hide", hideOther})
+      end
     end
   end
   GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)

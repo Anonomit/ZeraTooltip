@@ -235,6 +235,8 @@ local contexts = Addon:MakeLookupTable(Addon:Squish{
   "Cooldown",
   "Description",
   "MadeBy",
+  "GiftFrom",
+  "WrittenBy",
   Addon:ShortCircuit(Addon.expansionLevel >= Addon.expansions.tbc, "SocketHint", nil),
   "Refundable",
   "SoulboundTradeable",
@@ -722,8 +724,13 @@ contextActions = Addon:Map({
   MadeBy = function(i, tooltipData, line)
     local madeType = line.colorLeft == Addon.colors.GREEN and MatchesAny(line.textLeftTextStripped, L_ITEM_CREATED_BY, L_ITEM_WRAPPED_BY, L_ITEM_WRITTEN_BY)
     if madeType then
-      line.madeType = madeType
-      return SetContext(i, tooltipData, line)
+      if madeType == L_ITEM_CREATED_BY then
+        return SetContext(i, tooltipData, line)
+      elseif madeType == L_ITEM_WRAPPED_BY then
+        return SetContext(i+1, tooltipData, line)
+      elseif madeType == L_ITEM_WRITTEN_BY then
+        return SetContext(i+2, tooltipData, line)
+      end
     end
   end,
   SocketHint = function(i, tooltipData, line)
