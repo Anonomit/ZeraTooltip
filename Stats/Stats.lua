@@ -354,6 +354,7 @@ do
         -- if DECIMAL_SEPERATOR ~= "." then
         --   strNumber = strGsub(strNumber, "%.", DECIMAL_SEPERATOR)
         -- end
+        local percent = strFind(number, "%%$")
         number = Addon:ToNumber(number)
         local strNumber
         if isBaseStat then
@@ -361,6 +362,7 @@ do
         else
           strNumber = Addon:ToFormattedNumber(number)
         end
+        strNumber = strNumber .. (percent and "%" or "")
         return format(tooltipPattern2, isBaseStat and (number < 0 and "" or "+") or strNumber, isBaseStat and strNumber or nil)
       end
       

@@ -1306,6 +1306,9 @@ do
     end
     if type(text) ~= "string" then return nil end
     
+    -- strip percentage
+    text = strGsub(text, "%%*$", "")
+    
     -- strip comma separators, convert decimal separator into period
     if DECIMAL_SEPERATOR == "." then
       text = strGsub(text, "(%d),(%d)", "%1%2")
