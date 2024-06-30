@@ -215,7 +215,6 @@ L["Armor"]                                                                      
 L["Block"]                                                                                           = BLOCK
 L["Durability %d / %d"]                                                                              = DURABILITY_TEMPLATE
 L["Enchanted: %s"]                                                                                   = ENCHANTED_TOOLTIP_LINE
-L["Equipped Runes"]                                                                                  = EQUIPPED_RUNES
 L["<Shift Right Click to Socket>"]                                                                   = ITEM_SOCKETABLE
 L["You may sell this item to a vendor within %s for a full refund."]                                 = REFUND_TIME_REMAINING
 L["You may trade this item with players that were also eligible to loot this item for the next %s."] = BIND_TRADE_TIME_REMAINING
