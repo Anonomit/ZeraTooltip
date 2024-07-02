@@ -24,7 +24,7 @@ function Addon:ModifyWeaponDamage(text, dps, speed, damageBonus)
   local noThousandsSeparator = self:GetOption("allow", "reword") and not self:GetOption("separateThousands", stat)
   local precision = self:GetOption("allow", "reword") and (1 / 10^self:GetOption("precision", stat)) or 1
   
-  local minMax, min, gap, max = strMatch(text, "(([%d,]+)( ?%- ?)([%d,]+))")
+  local minMax, min, gap, max = strMatch(text, "((" .. self.L["[%d,%.]+"] .. ")( ?%- ?)(" .. self.L["[%d,%.]+"] .. "))")
   if min then
     min, max = self:ToNumber(min), self:ToNumber(max)
     local mid = dps * speed
@@ -64,7 +64,7 @@ function Addon:ModifyWeaponDamage(text, dps, speed, damageBonus)
       end
     end
     
-    return strGsub(text, "[%d,]+ ?%- ?[%d,]+", pattern)
+    return strGsub(text, self.L["[%d,%.]+"] .. " ?%- ?" .. self.L["[%d,%.]+"], pattern)
   end
   return text
 end
@@ -82,7 +82,7 @@ function Addon:ModifyWeaponDamageBonus(text, damageBonus)
   local noThousandsSeparator = self:GetOption("allow", "reword") and not self:GetOption("separateThousands", stat)
   local precision = self:GetOption("allow", "reword") and (1 / 10^self:GetOption("precision", stat)) or 1
   
-  local minMax, min, gap, max = strMatch(text, "(([%d,]+)( ?%- ?)([%d,]+))")
+  local minMax, min, gap, max = strMatch(text, "((" .. self.L["[%d,%.]+"] .. ")( ?%- ?)(" .. self.L["[%d,%.]+"] .. "))")
   if min then
     min, max = self:ToNumber(min), self:ToNumber(max)
     local mid = (damageBonus[1] + damageBonus[2]) / 2
@@ -116,10 +116,11 @@ function Addon:ModifyWeaponDamageBonus(text, damageBonus)
       end
     end
     
-    return strGsub(text, "[%d,]+ ?%- ?[%d,]+", pattern)
+    return strGsub(text, self.L["[%d,%.]+"] .. " ?%- ?" .. self.L["[%d,%.]+"], pattern)
   end
   return text
 end
+
 
 
 local stat = "Speed"
@@ -137,14 +138,16 @@ function Addon:ModifyWeaponSpeed(text, speed, speedString)
   end
   
   if self:GetOption("allow", "reword") then
-    local precision = self:GetOption("precision", stat)
-    if precision ~= 2 then
-      local newSpeed = format("%." .. precision .. "f", speed)
-      if DECIMAL_SEPERATOR ~= "." then
-        newSpeed = strGsub(newSpeed, "%.", DECIMAL_SEPERATOR)
-      end
-      text = strGsub(text, speedString, newSpeed)
-    end
+    local newSpeed = self:ToFormattedNumber(speed, nil, self:GetOption("precision", stat))
+    text = strGsub(text, self:CoverSpecialCharacters(speedString), newSpeed)
+    -- local precision = self:GetOption("precision", stat)
+    -- if precision ~= 2 then
+    --   local newSpeed = format("%." .. precision .. "f", speed)
+    --   if self.L["."] ~= "." then
+    --     newSpeed = strGsub(newSpeed, "%.", self.L["."])
+    --   end
+    --   text = strGsub(text, self:CoverSpecialCharacters(speedString), newSpeed)
+    -- end
   end
   return text
 end

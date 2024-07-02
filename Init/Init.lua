@@ -73,8 +73,6 @@ do
     -- GAME_LOCALE = "enUS" -- AceLocale override
     
     -- TOOLTIP_UPDATE_TIME = 10000
-    
-    -- DECIMAL_SEPERATOR = ","
   end
   --@end-debug@
   
@@ -1310,32 +1308,29 @@ do
     text = strGsub(text, "%%*$", "")
     
     -- strip comma separators, convert decimal separator into period
-    if DECIMAL_SEPERATOR == "." then
-      text = strGsub(text, "(%d),(%d)", "%1%2")
+    if self.L["."] == "." then
+      text = strGsub(text, "(%d)" .. self.L["."] .. "(%d%d%d)", "%1%2")
     else
-      text = self:ChainGsub(text, {"(%d)%.(%d)", "%1%2"}, {"%"..DECIMAL_SEPERATOR, "."})
+      text = self:ChainGsub(text, {"(%d)%" .. self.L[","] .. "(%d%d%d)", "%1%2"}, {"%" .. self.L["."], "."})
     end
     
     return tonumber(text)
   end
   
-  function Addon:ToFormattedNumber(text, noThousandsSeparator)
+  function Addon:ToFormattedNumber(text, noThousandsSeparator, numDecimalPlaces)
+    text = self:ToNumber(text)
+    if numDecimalPlaces then
+      text = format("%." .. numDecimalPlaces .. "f", text)
+    end
     text = tostring(self:ToNumber(text))
     
-    if DECIMAL_SEPERATOR == "." then
-      if not noThousandsSeparator then
-        local count = 1
-        while count > 0 do
-          text, count = strGsub(text, "^(-?%d+)(%d%d%d)", "%1,%2")
-        end
-      end
-    else
-      text = strGsub(text, "(%d)%.(%d)", "%1,%2")
-      if not noThousandsSeparator then
-        local count = 1
-        while count > 0 do
-          text, count = strGsub(text, "^(-?%d+)(%d%d%d)", "%1.%2")
-        end
+    if self.L["."] ~= "." then
+      text = strGsub(text, "(%d)%.(%d)", "%1" .. self.L["."] .. "%2")
+    end
+    if not noThousandsSeparator then
+      local count = 1
+      while count > 0 do
+        text, count = strGsub(text, "^(-?%d+)(%d%d%d)", "%1" .. self.L[","] .. "%2")
       end
     end
     

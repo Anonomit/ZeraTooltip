@@ -7,6 +7,7 @@ local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 
 
 local strLower = string.lower
+local strFind  = string.find
 local strMatch = string.match
 local strGsub  = string.gsub
 
@@ -21,18 +22,18 @@ local locale = GetLocale()
 local actual = {}
 local L = setmetatable({}, {
   __index = function(self, key)
-    if not rawget(actual, key) then
-      rawset(self, key, key)
+    if not actual[key] then
+      actual[key] = key
       Addon:Throwf("%s: Missing automatic translation for '%s'", ADDON_NAME, tostring(key))
     end
-    return key
+    return actual[key]
   end,
   __newindex = function(self, key, val)
-    if rawget(actual, key) then
+    if actual[key] then
       Addon:Warnf(ADDON_NAME..": Automatic translation for '%s' has been overwritten", tostring(key))
     end
     if type(val) == "table" then
-      -- get the largest index in table
+      -- get the largest key in table
       local max = 1
       for i in pairs(val) do
         if i > max then
@@ -42,8 +43,8 @@ local L = setmetatable({}, {
       -- try adding values from the table in order
       for i = 1, max do
         if val[i] then
-          actual[key] = val[i]
-          if rawget(actual, key) then
+          self[key] = val[i]
+          if actual[key] then
             return
           else
             Addon:Warnf(ADDON_NAME..": Automatic translation #%d failed for '%s'", i, tostring(key))
@@ -54,20 +55,30 @@ local L = setmetatable({}, {
       end
     elseif type(val) == "function" then
       -- use the function return value unless it errors
-      local success, val = Addon:xpcall(val)
+      local success, result = Addon:xpcall(val)
       if not success then
         Addon:Throwf("%s: Automatic translation error for '%s'", ADDON_NAME, tostring(key))
         return
       end
-      rawset(actual, key, val)
+      actual[key] = result
     else
-      rawset(actual, key, val)
+      actual[key] = val
     end
   end,
 })
 Addon.L = L
 
 
+
+if locale == "esES" then
+  L["."] = "."
+  L[","] = ","
+else
+  L["."] = DECIMAL_SEPERATOR
+  L[","] = LARGE_NUMBER_SEPERATOR
+end
+
+L["[%d,%.]+"] = function() return "[%d%" .. L[","] .. "%" .. L["."] .. "]+" end
 
 
 
@@ -324,7 +335,7 @@ L["Written by %s"]  = ITEM_WRITTEN_BY
 L["%c%d %s Resistance"] = ITEM_RESIST_SINGLE
 
 if locale == "zhTW" and not Addon.isEra then
-  Addon.L["%c%d to All Resistances"] = strGsub(Addon.L["%c%d to All Resistances"], "(%%d)", "%1 ")
+  Addon.L["%c%d to All Resistances"] = strGsub(ITEM_RESIST_ALL, "%%d", "%1 ")
 else
   L["%c%d to All Resistances"] = ITEM_RESIST_ALL
 end
@@ -402,6 +413,8 @@ end
 
 
 
+
+
 L["Defense Rating"] = ITEM_MOD_DEFENSE_SKILL_RATING_SHORT
 L["Increases defense rating by %s."] = ITEM_MOD_DEFENSE_SKILL_RATING
 
@@ -463,7 +476,15 @@ L["Haste Rating (Spell)"] = {ITEM_MOD_HASTE_SPELL_RATING_SHORT, function() retur
 L["Improves spell haste rating by %s."] = {ITEM_MOD_HASTE_SPELL_RATING, function() return strGsub(ITEM_MOD_CRIT_SPELL_RATING, Addon:CoverSpecialCharacters(ITEM_MOD_CRIT_RATING), Addon:CoverSpecialCharacters(ITEM_MOD_HASTE_RATING)) end}
 
 L["Mastery"] = ITEM_MOD_MASTERY_RATING_SHORT
-L["%c%d Mastery"] = {function() return "%c%d " .. L["Mastery"] end}
+if strFind(L["%c%d Stamina"], "^%%") then
+  if strFind(L["%c%d Stamina"], " ") then
+    L["%c%d Mastery"] = "%c%d " .. L["Mastery"]
+  else
+    L["%c%d Mastery"] = "%c%d" .. L["Mastery"]
+  end
+else
+    L["%c%d Mastery"] = L["Mastery"] .. " %c%d"
+end
 
 L["Health Regeneration"] = ITEM_MOD_HEALTH_REGENERATION_SHORT
 L["Restores %s health per 5 sec."] = ITEM_MOD_HEALTH_REGEN

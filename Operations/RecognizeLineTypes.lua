@@ -20,7 +20,7 @@ local L_ITEM_MOD_INTELLECT      = Addon.L["%c%d Intellect"]
 local L_ITEM_MOD_SPIRIT         = Addon.L["%c%d Spirit"]
 local L_ITEM_RESIST_SINGLE      = Addon.L["%c%d %s Resistance"]
 
-local L_ITEM_MOD_MASTERY_RATING = Addon.L["%c%d Mastery"]
+local L_ITEM_MOD_MASTERY_RATING_SHORT = Addon.L["%c%d Mastery"]
 
 local L_CURRENTLY_EQUIPPED = Addon.L["Currently Equipped"]
 local L_DESTROY_GEM        = Addon.L["Gem to be destroyed"]
@@ -140,7 +140,7 @@ local bindTypes = {
 }
 
 
-local numberPattern = "[%d%"..DECIMAL_SEPERATOR.."]+"
+local numberPattern = Addon.L["[%d,%.]+"]
 local lockedPattern = "%s" .. Addon.L["Locked"]
 
 
@@ -441,6 +441,7 @@ contextActions = Addon:Map({
       if not speed then return end -- SINGLE_DAMAGE_TEMPLATE can match unrelated lines, like in Chaotic gems
       tooltipData.speedStringFull = line.textRightText
       tooltipData.speedString     = speed
+       -- actual DECIMAL_SEPERATOR is used to write speed
       if DECIMAL_SEPERATOR ~= "." then
         speed = strGsub(speed, "%"..DECIMAL_SEPERATOR, ".")
       end
@@ -459,11 +460,11 @@ contextActions = Addon:Map({
         end
       end
       -- didn't match any other possible line
-      local min, max = strMatch(line.textLeftTextStripped, "%+ ?(%d+) ?%- ?(%d+)")
+      local min, max = strMatch(line.textLeftTextStripped, "(" .. numberPattern .. ") ?%- ?(" .. numberPattern .. ")")
       if min then
-        tooltipData.damageBonus = {tonumber(min), tonumber(max)}
+        tooltipData.damageBonus = {Addon:ToNumber(min), Addon:ToNumber(max)}
       else
-        local n = tonumber(strMatch(line.textLeftTextStripped, "%+ ?(%d+)"))
+        local n = Addon:ToNumber(strMatch(line.textLeftTextStripped, numberPattern))
         tooltipData.damageBonus = {n, n}
       end
       return SetContext(i, tooltipData, line)
@@ -473,7 +474,7 @@ contextActions = Addon:Map({
   if tooltipData.speed then
     local _, dps = MatchesAny(line.textLeftTextStripped, L_DPS_TEMPLATE)
       if dps then
-        tooltipData.dps = tonumber(dps)
+        tooltipData.dps = tonumber(dps) -- always uses period as decimal
         return SetContext(i, tooltipData, line)
       end
     end
@@ -515,9 +516,9 @@ contextActions = Addon:Map({
             end
           end
         end
-      elseif line.colorLeft == Addon.colors.GREEN and MatchesAny(line.textLeftTextStripped, L_ITEM_MOD_MASTERY_RATING) then
+      elseif line.colorLeft == Addon.colors.GREEN and MatchesAny(line.textLeftTextStripped, L_ITEM_MOD_MASTERY_RATING_SHORT) then
         line.stat       = "Mastery Rating"
-        line.normalForm = line.textLeftText
+        line.normalForm = Addon.statsInfo["Mastery Rating"]:ConvertToNormalForm(line.textLeftTextStripped)
         return SetContext(i-1, tooltipData, line)
       end
     end

@@ -1253,7 +1253,7 @@ local function MakeExtraOptions(opts, categoryName)
     end
   end
   
-  local speedString = strGsub(format("%.2f", sampleSpeed), "%.", DECIMAL_SEPERATOR)
+  local speedString = strGsub(format("%.2f", sampleSpeed), "%.", DECIMAL_SEPERATOR) -- always use default DECIMAL_SEPERATOR
   local speedStringFull = self.L["Speed"] .. " " .. speedString
   -- Weapon Speed
   do
@@ -1297,7 +1297,7 @@ local function MakeExtraOptions(opts, categoryName)
   GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
   
   -- Weapon DPS
-  local sampleDPS = strGsub(format("%.1f", sampleDamage / sampleSpeed), "%.", DECIMAL_SEPERATOR)
+  local sampleDPS = format("%.1f", sampleDamage / sampleSpeed) -- always uses period as decimal
   do
     local stat = "DamagePerSecond"
     

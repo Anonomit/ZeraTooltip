@@ -275,27 +275,12 @@ do
       local function ApplyMod(text, normalForm)
         local match1, match2 = strMatch(normalForm, normalFormCapture)
         local origStrNumber = match1 .. (match2 or "")
-        local strNumber, percent = strMatch(origStrNumber, "(%-?[%d,]+)(%%?)")
-        -- if DECIMAL_SEPERATOR ~= "." then
-        --   strNumber = strGsub(strNumber, "%"..DECIMAL_SEPERATOR, ".")
-        -- end
-        -- strNumber, commas = strGsub(strNumber, "(%d),(%d)", "%1%2")
-        -- local number = self:Round(tonumber(strNumber) * self:GetOption("mod", stat), 1 / 10^self:GetOption("precision", stat))
+        local strNumber, percent = strMatch(origStrNumber, "(%-?" .. self.L["[%d,%.]+"] .. ")(%%?)")
         local number = self:Round(self:ToNumber(strNumber) * self:GetOption("mod", stat), 1 / 10^self:GetOption("precision", stat))
-        -- strNumber = tostring(number)
-        -- if DECIMAL_SEPERATOR ~= "." then
-        --   strNumber = strGsub(strNumber, "%.", DECIMAL_SEPERATOR)
-        -- end
         strNumber = self:ToFormattedNumber(number, not self:GetOption("separateThousands", stat))
         if isBaseStat and number > 0 then
           strNumber = "+" .. strNumber
         end
-        -- if commas > -1 then
-        --   local count = 1
-        --   while count > 0 do
-        --     strNumber, count = strGsub(strNumber, "^(-?%d+)(%d%d%d)", "%1,%2")
-        --   end
-        -- end
         return strGsub(text, self:CoverSpecialCharacters(origStrNumber), self:CoverSpecialCharacters(strNumber .. percent))
       end
       
@@ -320,7 +305,6 @@ do
           strNumber = match2
         end
         return self:ToNumber(strGsub(strNumber, "%%", ""))
-        -- return tonumber((self:ChainGsub(strNumber, {"%%", ""}, {"(%d),(%d)", "%1%2"})))
       end
       
       function StatInfo:ConvertToNormalForm(text)
@@ -347,13 +331,6 @@ do
       end
       
       function StatInfo:GetDefaultForm(number)
-        -- local strNumber = tostring(number)
-        -- if type(number) == "string" then
-        --   number = tonumber(strMatch(number, "%d+"))
-        -- end
-        -- if DECIMAL_SEPERATOR ~= "." then
-        --   strNumber = strGsub(strNumber, "%.", DECIMAL_SEPERATOR)
-        -- end
         local percent = strFind(number, "%%$")
         number = Addon:ToNumber(number)
         local strNumber
