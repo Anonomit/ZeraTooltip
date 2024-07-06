@@ -850,7 +850,7 @@ local function MakeExtraOptions(opts, categoryName)
       samples[#samples+1] = {sampleText, self:MakeColorCode(self.colors.WHITE, sampleText)}
     end
     
-    local opts = GUI:CreateGroup(opts, stat, samples[1][1])
+    local opts = GUI:CreateGroup(opts, stat, self:GetOption("hide", stat) and samples[1][2] or samples[1][1])
     
     CreateSamples(opts, samples)
     
