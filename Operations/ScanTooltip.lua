@@ -108,11 +108,11 @@ function Addon:ReadTooltip(tooltip, name, link, maxLines)
     local textLeft  = _G[textLeftName  .. i]
     local textRight = _G[textRightName .. i]
     
-    local textLeftText  = textLeft:GetText() or " "
-    local textRightText = textRight and textRight:IsShown() and textRight:GetText() or nil
+    local validationText = textLeft:GetText() or " "
     
-    local hex, text = strMatch(textLeftText, "^|c%x%x(%x%x%x%x%x%x)(.*)|r$")
-    textLeftText = text or textLeftText
+    local hex, text = strMatch(validationText, "^|c%x%x(%x%x%x%x%x%x)(.*)|r$")
+    local textLeftText = text or validationText
+    local textRightText = textRight and textRight:IsShown() and textRight:GetText() or nil
     
     local realTextLeft = _G[tooltip.tooltip:GetName().."TextLeft"..i]
     if not realTextLeft then break end
@@ -128,6 +128,7 @@ function Addon:ReadTooltip(tooltip, name, link, maxLines)
       moneyFrame            = moneyMap[textLeft],
       realTextLeft          = realTextLeft:GetText() or " ",
       realColor             = self:GetTextColorAsHex(realTextLeft),
+      validationText        = validationText,
     }
   end
   tooltipData.numLines     = #tooltipData

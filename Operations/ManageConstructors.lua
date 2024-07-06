@@ -30,6 +30,7 @@ end
 Addon:RegisterOptionSetHandler(Addon.WipeConstructorCache)
 Addon:RegisterCVarCallback("colorblindMode", Addon.WipeConstructorCache)
 Addon:RegisterEventCallback("PLAYER_EQUIPMENT_CHANGED", Addon.WipeConstructorCache)
+Addon:RegisterEventCallback("PLAYER_LEVEL_UP", Addon.WipeConstructorCache) -- for ratingbuster compatibility
 
 local hashMaps = {
   SetHyperlink            = function(link, itemStringOrLink) return itemStringOrLink end,

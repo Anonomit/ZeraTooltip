@@ -108,7 +108,7 @@ function Addon:CreateConstructor(tooltipData)
       if line.type == "Cooldown" or line.oldType == "Cooldown" then
         constructor.validation[line.i] = self:ReversePattern(self.L["Cooldown remaining: %s"])
       else
-        constructor.validation[line.i] = line.realTextLeft
+        constructor.validation[line.i] = line.validationText
       end
     end
   end

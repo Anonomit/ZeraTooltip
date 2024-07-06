@@ -21,6 +21,7 @@ function Addon:GetTextCacheSize()
 end
 Addon:RegisterOptionSetHandler(Addon.WipeTextCache)
 Addon:RegisterCVarCallback("colorblindMode", Addon.WipeTextCache)
+Addon:RegisterEventCallback("PLAYER_LEVEL_UP", Addon.WipeTextCache) -- for ratingbuster compatibility
 
 
 cacheLineTypes = setmetatable({
@@ -168,16 +169,6 @@ function Addon:RewordLine(tooltip, line, tooltipData)
       end
     end
     
-    -- check compatibility
-    if line.realTextLeft ~= line.textLeftText then
-      -- some other addon is modifying tooltip text
-      
-      -- RatingBuster compatibility
-      if RatingBuster and RatingBuster.ProcessLine then
-        text = RatingBuster:ProcessLine(text) or text
-      end
-    end
-    
     -- swap in localized nickname, fix prefix
     if self:GetOption("allow", "reword") then
       if line.stat then
@@ -199,10 +190,31 @@ function Addon:RewordLine(tooltip, line, tooltipData)
       end
     end
     
-    if self:GetGlobalOption("cache", "enabled") and self:GetGlobalOption("cache", "text") and cacheLineTypes[line.type] then
-      Addon:MakeTable(textCache, line.type, line.textLeftText, line.textRightText or "", {text, line.rewordRight})
-      cacheSize = cacheSize + 1
+    -- check compatibility
+    if line.realTextLeft ~= line.validationText or true then
+      -- some other addon is modifying tooltip text
+      
+      -- RatingBuster compatibility
+      if RatingBuster and RatingBuster.ProcessText and line.stat --[[and not strFind(line.realTextLeft, " |cff%x%x%x%x%x%x%(.*")]] then
+        
+        local expectedReword = RatingBuster:ProcessLine(line.validationText, tooltipData.link, CreateColor(self:ConvertHexToRGB(line.colorLeft)))
+        if expectedReword then
+          local hasReworded = strFind(line.realTextLeft, "%)|r")
+          local willReword = strFind(RatingBuster:ProcessText(text, tooltipData.link, CreateColor(self:ConvertHexToRGB(line.colorLeft))), "%)|r")
+          if not willReword or hasReworded then
+            local addition = strMatch(expectedReword, " |cff%x%x%x%x%x%x%(.*|r")
+            if addition then
+              text = text .. addition
+            end
+          end
+        end
+      end
     end
+    
+    -- if self:GetGlobalOption("cache", "enabled") and self:GetGlobalOption("cache", "text") and cacheLineTypes[line.type] then
+    --   Addon:MakeTable(textCache, line.type, line.textLeftText, line.textRightText or "", {text, line.rewordRight})
+    --   cacheSize = cacheSize + 1
+    -- end
   end
   
   if Addon:GetDebugView"tooltipLineNumbers" then
