@@ -3,9 +3,8 @@ local ADDON_NAME, Data = ...
 
 
 local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
+local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 
-
-if not Addon.isSoD then return end
 
 
 
@@ -16,7 +15,7 @@ local strGsub  = string.gsub
 
 local defaultPrefix = Addon.L["Equipped Runes"]
 local coveredDefaultPrefix = Addon:CoverSpecialCharacters(defaultPrefix)
-local prefixPattern = strGsub(ENCHANTED_TOOLTIP_LINE, "^[^:]+", coveredDefaultPrefix)
+local prefixPattern = strGsub(Addon.L["Enchanted: %s"], "^[^:]+", coveredDefaultPrefix)
 
 local stat = "Rune"
 function Addon:ModifyRune(text)

@@ -3,6 +3,7 @@ local ADDON_NAME, Data = ...
 
 
 local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
+local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 
 
 local strMatch  = string.match
@@ -17,11 +18,6 @@ local prepareAgain = false
 Addon:RegisterEventCallback("PLAYER_EQUIPMENT_CHANGED", function() prepareAgain = true end)
 
 
-local function RefreshDebugOptions()
-  if ((Addon.AceConfigDialog:GetStatusTable(ADDON_NAME) or {}).groups or {}).selected == "Debug" then
-    Addon.AceConfigRegistry:NotifyChange(ADDON_NAME)
-  end
-end
 
 
 function Addon:IsHookEnabled()
@@ -234,7 +230,7 @@ local function OnTooltipItemMethod(tooltip, methodName, ...)
     OnTooltipItemMethod(args[1], methodName, ...)
     recursion = false
   end
-  RefreshDebugOptions()
+  self:RefreshDebugOptions()
 end
 
  -- works on uncached itemlinks
@@ -324,7 +320,7 @@ local function OnTooltipSetItem(tooltip)
       self:DestructTooltip(scannerTooltip.tooltip, destructor)
     end
   end
-  RefreshDebugOptions()
+  self:RefreshDebugOptions()
 end
 
 Addon:RegisterEnableCallback(function(self)

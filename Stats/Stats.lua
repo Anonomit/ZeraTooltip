@@ -3,7 +3,7 @@ local ADDON_NAME, Data = ...
 
 
 local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
-ZeraTooltip = Addon
+local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 
 Addon.TipHooker  = LibStub"LibTipHooker-1.1-ZeraTooltip"
 Addon.TipHooker2 = LibStub"LibTipHooker-1.0-ZeraTooltip"

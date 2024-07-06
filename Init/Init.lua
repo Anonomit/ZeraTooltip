@@ -1174,6 +1174,11 @@ do
     end
   end
   
+  function Addon:RefreshDebugOptions()
+    if self:CheckTable(self.AceConfigDialog:GetStatusTable(ADDON_NAME), "groups", "selected") == "Debug" then
+      self.AceConfigRegistry:NotifyChange(ADDON_NAME)
+    end
+  end
   
   function Addon:ResetProfile(category)
     self:GetDB():ResetProfile()
