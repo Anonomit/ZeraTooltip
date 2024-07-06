@@ -1158,6 +1158,7 @@ local function MakeExtraOptions(opts, categoryName)
     GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
   end
   
+  -- Reforged
   if Addon.expansionLevel >= Addon.expansions.cata then
     do
       local stat = "Reforged"

@@ -165,8 +165,6 @@ L["Enable UI Colorblind Mode"]                                             = USE
 L["Adds additional information to tooltips and several other interfaces."] = OPTION_TOOLTIP_USE_COLORBLIND_MODE
 L["Colorblind Mode"]                                                       = {COLORBLIND_LABEL, COLORBLIND_MODE_LABEL, COLORBLIND_MODE_TAB}
 
-L["Bonus Armor"] = BONUS_ARMOR
-
 L["Effects"]        = EFFECTS_SUBHEADER
 L["Equip:"]         = ITEM_SPELL_TRIGGER_ONEQUIP
 L["Chance on hit:"] = ITEM_SPELL_TRIGGER_ONPROC
