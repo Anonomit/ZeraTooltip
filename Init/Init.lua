@@ -290,10 +290,10 @@ end
 do
   do
     local privates = setmetatable({}, {__mode = "k"})
-    function Addon.GetPrivate(obj)
+    function Addon:GetPrivate(obj)
       return privates[obj]
     end
-    function Addon.SetPrivate(obj, p)
+    function Addon:SetPrivate(obj, p)
       privates[obj] = p
       return obj
     end
@@ -305,18 +305,18 @@ do
       local meta = {
         __index = {
           Get = function(self)
-            return Addon.GetPrivate(self).obj
+            return Addon:GetPrivate(self).obj
           end,
         },
       }
       Link = function(obj)
-        return setmetatable(Addon.SetPrivate({}, {obj = obj}), meta)
+        return setmetatable(Addon:SetPrivate({}, {obj = obj}), meta)
       end
     end
     
     local funcs = {
       Add = function(self, v)
-        local p = Addon.GetPrivate(self)
+        local p = Addon:GetPrivate(self)
         p.count = p.count + 1
         
         local id = p.next  + 1
@@ -337,7 +337,7 @@ do
         return id
       end,
       Remove = function(self, id)
-        local p = Addon.GetPrivate(self)
+        local p = Addon:GetPrivate(self)
         
         local link = p.indices[id]
         if not link then return false end
@@ -360,14 +360,14 @@ do
         return true
       end,
       Wipe = function(self)
-        local p = Addon.GetPrivate(self)
+        local p = Addon:GetPrivate(self)
         p.indices = {}
         p.count   = 0
         p.next    = 0
         return self
       end,
       GetCount = function(self)
-        return Addon.GetPrivate(self).count
+        return Addon:GetPrivate(self).count
       end,
       iter = function(self)
         local link
@@ -375,7 +375,7 @@ do
           if link then
             link = link.next
           else
-            link = Addon.GetPrivate(self).head
+            link = Addon:GetPrivate(self).head
           end
           return link and link:Get()
         end
@@ -384,7 +384,7 @@ do
     local meta = {
       __index = function(self, k)
         if type(k) == "number" then
-          return Addon.GetPrivate(self)[k]
+          return Addon:GetPrivate(self)[k]
         else
           return funcs[k]
         end
@@ -392,8 +392,82 @@ do
     }
     
     function Addon.IndexedLinkedList()
-      return setmetatable(Addon.SetPrivate({}, {}), meta):Wipe()
+      return setmetatable(Addon:SetPrivate({}, {}), meta):Wipe()
     end
+  end
+  
+  function Addon.TimedTable(defaultDuration)
+    local duration = defaultDuration
+    local db       = {}
+    local timers   = {}
+    local count    = 0
+    
+    local funcs = {
+      SetDuration = function(self, d)
+        duration = d
+        return self
+      end,
+      
+      GetDuration = function(self)
+        return duration
+      end,
+      
+      Bump = function(self, k)
+        if timers[k] then
+          timers[k]:Cancel()
+        end
+        
+        if db[k] ~= nil then
+          timers[k] = C_Timer.NewTicker(duration, function() self[k] = nil end, 1)
+        else
+          timers[k] = nil
+        end
+        
+        return self
+      end,
+      
+      Set = function(self, k, v)
+        local before = db[k] ~= nil and 1 or 0
+        db[k] = v
+        local after  = db[k] ~= nil and 1 or 0
+        count = count + after - before
+        
+        self:Bump(k)
+        return self
+      end,
+      
+      Get = function(self, k)
+        self:Bump(k)
+        return db[k]
+      end,
+      
+      GetCount = function(self)
+        return count
+      end,
+      
+      iter = function(self)
+        return pairs(db)
+      end,
+      
+      Wipe = function(self)
+        for k, timer in pairs(timers) do
+          timer:Cancel()
+        end
+        wipe(db)
+        wipe(timers)
+        count = 0
+      end,
+    }
+    local meta = {
+      __index = function(self, k)
+        return funcs[k] or funcs.Get(self, k)
+      end,
+      __newindex = function(self, k, v)
+        return self:Set(k, v)
+      end,
+    }
+    
+    return setmetatable({}, meta)
   end
   
   function Addon:Map(t, ValMap, KeyMap)
