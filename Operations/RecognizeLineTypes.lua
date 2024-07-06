@@ -40,6 +40,7 @@ local L_ITEM_LIMIT_CATEGORY_MULTIPLE = Addon.L["Unique-Equipped: %s (%d)"]
 local L_ITEM_LIMIT_CATEGORY          = Addon.L["Unique: %s (%d)"]
 
 local L_ITEM_MIN_SKILL = Addon.L["Requires %s (%d)"]
+local L_ITEM_REQ_SKILL = Addon.L["Requires %s"]
 
 local L_DAMAGE_TEMPLATE             = Addon.L["%s - %s Damage"]
 local L_DAMAGE_TEMPLATE_WITH_SCHOOL = Addon.L["%s - %s %s Damage"]
@@ -432,7 +433,9 @@ contextActions = Addon:Map({
         end
       end
       -- didn't match any other possible red line
-      return SetContext(i, tooltipData, line)
+      if not MatchesAny(line.textLeftTextStripped, L_ITEM_REQ_SKILL) then
+        return SetContext(i, tooltipData, line)
+      end
     end
   end,
   Damage = function(i, tooltipData, line)
