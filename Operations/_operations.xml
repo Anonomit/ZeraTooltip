@@ -26,6 +26,7 @@
   <Script file="RewordEnchantment.lua"/>
   <Script file="RewordLine.lua"/>
   <Script file="RewordPrefix.lua"/>
+  <Script file="RewordReforged.lua"/>
   <Script file="RewordRune.lua"/>
   <Script file="RewordSocketHint.lua"/>
   <Script file="RewordTradeableRefundable.lua"/>

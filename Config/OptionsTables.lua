@@ -1158,6 +1158,26 @@ local function MakeExtraOptions(opts, categoryName)
     GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
   end
   
+  if Addon.expansionLevel >= Addon.expansions.cata then
+    do
+      local stat = "Reforged"
+      
+      local defaultText = self.L["Reforged"]
+      local defaultText, formattedText, changed = GetFormattedText(stat, self.colors.GREEN, defaultText, self:RewordReforged(defaultText))
+      
+      local opts = GUI:CreateGroup(opts, stat, formattedText)
+      
+      CreateTitle(opts, defaultText, formattedText, changed)
+      
+      CreateColor(opts, stat)
+      
+      CreateReword(opts, stat)
+      
+      CreateHide(opts, stat)
+    end
+  end
+  if self.expansionLevel >= self.expansions.cata then GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true) end
+  
   -- Weapon Damage
   do
     local stat = "Damage"
@@ -1658,24 +1678,22 @@ local function MakeExtraOptions(opts, categoryName)
   
   -- Socket Hint
   local function MakeSocketHintOptions()
-    do
-      local stat = "SocketHint"
-      
-      local defaultText = self.L["<Shift Right Click to Socket>"]
-      local defaultText, formattedText, changed = GetFormattedText(stat, self.colors.GREEN, defaultText, self:RewordSocketHint(defaultText))
-      
-      local opts = GUI:CreateGroup(opts, stat, formattedText)
-      
-      CreateTitle(opts, defaultText, formattedText, changed)
-      
-      CreateReorder(opts, stat, L["Move this line to the socket bonus."])
-      
-      CreateColor(opts, stat)
-      
-      CreateReword(opts, stat)
-      
-      CreateHide(opts, stat)
-    end
+    local stat = "SocketHint"
+    
+    local defaultText = self.L["<Shift Right Click to Socket>"]
+    local defaultText, formattedText, changed = GetFormattedText(stat, self.colors.GREEN, defaultText, self:RewordSocketHint(defaultText))
+    
+    local opts = GUI:CreateGroup(opts, stat, formattedText)
+    
+    CreateTitle(opts, defaultText, formattedText, changed)
+    
+    CreateReorder(opts, stat, L["Move this line to the socket bonus."])
+    
+    CreateColor(opts, stat)
+    
+    CreateReword(opts, stat)
+    
+    CreateHide(opts, stat)
   end
   if self.expansionLevel >= self.expansions.tbc and self:GetOption("doReorder", "SocketHint") then MakeSocketHintOptions() end
   if self.expansionLevel >= self.expansions.tbc then GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true) end

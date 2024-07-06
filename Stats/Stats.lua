@@ -368,6 +368,8 @@ do
   
   self.statsInfo["Trainable"]          = {color = self.colors.ORANGE}
   
+  self.statsInfo["Reforged"]           = {color = self.colors.GREEN}
+  
   self.statsInfo["Damage"]             = {color = self.colors.WHITE}
   self.statsInfo["DamageBonus"]        = {color = self.colors.WHITE}
   self.statsInfo["Speed"]              = {color = self.colors.WHITE}

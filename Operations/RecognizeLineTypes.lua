@@ -43,6 +43,8 @@ local L_ITEM_LIMIT_CATEGORY          = Addon.L["Unique: %s (%d)"]
 local L_ITEM_MIN_SKILL = Addon.L["Requires %s (%d)"]
 local L_ITEM_REQ_SKILL = Addon.L["Requires %s"]
 
+local L_REFORGED = Addon.L["Reforged"]
+
 local L_DAMAGE_TEMPLATE             = Addon.L["%s - %s Damage"]
 local L_DAMAGE_TEMPLATE_WITH_SCHOOL = Addon.L["%s - %s %s Damage"]
 local L_SINGLE_DAMAGE_TEMPLATE      = Addon.L["%s Damage"]
@@ -195,6 +197,7 @@ local contexts = Addon:MakeLookupTable(Addon:Squish{
   "LockedWithProfession",
   "Type",
   "RedType",
+  Addon:ShortCircuit(Addon.expansionLevel >= Addon.expansions.cata, "Reforged", nil),
   "Damage",
   "DamageBonus",
   "DamagePerSecond",
@@ -437,6 +440,11 @@ contextActions = Addon:Map({
       if not MatchesAny(line.textLeftTextStripped, L_ITEM_REQ_SKILL) then
         return SetContext(i, tooltipData, line)
       end
+    end
+  end,
+  Reforged = function(i, tooltipData, line)
+    if line.colorLeft == Addon.colors.GREEN and MatchesAny(line.textLeftTextStripped, L_REFORGED) then
+      return SetContext(i, tooltipData, line)
     end
   end,
   Damage = function(i, tooltipData, line)

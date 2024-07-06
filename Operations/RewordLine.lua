@@ -79,6 +79,9 @@ function Addon:RewordLine(tooltip, line, tooltipData)
         Binding = function()
           text = self:RewordBinding(text, line.bindType)
         end,
+        Reforged = function()
+          text = self:RewordReforged(text)
+        end,
         Damage = function()
           text = self:ModifyWeaponDamage(text, tooltipData.dps, tooltipData.speed, tooltipData.damageBonus)
           if not line.hideRight then

@@ -259,6 +259,7 @@ L["Unique: %s (%d)"]          = ITEM_LIMIT_CATEGORY
 
 L["Requires %s (%d)"] = ITEM_MIN_SKILL
 
+L["Reforged"] = REFORGED
 
 L["%s - %s Damage"]    = DAMAGE_TEMPLATE
 L["%s - %s %s Damage"] = DAMAGE_TEMPLATE_WITH_SCHOOL
