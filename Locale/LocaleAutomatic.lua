@@ -415,6 +415,21 @@ end
 
 
 
+L["Bonus Armor"] = ITEM_MOD_EXTRA_ARMOR_SHORT
+L["Mastery"] = ITEM_MOD_MASTERY_RATING_SHORT
+
+if strFind(L["%c%d Stamina"], "^%%") then
+  if strFind(L["%c%d Stamina"], " ") then
+    L["%c%s Bonus Armor"] = "%c%s " .. L["Bonus Armor"]
+    L["%c%s Mastery"] = "%c%s " .. L["Mastery"]
+  else
+    L["%c%s Bonus Armor"] = "%c%s" .. L["Bonus Armor"]
+    L["%c%s Mastery"] = "%c%s" .. L["Mastery"]
+  end
+else
+    L["%c%s Bonus Armor"] = L["Bonus Armor"] .. " %c%s"
+    L["%c%s Mastery"] = L["Mastery"] .. " %c%s"
+end
 
 L["Defense Rating"] = ITEM_MOD_DEFENSE_SKILL_RATING_SHORT
 L["Increases defense rating by %s."] = ITEM_MOD_DEFENSE_SKILL_RATING
@@ -475,17 +490,6 @@ L["Improves spell critical strike rating by %s."] = ITEM_MOD_CRIT_SPELL_RATING
 
 L["Haste Rating (Spell)"] = {ITEM_MOD_HASTE_SPELL_RATING_SHORT, function() return strGsub(ITEM_MOD_CRIT_SPELL_RATING_SHORT, Addon:CoverSpecialCharacters(ITEM_MOD_CRIT_RATING_SHORT), Addon:CoverSpecialCharacters(ITEM_MOD_HASTE_RATING_SHORT)) end}
 L["Improves spell haste rating by %s."] = {ITEM_MOD_HASTE_SPELL_RATING, function() return strGsub(ITEM_MOD_CRIT_SPELL_RATING, Addon:CoverSpecialCharacters(ITEM_MOD_CRIT_RATING), Addon:CoverSpecialCharacters(ITEM_MOD_HASTE_RATING)) end}
-
-L["Mastery"] = ITEM_MOD_MASTERY_RATING_SHORT
-if strFind(L["%c%d Stamina"], "^%%") then
-  if strFind(L["%c%d Stamina"], " ") then
-    L["%c%d Mastery"] = "%c%d " .. L["Mastery"]
-  else
-    L["%c%d Mastery"] = "%c%d" .. L["Mastery"]
-  end
-else
-    L["%c%d Mastery"] = L["Mastery"] .. " %c%d"
-end
 
 L["Health Regeneration"] = ITEM_MOD_HEALTH_REGENERATION_SHORT
 L["Restores %s health per 5 sec."] = ITEM_MOD_HEALTH_REGEN

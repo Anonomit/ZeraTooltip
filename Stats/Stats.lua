@@ -163,6 +163,9 @@ do
   }
   
   local statsData = {}
+  
+  tinsert(statsData, {0, {nil, nil, nil, true}, "Bonus Armor", self.L["Bonus Armor"], self.L["%c%s Bonus Armor"], self.colors.GREEN, self.colors.GREEN})
+  
   tinsert(statsData, {1, {true, true, true, true}, "Stamina",   self.L["Stamina"],   self.L["%c%d Stamina"],   self.colors.WHITE, self.colors.PALE_LIGHT_GREEN})
   tinsert(statsData, {1, {true, true, true, true}, "Strength",  self.L["Strength"],  self.L["%c%d Strength"],  self.colors.WHITE, self.colors.TUMBLEWEED})
   tinsert(statsData, {0, {true, true, true, true}, "Agility",   self.L["Agility"],   self.L["%c%d Agility"],   self.colors.WHITE, self.colors.PUMPKIN_ORANGE})
@@ -210,7 +213,7 @@ do
   tinsert(statsData, {1, {true,       true, nil,  nil},  "Spell Hit Rating",                self.L["Hit Rating (Spell)"],              self.L["Improves spell hit rating by %s."],              self.colors.GREEN, self.colors.PINK_SHERBET})
   tinsert(statsData, {0, {true,       true, nil,  nil},  "Spell Critical Strike Rating",    self.L["Critical Strike Rating (Spell)"] , self.L["Improves spell critical strike rating by %s."] , self.colors.GREEN, self.colors.PARIS_GREEN})
   tinsert(statsData, {0, {nil ,       true, nil,  nil},  "Spell Haste Rating",              self.L["Haste Rating (Spell)"],            self.L["Improves spell haste rating by %s."],            self.colors.GREEN, self.colors.LEMON_LIME})
-  tinsert(statsData, {0, { nil,       nil,  nil,  true}, "Mastery Rating",                  self.L["Mastery"],                         self.L["%c%d Mastery"],                                  self.colors.GREEN, self.colors.GREEN_GAS})
+  tinsert(statsData, {0, { nil,       nil,  nil,  true}, "Mastery Rating",                  self.L["Mastery"],                         self.L["%c%s Mastery"],                                  self.colors.GREEN, self.colors.GREEN_GAS})
     
   tinsert(statsData, {1, {true, true, true, true}, "Health Regeneration", self.L["Health Regeneration"], self.L["Restores %s health per 5 sec."], self.colors.GREEN, self.colors.PALE_LIGHT_GREEN})
   tinsert(statsData, {0, {true, true, true, nil},  "Mana Regeneration",   self.L["Mana Regeneration"],   self.L["Restores %s mana per 5 sec."],   self.colors.GREEN, self.colors.JORDY_BLUE})

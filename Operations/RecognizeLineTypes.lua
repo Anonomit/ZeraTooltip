@@ -21,7 +21,8 @@ local L_ITEM_MOD_INTELLECT      = Addon.L["%c%d Intellect"]
 local L_ITEM_MOD_SPIRIT         = Addon.L["%c%d Spirit"]
 local L_ITEM_RESIST_SINGLE      = Addon.L["%c%d %s Resistance"]
 
-local L_ITEM_MOD_MASTERY_RATING_SHORT = Addon.L["%c%d Mastery"]
+local L_ITEM_MOD_BONUS_ARMOR_SHORT    = Addon.L["%c%s Bonus Armor"]
+local L_ITEM_MOD_MASTERY_RATING_SHORT = Addon.L["%c%s Mastery"]
 
 local L_CURRENTLY_EQUIPPED = Addon.L["Currently Equipped"]
 local L_DESTROY_GEM        = Addon.L["Gem to be destroyed"]
@@ -492,7 +493,7 @@ contextActions = Addon:Map({
     end
   end,
   Armor = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, L_ARMOR_TEMPLATE) then
+    if MatchesAny(line.textLeftTextStripped, L_ARMOR_TEMPLATE) and not strFind(line.textLeftTextStripped, "%+") then
       if line.colorLeft == Addon.colors.GREEN then
         return SetContext(contexts.BonusArmor, tooltipData, line)
       else
@@ -528,10 +529,16 @@ contextActions = Addon:Map({
             end
           end
         end
-      elseif line.colorLeft == Addon.colors.GREEN and MatchesAny(line.textLeftTextStripped, L_ITEM_MOD_MASTERY_RATING_SHORT) then
-        line.stat       = "Mastery Rating"
-        line.normalForm = Addon.statsInfo["Mastery Rating"]:ConvertToNormalForm(line.textLeftTextStripped)
-        return SetContext(i-1, tooltipData, line)
+      elseif line.colorLeft == Addon.colors.GREEN then
+        if MatchesAny(line.textLeftTextStripped, L_ITEM_MOD_MASTERY_RATING_SHORT) then
+          line.stat       = "Mastery Rating"
+          line.normalForm = Addon.statsInfo["Mastery Rating"]:ConvertToNormalForm(line.textLeftTextStripped)
+          return SetContext(i-1, tooltipData, line)
+        elseif MatchesAny(line.textLeftTextStripped, L_ITEM_MOD_BONUS_ARMOR_SHORT) then
+          line.stat       = "Bonus Armor"
+          line.normalForm = Addon.statsInfo["Bonus Armor"]:ConvertToNormalForm(line.textLeftTextStripped)
+          return SetContext(i-1, tooltipData, line)
+        end
       end
     end
   end,
