@@ -14,8 +14,8 @@ local tblConcat = table.concat
 
 
 
-local prepareAgain = false
-Addon:RegisterEventCallback("PLAYER_EQUIPMENT_CHANGED", function() prepareAgain = true end)
+local equipmentChanged = false
+Addon:RegisterEventCallback("PLAYER_EQUIPMENT_CHANGED", function() equipmentChanged = true end)
 
 
 
@@ -146,8 +146,8 @@ local function OnTooltipItemMethod(tooltip, methodName, ...)
   local isComparison = compareMethods[methodName]
   
   if self:IsTooltipMarked(tooltip) then
-    if isComparison and prepareAgain then
-      prepareAgain = false
+    if isComparison and equipmentChanged then
+      equipmentChanged = false
       if Addon:GetGlobalOption("debugOutput", "tooltipMethodHook") then
         local args = ConvertArgs(...)
         Addon:Debugf("Hook (early prep): %s:%s(%s) - %s", tooltip:GetName(), methodName, tblConcat({unpack(args, 1, args.n)}, ", "), link)

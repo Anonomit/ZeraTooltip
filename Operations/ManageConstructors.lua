@@ -29,6 +29,7 @@ function Addon:GetConstructorCacheSize()
 end
 Addon:RegisterOptionSetHandler(Addon.WipeConstructorCache)
 Addon:RegisterCVarCallback("colorblindMode", Addon.WipeConstructorCache)
+Addon:RegisterEventCallback("PLAYER_EQUIPMENT_CHANGED", Addon.WipeConstructorCache)
 
 local hashMaps = {
   SetHyperlink            = function(link, itemStringOrLink) return itemStringOrLink end,
