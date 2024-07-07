@@ -122,7 +122,7 @@ end
 
 local compareMethods = Addon:MakeLookupTable{"SetCompareItem", "SetHyperlinkCompareItem"}
 local recursion      = false -- used for shopping tooltips
-local alreadyPrepped = false -- used for shopping tooltips
+local shoppingPrepped = false -- used for shopping tooltips
 local function OnTooltipItemMethod(tooltip, methodName, ...)
   local self = Addon
   if not self:IsHookEnabled() then return end
@@ -177,7 +177,7 @@ local function OnTooltipItemMethod(tooltip, methodName, ...)
   if not recursion and isComparison then
     args[1] = GetScanner(args[1])
     ResetScanner(args[1], nil, methodName, ...)
-    alreadyPrepped = false
+    shoppingPrepped = false
   end
   
   do
@@ -187,16 +187,19 @@ local function OnTooltipItemMethod(tooltip, methodName, ...)
     end
     
     if tooltip:IsShown() then
+      local alreadyPrepped = false
       local constructor = self:GetConstructor(tooltip, link, methodName, ...)
       if not constructor or not self:ValidateConstructor(tooltip, constructor) then
-        if constructor then -- failed validation
+        local passedValidation = not constructor
+        if constructor then -- validation failed
+          self:DebugfIfOutput("constructorValidationFail", "Constructor validation failed at point #1")
           self:WipeConstructor(tooltip, link, methodName, ...)
           constructor = nil
         end
         if isComparison and recursion then
           scannerTooltip.currentItem = link
         end
-        if not recursion or not alreadyPrepped then
+        if not recursion or not shoppingPrepped or not passedValidation then
           if not self:PrepareTooltip(scannerTooltip, link, methodName, unpack(args, 1, args.n)) then
             if Addon:GetGlobalOption("debugOutput", "tooltipHookFail") then
               local args = ConvertArgs(...)
@@ -204,14 +207,31 @@ local function OnTooltipItemMethod(tooltip, methodName, ...)
             end
             return
           end
-          scannerTooltip.currentItem = link
           alreadyPrepped = true
+          scannerTooltip.currentItem = link
+          shoppingPrepped = true
         end
         
         constructor = GenerateConstructor(tooltip, scannerTooltip, name, link, scannerTooltip.isRecipe and scannerTooltip.lengths[1] or nil)
-        if constructor and name ~= "" then
-          self:SetConstructor(constructor, tooltip, link, methodName, ...)
+      end
+      if not constructor or not self:ValidateConstructor(tooltip, constructor) then
+        if constructor then -- validation failed
+          self:DebugfIfOutput("constructorValidationFail", "Constructor validation failed at point #2")
+          self:WipeConstructor(tooltip, link, methodName, ...)
+          constructor = nil
         end
+        if not self:PrepareTooltip(scannerTooltip, link, methodName, unpack(args, 1, args.n)) then
+          if Addon:GetGlobalOption("debugOutput", "tooltipHookFail") then
+            local args = ConvertArgs(...)
+            Addon:Debugf("Bad Hook (Preparing failed): %s:%s(%s)", tooltip:GetName(), methodName, tblConcat({unpack(args, 1, args.n)}, ", "))
+          end
+        end
+        scannerTooltip.currentItem = link
+        shoppingPrepped = true
+        constructor = GenerateConstructor(tooltip, scannerTooltip, name, link, scannerTooltip.isRecipe and scannerTooltip.lengths[1] or nil)
+      end
+      if constructor and name ~= "" then
+        self:SetConstructor(constructor, tooltip, link, methodName, ...)
       end
       
       if constructor then
@@ -304,16 +324,43 @@ local function OnTooltipSetItem(tooltip)
   
   local constructor = self:GetConstructor(tooltip, unpack(scannerTooltip.lastCall, 1, scannerTooltip.lastCall.n))
   if not constructor or not self:ValidateConstructor(tooltip, constructor) then
-    if constructor then
+    if constructor then -- validation failed
+      self:DebugfIfOutput("constructorValidationFail", "Constructor validation failed at point #3")
       self:WipeConstructor(tooltip, unpack(scannerTooltip.lastCall, 1, scannerTooltip.lastCall.n))
       constructor = nil
       if tooltip == ShoppingTooltip2 then
         self:WipeConstructor(ShoppingTooltip1, unpack(scannerTooltip.lastCall, 1, scannerTooltip.lastCall.n))
       end
+      
+      local args = ConvertArgs(unpack(scannerTooltip.lastCall, 3, scannerTooltip.lastCall.n))
+      if not self:PrepareTooltip(scannerTooltip, link, methodName, unpack(args, 1, args.n)) then
+        if Addon:GetGlobalOption("debugOutput", "tooltipHookFail") then
+          Addon:Debugf("Bad Hook (Preparing failed): %s:%s(%s)", tooltip:GetName(), methodName, tblConcat({unpack(args, 1, args.n)}, ", "))
+        end
+      end
     end
     
     constructor = GenerateConstructor(tooltip, scannerTooltip, name, link, scannerTooltip.isRecipe and scannerTooltip.lengths[1] or nil)
   end
+  local args = ConvertArgs(unpack(scannerTooltip.lastCall, 3, scannerTooltip.lastCall.n))
+  if not constructor or not self:ValidateConstructor(tooltip, constructor) then
+    if constructor then -- validation failed
+      self:DebugfIfOutput("constructorValidationFail", "Constructor validation failed at point #4")
+      self:WipeConstructor(tooltip, unpack(scannerTooltip.lastCall, 1, scannerTooltip.lastCall.n))
+      constructor = nil
+    end
+    if not self:PrepareTooltip(scannerTooltip, link, methodName, unpack(args, 1, args.n)) then
+      if Addon:GetGlobalOption("debugOutput", "tooltipHookFail") then
+        Addon:Debugf("Bad Hook (Preparing failed): %s:%s(%s)", tooltip:GetName(), methodName, tblConcat({unpack(args, 1, args.n)}, ", "))
+      end
+    end
+    constructor = GenerateConstructor(tooltip, scannerTooltip, name, link, scannerTooltip.isRecipe and scannerTooltip.lengths[1] or nil)
+  end
+  
+  if constructor and name ~= "" then
+    self:SetConstructor(constructor, tooltip, unpack(scannerTooltip.lastCall, 1, scannerTooltip.lastCall.n))
+  end
+  
   if constructor then
     local destructor = self:ConstructTooltip(scannerTooltip.tooltip, constructor)
     if self:GetGlobalOption("constructor", "alwaysDestruct") then
