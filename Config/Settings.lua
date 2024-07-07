@@ -114,6 +114,17 @@ function Addon:MakeDefaultOptions()
           StackSize          = false, -- whether it shows up after title
         },
         
+        overwriteSeparator = {
+          ["."] = false,
+          [","] = false,
+        },
+        separator = {
+          ["."]              = ".",
+          [","]              = " ",
+          fourDigitException = false,
+          separateDecimals   = false,
+        },
+        
         itemLevel = {
           ["*"]               = true,
           useShortName        = true,

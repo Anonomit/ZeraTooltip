@@ -21,7 +21,7 @@ function Addon:RewordArmor(text)
   local origNumber = strMatch(text, "[%d+,%.]+")
   if not origNumber then return text end
   
-  local strNumber = self:ToFormattedNumber(self:ToNumber(origNumber), not self:GetOption("separateThousands", stat))
+  local strNumber = self:ToFormattedNumber(self:ToNumber(origNumber), nil, nil, not self:GetOption("separateThousands", stat) and "" or nil)
   text = strGsub(text, self:CoverSpecialCharacters(origNumber), strNumber)
   
   if self:GetOption("doReword", stat) then
@@ -47,7 +47,7 @@ function Addon:RewordBonusArmor(text)
   local origNumber = strMatch(text, "[%d+,%.]+")
   if not origNumber then return text end
   
-  local strNumber = self:ToFormattedNumber(self:ToNumber(origNumber), not self:GetOption("separateThousands", stat))
+  local strNumber = self:ToFormattedNumber(self:ToNumber(origNumber), nil, nil, not self:GetOption("separateThousands", stat) and "" or nil)
   text = strGsub(text, self:CoverSpecialCharacters(origNumber), strNumber)
   
   if self:GetOption("doReword", stat) then

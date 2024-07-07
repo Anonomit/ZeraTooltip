@@ -35,9 +35,9 @@ function Addon:ModifyWeaponDamage(text, dps, speed, damageBonus)
     else
       mid = mid - (damageBonus[1] + damageBonus[2]) / 2
     end
-    minMax = self:ToFormattedNumber(min, noThousandsSeparator) .. gap .. self:ToFormattedNumber(max, noThousandsSeparator)
+    minMax = self:ToFormattedNumber(min, nil, "") .. gap .. self:ToFormattedNumber(max, nil, nil, noThousandsSeparator and "" or nil)
     
-    local average = showAverage and self:ToFormattedNumber(self:Round(mid, precision), noThousandsSeparator) or nil
+    local average = showAverage and self:ToFormattedNumber(self:Round(mid, precision), nil, nil, noThousandsSeparator and "" or nil) or nil
     local usePercent = self:GetOption("damage", "variancePercent")
     
     local varianceDecimal
@@ -87,7 +87,7 @@ function Addon:ModifyWeaponDamageBonus(text, damageBonus)
   if min then
     min, max = self:ToNumber(min), self:ToNumber(max)
     local mid = (damageBonus[1] + damageBonus[2]) / 2
-    local average = showAverage and self:ToFormattedNumber(self:Round(mid, precision), noThousandsSeparator) or nil
+    local average = showAverage and self:ToFormattedNumber(self:Round(mid, precision), nil, nil, noThousandsSeparator and "" or nil) or nil
     local usePercent = self:GetOption("damage", "variancePercent")
     
     local varianceDecimal
@@ -98,7 +98,7 @@ function Addon:ModifyWeaponDamageBonus(text, damageBonus)
     end
     local variance = showVariance and format("%s%d%s", self:GetOption("damage", "variancePrefix"), usePercent and self:Round((varianceDecimal-1)*100, 5) or self:Round(max-mid, 1), usePercent and "%%" or "") or nil
     
-    minMax = self:ToFormattedNumber(min, noThousandsSeparator) .. gap .. self:ToFormattedNumber(max, noThousandsSeparator)
+    minMax = self:ToFormattedNumber(min, nil, nil, noThousandsSeparator and "" or nil) .. gap .. self:ToFormattedNumber(max, nil, nil, noThousandsSeparator and "" or nil)
     minMax = showMinMax and minMax or nil
     
     local pattern
@@ -139,7 +139,7 @@ function Addon:ModifyWeaponSpeed(text, speed, speedString)
   end
   
   if self:GetOption("allow", "reword") then
-    local newSpeed = self:ToFormattedNumber(speed, nil, self:GetOption("precision", stat))
+    local newSpeed = self:ToFormattedNumber(speed, self:GetOption("precision", stat))
     text = strGsub(text, self:CoverSpecialCharacters(speedString), newSpeed)
     -- local precision = self:GetOption("precision", stat)
     -- if precision ~= 2 then
@@ -167,7 +167,7 @@ function Addon:ModifyWeaponDamagePerSecond(text)
   local noThousandsSeparator = not self:GetOption("separateThousands", stat)
   local precision = (1 / 10^self:GetOption("precision", stat)) or 1
   
-  local strNumber = self:ToFormattedNumber(self:Round(self:ToNumber(origNumber), precision), noThousandsSeparator)
+  local strNumber = self:ToFormattedNumber(self:Round(self:ToNumber(origNumber), precision), nil, nil, noThousandsSeparator and "" or nil)
   text = strGsub(text, self:CoverSpecialCharacters(origNumber), strNumber)
   
   if self:GetOption("doReword", stat) then

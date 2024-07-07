@@ -21,6 +21,13 @@ L["Allow or prohibit all recoloring."]                                          
 L["Greatly speeds up processing, but may occasionally cause tooltip formatting issues."]          = true
 L["If a tooltip appears to be formatted incorrectly, hide it for %d seconds to clear the cache."] = true
 
+L["Use custom decimal separator."]                                                     = true
+L["Use custom thousands separator."]                                                   = true
+L["Four Digit Exception"]                                                              = true
+L["Don't group digits if there are four or fewer on that side of the decimal marker."] = true
+L["Group decimal digits"]                                                              = true
+L["Group digits to the right of the decimal marker."]                                  = true
+L["Recommended by NIST (National Institute of Standards and Technology)."]             = true
 
 L["Multiply"]   = true
 L["Multiplier"] = true

@@ -1386,9 +1386,9 @@ do
     -- strip percentage
     text = strGsub(text, "%%*$", "")
     
-    -- strip comma separators, convert decimal separator into period
+    -- strip thousands separators, convert decimal separator into period
     if self.L["."] == "." then
-      text = strGsub(text, "(%d)" .. self.L["."] .. "(%d%d%d)", "%1%2")
+      text = strGsub(text, "(%d)" .. self.L[","] .. "(%d%d%d)", "%1%2")
     else
       text = self:ChainGsub(text, {"(%d)%" .. self.L[","] .. "(%d%d%d)", "%1%2"}, {"%" .. self.L["."], "."})
     end
@@ -1396,21 +1396,63 @@ do
     return tonumber(text)
   end
   
-  function Addon:ToFormattedNumber(text, noThousandsSeparator, numDecimalPlaces)
-    text = self:ToNumber(text)
-    if numDecimalPlaces then
-      text = format("%." .. numDecimalPlaces .. "f", text)
-    end
-    text = tostring(self:ToNumber(text))
+  function Addon:ToFormattedNumber(text, numDecimalPlaces, decimalChar, thousandsChar, forceFourDigitException, forceSeparateDecimals)
+    local decimal   = decimalChar   or self:GetOption("overwriteSeparator", ".") and self:GetOption("separator", ".") or self.L["."]
+    local separator = thousandsChar or self:GetOption("overwriteSeparator", ",") and self:GetOption("separator", ",") or self.L[","]
     
-    if self.L["."] ~= "." then
-      text = strGsub(text, "(%d)%.(%d)", "%1" .. self.L["."] .. "%2")
+    local fourDigitException
+    if forceFourDigitException ~= nil then
+      fourDigitException = forceFourDigitException
+    else
+      fourDigitException = self:GetOption("separator", "fourDigitException")
     end
-    if not noThousandsSeparator then
-      local count = 1
-      while count > 0 do
-        text, count = strGsub(text, "^(-?%d+)(%d%d%d)", "%1" .. self.L[","] .. "%2")
+    local separateDecimals
+    if forceSeparateDecimals ~= nil then
+      separateDecimals = forceSeparateDecimals
+    else
+      separateDecimals = self:GetOption("separator", "separateDecimals")
+    end
+    
+    local number = self:ToNumber(text)
+    if numDecimalPlaces then
+      number = self:Round(number, 1 / 10^numDecimalPlaces)
+    end
+    
+    local text  = tostring(abs(number))
+    local left  = strMatch(text,  "^%-?%d+")
+    local right = strMatch(text, "%.(%d*)$") or ""
+    
+    if numDecimalPlaces then
+      while #right < numDecimalPlaces do
+        right = right .. "0"
       end
+    end
+    
+    if decimal ~= "" and #left > 3 and not (fourDigitException and #left <= 4) then
+      local result = {}
+      
+      for i = #left, 0, -3 do
+        result[mathFloor(i/3)+1] = strSub(left, mathMax(i-2, 0), i)
+      end
+      left = tblConcat(result, separator)
+    end
+    
+    if separator ~= "" and #right > 3 and not (fourDigitException and #right <= 4) and separateDecimals then
+      local result = {}
+      
+      for i = 1, #right, 3 do
+        result[mathFloor(i/3)+1] = strSub(right, i, mathMin(i+2, #right))
+      end
+      right = tblConcat(result, separator)
+    end
+    
+    text = left
+    if #right > 0 then
+      text = text .. decimal .. right
+    end
+    
+    if number < 0 then
+      text = "-" .. text
     end
     
     return text

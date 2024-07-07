@@ -187,7 +187,7 @@ local function CreateThousandsSeparator(opts, stat, disabled)
   local opts = GUI:CreateGroupBox(opts, self.L["Formatting"])
   
   local disabled = disabled or not self:GetOption("allow", "reword")
-  GUI:CreateDropdown(opts, {"separateThousands", stat}, self.L["Formatting"], self.L["Formatting"], {[true] = self:ToFormattedNumber(1000, false), [false] = self:ToFormattedNumber(1000, true)}, {true, false}, disabled).width = 0.5
+  GUI:CreateDropdown(opts, {"separateThousands", stat}, self.L["Formatting"], self.L["Formatting"], {[true] = self:ToFormattedNumber(10000), [false] = self:ToFormattedNumber(10000, nil, nil, "")}, {true, false}, disabled).width = 0.5
   GUI:CreateReset(opts, {"separateThousands", stat}, function() self:ResetOption("separateThousands", stat) end)
   
   return opts
@@ -321,6 +321,56 @@ local function MakeGeneralOptions(opts)
       GUI:CreateToggle(opts, {"cache", "enabled"}, L["Cache"], L["Greatly speeds up processing, but may occasionally cause tooltip formatting issues."] .. "|n|n" .. Addon:MakeColorCode(Addon.colors.RED, format(L["If a tooltip appears to be formatted incorrectly, hide it for %d seconds to clear the cache."], Addon:GetGlobalOption("cache", "constructorWipeDelay"))))
       GUI:CreateReset(opts, {"cache", "enabled"})
       GUI:ResetDBType()
+    end
+    
+    do
+      local opts = GUI:CreateGroupBox(opts, self.L["Formatting"])
+      
+      local samples = {}
+      for _, data in ipairs{
+        {1000,        0},
+        {1000000.01,  2},
+        {1000.0001,   4},
+        {-10.0000001, 7},
+      } do
+        local number, numDecimalPlaces = unpack(data)
+        local sample1 = self:ToFormattedNumber(number, numDecimalPlaces, self.L["."], self.L[","], false, false)
+        local sample2 = self:ToFormattedNumber(number, numDecimalPlaces)
+        tinsert(samples, {sample1, sample2})
+      end
+      
+      CreateSamples(opts, samples)
+      
+      do
+        GUI:CreateToggle(opts, {"overwriteSeparator", "."}, self.L["Rename"], L["Use custom decimal separator."])
+        local option = GUI:CreateInput(opts, {"separator", "."}, self.L["."], nil, nil, not self:GetOption("overwriteSeparator", "."))
+        option.set = function(info, v)
+          v = strGsub(v, "[0-9]", "")
+          if v == "" then
+            v = self.L["."]
+          end
+          self:SetOption(v, "separator", ".")
+        end
+        
+        GUI:CreateReset(opts, {"separator", "."})
+        GUI:CreateNewline(opts)
+      end
+      do
+        GUI:CreateToggle(opts, {"overwriteSeparator", ","}, self.L["Rename"], L["Use custom thousands separator."])
+        local option = GUI:CreateInput(opts, {"separator", ","}, self.L[","], nil, nil, not self:GetOption("overwriteSeparator", ","))
+        option.set = function(info, v)
+          v = strGsub(v, "[0-9]", "")
+          self:SetOption(v, "separator", ",")
+        end
+        
+        GUI:CreateReset(opts, {"separator", ","})
+        GUI:CreateNewline(opts)
+      end
+      
+      GUI:CreateToggle(opts, {"separator", "fourDigitException"}, L["Four Digit Exception"], L["Don't group digits if there are four or fewer on that side of the decimal marker."] .. "|n|n" .. L["Recommended by NIST (National Institute of Standards and Technology)."])
+      GUI:CreateNewline(opts)
+      GUI:CreateToggle(opts, {"separator", "separateDecimals"}, L["Group decimal digits"], L["Group digits to the right of the decimal marker."] .. "|n|n" .. L["Recommended by NIST (National Institute of Standards and Technology)."])
+      GUI:CreateNewline(opts)
     end
   end
   
@@ -1186,8 +1236,8 @@ local function MakeExtraOptions(opts, categoryName)
     local samples = {}
     do
       local min, max = self:Round(sampleDamage * (1-sampleVariance)), self:Round(sampleDamage * (1+sampleVariance))
-      local default1 = format(self.L["%s - %s Damage"], self:ToFormattedNumber(min), self:ToFormattedNumber(max))
-      local default2 = format(self.L["+ %s - %s Damage"], self:ToFormattedNumber(min), self:ToFormattedNumber(max))
+      local default1 = format(self.L["%s - %s Damage"], self:ToFormattedNumber(min, nil, self.L["."], self.L[","], false, false), self:ToFormattedNumber(max, nil, self.L["."], self.L[","], false, false))
+      local default2 = format(self.L["+ %s - %s Damage"], self:ToFormattedNumber(min, nil, self.L["."], self.L[","], false, false), self:ToFormattedNumber(max, nil, self.L["."], self.L[","], false, false))
       
       for _, v in ipairs{
         {default1, self:ModifyWeaponDamage(default1, sampleDamage*2, 1, {min, max}), self:GetOption("hide", stat)},
@@ -1443,7 +1493,7 @@ local function MakeExtraOptions(opts, categoryName)
     local sample = 1000
     
     local samples = {}
-    local defaultText = format(self.L["%s Armor"], self:ToFormattedNumber(sample))
+    local defaultText = format(self.L["%s Armor"], self:ToFormattedNumber(sample, nil, self.L["."], self.L[","], false, false))
     local defaultText, formattedText, changed = GetFormattedText(stat, self.colors.WHITE, defaultText, self:RewordArmor(defaultText))
     tinsert(samples, {defaultText, formattedText})
     
@@ -1478,7 +1528,7 @@ local function MakeExtraOptions(opts, categoryName)
     local sample = 2000
     
     local samples = {}
-    local defaultText = format(self.L["%s Armor"], self:ToFormattedNumber(sample))
+    local defaultText = format(self.L["%s Armor"], self:ToFormattedNumber(sample, nil, self.L["."], self.L[","], false, false))
     local defaultText, formattedText, changed = GetFormattedText(stat, self.colors.GREEN, defaultText, self:RewordBonusArmor(defaultText))
     tinsert(samples, {defaultText, formattedText})
     

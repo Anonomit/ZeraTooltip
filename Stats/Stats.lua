@@ -261,6 +261,7 @@ do
       StatInfo.color = color
       
       local isBaseStat = strFind(tooltipPattern, "%%%d?%$?c")
+      local isFakeBaseStat = strFind(tooltipPattern, "%%%d?%$?c%%s")
       local reorderLocaleMode = isBaseStat and "%s%s" or "+%s"
       
       
@@ -280,7 +281,7 @@ do
         local origStrNumber = match1 .. (match2 or "")
         local strNumber, percent = strMatch(origStrNumber, "(%-?" .. self.L["[%d,%.]+"] .. ")(%%?)")
         local number = self:Round(self:ToNumber(strNumber) * self:GetOption("mod", stat), 1 / 10^self:GetOption("precision", stat))
-        strNumber = self:ToFormattedNumber(number, not self:GetOption("separateThousands", stat))
+        strNumber = self:ToFormattedNumber(number, nil, nil, not self:GetOption("separateThousands", stat) and "" or nil)
         if isBaseStat and number > 0 then
           strNumber = "+" .. strNumber
         end
@@ -337,10 +338,10 @@ do
         local percent = strFind(number, "%%$")
         number = Addon:ToNumber(number)
         local strNumber
-        if isBaseStat then
+        if isBaseStat and not isFakeBaseStat then
           strNumber = tostring(number)
         else
-          strNumber = Addon:ToFormattedNumber(number)
+          strNumber = Addon:ToFormattedNumber(number, nil, Addon.L["."], Addon.L[","], false, false)
         end
         strNumber = strNumber .. (percent and "%" or "")
         return format(tooltipPattern2, isBaseStat and (number < 0 and "" or "+") or strNumber, isBaseStat and strNumber or nil)
