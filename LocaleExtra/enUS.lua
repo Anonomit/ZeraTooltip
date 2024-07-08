@@ -77,115 +77,115 @@ end
 
 
 Addon:AddExtraStatCapture("Arcane Damage",
-  {INPUT = "%+(%d+) Arcane Spell Damage"})
+  {INPUT = "%+([%d,]+) Arcane Spell Damage"})
 
 Addon:AddExtraStatCapture("Fire Damage",
-  {INPUT = "%+(%d+) Fire Spell Damage"})
+  {INPUT = "%+([%d,]+) Fire Spell Damage"})
 
 Addon:AddExtraStatCapture("Nature Damage",
-  {INPUT = "%+(%d+) Nature Spell Damage"})
+  {INPUT = "%+([%d,]+) Nature Spell Damage"})
 
 Addon:AddExtraStatCapture("Frost Damage",
-  {INPUT = "%+(%d+) Frost Spell Damage"})
+  {INPUT = "%+([%d,]+) Frost Spell Damage"})
 
 Addon:AddExtraStatCapture("Shadow Damage",
-  {INPUT = "%+(%d+) Shadow Spell Damage"})
+  {INPUT = "%+([%d,]+) Shadow Spell Damage"})
 
 Addon:AddExtraStatCapture("Holy Damage",
-  {INPUT = "%+(%d+) Holy Spell Damage"})
+  {INPUT = "%+([%d,]+) Holy Spell Damage"})
 
 Addon:AddExtraStatCapture("Health Regeneration",
-  {INPUT = "^%+(%d+) health every 5 sec%.$"})
+  {INPUT = "^%+([%d,]+) health every 5 sec%.$"})
 
 
 
 if Addon.isEra then
   Addon:AddExtraStatCapture("Defense Rating",
-    {INPUT = "^Increased Defense %+(%d+)%.$"})
+    {INPUT = "^Increased Defense %+([%d,]+)%.$"})
   
   Addon:AddExtraStatCapture("Dodge Rating",
-    {INPUT = "^Increases your chance to dodge an attack by (%d+%%)%.$"})
+    {INPUT = "^Increases your chance to dodge an attack by ([%d,]+%%)%.$"})
   
   Addon:AddExtraStatCapture("Parry Rating",
-    {INPUT = "^Increases your chance to parry an attack by (%d+%%)%.$"})
+    {INPUT = "^Increases your chance to parry an attack by ([%d,]+%%)%.$"})
   
   Addon:AddExtraStatCapture("Block Rating",
-    {INPUT = "^Increases your chance to block attacks with a shield by (%d+%%)%.$"})
+    {INPUT = "^Increases your chance to block attacks with a shield by ([%d,]+%%)%.$"})
   
   Addon:AddExtraStatCapture("Attack Power In Forms",
-    {INPUT = "^%+(%d+) Attack Power in Cat, Bear, and Dire Bear forms only%.$"})
+    {INPUT = "^%+([%d,]+) Attack Power in Cat, Bear, and Dire Bear forms only%.$"})
   
   Addon:AddExtraStatCapture("Spell Power",
-    {INPUT = "^Increases damage and healing done by magical spells and effects by up to (%d+)%.$"},
-    {INPUT = "^%+(%d+) Damage and Healing Spells$"})
+    {INPUT = "^Increases damage and healing done by magical spells and effects by up to ([%d,]+)%.$"},
+    {INPUT = "^%+([%d,]+) Damage and Healing Spells$"})
   
   Addon:AddExtraStatCapture("Arcane Damage",
-    {INPUT = "^Increases damage done by Arcane spells and effects by up to (%d+)%.$"})
+    {INPUT = "^Increases damage done by Arcane spells and effects by up to ([%d,]+)%.$"})
   
   Addon:AddExtraStatCapture("Fire Damage",
-    {INPUT = "^Increases damage done by Fire spells and effects by up to (%d+)%.$"})
+    {INPUT = "^Increases damage done by Fire spells and effects by up to ([%d,]+)%.$"})
   
   Addon:AddExtraStatCapture("Nature Damage",
-    {INPUT = "^Increases damage done by Nature spells and effects by up to (%d+)%.$"})
+    {INPUT = "^Increases damage done by Nature spells and effects by up to ([%d,]+)%.$"})
   
   Addon:AddExtraStatCapture("Frost Damage",
-    {INPUT = "^Increases damage done by Frost spells and effects by up to (%d+)%.$"})
+    {INPUT = "^Increases damage done by Frost spells and effects by up to ([%d,]+)%.$"})
   
   Addon:AddExtraStatCapture("Shadow Damage",
-    {INPUT = "^Increases damage done by Shadow spells and effects by up to (%d+)%.$"})
+    {INPUT = "^Increases damage done by Shadow spells and effects by up to ([%d,]+)%.$"})
   
   Addon:AddExtraStatCapture("Holy Damage",
-    {INPUT = "^Increases damage done by Holy spells and effects by up to (%d+)%.$"})
+    {INPUT = "^Increases damage done by Holy spells and effects by up to ([%d,]+)%.$"})
   
   Addon:AddExtraStatCapture("Healing",
-    {INPUT = "^Increases healing done by spells and effects by up to (%d+)%.$"},
-    {INPUT = "^%+(%d+) Healing Spells$"})
+    {INPUT = "^Increases healing done by spells and effects by up to ([%d,]+)%.$"},
+    {INPUT = "^%+([%d,]+) Healing Spells$"})
   
   Addon:AddExtraStatCapture("Spell Penetration",
-    {INPUT = "^Decreases the magical resistances of your spell targets by (%d+)%.$"})
+    {INPUT = "^Decreases the magical resistances of your spell targets by ([%d,]+)%.$"})
   
   Addon:AddExtraStatCapture("Hit Rating",
-    {INPUT = "^Improves your chance to hit with all spells and attacks by (%d+%%)%.$"})
+    {INPUT = "^Improves your chance to hit with all spells and attacks by ([%d,]+%%)%.$"})
   
   Addon:AddExtraStatCapture("Critical Strike Rating",
-    {INPUT = "^Improves your chance to get a critical strike with all spells and attacks by (%d+%%)%.$"},
-    {INPUT = "^Improves your chance to get a critical strike with melee and ranged attacks and with spells by (%d+%%)%.$"})
+    {INPUT = "^Improves your chance to get a critical strike with all spells and attacks by ([%d,]+%%)%.$"},
+    {INPUT = "^Improves your chance to get a critical strike with melee and ranged attacks and with spells by ([%d,]+%%)%.$"})
   
   Addon:AddExtraStatCapture("Physical Hit Rating",
-    {INPUT = "^Improves your chance to hit by (%d+%%)%.$"})
+    {INPUT = "^Improves your chance to hit by ([%d,]+%%)%.$"})
   
   Addon:AddExtraStatCapture("Physical Critical Strike Rating",
-    {INPUT = "^Improves your chance to get a critical strike by (%d+%%)%.$"})
+    {INPUT = "^Improves your chance to get a critical strike by ([%d,]+%%)%.$"})
   
   Addon:AddExtraStatCapture("Spell Hit Rating",
-    {INPUT = "^Improves your chance to hit with spells by (%d+%%)%.$"})
+    {INPUT = "^Improves your chance to hit with spells by ([%d,]+%%)%.$"})
   
   Addon:AddExtraStatCapture("Spell Critical Strike Rating",
-    {INPUT = "^Improves your chance to get a critical strike with spells by (%d+%%)%.$"})
+    {INPUT = "^Improves your chance to get a critical strike with spells by ([%d,]+%%)%.$"})
   
   Addon:AddExtraStatCapture("Health Regeneration",
-    {INPUT = "^Restores (%d+) health every 5 sec%.$"})
+    {INPUT = "^Restores ([%d,]+) health every 5 sec%.$"})
   
   Addon:AddExtraStatCapture("Mana Regeneration",
-    {INPUT = "^%+(%d+) mana every 5 sec%.$"})
+    {INPUT = "^%+([%d,]+) mana every 5 sec%.$"})
 else
   Addon:AddExtraStatCapture("Block Rating",
-    {INPUT = "^Increases your block rating by (%d+)%.$"})
+    {INPUT = "^Increases your block rating by ([%d,]+)%.$"})
   
   Addon:AddExtraStatCapture("Spell Power",
-    {INPUT = "^Increases your spell power by (%d+)%.$"}) -- Atiesh 22631
+    {INPUT = "^Increases your spell power by ([%d,]+)%.$"}) -- Atiesh 22631
   
   Addon:AddExtraStatCapture("Hit Rating",
-    {INPUT = "^Increases your hit rating by (%d+)%.$"}) -- Maexxna's Fang 22804
+    {INPUT = "^Increases your hit rating by ([%d,]+)%.$"}) -- Maexxna's Fang 22804
   
   Addon:AddExtraStatCapture("Critical Strike Rating",
-    {INPUT = "^Increases your critical strike rating by (%d+)%.$"}) -- Staff of Balzaphon 23124
+    {INPUT = "^Increases your critical strike rating by ([%d,]+)%.$"}) -- Staff of Balzaphon 23124
   
   Addon:AddExtraStatCapture("Armor Penetration Rating",
-    {INPUT = "^Increases armor penetration rating by (%d+)%.$"}) -- Maexxna's Femur 39226
+    {INPUT = "^Increases armor penetration rating by ([%d,]+)%.$"}) -- Maexxna's Femur 39226
   
   Addon:AddExtraStatCapture("Spell Penetration",
-    {INPUT = "^Increases your spell penetration by (%d+)%.$"}) -- Hatefury Mantle 30884
+    {INPUT = "^Increases your spell penetration by ([%d,]+)%.$"}) -- Hatefury Mantle 30884
 end
 
 

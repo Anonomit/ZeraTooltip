@@ -512,7 +512,7 @@ contextActions = Addon:Map({
         local stat = MatchesAny(line.textLeftTextStripped, L_ITEM_MOD_STAMINA, L_ITEM_MOD_STRENGTH, L_ITEM_MOD_AGILITY, L_ITEM_MOD_INTELLECT, L_ITEM_MOD_SPIRIT, L_ITEM_RESIST_SINGLE)
         if stat then
           if stat == L_ITEM_RESIST_SINGLE then
-            local n = strMatch(line.textLeftTextStripped, "(%d+)")
+            local n = strMatch(line.textLeftTextStripped, numberPattern)
             tooltipData.resistN = tooltipData.resistN or n
             if tooltipData.resistN == n then
               tooltipData.resists = tooltipData.resists + 1

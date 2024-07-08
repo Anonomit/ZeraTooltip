@@ -52,7 +52,7 @@ function Addon:RewordLine(tooltip, line, tooltipData)
   
   local text = line.textLeftText
   
-  local cache = self:GetGlobalOption("cache", "enabled") and self:GetGlobalOption("cache", "text") and not RatingBuster and Addon:CheckTable(textCache, line.type, line.textLeftText, line.textRightText or "")
+  local cache = self:GetGlobalOption("cache", "enabled") and self:GetGlobalOption("cache", "text") and Addon:CheckTable(textCache, line.type, line.textLeftText, line.textRightText or "")
   if cache then
     text, line.rewordRight = unpack(cache, 1, 2)
   else
@@ -224,7 +224,7 @@ function Addon:RewordLine(tooltip, line, tooltipData)
     text = format("[%d] ", line.i) .. text
   end
   
-  if text ~= line.realTextLeft and (text ~= line.textLeftText or line.recolorLeft) and not rewordBlacklist[line.type] then
+  if text ~= line.realTextLeft and (text ~= line.textLeftText or line.recolorLeft) and not rewordBlacklist[line.type] and not RatingBuster then
     line.rewordLeft = text
   end
 end

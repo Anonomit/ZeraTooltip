@@ -141,14 +141,6 @@ function Addon:ModifyWeaponSpeed(text, speed, speedString)
   if self:GetOption("allow", "reword") then
     local newSpeed = self:ToFormattedNumber(speed, self:GetOption("precision", stat))
     text = strGsub(text, self:CoverSpecialCharacters(speedString), newSpeed)
-    -- local precision = self:GetOption("precision", stat)
-    -- if precision ~= 2 then
-    --   local newSpeed = format("%." .. precision .. "f", speed)
-    --   if self.L["."] ~= "." then
-    --     newSpeed = strGsub(newSpeed, "%.", self.L["."])
-    --   end
-    --   text = strGsub(text, self:CoverSpecialCharacters(speedString), newSpeed)
-    -- end
   end
   return text
 end
@@ -161,7 +153,7 @@ local stat = "DamagePerSecond"
 function Addon:ModifyWeaponDamagePerSecond(text)
   if not self:GetOption("allow", "reword") then return text end
   
-  local origNumber = strMatch(text, "[%d+,%.]+")
+  local origNumber = strMatch(text, "[%d,%.]+") -- doesn't use localized separators
   if not origNumber then return text end
   
   local noThousandsSeparator = not self:GetOption("separateThousands", stat)

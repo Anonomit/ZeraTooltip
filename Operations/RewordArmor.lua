@@ -18,7 +18,7 @@ local stat = "Armor"
 function Addon:RewordArmor(text)
   if not self:GetOption("allow", "reword") then return text end
   
-  local origNumber = strMatch(text, "[%d+,%.]+")
+  local origNumber = strMatch(text, self.L["[%d,%.]+"])
   if not origNumber then return text end
   
   local strNumber = self:ToFormattedNumber(self:ToNumber(origNumber), nil, nil, not self:GetOption("separateThousands", stat) and "" or nil)
@@ -44,7 +44,7 @@ local stat = "BonusArmor"
 function Addon:RewordBonusArmor(text)
   if not self:GetOption("allow", "reword") then return text end
   
-  local origNumber = strMatch(text, "[%d+,%.]+")
+  local origNumber = strMatch(text, self.L["[%d,%.]+"])
   if not origNumber then return text end
   
   local strNumber = self:ToFormattedNumber(self:ToNumber(origNumber), nil, nil, not self:GetOption("separateThousands", stat) and "" or nil)
