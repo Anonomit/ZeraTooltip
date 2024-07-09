@@ -137,6 +137,7 @@ L["Hide lines that contain only my class."] = true
 -- level
 L["Hide white level requirements."]                                  = true
 L["Hide maximum level requirements when you are the maximum level."] = true
+L["Hide level range requirements."]                                  = true
 
 -- prefixes
 L["Remove Space"] = true

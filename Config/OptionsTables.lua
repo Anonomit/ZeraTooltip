@@ -1041,11 +1041,17 @@ local function MakeExtraOptions(opts, categoryName)
     do
       local opts = GUI:CreateGroupBox(opts, self.L["Example Text:"])
       
-      local sampleLevels = {sample1, self.MAX_LEVEL, self.MAX_LEVEL + 1}
+      local sampleLevels = {
+        {self.L["Requires Level %d"], sample1},
+        {self.L["Requires Level %d"], self.MAX_LEVEL},
+        {self.L["Requires Level %d"], self.MAX_LEVEL + 1},
+        self:ShortCircuit(self.expansionLevel >= self.expansions.cata, {self.L["Requires level %d to %d (%d)"], 1, self.MAX_LEVEL, self.MY_LEVEL}, nil),
+      }
       
       GUI:CreateDescription(opts, self.L["Default"], "small")
-      for i, level in ipairs(sampleLevels) do
-        local defaultText = format("|cffff%s%s", level > self.MY_LEVEL and "0000" or "ffff", format(self.L["Requires Level %d"], level))
+      for i, levels in ipairs(sampleLevels) do
+        local pattern, min, max, current = unpack(levels)
+        local defaultText = format("|cffff%s%s", min > self.MY_LEVEL and "0000" or "ffff", format(pattern, min, max, current))
         GUI:CreateDescription(opts, defaultText)
       end
       GUI:CreateDivider(opts)
@@ -1053,17 +1059,18 @@ local function MakeExtraOptions(opts, categoryName)
       local anyChanged
       local anyChangedOpt = GUI:CreateDescription(opts, " ", "small")
       
-      for i, level in ipairs(sampleLevels) do
-        local defaultText = format("|cffff%s%s", level > self.MY_LEVEL and "0000" or "ffff", format(self.L["Requires Level %d"], level))
+      for i, levels in ipairs(sampleLevels) do
+        local pattern, min, max, current = unpack(levels)
+        local defaultText = format("|cffff%s%s", min > self.MY_LEVEL and "0000" or "ffff", format(pattern, min, max, current))
         local formattedText = defaultText
-        local changed = self:GetOption("hide", stat) or self:GetOption("hide", "requiredLevelMet") and level <= self.MY_LEVEL or self:GetOption("hide", "requiredLevelMax") and UnitLevel"player" == self.MAX_LEVEL and level == self.MAX_LEVEL
+        local changed = self:GetOption("hide", stat) or self:GetOption("hide", "requiredLevelMet") and min <= self.MY_LEVEL or self:GetOption("hide", "requiredLevelMax") and self.MY_LEVEL == self.MAX_LEVEL and min == self.MAX_LEVEL and max == self.MAX_LEVEL or max and self:GetOption("hide", "RequiredLevel_range")
         if changed then
           formattedText = self.stealthIcon .. self:MakeColorCode(self.colors.GRAY, strGsub(formattedText, "|c%x%x%x%x%x%x%x%x", ""))
         end
         
         if changed then anyChanged = true end
         GUI:CreateDescription(opts, changed and formattedText or " ")
-        if level > self.MY_LEVEL then
+        if min > self.MY_LEVEL then
           name = formattedText
         end
       end
@@ -1086,6 +1093,12 @@ local function MakeExtraOptions(opts, categoryName)
       
       GUI:CreateToggle(opts, {"hide", "requiredLevelMax"}, self.L["Max Level"], L["Hide maximum level requirements when you are the maximum level."])
       GUI:CreateReset(opts, {"hide", "requiredLevelMax"})
+      
+      if self.expansionLevel >= self.expansions.wrath then
+        GUI:CreateNewline(opts)
+        GUI:CreateToggle(opts, {"hide", "RequiredLevel_range"}, self.L["Heirloom"], L["Hide level range requirements."])
+        GUI:CreateReset(opts, {"hide", "RequiredLevel_range"})
+      end
     end
   end
   

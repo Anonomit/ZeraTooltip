@@ -286,7 +286,10 @@ L["Socket Bonus: %s"] = ITEM_SOCKET_BONUS
 
 L["Classes: %s"] = ITEM_CLASSES_ALLOWED
 
-L["Requires Level %d"] = ITEM_MIN_LEVEL
+L["Requires Level %d"]            = ITEM_MIN_LEVEL
+L["Requires level %d to %d"]      = ITEM_LEVEL_RANGE
+L["Requires level %d to %d (%d)"] = ITEM_LEVEL_RANGE_CURRENT
+L["Heirloom"]                     = ITEM_QUALITY7_DESC
 
 L["Already known"] = ITEM_SPELL_KNOWN
 

@@ -64,8 +64,13 @@ function Addon:HideLine(line, allResist)
       end
     end,
     RequiredLevel = function()
-      local level = tonumber(strMatch(line.textLeftText, self:ReversePattern(ITEM_MIN_LEVEL)))
-      if level <= self.MY_LEVEL and self:GetOption("hide", "requiredLevelMet") or UnitLevel"player" == self.MAX_LEVEL and level == self.MAX_LEVEL and self:GetOption("hide", "requiredLevelMax") then
+      local min = line.requiredLevelMin
+      local max = line.requiredLevelMax
+      if min <= self.MY_LEVEL and self:GetOption("hide", "requiredLevelMet") then
+        return HideLeft(line)
+      elseif self.MY_LEVEL == self.MAX_LEVEL and min == self.MAX_LEVEL and max == self.MAX_LEVEL and self:GetOption("hide", "requiredLevelMax") then
+        return HideLeft(line)
+      elseif min ~= max and self:GetOption("hide", "RequiredLevel_range") then
         return HideLeft(line)
       end
     end,

@@ -85,7 +85,9 @@ local L_ITEM_RACES_ALLOWED = Addon.L["Races: %s"]
 
 local L_ITEM_CLASSES_ALLOWED = Addon.L["Classes: %s"]
 
-local L_ITEM_MIN_LEVEL = Addon.L["Requires Level %d"]
+local L_ITEM_MIN_LEVEL           = Addon.L["Requires Level %d"]
+local L_ITEM_LEVEL_RANGE         = Addon.L["Requires level %d to %d"]
+local L_ITEM_LEVEL_RANGE_CURRENT = Addon.L["Requires level %d to %d (%d)"]
 
 local L_ITEM_LEVEL = Addon.L["Item Level %d"]
 
@@ -665,7 +667,15 @@ contextActions = Addon:Map({
     end
   end,
   RequiredLevel = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, L_ITEM_MIN_LEVEL) then
+    local requiredLevelPattern = MatchesAny(line.textLeftTextStripped, L_ITEM_MIN_LEVEL, L_ITEM_LEVEL_RANGE, L_ITEM_LEVEL_RANGE_CURRENT)
+    if requiredLevelPattern then
+      local success, min, max = strMatch(line.textLeftTextStripped, "(%d+)[^%d]+(%d+)")
+      if not success then
+        min = strMatch(line.textLeftTextStripped, "%d+")
+        max = min
+      end
+      line.requiredLevelMin = tonumber(min)
+      line.requiredLevelMax = tonumber(max)
       return SetContext(i, tooltipData, line)
     end
   end,
