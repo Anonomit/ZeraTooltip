@@ -11,7 +11,7 @@ local strGsub = string.gsub
 
 local blockText   = Addon.L["Block"]
 local coveredText = Addon:CoverSpecialCharacters(blockText)
-local emptyText   = blockText .. " *"
+local emptyText   = " *" .. blockText .. " *"
 
 local stat = "Block"
 function Addon:RewordBlock(text)

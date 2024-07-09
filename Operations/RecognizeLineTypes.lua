@@ -44,8 +44,6 @@ local L_ITEM_LIMIT_CATEGORY          = Addon.L["Unique: %s (%d)"]
 local L_ITEM_MIN_SKILL = Addon.L["Requires %s (%d)"]
 local L_ITEM_REQ_SKILL = Addon.L["Requires %s"]
 
-local L_REFORGED = Addon.L["Reforged"]
-
 local L_DAMAGE_TEMPLATE             = Addon.L["%s - %s Damage"]
 local L_DAMAGE_TEMPLATE_WITH_SCHOOL = Addon.L["%s - %s %s Damage"]
 local L_SINGLE_DAMAGE_TEMPLATE      = Addon.L["%s Damage"]
@@ -444,7 +442,7 @@ contextActions = Addon:Map({
     end
   end,
   Reforged = function(i, tooltipData, line)
-    if line.colorLeft == Addon.colors.GREEN and MatchesAny(line.textLeftTextStripped, L_REFORGED) then
+    if line.colorLeft == Addon.colors.GREEN and MatchesAny(line.textLeftTextStripped, Addon.L["Reforged"]) then -- don't replace locale reference with local version since the globalstring doesn't exist in older flavors
       return SetContext(i, tooltipData, line)
     end
   end,

@@ -12,7 +12,7 @@ local strGsub  = string.gsub
 
 local armorText   = Addon.L["Armor"]
 local coveredText = Addon:CoverSpecialCharacters(armorText)
-local emptyText   = armorText .. " *"
+local emptyText   = " *" .. armorText .. " *"
 
 local stat = "Armor"
 function Addon:RewordArmor(text)
