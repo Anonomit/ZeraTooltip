@@ -159,7 +159,7 @@ local function CreateColor(opts, stat, disabled)
   local disabled = disabled or not Addon:GetOption("allow", "recolor")
   GUI:CreateToggle(opts, {"doRecolor", stat}, self.L["Enable"], nil, disabled).width = 0.5
   GUI:CreateColor(opts, {"color", stat}, self.L["Color"], nil, disabled or not Addon:GetOption("doRecolor", stat)).width = 0.5
-  GUI:CreateReset(opts, {"color", stat})
+  GUI:CreateReset(opts, {"color", stat}, function() self:ResetColor(stat) end)
   
   return opts
 end
@@ -228,7 +228,7 @@ local function CreateIcon(opts, stat)
   option.width = 0.7
   option.get   = function(info)    return self:MakeIcon(self:GetOption("icon", stat), 16) end
   option.set   = function(info, v) self:SetOption(self:UnmakeIcon(v), "icon", stat)   end
-  GUI:CreateReset(opts, {"icon", stat}, function() self:ResetOption("icon", stat) end)
+  GUI:CreateReset(opts, {"icon", stat}, function() self:ResetIcon(stat) end)
   GUI:CreateNewline(opts)
   
   local disabled = disabled or not self:GetOption("doIcon", stat)
@@ -237,7 +237,7 @@ local function CreateIcon(opts, stat)
   option.width = 0.7
   option.softMin = 8
   option.softMax = 32
-  GUI:CreateReset(opts, {"iconSize", stat}, function() self:ResetOption("iconSize", stat) end)
+  GUI:CreateReset(opts, {"iconSize", stat}, function() self:ResetIconSize(stat) end)
   GUI:CreateNewline(opts)
   
   GUI:CreateToggle(opts, {"iconSpace", stat}, L["Icon Space"], nil, disabled).width = 0.7
@@ -645,7 +645,7 @@ local function MakeExtraOptions(opts, categoryName)
       option.width = 0.7
       option.softMin = 8
       option.softMax = 32
-      GUI:CreateReset(opts, {"iconSize", stat}, function() self:ResetOption("iconSize", stat) end)
+      GUI:CreateReset(opts, {"iconSize", stat}, function() self:ResetIconSize(stat) end)
       GUI:CreateNewline(opts)
       
       GUI:CreateToggle(opts, {"iconSpace", stat}, L["Icon Space"], nil, disabled).width = 0.7
@@ -1015,7 +1015,7 @@ local function MakeExtraOptions(opts, categoryName)
       option.width = 0.7
       option.softMin = 8
       option.softMax = 32
-      GUI:CreateReset(opts, {"iconSize", stat}, function() self:ResetOption("iconSize", stat) end)
+      GUI:CreateReset(opts, {"iconSize", stat}, function() self:ResetIconSize(stat) end)
       GUI:CreateNewline(opts)
       
       GUI:CreateToggle(opts, {"iconSpace", stat}, L["Icon Space"], nil, disabled).width = 0.7
@@ -1763,7 +1763,7 @@ local function MakeExtraOptions(opts, categoryName)
       local disabled = disabled or not Addon:GetOption("allow", "recolor")
       GUI:CreateToggle(opts, {"doRecolor", stat}, L["Recolor"], nil, disabled).width = 0.5
       GUI:CreateColor(opts, {"color", stat}, self.L["Color"], nil, disabled or not Addon:GetOption("doRecolor", stat)).width = 0.5
-      GUI:CreateReset(opts, {"color", stat})
+      GUI:CreateReset(opts, {"color", stat}, function() self:ResetColor(stat) end)
     end
   end
   
@@ -1914,12 +1914,12 @@ local function MakeExtraOptions(opts, categoryName)
       local disabled = disabled or not self:GetOption("allow", "recolor")
       GUI:CreateToggle(opts, {"doRecolor", "Charges"}, someCharges, nil, disabled).width = 1
       GUI:CreateColor(opts, {"color", "Charges"}, self.L["Color"], nil, disabled or not self:GetOption("doRecolor", "Charges")).width = 0.5
-      GUI:CreateReset(opts, {"color", "Charges"})
+      GUI:CreateReset(opts, {"color", "Charges"}, function() self:ResetColor"Charges" end)
       GUI:CreateNewline(opts)
       
       GUI:CreateToggle(opts, {"doRecolor", "NoCharges"}, noCharges, nil, disabled).width = 1
       GUI:CreateColor(opts, {"color", "NoCharges"}, self.L["Color"], nil, disabled or not self:GetOption("doRecolor", "NoCharges")).width = 0.5
-      GUI:CreateReset(opts, {"color", "NoCharges"})
+      GUI:CreateReset(opts, {"color", "NoCharges"}, function() self:ResetColor"NoCharges" end)
     end
     
     CreateHide(opts, stat)

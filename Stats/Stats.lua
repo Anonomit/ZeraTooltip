@@ -63,7 +63,12 @@ do
     self:ResetOption("order", self.expansionLevel)
     self:RegenerateStatOrder()
   end
+  function Addon:ResetColor(stat)
+    self:ResetOption("doRecolor", stat)
+    self:ResetOption("color", stat)
+  end
   function Addon:ResetReword(stat)
+    self:ResetOption("doReword", stat)
     self:ResetOption("reword", stat)
     self:SetDefaultRewordByLocale(stat)
   end
@@ -74,6 +79,14 @@ do
   function Addon:ResetPrecision(stat)
     self:ResetOption("precision", stat)
     self:SetDefaultPrecisionByLocale(stat)
+  end
+  function Addon:ResetIcon(stat)
+    self:ResetOption("doIcon", stat)
+    self:ResetOption("icon", stat)
+  end
+  function Addon:ResetIconSize(stat)
+    self:ResetOption("iconSizeManual", stat)
+    self:ResetOption("iconSize", stat)
   end
 end
 
