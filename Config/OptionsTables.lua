@@ -1264,6 +1264,8 @@ local function MakeExtraOptions(opts, categoryName)
       
       CreateReword(opts, stat)
       
+      CreateIcon(opts, stat)
+      
       CreateHide(opts, stat)
     end
   end

@@ -651,6 +651,9 @@ do
     "Interface\\MINIMAP\\TRACKING\\Transmogrifier",
     "Interface\\Cursor\\Transmogrify",
     
+    "Interface\\Reforging\\Reforge-Portrait",
+    "Interface\\Cursor\\Reforge",
+    
     "Interface\\ContainerFrame\\KeyRing-Bag-Icon",
     "Interface\\ICONS\\INV_Misc_Key_01",
     "Interface\\ICONS\\INV_Misc_Key_02",

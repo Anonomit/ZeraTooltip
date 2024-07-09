@@ -17,11 +17,16 @@ local coveredDefaultText = Addon:CoverSpecialCharacters(defaultText)
 
 local stat = "Reforged"
 function Addon:RewordReforged(text)
-  if self:GetOption("allow", "reword") and self:GetOption("doReword", stat) then
+  if not self:GetOption("allow", "reword") then return text end
+  
+  if self:GetOption("doReword", stat) then
     local alias = self:GetOption("reword", stat)
     if alias and alias ~= "" and alias ~= coveredDefaultText then
       text = strGsub(text, coveredDefaultText, alias)
     end
   end
+  
+  text = self:InsertIcon(text, stat)
+  
   return text
 end
