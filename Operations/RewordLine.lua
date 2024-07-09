@@ -217,17 +217,17 @@ function Addon:RewordLine(tooltip, line, tooltipData)
       end
     end
     
-    -- if self:GetGlobalOption("cache", "enabled") and self:GetGlobalOption("cache", "text") and cacheLineTypes[line.type] then
-    --   Addon:MakeTable(textCache, line.type, line.textLeftText, line.textRightText or "", {text, line.rewordRight})
-    --   cacheSize = cacheSize + 1
-    -- end
+    if not RatingBuster and self:GetGlobalOption("cache", "enabled") and self:GetGlobalOption("cache", "text") and cacheLineTypes[line.type] then
+      Addon:MakeTable(textCache, line.type, line.textLeftText, line.textRightText or "", {text, line.rewordRight})
+      cacheSize = cacheSize + 1
+    end
   end
   
   if Addon:GetDebugView"tooltipLineNumbers" then
     text = format("[%d] ", line.i) .. text
   end
   
-  if text ~= line.realTextLeft and (text ~= line.textLeftText or line.recolorLeft) and not rewordBlacklist[line.type] and not RatingBuster then
+  if text ~= line.realTextLeft and (text ~= line.textLeftText or line.recolorLeft) and not rewordBlacklist[line.type] then
     line.rewordLeft = text
   end
 end
