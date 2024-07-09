@@ -141,6 +141,7 @@ L["End"]                = KEY_END
 
 L["Short Name"]        = COMMUNITIES_SETTINGS_SHORT_NAME_LABEL
 L["Show Item Level"]   = SHOW_ITEM_LEVEL
+L["Category"]          = CATEGORY
 L["Weapon Damage"]     = DAMAGE_TOOLTIP
 L["Bonus Damage"]      = BONUS_DAMAGE
 L["Speed"]             = SPEED
@@ -251,9 +252,9 @@ L["Gem to be destroyed"] = DESTROY_GEM
 
 L["Unique"]                   = ITEM_UNIQUE
 L["Unique (%d)"]              = ITEM_UNIQUE_MULTIPLE
+L["Unique: %s (%d)"]          = ITEM_LIMIT_CATEGORY
 L["Unique-Equipped"]          = ITEM_UNIQUE_EQUIPPABLE
 L["Unique-Equipped: %s (%d)"] = ITEM_LIMIT_CATEGORY_MULTIPLE
-L["Unique: %s (%d)"]          = ITEM_LIMIT_CATEGORY
 
 L["Requires %s (%d)"] = ITEM_MIN_SKILL
 

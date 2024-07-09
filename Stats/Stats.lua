@@ -356,65 +356,71 @@ do
   
   -- Default color settings
   
-  self.statsInfo["Title"]              = {color = self.colors.WHITE}
+  self.statsInfo["Title"]                       = {color = self.colors.WHITE}
   
-  self.statsInfo["Quality"]            = {color = self.colors.WHITE}
-  self.statsInfo["Heroic"]             = {color = self.colors.GREEN}
-  self.statsInfo["ItemLevel"]          = {color = self.colors.DEFAULT}
+  self.statsInfo["Quality"]                     = {color = self.colors.WHITE}
+  self.statsInfo["Heroic"]                      = {color = self.colors.GREEN}
+  self.statsInfo["ItemLevel"]                   = {color = self.colors.DEFAULT}
   
-  self.statsInfo["TransmogHeader"]     = {color = self.colors.TRANSMOG}
-  self.statsInfo["Transmog"]           = {color = self.colors.TRANSMOG}
+  self.statsInfo["TransmogHeader"]              = {color = self.colors.TRANSMOG}
+  self.statsInfo["Transmog"]                    = {color = self.colors.TRANSMOG}
   
-  self.statsInfo["AlreadyBound"]       = {color = self.colors.WHITE}
-  self.statsInfo["CharacterBound"]     = {color = self.colors.WHITE}
-  self.statsInfo["AccountBound"]       = {color = self.colors.CANDID_BLUE}
-  self.statsInfo["Tradeable"]          = {color = self.colors.WHITE}
+  self.statsInfo["AlreadyBound"]                = {color = self.colors.WHITE}
+  self.statsInfo["CharacterBound"]              = {color = self.colors.WHITE}
+  self.statsInfo["AccountBound"]                = {color = self.colors.CANDID_BLUE}
+  self.statsInfo["Tradeable"]                   = {color = self.colors.WHITE}
   
-  self.statsInfo["Trainable"]          = {color = self.colors.ORANGE}
+  self.statsInfo["Unique"]                      = {color = self.colors.WHITE}
+  self.statsInfo["UniqueLimit"]                 = {color = self.colors.WHITE}
+  self.statsInfo["UniqueCategoryLimit"]         = {color = self.colors.WHITE}
+  self.statsInfo["UniqueEquipped"]              = {color = self.colors.WHITE}
+  self.statsInfo["UniqueEquippedCategoryLimit"] = {color = self.colors.WHITE}
   
-  self.statsInfo["Reforged"]           = {color = self.colors.GREEN}
+  self.statsInfo["Trainable"]                   = {color = self.colors.ORANGE}
   
-  self.statsInfo["Damage"]             = {color = self.colors.WHITE}
-  self.statsInfo["DamageBonus"]        = {color = self.colors.WHITE}
-  self.statsInfo["Speed"]              = {color = self.colors.WHITE}
+  self.statsInfo["Reforged"]                    = {color = self.colors.GREEN}
   
-  self.statsInfo["DamagePerSecond"]    = {color = self.colors.WHITE}
-  self.statsInfo["Speedbar"]           = {color = self.colors.WHITE}
+  self.statsInfo["Damage"]                      = {color = self.colors.WHITE}
+  self.statsInfo["DamageBonus"]                 = {color = self.colors.WHITE}
+  self.statsInfo["Speed"]                       = {color = self.colors.WHITE}
   
-  self.statsInfo["Armor"]              = {color = self.colors.WHITE}
-  self.statsInfo["BonusArmor"]         = {color = self.colors.GREEN}
-  self.statsInfo["Block"]              = {color = self.colors.WHITE}
+  self.statsInfo["DamagePerSecond"]             = {color = self.colors.WHITE}
+  self.statsInfo["Speedbar"]                    = {color = self.colors.WHITE}
   
-  self.statsInfo["Enchant"]            = {color = self.colors.GREEN}
-  self.statsInfo["WeaponEnchant"]      = {color = self.colors.GREEN}
-  self.statsInfo["Rune"]               = {color = self.colors.GREEN}
+  self.statsInfo["Armor"]                       = {color = self.colors.WHITE}
+  self.statsInfo["BonusArmor"]                  = {color = self.colors.GREEN}
+  self.statsInfo["Block"]                       = {color = self.colors.WHITE}
   
-  self.statsInfo["Socket_red"]         = {color = self.colors.RED}
-  self.statsInfo["Socket_blue"]        = {color = self.colors.BLUE}
-  self.statsInfo["Socket_yellow"]      = {color = self.colors.YELLOW}
-  self.statsInfo["Socket_purple"]      = {color = self.colors.PURPLE}
-  self.statsInfo["Socket_green"]       = {color = self.colors.GREEN}
-  self.statsInfo["Socket_orange"]      = {color = self.colors.ORANGE}
-  self.statsInfo["Socket_prismatic"]   = {color = self.colors.WHITE}
-  self.statsInfo["Socket_meta"]        = {color = self.colors.WHITE}
-  self.statsInfo["Socket_cogwheel"]    = {color = self.colors.WHITE}
-  self.statsInfo["Socket_hydraulic"]   = {color = self.colors.WHITE}
+  self.statsInfo["Enchant"]                     = {color = self.colors.GREEN}
+  self.statsInfo["WeaponEnchant"]               = {color = self.colors.GREEN}
+  self.statsInfo["Rune"]                        = {color = self.colors.GREEN}
   
-  self.statsInfo["Charges"]            = {color = self.colors.ORANGE}
-  self.statsInfo["NoCharges"]          = {color = self.colors.RED}
-  self.statsInfo["Cooldown"]           = {color = self.colors.RED}
+  self.statsInfo["Socket_red"]                  = {color = self.colors.RED}
+  self.statsInfo["Socket_blue"]                 = {color = self.colors.BLUE}
+  self.statsInfo["Socket_yellow"]               = {color = self.colors.YELLOW}
+  self.statsInfo["Socket_purple"]               = {color = self.colors.PURPLE}
+  self.statsInfo["Socket_green"]                = {color = self.colors.GREEN}
+  self.statsInfo["Socket_orange"]               = {color = self.colors.ORANGE}
+  self.statsInfo["Socket_prismatic"]            = {color = self.colors.WHITE}
+  self.statsInfo["Socket_meta"]                 = {color = self.colors.WHITE}
+  self.statsInfo["Socket_cogwheel"]             = {color = self.colors.WHITE}
+  self.statsInfo["Socket_hydraulic"]            = {color = self.colors.WHITE}
   
-  self.statsInfo["Durability"]         = {color = self.colors.WHITE}
+  self.statsInfo["Charges"]                     = {color = self.colors.ORANGE}
+  self.statsInfo["NoCharges"]                   = {color = self.colors.RED}
+  self.statsInfo["Cooldown"]                    = {color = self.colors.RED}
   
-  self.statsInfo["Reputation"]         = {color = self.colors.REP}
+  self.statsInfo["Durability"]                  = {color = self.colors.WHITE}
   
-  self.statsInfo["MadeBy"]             = {color = self.colors.GREEN}
+  self.statsInfo["Reputation"]                  = {color = self.colors.REP}
   
-  self.statsInfo["SocketHint"]         = {color = self.colors.GREEN}
+  self.statsInfo["MadeBy"]                      = {color = self.colors.GREEN}
   
-  self.statsInfo["Refundable"]         = {color = self.colors.SKY_BLUE}
-  self.statsInfo["SoulboundTradeable"] = {color = self.colors.SKY_BLUE}
+  self.statsInfo["SocketHint"]                  = {color = self.colors.GREEN}
   
-  self.statsInfo["StackSize"]          = {color = self.colors.DEFAULT}
+  self.statsInfo["Refundable"]                  = {color = self.colors.SKY_BLUE}
+  self.statsInfo["SoulboundTradeable"]          = {color = self.colors.SKY_BLUE}
+  
+  self.statsInfo["StackSize"]                   = {color = self.colors.DEFAULT}
 end
 

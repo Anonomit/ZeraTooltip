@@ -31,6 +31,8 @@ function Addon:RecolorLine(tooltip, line, tooltipData)
       Recolor("left", line.type)
     elseif line.type == "Binding" then
       Recolor("left", line.bindType)
+    elseif line.type == "Unique" then
+      Recolor("left", line.uniqueType)
     elseif line.type == "RedType" then
       if self.expansionLevel < self.expansions.cata then
         if IsEquippableItem(tooltipData.id) and self:IsItemUsable(tooltipData.id) then

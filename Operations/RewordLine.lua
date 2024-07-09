@@ -79,6 +79,9 @@ function Addon:RewordLine(tooltip, line, tooltipData)
         Binding = function()
           text = self:RewordBinding(text, line.bindType)
         end,
+        Unique = function()
+          text = self:RewordUnique(text, line.uniqueType)
+        end,
         Reforged = function()
           text = self:RewordReforged(text)
         end,

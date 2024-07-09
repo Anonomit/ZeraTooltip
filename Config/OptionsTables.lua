@@ -1124,6 +1124,46 @@ local function MakeExtraOptions(opts, categoryName)
   end
   GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
   
+  -- Unique
+  do
+    local stat = "Unique"
+    
+    for _, data in ipairs{
+      {"Unique",                      Addon.L["Unique"],                   nil,                nil},
+      {"UniqueLimit",                 Addon.L["Unique (%d)"],              1,                  nil},
+      {"UniqueCategoryLimit",         Addon.L["Unique: %s (%d)"],          self.L["Category"], 1},
+      {"UniqueEquipped",              Addon.L["Unique-Equipped"],          nil,                nil},
+      {"UniqueEquippedCategoryLimit", Addon.L["Unique-Equipped: %s (%d)"], self.L["Category"], 1},
+    } do
+      local stat = data[1]
+      
+      local samples = {}
+      
+      local defaultText = format(unpack(data, 2, 4))
+      local defaultText, formattedText = GetFormattedText(stat, self.colors.WHITE, defaultText, self:RewordUnique(defaultText, stat))
+      tinsert(samples, {defaultText, formattedText})
+      
+      local opts = GUI:CreateGroup(opts, stat, samples[1][2], nil, nil, disabled)
+      
+      CreateSamples(opts, samples)
+      
+      CreateColor(opts, stat)
+      
+      CreateReword(opts, stat)
+      
+      CreateIcon(opts, stat)
+      
+      do
+        local opts = CreateHide(opts, stat)
+        GUI:CreateNewline(opts)
+        
+        GUI:CreateToggle(opts, {"hide", "Unique_uselessLines"}, L["Hide Pointless Lines"], L["Hide redundant lines when multiple Unique lines exist."])
+        GUI:CreateReset(opts, {"hide", "Unique_uselessLines"})
+      end
+    end
+  end
+  GUI:CreateGroup(opts, GUI:Order(), " ", nil, nil, true)
+  
   -- Refundable
   local function MakeRefundableOption()
     local stat = "Refundable"

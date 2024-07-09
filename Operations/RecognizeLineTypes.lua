@@ -37,9 +37,17 @@ local L_ITEM_WRITTEN_BY = Addon.L["Written by %s"]
 
 local L_ITEM_UNIQUE                  = Addon.L["Unique"]
 local L_ITEM_UNIQUE_MULTIPLE         = Addon.L["Unique (%d)"]
+local L_ITEM_LIMIT_CATEGORY          = Addon.L["Unique: %s (%d)"]
 local L_ITEM_UNIQUE_EQUIPPABLE       = Addon.L["Unique-Equipped"]
 local L_ITEM_LIMIT_CATEGORY_MULTIPLE = Addon.L["Unique-Equipped: %s (%d)"]
-local L_ITEM_LIMIT_CATEGORY          = Addon.L["Unique: %s (%d)"]
+
+local uniquePatterns = {
+  [L_ITEM_UNIQUE]                  = "Unique",
+  [L_ITEM_UNIQUE_MULTIPLE]         = "UniqueLimit",
+  [L_ITEM_LIMIT_CATEGORY]          = "UniqueCategoryLimit",
+  [L_ITEM_UNIQUE_EQUIPPABLE]       = "UniqueEquipped",
+  [L_ITEM_LIMIT_CATEGORY_MULTIPLE] = "UniqueEquippedCategoryLimit",
+}
 
 local L_ITEM_MIN_SKILL = Addon.L["Requires %s (%d)"]
 local L_ITEM_REQ_SKILL = Addon.L["Requires %s"]
@@ -404,7 +412,30 @@ contextActions = Addon:Map({
     end
   end,
   LastUnique = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, L_ITEM_UNIQUE, L_ITEM_UNIQUE_MULTIPLE, L_ITEM_UNIQUE_EQUIPPABLE, L_ITEM_LIMIT_CATEGORY_MULTIPLE, L_ITEM_LIMIT_CATEGORY) then
+    local uniquePattern = MatchesAny(line.textLeftTextStripped, L_ITEM_UNIQUE, L_ITEM_UNIQUE_MULTIPLE, L_ITEM_LIMIT_CATEGORY, L_ITEM_UNIQUE_EQUIPPABLE, L_ITEM_LIMIT_CATEGORY_MULTIPLE)
+    if uniquePattern then
+      local stat = uniquePatterns[uniquePattern]
+      
+      local limit = strFind(line.textLeftTextStripped, "%((%d+)%)") or 1
+      tooltipData.redundantUniqueLimits = tooltipData.redundantUniqueLimits or {}
+      
+      -- set to 0 to auto pass redundancy check
+      if stat == "Unique" then
+        tooltipData.redundantUniqueLimits["UniqueEquipped"] = tooltipData.redundantUniqueLimits["UniqueEquipped"] and tooltipData.redundantUniqueLimits["UniqueEquipped"]:Store(limit) or Addon:MinStore(limit)
+        tooltipData.redundantUniqueLimits["UniqueLimit"]    = tooltipData.redundantUniqueLimits["UniqueLimit"]    and tooltipData.redundantUniqueLimits["UniqueLimit"]:Store(0)        or Addon:MinStore(0)
+        
+      elseif stat == "UniqueEquippedCategoryLimit" then
+        tooltipData.redundantUniqueLimits["UniqueEquipped"] = tooltipData.redundantUniqueLimits["UniqueEquipped"] and tooltipData.redundantUniqueLimits["UniqueEquipped"]:Store(limit) or Addon:MinStore(limit)
+        
+      elseif stat == "UniqueCategoryLimit" then
+        tooltipData.redundantUniqueLimits["Unique"]      = tooltipData.redundantUniqueLimits["Unique"]      and tooltipData.redundantUniqueLimits["Unique"]:Store(limit)      or Addon:MinStore(limit)
+        tooltipData.redundantUniqueLimits["UniqueLimit"] = tooltipData.redundantUniqueLimits["UniqueLimit"] and tooltipData.redundantUniqueLimits["UniqueLimit"]:Store(limit) or Addon:MinStore(limit)
+        
+      end
+      
+      line.uniqueType   = stat
+      line.uniqueLimit  = limit
+      line.uniqueLimits = tooltipData.redundantUniqueLimits
       return SetContext(i-1, tooltipData, line)
     end
   end,

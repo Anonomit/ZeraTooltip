@@ -29,6 +29,11 @@ function Addon:HideLine(line, allResist)
         return HideLeft(line)
       end
     end,
+    Unique = function()
+      if self:ShouldHideUnique(line.uniqueType, line.uniqueLimit, line.uniqueLimits) then
+        return HideLeft(line)
+      end
+    end,
     Damage = function()
       if self:GetOption("hide", "Speed") then
         line.hideRight = true

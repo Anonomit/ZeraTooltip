@@ -76,6 +76,9 @@ L["Hide stack size on unstackable items that can be equipped on a character."] =
 -- transmog
 L["Teebu's Blazing Longsword"] = true
 
+-- unique
+L["Hide redundant lines when multiple Unique lines exist."] = true
+
 -- trainable
 L["Trainable Equipment"]                             = true
 L["Equipment that a trainer can teach you to wear."] = true

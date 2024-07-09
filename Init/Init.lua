@@ -1458,6 +1458,42 @@ do
     return text
   end
   
+  
+  do
+    local function CompareMin(a, b) return a < b end
+    local function CompareMax(a, b) return a > b end
+    local function Store(compare, defaultNum, ...)
+      local storedNum  = defaultNum
+      local storedData = {...}
+      local dataCount  = select("#", ...)
+      local Store = setmetatable({}, {
+        __index = {
+          Store = function(self, num, ...)
+            if not storedNum or compare(num, storedNum) then
+              storedNum  = num
+              storedData = {...}
+              dataCount  = select("#", ...)
+            end
+            return self
+          end,
+          
+          Get = function()
+            return storedNum, unpack(storedData, 1, dataCount)
+          end,
+        }
+      })
+      return Store
+    end
+    
+    function Addon:MinStore(...)
+      return Store(CompareMin, ...)
+    end
+    function Addon:MaxStore(...)
+      return Store(CompareMax, ...)
+    end
+  end
+  
+  
   function Addon:Round(num, nearest)
     nearest = nearest or 1
     local lower = mathFloor(num / nearest) * nearest

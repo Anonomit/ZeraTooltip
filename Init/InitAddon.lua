@@ -624,6 +624,7 @@ do
     
     
     "Interface\\Buttons\\UI-AttributeButton-Encourage-Up",
+    "Interface\\Buttons\\UI-StopButton",
     "Interface\\Buttons\\UI-GroupLoot-Coin-Up",
     "Interface\\Buttons\\UI-GroupLoot-DE-Up",
     "Interface\\Buttons\\UI-GroupLoot-Dice-Up",

@@ -16,6 +16,7 @@
   <Script file="ModifyRequiredRaces.lua"/>
   <Script file="ModifyTitle.lua"/>
   <Script file="ModifyTooltipData.lua"/>
+  <Script file="ModifyUnique.lua"/>
   <Script file="RebuildTooltip.lua"/>
   <Script file="RecognizeLineTypes.lua"/>
   <Script file="RecognizeStat.lua"/>
