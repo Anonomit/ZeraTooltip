@@ -33,6 +33,7 @@ local engravableInvTypes = Addon:MakeLookupTable{
   "INVTYPE_HEAD",
   "INVTYPE_SHOULDER",
   "INVTYPE_WAIST",
+  "INVTYPE_FINGER",
 }
 
 
