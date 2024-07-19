@@ -21,6 +21,8 @@ local weaponInvTypes = Addon:MakeLookupTable{
   "INVTYPE_2HWEAPON",
   "INVTYPE_WEAPONMAINHAND",
   "INVTYPE_WEAPONOFFHAND",
+  "INVTYPE_RANGED",
+  "INVTYPE_RANGEDRIGHT",
 }
 local engravableInvTypes = Addon:MakeLookupTable{
   "INVTYPE_CHEST",
