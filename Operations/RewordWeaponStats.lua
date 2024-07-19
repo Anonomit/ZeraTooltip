@@ -157,9 +157,10 @@ function Addon:ModifyWeaponDamagePerSecond(text)
   if not origNumber then return text end
   
   local noThousandsSeparator = not self:GetOption("separateThousands", stat)
-  local precision = (1 / 10^self:GetOption("precision", stat)) or 1
+  local numDecimalPlaces = self:GetOption("precision", stat)
+  local precision = (1 / 10^numDecimalPlaces) or 1
   
-  local strNumber = self:ToFormattedNumber(self:Round(self:ToNumber(origNumber), precision), nil, nil, noThousandsSeparator and "" or nil)
+  local strNumber = self:ToFormattedNumber(self:Round(self:ToNumber(origNumber), precision), numDecimalPlaces, nil, noThousandsSeparator and "" or nil)
   text = strGsub(text, self:CoverSpecialCharacters(origNumber), strNumber)
   
   if self:GetOption("doReword", stat) then
