@@ -25,9 +25,14 @@ Addon:RegisterEventCallback("PLAYER_LEVEL_UP", Addon.WipeTextCache) -- for ratin
 
 
 cacheLineTypes = setmetatable({
-  Title           = false,
-  Damage          = false,
-  DamagePerSecond = false,
+  Title                 = false,
+  Damage                = false,
+  DamagePerSecond       = false,
+}, {__index = function() return true end})
+
+cacheLineStats = setmetatable({
+  ["All Resistance"]    = false,
+  ["Arcane Resistance"] = false,
 }, {__index = function() return true end})
 
 rewordBlacklist = setmetatable({
@@ -217,7 +222,7 @@ function Addon:RewordLine(tooltip, line, tooltipData)
       end
     end
     
-    if not RatingBuster and self:GetGlobalOption("cache", "enabled") and self:GetGlobalOption("cache", "text") and cacheLineTypes[line.type] then
+    if not RatingBuster and self:GetGlobalOption("cache", "enabled") and self:GetGlobalOption("cache", "text") and cacheLineTypes[line.type] and cacheLineStats[line.stat or ""] then
       Addon:MakeTable(textCache, line.type, line.textLeftText, line.textRightText or "", {text, line.rewordRight})
       cacheSize = cacheSize + 1
     end
