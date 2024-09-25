@@ -50,16 +50,31 @@ do
     return strRemove(text, "|c%x%x%x%x%x%x%x%x", "|r", "^ +", " +$")
   end
   
-  function Addon:ChainGsub(text, ...)
-    for i, patterns in ipairs{...} do
-      local newText = patterns[#patterns]
-      for i = 1, #patterns - 1 do
-        local oldText = patterns[i]
-        text = strGsub(text, oldText, newText)
+  
+  do
+    local oldFunc = Addon.ToFormattedNumber
+    function Addon:ToFormattedNumber(text, numDecimalPlaces, decimalChar, thousandsChar, forceFourDigitException, forceSeparateDecimals)
+      
+      local decimal   = decimalChar   or self:GetOption("overwriteSeparator", ".") and self:GetOption("separator", ".") or self.L["."]
+      local separator = thousandsChar or self:GetOption("overwriteSeparator", ",") and self:GetOption("separator", ",") or self.L[","]
+      
+      local fourDigitException
+      if forceFourDigitException ~= nil then
+        fourDigitException = forceFourDigitException
+      else
+        fourDigitException = self:GetOption("separator", "fourDigitException")
       end
+      local separateDecimals
+      if forceSeparateDecimals ~= nil then
+        separateDecimals = forceSeparateDecimals
+      else
+        separateDecimals = self:GetOption("separator", "separateDecimals")
+      end
+      
+      return oldFunc(self, text, numDecimalPlaces, decimal, separator, fourDigitException, separateDecimals)
     end
-    return text
   end
+  
   
   local chainGsubPattern = {
     {"%%%d%$", "%%"},               -- koKR ITEM_RESIST_SINGLE: "%3$s 저항력 %1$c%2$d" -> "%s 저항력 %c%d"
@@ -492,12 +507,11 @@ do
   Addon.sampleTitleID = 6948
   Addon.sampleTitleName = GetItemInfo(Addon.sampleTitleID)
   if not Addon.sampleTitleName then
-    local eventID
-    eventID = Addon:RegisterEventCallback("GET_ITEM_INFO_RECEIVED", function(self, event, id)
+    Addon:RegisterEventCallback("GET_ITEM_INFO_RECEIVED", function(self, event, id)
       if id == self.sampleTitleID then
         self.sampleTitleName = GetItemInfo(self.sampleTitleID)
         if self.sampleTitleName then
-          self:UnregisterEventCallback("GET_ITEM_INFO_RECEIVED", eventID)
+          return true
         end
       end
     end)
@@ -507,12 +521,11 @@ do
     local sampleTransmogID = 1728
     Addon.sampleTransmogName = GetItemInfo(sampleTransmogID)
     if not Addon.sampleTransmogName then
-      local eventID
-      eventID = Addon:RegisterEventCallback("GET_ITEM_INFO_RECEIVED", function(self, event, id)
+      Addon:RegisterEventCallback("GET_ITEM_INFO_RECEIVED", function(self, event, id)
         if id == sampleTransmogID then
           self.sampleTransmogName = GetItemInfo(sampleTransmogID)
           if self.sampleTransmogName then
-            self:UnregisterEventCallback("GET_ITEM_INFO_RECEIVED", eventID)
+            return true
           end
         end
       end)

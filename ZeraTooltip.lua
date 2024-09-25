@@ -141,7 +141,7 @@ function Addon:OnEnable()
   self:GetDB().RegisterCallback(self, "OnProfileCopied" , "InitDB")
   self:GetDB().RegisterCallback(self, "OnProfileReset"  , "InitDB")
   
-  self:InitChatCommands{"zt", "zera", ADDON_NAME:lower()}
+  self:InitChatCommands("zt", "zera", ADDON_NAME:lower())
   
   self:RunEnableCallbacks()
 end

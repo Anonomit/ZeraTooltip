@@ -178,7 +178,7 @@ for ids, repInfo in pairs{
     repInfo.rep = mathFloor(repInfo.rep * 1.1)
   end
   for _, id in ipairs(ids) do
-    Addon:Assertf(not reputationItems[id], "Duplicate reputation item: %d", id)
+    Addon:ThrowfAssert(not reputationItems[id], "Duplicate reputation item: %d", id)
     reputationItems[id]       = repInfo
     Addon.waylaidSupplies[id] = true
   end

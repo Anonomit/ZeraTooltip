@@ -454,7 +454,6 @@ end
 local function MakeStatsOptions(opts, categoryName)
   local self = Addon
   local GUI = self.GUI
-  
   local opts = GUI:CreateGroup(opts, categoryName, categoryName, nil, "tree")
   
   CreateCombineStatsOption(opts)
@@ -527,7 +526,6 @@ end
 local function MakePaddingOptions(opts, categoryName)
   local self = Addon
   local GUI = self.GUI
-  
   local opts = GUI:CreateGroup(opts, categoryName, categoryName, nil, "tree")
   
   CreateCombineStatsOption(opts)
@@ -615,7 +613,6 @@ local sampleSpeed    = 2.6
 local function MakeExtraOptions(opts, categoryName)
   local self = Addon
   local GUI = self.GUI
-  
   local opts = GUI:CreateGroup(opts, categoryName, categoryName, nil, "tree")
   
   local disabled -- just in case some other addon clobbers _G.disabled
@@ -2100,7 +2097,6 @@ end
 local function MakeResetOptions(opts, categoryName)
   local self = Addon
   local GUI = self.GUI
-  
   local opts = GUI:CreateGroup(opts, categoryName, categoryName)
   
   GUI:CreateDivider(opts)
@@ -2152,7 +2148,7 @@ local function MakeDebugOptions(opts, categoryName)
     local opts = GUI:CreateGroup(opts, GUI:Order(), self.L["Enable"])
     
     do
-      local opts = GUI:CreateGroupBox(opts, "Debug")
+      local opts = GUI:CreateGroupBox(opts, self.L["Debug"])
       GUI:CreateToggle(opts, {"debug"}, self.L["Enable"])
       GUI:CreateNewline(opts)
       

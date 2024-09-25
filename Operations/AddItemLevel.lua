@@ -143,7 +143,7 @@ for ids, ilvl in pairs{
   [{67429, 67430, 67431, 67428, 67427, 67426, 65001, 65000, 65002, 67423, 67424, 67425, 65088, 65087, 65089, 66998}] = 372, -- T11 H
 } do
   for _, id in ipairs(ids) do
-    Addon:Assertf(not tokenOverrides[id], "Duplicate item level override: %d", id)
+    Addon:ThrowfAssert(not tokenOverrides[id], "Duplicate item level override: %d", id)
     tokenOverrides[id] = ilvl
   end
 end
