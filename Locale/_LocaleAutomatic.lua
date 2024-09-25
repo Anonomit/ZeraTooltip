@@ -472,6 +472,9 @@ L["Increases spell power by %s."] = ITEM_MOD_SPELL_POWER
 L["Bonus Healing"] = ITEM_MOD_SPELL_HEALING_DONE_SHORT
 L["Increases healing done by magical spells and effects by up to %s."] = ITEM_MOD_SPELL_HEALING_DONE
 
+L["Bonus Damage"] = ITEM_MOD_SPELL_DAMAGE_DONE_SHORT
+L["Increases damage done by magical spells and effects by up to %s."] = ITEM_MOD_SPELL_DAMAGE_DONE
+
 L["Spell Penetration"] = ITEM_MOD_SPELL_PENETRATION_SHORT
 L["Increases spell penetration by %s."] = ITEM_MOD_SPELL_PENETRATION
 
