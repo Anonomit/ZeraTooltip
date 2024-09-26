@@ -6,6 +6,9 @@ local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 
 
+local strLower = string.lower
+local strMatch = string.match
+
 local tblConcat = table.concat
 
 
@@ -42,6 +45,7 @@ function Addon:ModifyTooltipData(tooltip, tooltipData)
   self:RecognizeLineTypes(tooltipData)
   local allResist = tooltipData.resists == 5 and not self:GetOption("hide", "All Resistance")
   
+  
   for i, line in ipairs(tooltipData) do
     self:RecognizeStat(line, tooltipData, allResist)
     
@@ -55,10 +59,51 @@ function Addon:ModifyTooltipData(tooltip, tooltipData)
     end
   end
   
+  
   self:AddHeroicTag(tooltipData)
   self:AddItemLevel(tooltipData)
   self:AddReputation(tooltipData)
   self:AddStackSize(tooltipData)
+  
+  if self.isSoD or self.isTBC then
+    -- split healing/damage into two lines
+    if self:GetOption("allow", "reword") and self:GetOption("doReword", "Healing") and not self:GetOption("hide", "Spell Damage") then
+      for i, line in ipairs(tooltipData) do
+        if (line.type == "SecondaryStat" or line.oldType == "SecondaryStat") and line.stat == "Healing" then
+          
+          local value = strMatch(line.textLeftText, self.L["[%d,%.]+"] .. "%D+(%d+)")
+          if value then
+            
+            local stat = "Spell Damage"
+            local text = self.statsInfo[stat]:ConvertToNormalForm(format(self.L["Increases damage done by magical spells and effects by up to %s."], value or "0"))
+            
+            local extraLine = self:AddExtraLine(tooltipData, i)
+            
+            extraLine.stat                 = stat
+            extraLine.normalForm           = text
+            extraLine.textLeftText         = text
+            extraLine.textLeftTextStripped = strLower(self:StripText(text))
+            extraLine.realTextLeftText     = text
+            extraLine.validationText       = text
+            
+            extraLine.type      = "SecondaryStat"
+            extraLine.colorLeft = self.colors.GREEN
+            extraLine.realColor = self.colors.GREEN
+            
+            if not self:HideLine(extraLine) then
+              self:RecolorLine(tooltip, extraLine, tooltipData)
+              self:RewordLine(tooltip, extraLine, tooltipData)
+            end
+            
+            extraLine[2] = extraLine.rewordLeft  or extraLine[2]
+            extraLine[3] = extraLine.recolorLeft or extraLine[3]
+          end
+          break
+        end
+      end
+    end
+  end
+  
   
   self:ReorderLines(tooltipData)
   
@@ -76,15 +121,17 @@ end
 do
   local function AddLine(tooltipData, i, ...)
     tooltipData.extraLines = true
-    tinsert(tooltipData, i+1, {fake = true, ...})
+    local line = {fake = true, ...}
+    tinsert(tooltipData, i+1, line)
     Addon:BumpLocationsRange(tooltipData, i)
+    return line
   end
   
   function Addon:AddExtraLine(tooltipData, n, textLeft, hex, wordWrap)
-    AddLine(tooltipData, n, false, textLeft, hex, wordWrap)
+    return AddLine(tooltipData, n, false, textLeft, hex, wordWrap)
   end
   function Addon:AddExtraDoubleLine(tooltipData, n, textLeft, hexLeft, textRight, hexRight)
-    AddLine(tooltipData, n, true, textLeft, hexLeft, textRight, hexRight)
+    return AddLine(tooltipData, n, true, textLeft, hexLeft, textRight, hexRight)
   end
 end
 

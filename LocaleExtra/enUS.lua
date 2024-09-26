@@ -119,6 +119,10 @@ if Addon.isEra then
     {INPUT = "^Increases damage and healing done by magical spells and effects by up to ([%d,]+)%.$"},
     {INPUT = "^%+([%d,]+) Damage and Healing Spells$"})
   
+  Addon:AddExtraStatCapture("Healing",
+    {INPUT = "^Increases healing done by spells and effects by up to ([%d,]+)%.$"},
+    {INPUT = "^%+([%d,]+) Healing Spells$"})
+  
   Addon:AddExtraStatCapture("Arcane Damage",
     {INPUT = "^Increases damage done by Arcane spells and effects by up to ([%d,]+)%.$"})
   
@@ -137,10 +141,6 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Holy Damage",
     {INPUT = "^Increases damage done by Holy spells and effects by up to ([%d,]+)%.$"})
   
-  Addon:AddExtraStatCapture("Healing",
-    {INPUT = "^Increases healing done by spells and effects by up to ([%d,]+)%.$"},
-    {INPUT = "^%+([%d,]+) Healing Spells$"})
-  
   Addon:AddExtraStatCapture("Spell Penetration",
     {INPUT = "^Decreases the magical resistances of your spell targets by ([%d,]+)%.$"})
   
@@ -149,7 +149,8 @@ if Addon.isEra then
   
   Addon:AddExtraStatCapture("Critical Strike Rating",
     {INPUT = "^Improves your chance to get a critical strike with all spells and attacks by ([%d,]+%%)%.$"},
-    {INPUT = "^Improves your chance to get a critical strike with melee and ranged attacks and with spells by ([%d,]+%%)%.$"})
+    {INPUT = "^Improves your chance to get a critical strike with melee and ranged attacks and with spells by ([%d,]+%%)%.$"},
+    {INPUT = "^Increases your critical strike chance with spells and attacks by ([%d,]+%%)%.$"})
   
   Addon:AddExtraStatCapture("Physical Hit Rating",
     {INPUT = "^Improves your chance to hit by ([%d,]+%%)%.$"})
@@ -188,6 +189,10 @@ else
     {INPUT = "^Increases your spell penetration by ([%d,]+)%.$"}) -- Hatefury Mantle 30884
 end
 
+if Addon.isSoD or Addon.isTBC then
+  Addon:AddExtraStatCapture("Healing",
+    {INPUT = "^Increases healing done by up to ([%d,]+) and damage done by up to %d+ for all magical spells and effects%.$"})
+end
 
 
 
@@ -273,11 +278,39 @@ if Addon.isEra then
   )
 end
 
+-- Fishing Skill
+Addon:AddExtraReplacement("Fishing Skill",
+  {
+    INPUT  = "Replaces the fishing line on your fishing pole with a high test eternium line", -- High Test Eternium Fishing Line
+    OUTPUT = "Adds +5 Fishing to an owned Fishing Pole",
+  },
+  {
+    INPUT  = "^Eternium Line$", -- Eternium Fishing Line (Eternium Line (2603))
+    OUTPUT = "+5 Fishing",
+  }
+)
+
 -- Mana Regen
 Addon:AddExtraReplacement("Mana Regen",
   {
     INPUT  = "Allow (%d+)%% of your Mana regeneration to continue while casting", -- Primal Mooncloth set
     OUTPUT = "+%1%% of Mana Regen continues while casting",
+  }
+)
+
+-- Hp5
+Addon:AddExtraReplacement("Hp5",
+  {
+    INPUT  = "restores (%d+) health every 5 seconds", -- Nightfin Soup
+    OUTPUT = function(amount) return format("+%s health per minute (%s Hp5)", Addon:ToFormattedNumber(Addon:ToNumber(amount)*12), Addon:ToFormattedNumber(amount)) end,
+  }
+)
+
+-- Mp5
+Addon:AddExtraReplacement("Mp5",
+  {
+    INPUT  = "restores (%d+) Mana every 5 seconds", -- Nightfin Soup
+    OUTPUT = function(amount) return format("+%s mana per minute (%s Mp5)", Addon:ToFormattedNumber(Addon:ToNumber(amount)*12), Addon:ToFormattedNumber(amount)) end,
   }
 )
 

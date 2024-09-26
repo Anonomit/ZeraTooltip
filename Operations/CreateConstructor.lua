@@ -67,7 +67,8 @@ function Addon:CreateConstructor(tooltipData)
     local lastDest
     
     constructor.addLines = {}
-    for i = #tooltipData, 1, -1 do
+    local i = 1
+    while i <= #tooltipData do
       local line = tooltipData[i]
       if line.fake then
         if i == #tooltipData then
@@ -96,9 +97,12 @@ function Addon:CreateConstructor(tooltipData)
         tinsert(constructor.addLines, slot, {before, line.pad, unpack(line, 1, 4)})
         extraMoves[after or (i+1)] = true
         tblRemove(tooltipData, i)
+        i = i - 1
         slot     = slot + 1
         lastDest = before
       end
+      
+      i = i + 1
     end
   end
   
@@ -131,7 +135,7 @@ function Addon:CreateConstructor(tooltipData)
     
     -- move
     if i > 1 then
-      if extraMoves[i] or line.pad or tooltipData[i-1].i ~= line.i - 1 then
+      if extraMoves[line.i or ""] or line.pad or tooltipData[i-1].i ~= line.i - 1 then
         moves[line.i] = tooltipData[i-1].i
         merge[line.i] = true
         pads[line.i]  = line.pad

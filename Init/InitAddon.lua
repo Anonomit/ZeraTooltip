@@ -598,6 +598,7 @@ do
     BLUSH_PINK           = rgb(230, 169, 236),
     LIGHT_FUSCHIA_PINK   = rgb(249, 132, 239),
     VENUS_SLIPPER_ORCHID = rgb(221, 101, 253),
+    KISSES               = rgb(255,  92, 183),
     PURPLE_PIZZAZZ       = rgb(255,  80, 218),
     BRIGHT_NEON_PINK     = rgb(244,  51, 255),
 
