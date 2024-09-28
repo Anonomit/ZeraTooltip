@@ -223,7 +223,7 @@ function Addon:RewordLine(tooltip, line, tooltipData)
     end
     
     if not RatingBuster and self:GetGlobalOption("cache", "enabled") and self:GetGlobalOption("cache", "text") and cacheLineTypes[line.type] and cacheLineStats[line.stat or ""] then
-      Addon:MakeTable(textCache, line.type, line.textLeftText, line.textRightText or "", {text, line.rewordRight})
+      Addon:StoreInTable(textCache, line.type, line.textLeftText, line.textRightText or "", {text, line.rewordRight})
       cacheSize = cacheSize + 1
     end
   end
