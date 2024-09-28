@@ -62,6 +62,29 @@ function Addon:RewordLine(tooltip, line, tooltipData)
     text, line.rewordRight = unpack(cache, 1, 2)
   else
     
+    if not line.stat and miscRewordLines[line.type] and self:GetOption("doReword", "Miscellaneous") then
+      -- localeExtra replacements
+      if self:GetOption("allow", "reword") then
+        for _, definition in ipairs(self:GetExtraReplacements()) do
+          for _, rule in ipairs(definition) do
+            local input = rule.INPUT .. "%[.。]$"
+            local matches = {strMatch(text, input)}
+            if #matches == 0 then
+              input = rule.INPUT
+              matches = {strMatch(text, input)}
+            end
+            if #matches > 0 then
+              local output = rule.OUTPUT
+              if type(rule.OUTPUT) == "function" then
+                output = rule.OUTPUT(unpack(matches))
+              end
+              text = strGsub(text, input, output)
+              break
+            end
+          end
+        end
+      end
+    end
     
     if line.stat then
       if self:GetOption("allow", "reword") and self:GetOption("doReword", line.stat) then
@@ -155,29 +178,6 @@ function Addon:RewordLine(tooltip, line, tooltipData)
           text = self:RewordSocketHint(text)
         end,
       })
-    end
-    if not line.stat and miscRewordLines[line.type] and self:GetOption("doReword", "Miscellaneous") then
-      -- localeExtra replacements
-      if self:GetOption("allow", "reword") then
-        for _, definition in ipairs(self:GetExtraReplacements()) do
-          for _, rule in ipairs(definition) do
-            local input = rule.INPUT .. "%[.。]$"
-            local matches = {strMatch(text, input)}
-            if #matches == 0 then
-              input = rule.INPUT
-              matches = {strMatch(text, input)}
-            end
-            if #matches > 0 then
-              local output = rule.OUTPUT
-              if type(rule.OUTPUT) == "function" then
-                output = rule.OUTPUT(unpack(matches))
-              end
-              text = strGsub(text, input, output)
-              break
-            end
-          end
-        end
-      end
     end
     
     -- swap in localized nickname, fix prefix
