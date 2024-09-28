@@ -31,6 +31,7 @@ Addon:RegisterOptionSetHandler(Addon.WipeConstructorCache)
 Addon:RegisterCVarCallback("colorblindMode", Addon.WipeConstructorCache)
 Addon:RegisterEventCallback("PLAYER_EQUIPMENT_CHANGED", Addon.WipeConstructorCache)
 Addon:RegisterEventCallback("PLAYER_LEVEL_UP", Addon.WipeConstructorCache) -- for ratingbuster compatibility
+Addon:RegisterEventCallback("TRANSMOG_COLLECTION_ITEM_UPDATE", Addon.WipeConstructorCache) -- "You haven't collected this appearance"
 
 local hashMaps = {
   SetHyperlink            = function(link, itemStringOrLink) return itemStringOrLink end,
