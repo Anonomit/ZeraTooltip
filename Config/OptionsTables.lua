@@ -1523,14 +1523,14 @@ local function MakeExtraOptions(opts, categoryName)
         local opts = GUI:CreateGroupBox(opts, self.L["Settings"])
         
         local option = GUI:CreateRange(opts, {"speedBar", "min"}, self.L["Minimum"], L["Fastest speed on the speed bar."], self:GetDefaultOption("speedBar", "min"), self:GetDefaultOption("speedBar", "max"), 0.1, disabled)
-        option.set = function(info, val) self:SetOption(val, "speedBar", "min") self:SetOption(mathMax(val, self:GetOption("speedBar", "max")), "speedBar", "max") end
+        option.set = function(info, val) self:SetOptionConfig(val, "speedBar", "min") self:SetOptionConfig(mathMax(val, self:GetOption("speedBar", "max")), "speedBar", "max") end
         local option = GUI:CreateRange(opts, {"speedBar", "max"}, self.L["Maximum"], L["Slowest speed on the speed bar."], self:GetDefaultOption("speedBar", "min"), self:GetDefaultOption("speedBar", "max"), 0.1, disabled)
-        option.set = function(info, val) self:SetOption(val, "speedBar", "max") self:SetOption(mathMin(val, self:GetOption("speedBar", "min")), "speedBar", "min") end
+        option.set = function(info, val) self:SetOptionConfig(val, "speedBar", "max") self:SetOptionConfig(mathMin(val, self:GetOption("speedBar", "min")), "speedBar", "min") end
         GUI:CreateNewline(opts)
         local option = GUI:CreateRange(opts, {"speedBar", "size"}, self.L["Frame Width"], L["Width of the speed bar."], 1, 1000, 1, disabled)
         option.softMin = 10
         option.softMax = 50
-        GUI:CreateReset(opts, {"speedBar", "size"}, func)
+        GUI:CreateReset(opts, {"speedBar", "size"})
       end
       
       CreateHide(opts, stat)
