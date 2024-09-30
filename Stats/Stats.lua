@@ -145,7 +145,7 @@ do
   for _, stat in ipairs{"Arcane Damage", "Fire Damage", "Nature Damage", "Frost Damage", "Shadow Damage", "Holy Damage"} do
     local rules = Addon:GetExtraStatCapture(stat)
     if rules then
-      spellDamageStats[stat] = Addon:ChainGsub(rules[1].INPUT, {"%(%[%%d[^%]]%]%+", "%(%%d%+%)", "%%s"}, {"^%^", "%$$", ""}, {"%%([^s])", "%1"})
+      spellDamageStats[stat] = Addon:ChainGsub(rules[1].INPUT, {"%(%[%%d[^%]]*%]%+%)", "%(%%d%+%)", "%%s"}, {"^%^", "%$$", ""}, {"%%([^s])", "%1"})
     end
   end
   
