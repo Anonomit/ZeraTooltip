@@ -66,10 +66,16 @@ end)
 local function GetFormattedStatText(number, stat)
   local StatInfo = Addon.statsInfo[stat]
   local hidden = Addon:GetOption("hide", stat)
-  local text = StatInfo:GetDefaultForm(number)
+  local defaultForm = StatInfo:GetDefaultForm(number)
+  Addon:Assertf(defaultForm, "Failed GetDefaultForm with stat %s. number: %s", stat, tostring(number))
+  local text
   if Addon:GetOption("allow", "reword") and Addon:GetOption("doReword", stat) then
-    text = StatInfo:ConvertToNormalForm(text)
-    text = strGsub(StatInfo:Reword(text, text), "%+(%-)", "%1")
+    local normalForm = StatInfo:ConvertToNormalForm(defaultForm)
+    Addon:Assertf(normalForm, "Failed ConvertToNormalForm with stat %s. defaultForm: %s", stat, defaultForm)
+    text = strGsub(StatInfo:Reword(normalForm, normalForm), "%+(%-)", "%1")
+    Addon:Assertf(text, "Failed Reword with stat %s. normalForm: %s", stat, normalForm)
+  else
+    text = defaultForm
   end
   local color = StatInfo.tooltipColor
   if hidden then
@@ -2125,6 +2131,29 @@ end
 
 
 
+
+--  ██████╗ ██████╗  ██████╗ ███████╗██╗██╗     ███████╗     ██████╗ ██████╗ ████████╗██╗ ██████╗ ███╗   ██╗███████╗
+--  ██╔══██╗██╔══██╗██╔═══██╗██╔════╝██║██║     ██╔════╝    ██╔═══██╗██╔══██╗╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
+--  ██████╔╝██████╔╝██║   ██║█████╗  ██║██║     █████╗      ██║   ██║██████╔╝   ██║   ██║██║   ██║██╔██╗ ██║███████╗
+--  ██╔═══╝ ██╔══██╗██║   ██║██╔══╝  ██║██║     ██╔══╝      ██║   ██║██╔═══╝    ██║   ██║██║   ██║██║╚██╗██║╚════██║
+--  ██║     ██║  ██║╚██████╔╝██║     ██║███████╗███████╗    ╚██████╔╝██║        ██║   ██║╚██████╔╝██║ ╚████║███████║
+--  ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝╚══════╝     ╚═════╝ ╚═╝        ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
+
+local function MakeProfileOptions(opts, categoryName)
+  local self = Addon
+  local GUI = self.GUI
+  
+  local profileOptions = self.AceDBOptions:GetOptionsTable(self:GetDB())
+  profileOptions.order = GUI:Order()
+  opts.args[categoryName] = profileOptions
+  
+  return opts
+end
+
+
+
+
+
 --  ██████╗ ███████╗██████╗ ██╗   ██╗ ██████╗      ██████╗ ██████╗ ████████╗██╗ ██████╗ ███╗   ██╗███████╗
 --  ██╔══██╗██╔════╝██╔══██╗██║   ██║██╔════╝     ██╔═══██╗██╔══██╗╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
 --  ██║  ██║█████╗  ██████╔╝██║   ██║██║  ███╗    ██║   ██║██████╔╝   ██║   ██║██║   ██║██╔██╗ ██║███████╗
@@ -2157,6 +2186,67 @@ local function MakeDebugOptions(opts, categoryName)
       
       local disabled = not self:GetGlobalOption"debugShowLuaErrors"
       GUI:CreateToggle(opts, {"debugShowLuaWarnings"}, self.L["Lua Warning"], nil, disabled).width = 2
+    end
+  end
+  
+  -- Debug Output
+  do
+    local opts = GUI:CreateGroup(opts, GUI:Order(), "Output")
+    
+    local disabled = not self:GetGlobalOption"debug"
+    
+    do
+      local opts = GUI:CreateGroupBox(opts, "Suppress All")
+      
+      GUI:CreateToggle(opts, {"debugOutput", "suppressAll"}, self.debugPrefix .. " " .. self.L["Hide messages like this one."], nil, disabled).width = 2
+    end
+    
+    do
+      local opts = GUI:CreateGroupBox(opts, "Message Types")
+      
+      local disabled = disabled or self:GetGlobalOption("debugOutput", "suppressAll")
+      
+      for i, data in ipairs{
+        {"tooltipMethodHook",         "Tooltip Method Hook"},
+        {"tooltipOnSetItemHook",      "Tooltip tooltipOnSetItem Hook"},
+        {"tooltipHookFail",           "Tooltip Hook Failure"},
+        {"tooltipHookMarked",         "Tooltip Hook Marked"},
+        {"initialTooltipData",        "Initial Tooltip Data"},
+        {"finalTooltipData",          "Final Tooltip Data"},
+        {"constructorCreated",        "Constructor Created"},
+        {"constructorCached",         "Constructor Cached"},
+        {"constructorWiped",          "Constructor Wiped"},
+        {"constructorValidationFail", "Constructor Validation Failure"},
+        {"constructorLineMove",       "Constructor Moving Line"},
+        {"paddingDecisions",          "Padding Decisions"},
+        {"optionSet",                 "Option Set"},
+        {"cvarSet",                   "CVar Set"},
+        {"InterfaceOptionsFrameFix",  "Interface Options Patch"},
+        {"throttlingStarted",         "Throttling Started"},
+      } do
+        if i ~= 1 then
+          GUI:CreateNewline(opts)
+        end
+        GUI:CreateToggle(opts, {"debugOutput", data[1]}, format("%d: %s", i, data[2]), nil, disabled).width = 2
+      end
+    end
+    
+    do
+      local opts = GUI:CreateGroupBox(opts, "Scanner Tooltips")
+      
+      local disabled = disabled or self:GetGlobalOption("debugOutput", "suppressAll")
+      
+      for i, data in ipairs{
+        {"tooltip_GameTooltip",      "GameTooltip"},
+        {"tooltip_ItemRefTooltip",   "ItemRefTooltip"},
+        {"tooltip_ShoppingTooltip1", "ShoppingTooltip1"},
+        {"tooltip_ShoppingTooltip2", "ShoppingTooltip2"},
+      } do
+        if i ~= 1 then
+          GUI:CreateNewline(opts)
+        end
+        GUI:CreateToggle(opts, {"debugOutput", data[1]}, data[2], nil, disabled).width = 2
+      end
     end
   end
   
@@ -2202,67 +2292,6 @@ local function MakeDebugOptions(opts, categoryName)
           GUI:CreateNewline(opts)
         end
         GUI:CreateToggle(opts, {"debugView", data[1]}, data[2]).width = 2
-      end
-    end
-  end
-  
-  -- Debug Output
-  do
-    local opts = GUI:CreateGroup(opts, GUI:Order(), "Output")
-    
-    local disabled = not self:GetGlobalOption"debug"
-    
-    do
-      local opts = GUI:CreateGroupBox(opts, "Suppress All")
-      
-      GUI:CreateToggle(opts, {"debugOutput", "suppressAll"}, self.debugPrefix .. " " .. self.L["Hide messages like this one."], nil, disabled).width = 2
-    end
-    
-    do
-      local opts = GUI:CreateGroupBox(opts, "Message Types")
-      
-      local disabled = disabled or self:GetGlobalOption("debugOutput", "suppressAll")
-      
-      for i, data in ipairs{
-        {"tooltipMethodHook",         "Tooltip Method Hook"},
-        {"tooltipOnSetItemHook",      "Tooltip tooltipOnSetItem Hook"},
-        {"tooltipHookFail",           "Tooltip Hook Failure"},
-        {"tooltipHookMarked",         "Tooltip Hook Marked"},
-        {"initialTooltipData",        "Initial Tooltip Data"},
-        {"finalTooltipData",          "Final Tooltip Data"},
-        {"constructorCreated",        "Constructor Created"},
-        {"constructorCached",         "Constructor Cached"},
-        {"constructorWiped",          "Constructor Wiped"},
-        {"constructorValidationFail", "Constructor Validation Failure"},
-        {"constructorLineMove",       "Constructor Moving Line"},
-        {"paddingDecisions",          "Padding Decisions"},
-        {"optionSet",                 "Option Set"},
-        {"cvarSet",                   "CVar Set"},
-        {"InterfaceOptionsFrameFix",  "Interface Options Patch"},
-        {"throttlingStarted",         "Throttling Started"},
-      } do
-        if i ~= 1 then
-          GUI:CreateNewline(opts)
-        end
-        GUI:CreateToggle(opts, {"debugOutput", data[1]}, data[2], nil, disabled).width = 2
-      end
-    end
-    
-    do
-      local opts = GUI:CreateGroupBox(opts, "Scanner Tooltips")
-      
-      local disabled = disabled or self:GetGlobalOption("debugOutput", "suppressAll")
-      
-      for i, data in ipairs{
-        {"tooltip_GameTooltip",      "GameTooltip"},
-        {"tooltip_ItemRefTooltip",   "ItemRefTooltip"},
-        {"tooltip_ShoppingTooltip1", "ShoppingTooltip1"},
-        {"tooltip_ShoppingTooltip2", "ShoppingTooltip2"},
-      } do
-        if i ~= 1 then
-          GUI:CreateNewline(opts)
-        end
-        GUI:CreateToggle(opts, {"debugOutput", data[1]}, data[2], nil, disabled).width = 2
       end
     end
   end
@@ -2358,25 +2387,6 @@ local function MakeDebugOptions(opts, categoryName)
   end
   
   GUI:ResetDBType()
-  
-  return opts
-end
-
-
---  ██████╗ ██████╗  ██████╗ ███████╗██╗██╗     ███████╗     ██████╗ ██████╗ ████████╗██╗ ██████╗ ███╗   ██╗███████╗
---  ██╔══██╗██╔══██╗██╔═══██╗██╔════╝██║██║     ██╔════╝    ██╔═══██╗██╔══██╗╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
---  ██████╔╝██████╔╝██║   ██║█████╗  ██║██║     █████╗      ██║   ██║██████╔╝   ██║   ██║██║   ██║██╔██╗ ██║███████╗
---  ██╔═══╝ ██╔══██╗██║   ██║██╔══╝  ██║██║     ██╔══╝      ██║   ██║██╔═══╝    ██║   ██║██║   ██║██║╚██╗██║╚════██║
---  ██║     ██║  ██║╚██████╔╝██║     ██║███████╗███████╗    ╚██████╔╝██║        ██║   ██║╚██████╔╝██║ ╚████║███████║
---  ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝╚══════╝     ╚═════╝ ╚═╝        ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
-
-local function MakeProfileOptions(opts, categoryName)
-  local self = Addon
-  local GUI = self.GUI
-  
-  local profileOptions = self.AceDBOptions:GetOptionsTable(self:GetDB())
-  profileOptions.order = GUI:Order()
-  opts.args[categoryName] = profileOptions
   
   return opts
 end

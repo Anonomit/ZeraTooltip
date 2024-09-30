@@ -18,6 +18,21 @@ local tostring = tostring
 local locale = GetLocale()
 
 
+--[[
+L["key"] = value
+
+value should be a string, but can also be a function that returns a string
+
+value could also be a list of strings or functions that return strings. the first truthy value will be used
+  a nil element will throw an error and continue to the next element
+  a false element will fail silently and continue to the next element
+
+a value of nil will throw an error and fail
+a value of false will fail silently
+
+accessing a key with no value will throw an error and return the key
+]]
+
 
 local actual = {}
 local L = setmetatable({}, {
@@ -49,19 +64,22 @@ local L = setmetatable({}, {
           else
             Addon:Warnf(ADDON_NAME..": Automatic translation #%d failed for '%s'", i, tostring(key))
           end
-        else
+        elseif val[i] ~= false then
           Addon:Warnf(ADDON_NAME..": Automatic translation #%d failed for '%s'", i, tostring(key))
         end
       end
     elseif type(val) == "function" then
       -- use the function return value unless it errors
+      if not Addon:xpcallSilent(val, function(err) Addon:Throwf("%s: Automatic translation error for '%s' : %s", ADDON_NAME, tostring(key), err) end) then
+        return
+      end
       local success, result = Addon:xpcall(val)
       if not success then
         Addon:Throwf("%s: Automatic translation error for '%s'", ADDON_NAME, tostring(key))
         return
       end
-      actual[key] = result
-    else
+      self[key] = result
+    elseif val ~= false then
       actual[key] = val
     end
   end,
@@ -143,7 +161,6 @@ L["Short Name"]        = COMMUNITIES_SETTINGS_SHORT_NAME_LABEL
 L["Show Item Level"]   = SHOW_ITEM_LEVEL
 L["Category"]          = CATEGORY
 L["Weapon Damage"]     = DAMAGE_TOOLTIP
-L["Bonus Damage"]      = BONUS_DAMAGE
 L["Speed"]             = SPEED
 L["Damage Per Second"] = ITEM_MOD_DAMAGE_PER_SECOND_SHORT
 L["Trade"]             = TRADE
@@ -493,8 +510,8 @@ L["Improves spell hit rating by %s."] = ITEM_MOD_HIT_SPELL_RATING
 L["Critical Strike Rating (Spell)"] = ITEM_MOD_CRIT_SPELL_RATING_SHORT
 L["Improves spell critical strike rating by %s."] = ITEM_MOD_CRIT_SPELL_RATING
 
-L["Haste Rating (Spell)"] = {ITEM_MOD_HASTE_SPELL_RATING_SHORT, function() return strGsub(ITEM_MOD_CRIT_SPELL_RATING_SHORT, Addon:CoverSpecialCharacters(ITEM_MOD_CRIT_RATING_SHORT), Addon:CoverSpecialCharacters(ITEM_MOD_HASTE_RATING_SHORT)) end}
-L["Improves spell haste rating by %s."] = {ITEM_MOD_HASTE_SPELL_RATING, function() return strGsub(ITEM_MOD_CRIT_SPELL_RATING, Addon:CoverSpecialCharacters(ITEM_MOD_CRIT_RATING), Addon:CoverSpecialCharacters(ITEM_MOD_HASTE_RATING)) end}
+L["Haste Rating (Spell)"] = {ITEM_MOD_HASTE_SPELL_RATING_SHORT or false, function() return strGsub(ITEM_MOD_CRIT_SPELL_RATING_SHORT, Addon:CoverSpecialCharacters(ITEM_MOD_CRIT_RATING_SHORT), Addon:CoverSpecialCharacters(ITEM_MOD_HASTE_RATING_SHORT)) end}
+L["Improves spell haste rating by %s."] = {ITEM_MOD_HASTE_SPELL_RATING or false, function() return strGsub(ITEM_MOD_CRIT_SPELL_RATING, Addon:CoverSpecialCharacters(ITEM_MOD_CRIT_RATING), Addon:CoverSpecialCharacters(ITEM_MOD_HASTE_RATING)) end}
 
 L["Health Regeneration"] = ITEM_MOD_HEALTH_REGENERATION_SHORT
 L["Restores %s health per 5 sec."] = ITEM_MOD_HEALTH_REGEN

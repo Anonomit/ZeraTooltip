@@ -196,12 +196,23 @@ do
       end
       return nop
     end
+    -- calls func in protected mode. errors are announced and then passed to errFunc. errFunc errors silently. non-blocking.
     function Addon:xpcall(func, errFunc)
       return xpcall(func, GetErrorHandler(errFunc))
     end
+    -- calls func in protected mode. errors passed to errFunc if it exists. errFunc errors silently. non-blocking.
     function Addon:xpcallSilent(func, errFunc)
-      return xpcall(func, nop)
+      return xpcall(func, errFunc or nop)
     end
+    -- calls func in protected mode. errors passed to errFunc. non-blocking, unless errFunc errors.
+    function Addon:pcall(func, errFunc)
+      local t = {pcall(func)}
+      if not t[1] then
+        errFunc(unpack(t, 2))
+      end
+      return unpack(t, 2)
+    end
+    -- Creates a non-blocking error.
     function Addon:Throw(...)
       if Addon:IsDebugEnabled() and ShouldShowLuaErrors() then
         geterrorhandler()(...)
@@ -212,6 +223,7 @@ do
       local count = select("#", ...)
       self:xpcall(function() self:Throw(format(unpack(args, 1, count))) end)
     end
+    -- Creates a non-blocking error if bool is falsy.
     function Addon:ThrowAssert(bool, ...)
       if bool then return bool end
       if Addon:IsDebugEnabled() and ShouldShowLuaErrors() then
@@ -226,6 +238,7 @@ do
       self:xpcall(function() self:Throw(format(unpack(args, 1, count))) end)
       return false
     end
+    -- Creates a blocking error.
     function Addon:Error(str)
       error(str, 2)
     end
@@ -238,6 +251,7 @@ do
     function Addon:ErrorfLevel(lvl, ...)
       error(format(...), lvl + 1)
     end
+    -- Creates a blocking error if bool is falsy.
     function Addon:Assert(bool, str)
       if not bool then
         error(str, 2)
@@ -325,6 +339,27 @@ end
 --     ╚═╝   ╚═╝  ╚═╝╚═════╝ ╚══════╝╚══════╝╚══════╝
 
 do
+  local function DeepCopy(orig, seen)
+    local new
+    if type(orig) == "table" then
+      if seen[orig] then
+        new = seen[orig]
+      else
+        new = {}
+        seen[orig] = copy
+        for k, v in next, orig, nil do
+          new[DeepCopy(k, seen)] = DeepCopy(v, seen)
+        end
+        setmetatable(new, DeepCopy(getmetatable(orig), seen))
+      end
+    else
+      new = orig
+    end
+    return new
+  end
+  function Addon:Copy(val)
+    return DeepCopy(val, {})
+  end
   
   function Addon:TableConcat(tbl, separator)
     local t = {}
@@ -894,28 +929,6 @@ end
 --  ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝
 
 do
-  local function DeepCopy(orig, seen)
-    local new
-    if type(orig) == "table" then
-      if seen[orig] then
-        new = seen[orig]
-      else
-        new = {}
-        seen[orig] = copy
-        for k, v in next, orig, nil do
-          new[DeepCopy(k, seen)] = DeepCopy(v, seen)
-        end
-        setmetatable(new, DeepCopy(getmetatable(orig), seen))
-      end
-    else
-      new = orig
-    end
-    return new
-  end
-  function Addon:Copy(val)
-    return DeepCopy(val, {})
-  end
-  
   local onOptionSetHandlers = {}
   function Addon:RegisterOptionSetHandler(func)
     tinsert(onOptionSetHandlers, func)
@@ -968,9 +981,10 @@ do
     for _, dbSection in ipairs(dbTypes) do
       local typeKey, typeName = unpack(dbSection, 1, 2)
       
-      local GetOptionQuiet   = format("Get%s%sOptionQuiet", dbName,      typeName)
-      local GetOption        = format("Get%s%sOption",      dbName,      typeName)
-      local GetDefaultOption = format("Get%s%sOption",      defaultName, typeName)
+      local GetOption             = format("Get%s%sOption",      dbName,      typeName)
+      local GetOptionQuiet        = format("Get%s%sOptionQuiet", dbName,      typeName)
+      local GetDefaultOption      = format("Get%s%sOption",      defaultName, typeName)
+      local GetDefaultOptionQuiet = format("Get%s%sOptionQuiet", defaultName, typeName)
       
       Addon[GetOptionQuiet] = function(self, ...)
         assert(self[dbKey], format("Attempted to access database before initialization: %s", Addon:TableConcat({dbKey, typeKey, ...}, " > ")))
@@ -1187,7 +1201,7 @@ do
     Addon:DebugIfOutput("optionsOpenedPost", "Options opened (Post)")
   end)
   Addon:RegisterOptionsClosePostCallback(function()
-    Addon:DebugIfOutput("optionsOpenedPost", "Options closed (Post)")
+    Addon:DebugIfOutput("optionsClosedPost", "Options closed (Post)")
   end)
   
   
@@ -1299,6 +1313,25 @@ do
     local ResetFunction    = function(keys) local funcName = format("Reset%sOptionConfig", dbType) return function(info, val)        Addon[funcName](Addon, unpack(keys))      end end
     local GetColorFunction = function(keys) local funcName = format("Get%sOption",         dbType) return function(info)          return Addon:ConvertColorToBlizzard(Addon[funcName](Addon, unpack(keys)))            end end
     local SetColorFunction = function(keys) local funcName = format("Set%sOption",         dbType) return function(info, r, g, b)        Addon[funcName](Addon, Addon:ConvertColorFromBlizzard(r, g, b), unpack(keys)) end end
+    
+    
+    local MultiGetFunction = function(keys)
+      local funcName = format("Get%sOption", dbType)
+      return function(info, key)
+        local path = Addon:Copy(keys)
+        path[#path+1] = key
+        return Addon[funcName](Addon, unpack(path))
+      end
+    end
+    
+    local MultiSetFunction = function(keys)
+      local funcName = format("Set%sOptionConfig", dbType)
+      return function(info, key, val)
+        local path = Addon:Copy(keys)
+        path[#path+1] = key
+        Addon[funcName](Addon, val, unpack(path))
+      end
+    end
     -- options window needs to redraw if color changes
     
     function GUI:SetDBType(typ)
@@ -1370,13 +1403,11 @@ do
       option.sorting = sorting
       return option
     end
-    
     function GUI:CreateDropdown(...)
       local option = self:CreateSelect(...)
       option.style = "dropdown"
       return option
     end
-    
     function GUI:CreateRadio(...)
       local option = self:CreateSelect(...)
       option.style = "radio"
@@ -1385,7 +1416,14 @@ do
     
     function GUI:CreateMultiSelect(opts, keys, name, desc, values, disabled)
       local option = self:CreateEntry(opts, keys, name, desc, "multiselect", disabled)
-      option.values  = values
+      option.values = values
+      option.get = MultiGetFunction(keys)
+      option.set = MultiSetFunction(keys)
+      return option
+    end
+    function GUI:CreateMultiDropdown(...)
+      local option = self:CreateMultiSelect(...)
+      option.dialogControl = "Dropdown"
       return option
     end
     
@@ -1468,21 +1506,26 @@ do
   end
   
   local function HookCloseConfig()
-    local hookedKey = "hooked" .. ADDON_NAME
+    local hookedKey = ADDON_NAME .. "_OPEN"
     
     local frame = Addon:GetConfigWindow()
     Addon:ThrowAssert(frame, "Can't find frame to hook options menu close")
     
-    if frame[hookedKey] then return end
+    local alreadyHooked = frame[hookedKey] ~= nil
+    frame[hookedKey] = true
+    
+    if alreadyHooked then return end
     
     frame:HookScript('OnHide', function(self)
       local currentFrame = Addon:GetConfigWindow()
       if not currentFrame or self ~= currentFrame then
-        Addon:RunOptionsClosePostCallbacks()
+        if self[hookedKey] then
+          Addon:RunOptionsClosePostCallbacks()
+          self[hookedKey] = false
+        end
       end
     end)
     
-    frame[hookedKey] = true
   end
   
   function Addon:GetConfigWindow()
@@ -1531,6 +1574,74 @@ do
     blizzardCategory = id
     Panel.default = function() self:ResetProfile(blizzardOptions) end
     return Panel
+  end
+  
+  
+  do
+    Addon.staticPopups = {}
+    
+    local function MakeName(name)
+      return ADDON_NAME .. "_" .. tostring(name)
+    end
+    
+    
+    function Addon:InitPopup(name, popupData)
+      local key = MakeName(name)
+      self:Assertf(not StaticPopupDialogs[key], "StaticPopup with name '%s' already exists", key)
+      
+      self.staticPopups[name] = true
+      StaticPopupDialogs[key] = popupData
+    end
+    
+    function Addon:ShowPopup(name, data, ...)
+      local key = MakeName(name)
+      self:Assertf(StaticPopupDialogs[key], "StaticPopup with name '%s' doesn't exist", key)
+      self:Assertf(self.staticPopups[name], "StaticPopup with name '%s' isn't owned by %s", key, ADDON_NAME)
+      
+      local textAdditions = {...}
+      StaticPopup_Show(key, textAdditions[1], textAdditions[2], data)
+      if #textAdditions > 2 then
+        self:EditPopupText(name, ...)
+      end
+    end
+    
+    function Addon:HidePopup(name)
+      local key = MakeName(name)
+      self:Assertf(StaticPopupDialogs[key], "StaticPopup with name '%s' doesn't exist", key)
+      self:Assertf(self.staticPopups[name], "StaticPopup with name '%s' isn't owned by %s", key, ADDON_NAME)
+      
+      StaticPopup_Hide(key)
+    end
+    
+    function Addon:IsPopupShown(name)
+      return self:GetPopupData(name) and true or false
+    end
+    
+    function Addon:GetPopupData(name)
+      local key = MakeName(name)
+      self:Assertf(StaticPopupDialogs[key], "StaticPopup with name '%s' doesn't exist", key)
+      self:Assertf(self.staticPopups[name], "StaticPopup with name '%s' isn't owned by %s", key, ADDON_NAME)
+      
+      local frameName, data = StaticPopup_Visible(key)
+      if not data then return end
+      
+      return data.data
+    end
+    
+    function Addon:EditPopupText(name, ...)
+      local key = MakeName(name)
+      self:Assertf(StaticPopupDialogs[key], "StaticPopup with name '%s' doesn't exist", key)
+      self:Assertf(self.staticPopups[name], "StaticPopup with name '%s' isn't owned by %s", key, ADDON_NAME)
+      
+      local frameName = StaticPopup_Visible(key)
+      if frameName then
+        local textFrameName = frameName .. "Text"
+        local textFrame     = _G[textFrameName]
+        self:Assertf(textFrame, "StaticPopup text frame with name '%s' isn't open", textFrameName)
+        
+        textFrame:SetFormattedText(StaticPopupDialogs[key].text, ...)
+      end
+    end
   end
 end
 

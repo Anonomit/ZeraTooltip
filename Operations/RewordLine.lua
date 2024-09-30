@@ -228,7 +228,7 @@ function Addon:RewordLine(tooltip, line, tooltipData)
     end
   end
   
-  if Addon:GetDebugView"tooltipLineNumbers" then
+  if Addon:GetDebugView"tooltipLineNumbers" and not line.fake then
     text = format("[%d] ", line.i) .. text
   end
   

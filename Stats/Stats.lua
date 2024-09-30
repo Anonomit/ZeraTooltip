@@ -211,7 +211,7 @@ do
   
   tinsert(statsData, {1, {true, true, true, true}, "Spell Power", self.L["Spell Power"], self.L["Increases spell power by %s."], self.colors.GREEN, self.colors.LILAC_GEODE})
   
-  tinsert(statsData, {0, {true,       true, nil , true}, "Healing",            self.L["Bonus Healing"], self.L["Increases healing done by magical spells and effects by up to %s."], self.colors.GREEN, self.colors.LIGHT_CYAN})
+  tinsert(statsData, {0, {true, true, nil , true}, "Healing", self.L["Bonus Healing"], self.L["Increases healing done by magical spells and effects by up to %s."], self.colors.GREEN, self.colors.LIGHT_CYAN})
   
   tinsert(statsData, {1, {true, true, nil, nil}, "Spell Damage" , self.L["Bonus Damage"], self.L["Increases damage done by magical spells and effects by up to %s."], self.colors.GREEN, self.colors.KISSES})
   for i, stat in ipairs{"Arcane Damage", "Fire Damage", "Nature Damage", "Frost Damage", "Shadow Damage", "Holy Damage"} do
@@ -317,10 +317,15 @@ do
       end
       
       function StatInfo:Reword(text, normalForm)
-        if Addon:GetOption("allow", "reword") and Addon:GetOption("doReword", stat) then
-          text = ConvertToAliasForm(ApplyMod(text, normalForm))
-        end
-        return text
+        return Addon:pcall(function()
+          if Addon:GetOption("allow", "reword") and Addon:GetOption("doReword", stat) then
+            text = ConvertToAliasForm(ApplyMod(text, normalForm))
+          end
+          return text
+        end,
+        function(err)
+          Addon:Errorf("Problem with stat %s: %s", stat, err)
+        end)
       end
       
       local function HasNumber(match1, match2)
@@ -332,39 +337,48 @@ do
       end
       
       function StatInfo:ConvertToNormalForm(text)
-        text = strLower(text)
-        local match1, match2 = strMatch(text, Addon:ReversePattern(tooltipPatternLower))
-        if match1 then
-          if HasNumber(match1, match2) then return format(normalFormPattern, match1, match2) end
-        end
-        local match1, match2 = strMatch(text, strLower(normalFormCaptureLower))
-        if match1 then
-          if HasNumber(match1, match2) then return format(normalFormPattern, match1, match2) end
-        end
-        local match1, match2 = strMatch(text, strLower(normalFormLooseCaptureLower))
-        if match1 then
-          if HasNumber(match1, match2) then return format(normalFormPattern, match1, match2) end
-        end
-        for _, rule in ipairs(Addon:GetExtraStatCapture(stat) or {}) do
-          local matches = rule.OUTPUT and {rule.OUTPUT(strMatch(text, rule.INPUT))} or {strMatch(text, rule.INPUT)}
-          if #matches > 0 then
-            if HasNumber(matches[1], matches[2]) then return format(normalFormPattern, matches[1], matches[2]) end
+        return Addon:pcall(function()
+          text = strLower(text)
+          local match1, match2 = strMatch(text, Addon:ReversePattern(tooltipPatternLower))
+          if match1 then
+            if HasNumber(match1, match2) then return format(normalFormPattern, match1, match2) end
           end
-        end
-        return nil
+          local match1, match2 = strMatch(text, strLower(normalFormCaptureLower))
+          if match1 then
+            if HasNumber(match1, match2) then return format(normalFormPattern, match1, match2) end
+          end
+          local match1, match2 = strMatch(text, strLower(normalFormLooseCaptureLower))
+          if match1 then
+            if HasNumber(match1, match2) then return format(normalFormPattern, match1, match2) end
+          end
+          for _, rule in ipairs(Addon:GetExtraStatCapture(stat) or {}) do
+            local matches = rule.OUTPUT and {rule.OUTPUT(strMatch(text, rule.INPUT))} or {strMatch(text, rule.INPUT)}
+            if #matches > 0 then
+              if HasNumber(matches[1], matches[2]) then return format(normalFormPattern, matches[1], matches[2]) end
+            end
+          end
+        end,
+        function(err)
+          Addon:Errorf("Problem with stat %s: %s", stat, err)
+        end)
       end
       
       function StatInfo:GetDefaultForm(number)
-        local percent = strFind(number, "%%$")
-        number = Addon:ToNumber(number)
-        local strNumber
-        if isBaseStat and not isFakeBaseStat then
-          strNumber = tostring(number)
-        else
-          strNumber = Addon:ToFormattedNumber(number, nil, Addon.L["."], Addon.L[","], false, false)
-        end
-        strNumber = strNumber .. (percent and "%" or "")
-        return format(tooltipPattern2, isBaseStat and (number < 0 and "" or "+") or strNumber, isBaseStat and strNumber or nil)
+        return Addon:pcall(function()
+          local percent = strFind(number, "%%$")
+          number = Addon:ToNumber(number)
+          local strNumber
+          if isBaseStat and not isFakeBaseStat then
+            strNumber = tostring(number)
+          else
+            strNumber = Addon:ToFormattedNumber(number, nil, Addon.L["."], Addon.L[","], false, false)
+          end
+          strNumber = strNumber .. (percent and "%" or "")
+          return format(tooltipPattern2, isBaseStat and (number < 0 and "" or "+") or strNumber, isBaseStat and strNumber or nil)
+        end,
+        function(err)
+          Addon:Errorf("Problem with stat %s: %s", stat, err)
+        end)
       end
       
       function StatInfo:GetNormalName()
