@@ -71,7 +71,13 @@ if Addon.isEra then
   
   Addon:AddExtraStatCapture("Spell Power",
     {INPUT = "^提高法術和魔法效果所造成的傷害和治療效果，最多([%d,]+)點。$"},
+    {INPUT = "^魔法法術和效果造成的傷害和治療效果最多提高([%d,]+)點。$"},
+    {INPUT = "^提高魔法法術和效果所造成的傷害和治療效果，最多([%d,]+)點。$"},
     {INPUT = "^%+([%d,]+) 傷害及治療法術$"})
+  
+  Addon:AddExtraStatCapture("Healing",
+    {INPUT = "^提高法術和魔法效果所造成的治療效果，最多([%d,]+)點。$"},
+    {INPUT = "^%+([%d,]+) 治療法術$"})
   
   Addon:AddExtraStatCapture("Arcane Damage",
     {INPUT = "^秘法法術和效果造成的傷害提高最多([%d,]+)點。$"},
@@ -92,10 +98,6 @@ if Addon.isEra then
   
   Addon:AddExtraStatCapture("Holy Damage",
     {INPUT = "^提高神聖法術和效果所造成的傷害，最多([%d,]+)點。$"})
-  
-  Addon:AddExtraStatCapture("Healing",
-    {INPUT = "^提高法術和魔法效果所造成的治療效果，最多([%d,]+)點。$"},
-    {INPUT = "^%+([%d,]+) 治療法術$"})
   
   Addon:AddExtraStatCapture("Spell Penetration",
     {INPUT = "^使你法術目標的魔法抗性降低([%d,]+)點。$"})
@@ -146,6 +148,12 @@ else
   
   Addon:AddExtraStatCapture("Health Regeneration",
     {INPUT = "^每5秒恢復([%d,]+)生命力$"})
+end
+
+if Addon.isSoD or Addon.isTBC then
+  Addon:AddExtraStatCapture("Healing",
+    {INPUT = "^使所有魔法法術和效果造成的治療效果最多提高([%d,]+)點，傷害最多提高[%d,]+點。$"},
+    {INPUT = "^使所有魔法法術和效果造成的治療效果提高最多([%d,]+)點，傷害提高最多[%d,]+點。$"})
 end
 
 

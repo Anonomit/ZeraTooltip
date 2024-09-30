@@ -64,7 +64,12 @@ if Addon.isEra then
   
   Addon:AddExtraStatCapture("Spell Power",
     {INPUT = "^Aumenta hasta ([%d,]+) p%. el daño y la sanación de los hechizos y efectos mágicos%.$"},
-    {INPUT = "^Daño y hechizos de sanación %+([%d,]+)$"})
+    {INPUT = "^Daño y hechizos de sanación %+([%d,]+)$"},
+    {INPUT = "^Aumenta hasta ([%d,]+) p%. el daño y la sanación de los efectos y hechizos mágicos%.$"})
+  
+  Addon:AddExtraStatCapture("Healing",
+    {INPUT = "^Aumenta hasta ([%d,]+) p%. la sanación de los hechizos y efectos%.$"},
+    {INPUT = "^%+([%d,]+) de hechizos de sanación$"})
   
   Addon:AddExtraStatCapture("Arcane Damage",
     {INPUT = "^Aumenta hasta ([%d,]+) p%. el daño que infligen los hechizos y efectos Arcanos%.$"})
@@ -84,15 +89,12 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Holy Damage",
     {INPUT = "^Aumenta hasta ([%d,]+) p%. el daño que infligen los hechizos y efectos Sagrados%.$"})
   
-  Addon:AddExtraStatCapture("Healing",
-    {INPUT = "^Aumenta hasta ([%d,]+) p%. la sanación de los hechizos y efectos%.$"},
-    {INPUT = "^%+([%d,]+) de hechizos de sanación$"})
-  
   Addon:AddExtraStatCapture("Spell Penetration",
     {INPUT = "^Las resistencias mágicas de los objetivos de tus hechizos se reducen ([%d,]+) p%.$"})
   
   Addon:AddExtraStatCapture("Hit Rating",
-    {INPUT = "^Mejora un ([%d,]+%%) tu probabilidad de golpear con todos tus hechizos y ataques%.$"})
+    {INPUT = "^Mejora un ([%d,]+%%) tu probabilidad de golpear con todos tus hechizos y ataques%.$"},
+    {INPUT = "^Aumenta un ([%d,]+%%) tu probabilidad de golpear con todos los hechizos y ataques%.$"})
   
   Addon:AddExtraStatCapture("Critical Strike Rating",
     {INPUT = "^Aumenta un ([%d,]+%%) tu probabilidad de golpe crítico con hechizos y ataques cuerpo a cuerpo y a distancia%.$"},
@@ -143,6 +145,11 @@ else
   
   Addon:AddExtraStatCapture("Critical Strike Rating",
     {INPUT = "^Aumenta tu índice de golpe crítico ([%d,]+) p%.$"})
+end
+
+if Addon.isSoD or Addon.isTBC then
+  Addon:AddExtraStatCapture("Healing",
+    {INPUT = "^Aumenta hasta ([%d,]+) p%. la sanación realizada y hasta [%d,]+ p%. el daño que infligen todos los efectos y hechizos mágicos%.$"})
 end
 
 

@@ -68,6 +68,10 @@ if Addon.isEra then
     {INPUT = "^Aumenta em até ([%d%.]+) o dano causado e a cura realizada por feitiços e efeitos mágicos%.$"},
     {INPUT = "^Feitiços de Cura e de Dano %+([%d%.]+)$"})
   
+  Addon:AddExtraStatCapture("Healing",
+    {INPUT = "^Aumenta em até ([%d%.]+) a cura realizada por feitiços e efeitos mágicos%.$"},
+    {INPUT = "^%+([%d%.]+) Feitiços de Cura$"})
+  
   Addon:AddExtraStatCapture("Arcane Damage",
     {INPUT = "^Aumenta em até ([%d%.]+) o dano causado por feitiços e efeitos Arcanos%.$"})
   
@@ -86,19 +90,17 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Holy Damage",
     {INPUT = "^Aumenta em até ([%d%.]+) o dano causado por feitiços e efeitos Sagrados%.$"})
   
-  Addon:AddExtraStatCapture("Healing",
-    {INPUT = "^Aumenta em até ([%d%.]+) a cura realizada por feitiços e efeitos mágicos%.$"},
-    {INPUT = "^%+([%d%.]+) Feitiços de Cura$"})
-  
   Addon:AddExtraStatCapture("Spell Penetration",
     {INPUT = "^Reduz em ([%d%.]+) as resistências mágicas dos alvos dos seus feitiços%.$"})
   
   Addon:AddExtraStatCapture("Hit Rating",
-    {INPUT = "^Melhora em ([%d%.]+%%) sua chance de acerto com todos os feitiços e ataques%.$"})
+    {INPUT = "^Melhora em ([%d%.]+%%) sua chance de acerto com todos os feitiços e ataques%.$"},
+    {INPUT = "^Aumenta em ([%d%.]+%%) a sua chance de acerto com todos os feitiços e ataques%.$"})
   
   Addon:AddExtraStatCapture("Critical Strike Rating",
     {INPUT = "^Aumenta em ([%d%.]+%%) a chance de obter um acerto crítico com ataques de longo alcance, corpo a corpo e feitiços%.$"},
     {INPUT = "^Aumenta em ([%d%.]+%%) sua chance de obter acerto crítico com todos os feitiços e ataques%.$"},
+    {INPUT = "^Aumenta em ([%d%.]+%%) sua chance de obter um acerto crítico com todos os feitiços e ataques%.$"},
     {INPUT = "^Melhora em ([%d%.]+%%) sua chance de receber um acerto crítico com todos os feitiços e ataques%.$"})
   
   Addon:AddExtraStatCapture("Physical Hit Rating",
@@ -139,6 +141,11 @@ else
   
   Addon:AddExtraStatCapture("Hit Rating",
     {INPUT = "^Aumenta em ([%d%.]+) a sua taxa de acerto%.$"})
+end
+
+if Addon.isSoD or Addon.isTBC then
+  Addon:AddExtraStatCapture("Healing",
+    {INPUT = "^Aumenta em ([%d%.]+) a cura realizada e em até [%d%.]+ o dano causado por todos os feitiços e efeitos mágicos%.$"})
 end
 
 

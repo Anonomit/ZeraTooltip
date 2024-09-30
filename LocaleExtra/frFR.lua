@@ -97,6 +97,10 @@ if Addon.isEra then
     {INPUT = "^Augmente les soins et dégâts produits par les sorts et effets magiques de ([%d%-]+) au maximum%.$"},
     {INPUT = "^%+([%d%-]+) aux dégâts et aux sorts de soins$"})
   
+  Addon:AddExtraStatCapture("Healing",
+    {INPUT = "^Augmente les soins prodigués par les sorts et effets de ([%d%-]+) au maximum%.$"},
+    {INPUT = "^%+([%d%-]+) aux sorts de soins$"})
+  
   Addon:AddExtraStatCapture("Arcane Damage",
     {INPUT = "^Augmente les dégâts infligés par les sorts et effets des Arcanes de ([%d%-]+) au maximum%.$"})
   
@@ -115,17 +119,19 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Holy Damage",
     {INPUT = "^Augmente les dégâts infligés par les sorts et effets du Sacré de ([%d%-]+) au maximum%.$"})
   
-  Addon:AddExtraStatCapture("Healing",
-    {INPUT = "^Augmente les soins prodigués par les sorts et effets de ([%d%-]+) au maximum%.$"},
-    {INPUT = "^%+([%d%-]+) aux sorts de soins$"})
-  
   Addon:AddExtraStatCapture("Spell Penetration",
     {INPUT = "^Diminue les résistances magiques des cibles de vos sorts de ([%d%-]+)%.$"})
   
-  Addon:AddExtraStatCapture("Hit Rating", {
-    INPUT  = "^Augmente de ([%d%-]+).*%% les chances de toucher avec tous les sorts et attaques%.",
-    OUTPUT = function(n) if n then return n .. "%" end end,
-  })
+  Addon:AddExtraStatCapture("Hit Rating",
+    {
+      INPUT  = "^Augmente de ([%d%-]+).*%% les chances de toucher avec tous les sorts et attaques%.",
+      OUTPUT = function(n) if n then return n .. "%" end end,
+    },
+    {
+      INPUT  = "^Augmente de ([%d%-]+).*%% vos chances de toucher avec tous les sorts et attaques%.",
+      OUTPUT = function(n) if n then return n .. "%" end end,
+    }
+  )
   
   Addon:AddExtraStatCapture("Critical Strike Rating",
     {
@@ -138,6 +144,10 @@ if Addon.isEra then
     },
     {
       INPUT = "^Augmente de ([%d%-]+).*%% vos chances d’infliger un coup critique avec les attaques en mêlée et à distance et les sorts%.$",
+      OUTPUT = function(n) if n then return n .. "%" end end,
+    },
+    {
+      INPUT = "^Augmente de ([%d%-]+).*%% vos chances de coup critique avec les sorts et attaques%.$",
       OUTPUT = function(n) if n then return n .. "%" end end,
     }
   )
@@ -193,6 +203,12 @@ else
   
   Addon:AddExtraStatCapture("Mana Regeneration",
     {INPUT = "^Rend ([%d%-]+) points de mana toutes les 5 sec%.$"})
+end
+
+if Addon.isSoD or Addon.isTBC then
+  Addon:AddExtraStatCapture("Healing",
+    {INPUT = "^Augmente les soins d’un maximum de ([%d%-]+) et les dégâts d’un maximum de [%d%-]+ pour tous les sorts et effets magiques%.$"},
+    {INPUT = "^Augmente les soins prodigués d’un maximum de ([%d%-]+) et les dégâts d’un maximum de [%d%-]+ pour tous les sorts et effets magiques%.$"})
 end
 
 

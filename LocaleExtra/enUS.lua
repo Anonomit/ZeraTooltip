@@ -373,7 +373,7 @@ Addon:AddExtraReplacement("Bandage",
 
 Addon:AddExtraReplacement("Average Range",
   {
-    INPUT  = "([%d,]+) to ([%d,]+)",
+    INPUT  = "([%d,]+) to (%d*,?%d+)", -- don't capture trailing commas
     OUTPUT = function(amount1, amount2) return format("%s (%s-%s)", Addon:ToFormattedNumber(Addon:Round((Addon:ToNumber(amount1)+Addon:ToNumber(amount2))/2, 1)), Addon:ToFormattedNumber(amount1), Addon:ToFormattedNumber(amount2)) end, -- Health/mana Potions, Demonic Rune
   }
 )

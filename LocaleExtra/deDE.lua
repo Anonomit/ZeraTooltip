@@ -55,7 +55,12 @@ if Addon.isEra then
   
   Addon:AddExtraStatCapture("Spell Power",
     {INPUT = "^Erhöht durch Zauber und magische Effekte zugefügten Schaden und Heilung um bis zu ([%d,]+)%.$"},
+    {INPUT = "^Erhöht durch Zauber und magische Effekte verursachten Schaden und Heilung um bis zu ([%d,]+)%.$"},
     {INPUT = "^%+([%d,]+) Schadenszauber und Heilzauber$"})
+  
+  Addon:AddExtraStatCapture("Healing",
+    {INPUT = "^Erhöht durch Zauber und Effekte verursachte Heilung um bis zu ([%d,]+)%.$"},
+    {INPUT = "^%+([%d,]+) Heilzauber$"})
   
   Addon:AddExtraStatCapture("Arcane Damage",
     {INPUT = "^Erhöht durch Arkanzauber und Arkaneffekte zugefügten Schaden um bis zu ([%d,]+)%.$"})
@@ -75,16 +80,13 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Holy Damage",
     {INPUT = "^Erhöht durch Heiligzauber und Heiligeffekte zugefügten Schaden um bis zu ([%d,]+)%.$"})
   
-  Addon:AddExtraStatCapture("Healing",
-    {INPUT = "^Erhöht durch Zauber und Effekte verursachte Heilung um bis zu ([%d,]+)%.$"},
-    {INPUT = "^%+([%d,]+) Heilzauber$"})
-  
   Addon:AddExtraStatCapture("Spell Penetration",
     {INPUT = "^Reduziert die Magiewiderstände der Ziele Eurer Zauber um ([%d,]+)%.$"},
     {INPUT = "^Verringert die Magiewiderstände der Ziele Eurer Zauber um ([%d,]+)%.$"})
   
   Addon:AddExtraStatCapture("Hit Rating",
-    {INPUT = "^Erhöht Eure Trefferchance mit Zaubern sowie Nahkampf%- und Distanzangriffen um ([%d,]+%%)%.$"})
+    {INPUT = "^Erhöht Eure Trefferchance mit Zaubern sowie Nahkampf%- und Distanzangriffen um ([%d,]+%%)%.$"},
+    {INPUT = "^Verbessert Eure Chance auf Treffer mit allen Zaubern und Angriffen um ([%d,]+%%)%.$"})
   
   Addon:AddExtraStatCapture("Critical Strike Rating",
     {INPUT = "^Erhöht die Chance auf einen kritischen Treffer mit Nahkampf%- und Distanzangriffen sowie Zaubern um ([%d,]+%%)%.$"},
@@ -132,6 +134,11 @@ else
   
   Addon:AddExtraStatCapture("Health Regeneration",
     {INPUT = "^Alle 5 Sek%. ([%d,]+) Gesundheit$"})
+end
+
+if Addon.isSoD or Addon.isTBC then
+  Addon:AddExtraStatCapture("Healing",
+    {INPUT = "^Erhöht durch sämtliche Zauber und magische Effekte verursachte Heilung um bis zu ([%d,]+) und den verursachten Schaden um bis zu [%d,]+%.$"})
 end
 
 

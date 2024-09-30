@@ -65,7 +65,12 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Spell Power",
     {INPUT = "^Aumenta el daño y la curación de los hechizos mágicos y los efectos hasta en ([%d,]+) p%.$"},
     {INPUT = "^Aumenta el daño y la sanación de los hechizos mágicos y los efectos hasta en ([%d,]+) p%.$"},
+    {INPUT = "^Aumenta hasta ([%d,]+) p%. el daño y la sanación de los hechizos y los efectos mágicos%.$"},
     {INPUT = "^%+([%d,]+) de daño y Hechizos de curación$"})
+  
+  Addon:AddExtraStatCapture("Healing",
+    {INPUT = "^Aumenta la curación de los hechizos y los efectos hasta en ([%d,]+) p%.$"},
+    {INPUT = "^%+([%d,]+) de Hechizos de curación$"})
   
   Addon:AddExtraStatCapture("Arcane Damage",
     {INPUT = "^Aumenta el daño causado por los hechizos Arcanos y los efectos hasta en ([%d,]+) p%.$"},
@@ -90,10 +95,6 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Holy Damage",
     {INPUT = "^Aumenta el daño causado por los hechizos Sagrados y los efectos hasta en ([%d,]+) p%.$"},
     {INPUT = "^%+([%d,]+) de daño de Hechizos Sagrados?$"})
-  
-  Addon:AddExtraStatCapture("Healing",
-    {INPUT = "^Aumenta la curación de los hechizos y los efectos hasta en ([%d,]+) p%.$"},
-    {INPUT = "^%+([%d,]+) de Hechizos de curación$"})
   
   Addon:AddExtraStatCapture("Spell Penetration",
     {INPUT = "^Reduce las resistencias mágicas de los objetivos de tus hechizos en ([%d,]+) p%.$"})
@@ -183,6 +184,11 @@ else
   
   Addon:AddExtraStatCapture("Health Regeneration",
     {INPUT = "^%+([%d,]+) salud cada 5 s$"})
+end
+
+if Addon.isSoD or Addon.isTBC then
+  Addon:AddExtraStatCapture("Healing",
+    {INPUT = "^Aumenta hasta ([%d,]+) p%. la sanación que aplicas y hasta [%d,]+ p%. el daño que infliges con todos los hechizos y efectos mágicos%.$"})
 end
 
 
