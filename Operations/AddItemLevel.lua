@@ -12,6 +12,40 @@ local tinsert  = table.insert
 
 local mathMax = math.max
 
+
+--[[
+1   Warrior       WARRIOR
+2   Paladin       PALADIN
+3   Hunter        HUNTER
+4   Rogue         ROGUE
+5   Priest        PRIEST
+6   Death Knight  DEATHKNIGHT
+7   Shaman        SHAMAN
+8   Mage          MAGE
+9   Warlock       WARLOCK
+10  Monk          MONK
+11  Druid         DRUID
+12  Demon Hunter  DEMONHUNTER
+13  Evoker        EVOKER
+]]
+
+local Enum_ClassID = {
+  WARRIOR     = 1,
+  PALADIN     = 2,
+  HUNTER      = 3,
+  ROGUE       = 4,
+  PRIEST      = 5,
+  DEATHKNIGHT = 6,
+  SHAMAN      = 7,
+  MAGE        = 8,
+  WARLOCK     = 9,
+  MONK        = 10,
+  DRUID       = 11,
+  DEMONHUNTER = 12,
+  EVOKER      = 13,
+}
+
+
 local invTypeBlacklist = Addon:MakeLookupTable{"", "INVTYPE_NON_EQUIP_IGNORE", "INVTYPE_BAG", "INVTYPE_TABARD", "INVTYPE_BODY"}
 
 
@@ -24,8 +58,8 @@ local function TableMax(t)
   until not val
   return max
 end
-local function GetItemLevelByClass(classLevels)
-  return classLevels[Addon.MY_CLASS] or TableMax(classLevels)
+local function GetItemLevelByClass(classLevels, default)
+  return classLevels[Addon.MY_CLASS] or default or TableMax(classLevels)
 end
 
 local tokenOverrides = {}
@@ -62,61 +96,85 @@ for ids, ilvl in pairs{
   
   [{19002, 19003}] = 83, -- Head of Nefarian
   
-  [{19721}] = 61, -- Primal Hakkari Shawl
-  [{19724}] = GetItemLevelByClass{
-    [3] = 68,
-    [4] = 65,
-    [5] = 68,
-  }, -- Primal Hakkari Aegis
-  [{19723}] = 65, -- Primal Hakkari Kossack
-  [{19722}] = 65, -- Primal Hakkari Tabard
-  [{19717}] = 61, -- Primal Hakkari Armsplint
-  [{19716}] = 61, -- Primal Hakkari Bindings
-  [{19718}] = 61, -- Primal Hakkari Stanchion
-  [{19719}] = 61, -- Primal Hakkari Girdle
-  [{19720}] = 61, -- Primal Hakkari Sash
+  [{19721}] = Addon:Ternary(Addon.isSoD, 65, 61), -- Primal Hakkari Shawl
+  [{19724}] = Addon:Ternary(Addon.isSoD, 68, GetItemLevelByClass{
+    [Enum_ClassID.HUNTER] = 68,
+    [Enum_ClassID.ROGUE]  = 65,
+    [Enum_ClassID.PRIEST] = 68,
+  }), -- Primal Hakkari Aegis
+  [{19723}] = Addon:Ternary(Addon.isSoD, 68, 65), -- Primal Hakkari Kossack
+  [{19722}] = Addon:Ternary(Addon.isSoD, 68, 65), -- Primal Hakkari Tabard
+  [{19717}] = Addon:Ternary(Addon.isSoD, 65, 61), -- Primal Hakkari Armsplint
+  [{19716}] = Addon:Ternary(Addon.isSoD, 65, 61), -- Primal Hakkari Bindings
+  [{19718}] = Addon:Ternary(Addon.isSoD, 65, 61), -- Primal Hakkari Stanchion
+  [{19719}] = Addon:Ternary(Addon.isSoD, 65, 61), -- Primal Hakkari Girdle
+  [{19720}] = Addon:Ternary(Addon.isSoD, 65, 61), -- Primal Hakkari Sash
   
   [{19939, 19940, 19941, 19942, 19819, 19820, 19818, 19814, 19821, 19816, 19817, 19813, 19815}] = 65, -- ZG Trinkets
   
   [{19802}] = 68, -- Heart of Hakkar
   
-  [{20888}] = 65, -- Qiraji Ceremonial Ring
-  [{20884}] = 65, -- Qiraji Magisterial Ring
-  [{20885}] = 67, -- Qiraji Martial Drape
-  [{20889}] = 67, -- Qiraji Regal Drape
-  [{20890}] = 70, -- Qiraji Ornate Hilt
-  [{20886}] = 70, -- Qiraji Spiked Hilt
+  [{20644}]  = 72, -- Nightmare Engulfed Object
+  [{235049}] = 75, -- Nightmare Engulfed Object (SoD)
   
-  [{20220}] = 70, -- Head of Ossirian the Unscarred
+  [{20888}] = Addon:Ternary(Addon.isSoD, 74, 65), -- Qiraji Ceremonial Ring
+  [{20884}] = Addon:Ternary(Addon.isSoD, 74, 65), -- Qiraji Magisterial Ring
+  [{20885}] = Addon:Ternary(Addon.isSoD, 76, 67), -- Qiraji Martial Drape
+  [{20889}] = Addon:Ternary(Addon.isSoD, 76, 67), -- Qiraji Regal Drape
+  [{20890}] = Addon:Ternary(Addon.isSoD, 79, 70), -- Qiraji Ornate Hilt
+  [{20886}] = Addon:Ternary(Addon.isSoD, 79, 70), -- Qiraji Spiked Hilt
   
-  [{21237}] = 79, -- Imperial Qiraji Regalia
-  [{21232}] = 79, -- Imperial Qiraji Armaments
-  [{20928}] = GetItemLevelByClass{
-    [1] = 78,
-    [3] = 81,
-    [4] = 78,
-    [5] = 78,
-  }, -- Qiraji Bindings of Command
+  [{20220}]  = 70, -- Head of Ossirian the Unscarred
+  [{235048}] = 77, -- Head of Ossirian the Unscarred (SoD)
+  
+  [{21237, 21232}] = 79, -- Imperial Qiraji Regalia, Imperial Qiraji Armaments
+  [{20928}] = GetItemLevelByClass({
+    [Enum_ClassID.WARRIOR] = 78,
+    [Enum_ClassID.HUNTER]  = 81,
+    [Enum_ClassID.ROGUE]   = 78,
+    [Enum_ClassID.PRIEST]  = 78,
+  }, 78), -- Qiraji Bindings of Command
   [{20932}] = 78, -- Qiraji Bindings of Dominance
   
   [{20930, 20926}] = 81, -- Vek'lor's Diadem, Vek'nilash's Circlet
   [{20927, 20931}] = 81, -- Ouro's Intact Hide, Skin of the Great Sandworm
   [{20929, 20933}] = 88, -- Carapace of the Old God, Husk of the Old God
   
+  
+  
+  [{235046}] = 79, -- Imperial Qiraji Armaments (SoD)
+  [{235045}] = 79, -- Imperial Qiraji Regalia (SoD)
+  
+  [{233371}] = 78, -- Qiraji Bindings of Sovereignty (SoD)
+  [{233369}] = 78, -- Qiraji Bindings of Dominance (SoD)
+  [{233370}] = GetItemLevelByClass({
+    [Enum_ClassID.WARRIOR] = 78,
+    [Enum_ClassID.HUNTER]  = 81,
+    [Enum_ClassID.MAGE]    = 78,
+  }, 78), -- Qiraji Bindings of Command (SoD),
+  
+  [{233368}] = 81, -- Intact Entrails (SoD)
+  [{233365}] = 81, -- Intact Viscera (SoD)
+  [{233367}] = 81, -- Intact Peritoneum (SoD)
+  
+  [{233364}] = 88, -- Skin of the Old God (SoD)
+  [{233362}] = 88, -- Husk of the Old God (SoD)
+  [{233363}] = 88, -- Carapace of the Old God (SoD)
+  
   [{21221}] = 88, -- Eye of C'Thun
   
   [{22726, 22727, 22724, 22733}] = 90, -- Atiesh
   
-  [{22369, 22362, 22355}] = 88, -- T3 Bracers
-  [{22371, 22364, 22357}] = 88, -- T3 Gloves
-  [{22370, 22363, 22356}] = 88, -- T3 Belts
-  [{22366, 22359, 22352}] = 88, -- T3 Legs
-  [{22372, 22365, 22358}] = 86, -- T3 Shoes
-  [{22351, 22350, 22349}] = 92, -- T3 Chests
-  [{22368, 22361, 22354}] = 86, -- T3 Shoulders
-  [{22367, 22360, 22353}] = 88, -- T3 Heads
+  [{22367, 22360, 22353, 236241, 236236, 236249}] = 88, -- T3 Heads
+  [{22368, 22361, 22354, 236240, 236237, 236254}] = 86, -- T3 Shoulders
+  [{22351, 22350, 22349, 236242, 236231, 236251}] = 92, -- T3 Chests
+  [{22369, 22362, 22355, 236245, 236235, 236247}] = 88, -- T3 Bracers
+  [{22371, 22364, 22357, 236243, 236233, 236250}] = 88, -- T3 Gloves
+  [{22370, 22363, 22356, 236244, 236232, 236252}] = 88, -- T3 Belts
+  [{22366, 22359, 22352, 236246, 236238, 236253}] = 88, -- T3 Legs
+  [{22372, 22365, 22358, 236239, 236234, 236248}] = 86, -- T3 Shoes
   
-  [{22520}] = 90, -- The Phylactery of Kel'Thuzad
+  [{22520, 236350}] = 90, -- The Phylactery of Kel'Thuzad
   
   
   
@@ -160,6 +218,9 @@ for ids, ilvl in pairs{
   [{71677, 71684, 71670, 71680, 71687, 71673, 71679, 71686, 71672, 71676, 71683, 71669, 71678, 71685, 71671}] = 391, -- T12 H
   
   [{71617}] = 391, -- Firestone
+  
+  [{78182, 78177, 78172, 78180, 78175, 78170, 78184, 78179, 78174, 78183, 78178, 78173, 78181, 78176, 78171}] = 397, -- T13 N
+  [{78850, 78851, 78852, 78859, 78860, 78861, 78847, 78848, 78849, 78853, 78854, 78855, 78856, 78857, 78858}] = 410, -- T13 H
 } do
   for _, id in ipairs(ids) do
     Addon:ThrowfAssert(not tokenOverrides[id], "Duplicate item level override: %d", id)
