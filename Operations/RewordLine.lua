@@ -19,7 +19,8 @@ end
 function Addon:GetTextCacheSize()
   return cacheSize
 end
-Addon:RegisterOptionSetHandler(Addon.WipeTextCache)
+Addon:RegisterAddonEventCallback("WIPE_CACHE", Addon.WipeTextCache)
+Addon:RegisterAddonEventCallback("OPTION_SET", Addon.WipeTextCache)
 Addon:RegisterCVarCallback("colorblindMode", Addon.WipeTextCache)
 Addon:RegisterEventCallback("PLAYER_LEVEL_UP", Addon.WipeTextCache) -- for ratingbuster compatibility
 

@@ -30,4 +30,4 @@ local function Throttle()
 end
 
 
-Addon:RegisterEnableCallback(function() Addon:OnAddonLoad("Blizzard_TradeSkillUI", Throttle) end)
+Addon:RegisterAddonEventCallback("ENABLE", function(self) Addon:OnAddonLoad("Blizzard_TradeSkillUI", Throttle) end)

@@ -370,7 +370,7 @@ local function OnTooltipSetItem(tooltip)
   self:RefreshDebugOptions()
 end
 
-Addon:RegisterEnableCallback(function(self)
+Addon:RegisterAddonEventCallback("ENABLE", function(self)
   -- hook tooltips with OnTooltipSetItem
   self.TipHooker2:Hook(OnTooltipSetItem, "item")
   

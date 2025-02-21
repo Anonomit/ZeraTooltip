@@ -280,10 +280,10 @@ end
 --  ╚██████╔╝███████╗██║ ╚████║███████╗██║  ██║██║  ██║███████╗    ╚██████╔╝██║        ██║   ██║╚██████╔╝██║ ╚████║███████║
 --   ╚═════╝ ╚══════╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝     ╚═════╝ ╚═╝        ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
 
-local function MakeGeneralOptions(opts)
+local function MakeGeneralOptions(opts, categoryName)
   local self = Addon
   local GUI = self.GUI
-  local opts = GUI:CreateGroup(opts, ADDON_NAME, ADDON_NAME, nil, "tab")
+  local opts = GUI:CreateGroup(opts, categoryName, categoryName, nil, "tab")
   
   do
     local opts = GUI:CreateGroup(opts, 1, self.L["Enable"], nil, "tab")
@@ -403,7 +403,7 @@ local function CreateStatOption(opts, i, stat)
   local self = Addon
   local GUI  = self.GUI
   
-  local percent = Addon.isEra and percentStats[stat] and "%" or ""
+  local percent = Addon.isEra and eraPercentStats[stat] and "%" or ""
   
   local defaultText = GetDefaultStatText(sampleNumber .. percent, stat)
   local formattedText = GetFormattedStatText(sampleNumber .. percent, stat)
@@ -728,7 +728,7 @@ local function MakeExtraOptions(opts, categoryName)
   local function MakeItemLevelOptions()
     local stat = "ItemLevel"
     
-    local sampleItemLevel = random(1, self.MAX_ITEMLEVEL)
+    local sampleItemLevel = random(1, self.MAX_ITEM_LEVEL)
     
     local samples = {}
     local defaultText   = format(self.L["Item Level %d"], sampleItemLevel)
@@ -1048,7 +1048,7 @@ local function MakeExtraOptions(opts, categoryName)
         {self.L["Requires Level %d"], sample1},
         {self.L["Requires Level %d"], self.MAX_LEVEL},
         {self.L["Requires Level %d"], self.MAX_LEVEL + 1},
-        self:ShortCircuit(self.expansionLevel >= self.expansions.cata, {self.L["Requires level %d to %d (%d)"], 1, self.MAX_LEVEL, self.MY_LEVEL}, nil),
+        self:Ternary(self.expansionLevel >= self.expansions.cata, {self.L["Requires level %d to %d (%d)"], 1, self.MAX_LEVEL, self.MY_LEVEL}, nil),
       }
       
       GUI:CreateDescription(opts, self.L["Default"], "small")
@@ -1757,8 +1757,8 @@ local function MakeExtraOptions(opts, categoryName)
       {"Socket_orange",    self.L["Matches a Red or Yellow Socket."]},
       {"Socket_prismatic", self.L["Prismatic Socket"]},
       {"Socket_meta",      self.L["Meta Socket"]},
-      Addon:ShortCircuit(Addon.expansionLevel >= Addon.expansions.cata, {"Socket_cogwheel", self.L["Cogwheel Socket"]}, nil),
-      Addon:ShortCircuit(Addon.expansionLevel >= Addon.expansions.mop, {"Socket_hydraulic", self.L["Hydraulic Socket"]}, nil),
+      Addon:Ternary(Addon.expansionLevel >= Addon.expansions.cata, {"Socket_cogwheel",  self.L["Cogwheel Socket"]},  nil),
+      Addon:Ternary(Addon.expansionLevel >= Addon.expansions.mop,  {"Socket_hydraulic", self.L["Hydraulic Socket"]}, nil),
     }
     
     local samples = {}
@@ -2108,15 +2108,15 @@ local function MakeResetOptions(opts, categoryName)
   GUI:CreateDivider(opts)
   
   for _, v in ipairs{
-    {self.L["All"]    , function() self:ResetProfile()     end},
-    {L["Order"]       , function() self:ResetOrder()       end},
-    {self.L["Color"]  , function() self:ResetOption"color" self:ResetOption"doRecolor" end},
-    {self.L["Rename"] , function() self:ResetReword()      self:ResetOption"doReword" end},
-    {self.L["Icon"]   , function() self:ResetOption"icon"  self:ResetOption"doIcon" self:ResetOption"iconSizeManual" self:ResetOption"iconSize" self:ResetOption"iconSpace" end},
-    {L["Mod"]         , function() self:ResetMod()         end},
-    {L["Precision"]   , function() self:ResetPrecision()   end},
-    {self.L["Hide"]   , function() self:ResetOption"hide"  end},
-    {L["Spacing"]     , function() self:ResetOption"pad"   end},
+    {self.L["All"]    , function() self:ResetProfile()          end},
+    {L["Order"]       , function() self:ResetOrder()            end},
+    {self.L["Color"]  , function() self:ResetColor()            end},
+    {self.L["Rename"] , function() self:ResetReword()           end},
+    {self.L["Icon"]   , function() self:ResetIcon()             self:ResetIconSize() self:ResetOptionQuiet"iconSpace" end},
+    {L["Mod"]         , function() self:ResetMod()              end},
+    {L["Precision"]   , function() self:ResetPrecision()        end},
+    {self.L["Hide"]   , function() self:ResetOptionQuiet"hide"  end},
+    {L["Spacing"]     , function() self:ResetOptionQuiet"pad"   end},
   } do
     local cat, func = unpack(v, 1, 2)
     GUI:CreateDescription(opts, cat)
@@ -2164,10 +2164,10 @@ end
 local function MakeDebugOptions(opts, categoryName)
   local self = Addon
   local GUI = self.GUI
-  
   if not self:IsDebugEnabled() then return end
-  
   GUI:SetDBType"Global"
+  
+  
   local opts = GUI:CreateGroup(opts, categoryName, categoryName, nil, "tab")
   
   GUI:CreateExecute(opts, "reload", self.L["Reload UI"], nil, ReloadUI)
@@ -2406,13 +2406,13 @@ function Addon:MakeAddonOptions(chatCmd)
   
   local sections = {}
   for _, data in ipairs{
-    {MakeGeneralOptions, nil},
+    {MakeGeneralOptions, ADDON_NAME},
     {MakeStatsOptions,   self.L["Stats"],         "stats"},
     {MakePaddingOptions, L["Spacing"],            "spacing", "spaces", "padding"},
     {MakeExtraOptions,   self.L["Miscellaneous"], "miscellaneous", "other"},
     {MakeProfileOptions, "Profiles",              "profiles"},
     {MakeResetOptions,   self.L["Reset"],         "reset"},
-    {MakeDebugOptions,   self.L["Debug"],         "debug"},
+    {MakeDebugOptions,   self.L["Debug"],         "debug", "db"},
   } do
     
     local func = data[1]
@@ -2426,8 +2426,9 @@ function Addon:MakeAddonOptions(chatCmd)
       local OpenOptions_Old = OpenOptions
       OpenOptions = function(...)
         if not self:GetGlobalOption"debug" then
-          self:SetGlobalOption(true, "debug")
-          self:Debug("Debug mode enabled")
+          self:SetGlobalOptionConfig(true, "debug")
+          self:Debug"Debug mode enabled"
+          self:NotifyChange()
         end
         return OpenOptions_Old(...)
       end
@@ -2443,14 +2444,17 @@ function Addon:MakeAddonOptions(chatCmd)
     local opts = GUI:CreateOpts(title, "tab")
     
     for _, func in ipairs(sections) do
-      func(opts)
+      GUI:ResetDBType()
+      self:xpcall(function()
+        func(opts)
+      end)
+      GUI:ResetDBType()
     end
     
     return opts
   end)
   
-  -- default is (700, 500)
-  self.AceConfigDialog:SetDefaultSize(ADDON_NAME, 700, 800)
+  self.AceConfigDialog:SetDefaultSize(ADDON_NAME, 700, 800) -- default is (700, 500)
 end
 
 
@@ -2468,5 +2472,3 @@ function Addon:MakeBlizzardOptions(chatCmd)
     return opts
   end)
 end
-
-

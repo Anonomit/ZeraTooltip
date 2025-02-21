@@ -64,29 +64,57 @@ do
     self:RegenerateStatOrder()
   end
   function Addon:ResetColor(stat)
-    self:ResetOption("doRecolor", stat)
-    self:ResetOption("color", stat)
+    if stat then
+      self:ResetOption("doRecolor", stat)
+      self:ResetOption("color", stat)
+    else
+      self:ResetOptionQuiet"doRecolor"
+      self:ResetOptionQuiet"color"
+    end
   end
   function Addon:ResetReword(stat)
-    self:ResetOption("doReword", stat)
-    self:ResetOption("reword", stat)
-    self:SetDefaultRewordByLocale(stat)
+    if stat then
+      self:ResetOption("doReword", stat)
+      self:ResetOption("reword", stat)
+    else
+      self:ResetOptionQuiet("doReword")
+      self:ResetOptionQuiet("reword")
+    end
+    -- self:SetDefaultRewordByLocale(stat)
   end
   function Addon:ResetMod(stat)
-    self:ResetOption("mod", stat)
-    self:SetDefaultModByLocale(stat)
+    if stat then
+      self:ResetOption("mod", stat)
+    else
+      self:ResetOptionQuiet"mod"
+    end
+    -- self:SetDefaultModByLocale(stat)
   end
   function Addon:ResetPrecision(stat)
-    self:ResetOption("precision", stat)
-    self:SetDefaultPrecisionByLocale(stat)
+    if stat then
+      self:ResetOption("precision", stat)
+    else
+      self:ResetOptionQuiet"precision"
+    end
+    -- self:SetDefaultPrecisionByLocale(stat)
   end
   function Addon:ResetIcon(stat)
-    self:ResetOption("doIcon", stat)
-    self:ResetOption("icon", stat)
+    if stat then
+      self:ResetOption("doIcon", stat)
+      self:ResetOption("icon", stat)
+    else
+      self:ResetOptionQuiet"doIcon"
+      self:ResetOptionQuiet"icon"
+    end
   end
   function Addon:ResetIconSize(stat)
-    self:ResetOption("iconSizeManual", stat)
-    self:ResetOption("iconSize", stat)
+    if stat then
+      self:ResetOption("iconSizeManual", stat)
+      self:ResetOption("iconSize", stat)
+    else
+      self:ResetOptionQuiet"iconSizeManual"
+      self:ResetOptionQuiet"iconSize"
+    end
   end
 end
 

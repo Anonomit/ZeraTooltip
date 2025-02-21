@@ -27,7 +27,8 @@ end
 function Addon:GetConstructorCacheSize()
   return cacheSize
 end
-Addon:RegisterOptionSetHandler(Addon.WipeConstructorCache)
+Addon:RegisterAddonEventCallback("WIPE_CACHE", Addon.WipeConstructorCache)
+Addon:RegisterAddonEventCallback("OPTION_SET", Addon.WipeConstructorCache)
 Addon:RegisterCVarCallback("colorblindMode", Addon.WipeConstructorCache)
 Addon:RegisterEventCallback("PLAYER_EQUIPMENT_CHANGED", Addon.WipeConstructorCache)
 Addon:RegisterEventCallback("PLAYER_LEVEL_UP", Addon.WipeConstructorCache) -- for ratingbuster compatibility

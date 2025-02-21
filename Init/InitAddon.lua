@@ -76,23 +76,6 @@ do
   end
   
   
-  local chainGsubPattern = {
-    {"%%%d%$", "%%"},               -- koKR ITEM_RESIST_SINGLE: "%3$s 저항력 %1$c%2$d" -> "%s 저항력 %c%d"
-    {"|3%-%d+%((.+)%)", "%1"},      -- ruRU ITEM_RESIST_SINGLE: "%c%d к сопротивлению |3-7(%s)" -> %c%d к сопротивлению %s
-    {"[().+-]", "%%%0"},            -- cover special characters with escape codes
-    {"%%c", "([+-])"},              -- "%c" -> "([+-])"
-    {"%%d", "(%%d+)"},              -- "%d" -> "(%d+)"
-    {"%%s", "(.*)"},                -- "%s" -> "(.*)"
-    {"|4[^:]-:[^:]-:[^:]-;", ".-"}, -- removes |4singular:plural;
-    {"|4[^:]-:[^:]-;", ".-"},       -- removes ruRU |4singular:plural1:plural2;
-  }
-  local reversedPatternsCache = {}
-  function Addon:ReversePattern(text)
-    reversedPatternsCache[text] = reversedPatternsCache[text] or ("^" .. self:ChainGsub(text, unpack(chainGsubPattern)) .. "$")
-    return reversedPatternsCache[text]
-  end
-  
-  
   function Addon:CoverSpecialCharacters(text)
     return self:ChainGsub(text, {"%p", "%%%0"})
   end
@@ -101,28 +84,6 @@ do
   end
   
   
-  
-  function Addon:MakeAtlas(atlas, height, width, hex)
-    height = tostring(height or "0")
-    local tex = "|A:" .. atlas .. ":" .. height .. ":" .. tostring(width or height)
-    if hex then
-      tex = tex .. format(":::%d:%d:%d", self:ConvertHexToRGB(hex))
-    end
-    return tex .. "|a"
-  end
-  function Addon:MakeIcon(texture, height, width, hex)
-    local tex = "|T" .. texture .. ":" .. tostring(height or "0") .. ":"
-    if width then
-      tex = tex .. width
-    end
-    if hex then
-      tex = tex .. format(":::1:1:0:1:0:1:%d:%d:%d", self:ConvertHexToRGB(hex))
-    end
-    return tex .. "|t"
-  end
-  function Addon:UnmakeIcon(texture)
-    return strMatch(texture, "|T([^:]+):")
-  end
   
   function Addon:InsertIcon(text, stat, customTexture)
     if self:GetOption("doIcon", stat) then
@@ -207,11 +168,11 @@ do
     Addon[method] = function(self, stat)
       if stat then
         if overrides[stat] then
-          Addon.SetOption(self, overrides[stat], field, stat)
+          Addon:StoreInTable(self, "profile", field, stat, overrides[stat])
         end
       else
         for stat, val in pairs(overrides) do
-          Addon.SetOption(self, val, field, stat)
+          Addon:StoreInTable(self, "profile", field, stat, val)
         end
       end
     end
@@ -296,8 +257,6 @@ end
 --  ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚══════╝╚══════╝
 
 do
-  Addon.MY_RACE_LOCALNAME, Addon.MY_RACE_FILENAME = UnitRace"player"
-  
   -- Races: Human, Orc, Dwarf, Night Elf, Undead, Tauren, Gnome, Troll, Blood Elf, Draenei
   local raceIDs = {1, 2, 3, 4, 5, 6, 7, 8}
   if Addon.expansionLevel >= Addon.expansions.tbc then
@@ -339,10 +298,7 @@ end
 --   ╚═════╝╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚══════╝
 
 do
-  local _
-  Addon.MY_CLASS_NAME, _, Addon.MY_CLASS = UnitClass"player"
-  
-  Addon.myClassString = format(ITEM_CLASSES_ALLOWED, Addon.MY_CLASS_NAME)
+  Addon.myClassString = format(ITEM_CLASSES_ALLOWED, Addon.MY_CLASS_LOCALNAME)
   
   local sampleClasses = {{5, 9, 2}, {7, 1, 3}, {4, 6, 8, 11}}
   if Addon.expansionLevel < Addon.expansions.wrath then
@@ -453,43 +409,6 @@ do
     end
     return true
   end
-end
-
-
-
---  ██╗     ███████╗██╗   ██╗███████╗██╗     ███████╗
---  ██║     ██╔════╝██║   ██║██╔════╝██║     ██╔════╝
---  ██║     █████╗  ██║   ██║█████╗  ██║     ███████╗
---  ██║     ██╔══╝  ╚██╗ ██╔╝██╔══╝  ██║     ╚════██║
---  ███████╗███████╗ ╚████╔╝ ███████╗███████╗███████║
---  ╚══════╝╚══════╝  ╚═══╝  ╚══════╝╚══════╝╚══════╝
-
-do
-  Addon.MAX_ITEMLEVEL = Addon:Switch(Addon.expansionLevel, {
-    [Addon.expansions.era]   = 92,
-    [Addon.expansions.tbc]   = 159,
-    [Addon.expansions.wrath] = 284,
-    [Addon.expansions.cata]  = 416,
-  }, 1)
-  
-  Addon.MAX_LEVEL = MAX_PLAYER_LEVEL_TABLE[GetExpansionLevel()] or 200
-  
-  Addon.MY_LEVEL = UnitLevel"player"
-  
-  Addon:RegisterEventCallback("PLAYER_LEVEL_UP", function(self, event, level) self.MY_LEVEL = UnitLevel"player" end)
-end
-
-
-
---  ███████╗ █████╗  ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗
---  ██╔════╝██╔══██╗██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
---  █████╗  ███████║██║        ██║   ██║██║   ██║██╔██╗ ██║███████╗
---  ██╔══╝  ██╔══██║██║        ██║   ██║██║   ██║██║╚██╗██║╚════██║
---  ██║     ██║  ██║╚██████╗   ██║   ██║╚██████╔╝██║ ╚████║███████║
---  ╚═╝     ╚═╝  ╚═╝ ╚═════╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
-
-do
-  Addon.MY_FACTION = UnitFactionGroup"player"
 end
 
 
@@ -961,6 +880,141 @@ do
     return color
   end
 end
+
+
+
+
+
+--  ████████╗███████╗███████╗████████╗██╗███╗   ██╗ ██████╗ 
+--  ╚══██╔══╝██╔════╝██╔════╝╚══██╔══╝██║████╗  ██║██╔════╝ 
+--     ██║   █████╗  ███████╗   ██║   ██║██╔██╗ ██║██║  ███╗
+--     ██║   ██╔══╝  ╚════██║   ██║   ██║██║╚██╗██║██║   ██║
+--     ██║   ███████╗███████║   ██║   ██║██║ ╚████║╚██████╔╝
+--     ╚═╝   ╚══════╝╚══════╝   ╚═╝   ╚═╝╚═╝  ╚═══╝ ╚═════╝ 
+
+--@debug@
+do
+  local self = Addon
+  
+  local items = self:Squish{
+    
+    
+    -- suffixes
+    {"stam str agi", {20659,2149}},
+    {"int spirit", {6512,757}},
+    {"agi dodge", {12007,1750}},
+    {"blockrating", {9753,1647}},
+    {"stam int spellpower", {20659,2143}},
+    {"hp5", {11994,2109}},
+    {"stam healing mp5", {20659,2146}},
+    {"atk pwr", {4561,1547}},
+    
+    
+    
+    
+    -- spell school damage
+    {"arcane dmg", 18338},
+    {"fire dmg", 10042},
+    {"nature dmg", 1998},
+    {"frost dmg", 19108},
+    {"shadow dmg", 2549},
+    self:Ternary(self.isSoD, {"stam holy dmg", 210773}, nil),
+    {"arcane dmg", {4569,1799}},
+    {"fire dmg", {15969,1875}},
+    {"nature dmg", {2140,1989}},
+    {"frost dmg", {15932,1951}},
+    {"shadow dmg", {2077,1847}},
+    {"holy dmg", {15970,1914}},
+    
+    
+    
+    
+    
+    
+    {"stam int spirit shadowres mp5 healing", 16829},
+    {"stam int spirit", 16683},
+    {"stam str fireres defense dodgerating", 16866},
+    {"str two-handedswords feralatkpwr", 18822},
+    {"stam str shadowres defense parry", 16867},
+    {"stam str shadowres defense blockrating", 16868},
+    {"stam int spellpwr spellpen spellcrit", 22505},
+    {"stam int spellpwr spellpen spellcrit", 22799},
+    {"rangedatkpwr physcrit", 18713},
+    {"stam str fireres defense physhit", 16863},
+    self:Ternary(self.expansionLevel >= self.expansions.tbc, {"stam atkpwr armorpen hit", 32497}, nil),
+    {"allres defense", 18813},
+    {"allres active", 23042},
+    {"stam blockrating blockval", 22981},
+    {"stam int spirit feralatkpwr healingaura damageaura portal", 22631},
+    {"spellpwr spellhit", 23031},
+    {"stam int spellpwr feralatkpwr mp5", 22988},
+    {"stam int atkpwr", 19144},
+    {"stam hp5", 18315},
+    self:Ternary(self.expansionLevel >= self.expansions.tbc, {"stam crit resilience atkpwr", 28377}, nil),
+    {"stam int arcanedamage", 7757},
+    {"int spirit fireres firedamage", 3075},
+    {"int spirit naturedamage", 2564},
+    {"stam int frostdamage", 11782},
+    {"stam shadowdamage", 18407},
+    
+    
+    
+    
+    {"mp5 hp5", 17743},
+    
+    
+    self:Ternary(self.isSoD, {"chance hitrating", 204807}, nil),
+    self:Ternary(self.isSoD, {"str stam int spi natureres critrating spellpwr", 215377}, nil), -- extra broken in frFR
+    self:Ternary(self.isSoD, {"str agi feralatkpwr active", 210741}, nil), -- extra broken in frFR
+    self:Ternary(self.isSoD, {"stam int spirit spellpwr crit", 220590}, nil),
+    self:Ternary(self.isSoD, {"stam spellpwr spellhaste", 236267}, nil),
+    self:Ternary(self.isSoD, {"stam atkpwr hit physhaste", 236269}, nil),
+    self:Ternary(self.isSoD, {"str expertise crit", 236255}, nil),
+    
+    
+    {"recipe", 5640},
+    
+    self:Ternary(self.expansionLevel >= self.expansions.cata, {"stam int mast haste", 64904}, nil),
+    -- self:Ternary(self.expansionLevel >= self.expansions.cata, {"stam agi mast expertise haste active", 77950}, nil),
+    
+  }
+  local ids = {}
+  
+  local ItemCache = LibStub"ItemCache"
+  
+  for i, v in ipairs(items) do
+    ids[#ids+1] = v[2]
+  end
+  
+  function self:RunTests()
+    ItemCache:OnCache(ids, function()
+      for i, v in ipairs(items) do
+        print((ItemCache(v[2]):GetLink():gsub("%[[^%]]+%]", "[" .. v[1] .. "]")))
+      end
+    end)
+  end
+  
+  
+  
+  function self:FindDuplicates()
+    local history = {}
+    for stat in pairs(self.statsInfo) do
+      for _, rule in ipairs(self:GetExtraStatCapture(stat) or {}) do
+        if history[rule.INPUT] then
+          print("duplicate found:", rule.INPUT)
+        else
+          history[rule.INPUT] = true
+        end
+      end
+    end
+  end
+  
+  
+end
+--@end-debug@
+
+
+
 
 
 

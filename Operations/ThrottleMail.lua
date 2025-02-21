@@ -37,4 +37,4 @@ local function Throttle()
 end
 
 
-Addon:RegisterEnableCallback(Throttle)
+Addon:RegisterAddonEventCallback("ENABLE", Throttle)

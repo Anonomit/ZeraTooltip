@@ -13,5 +13,5 @@
   
   <Include file="Config\_config.xml"/>
   
-  <Script file="ZeraTooltip.lua"/>
+  <Script file="Addon.lua"/>
 </Ui>

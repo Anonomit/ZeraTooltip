@@ -32,7 +32,8 @@ end
 function Addon:GetStatCacheSize()
   return cacheSize
 end
-Addon:RegisterOptionSetHandler(Addon.WipeStatCache)
+Addon:RegisterAddonEventCallback("WIPE_CACHE", Addon.WipeStatCache)
+Addon:RegisterAddonEventCallback("OPTION_SET", Addon.WipeStatCache)
 Addon:RegisterCVarCallback("colorblindMode", Addon.WipeStatCache)
 
 local function RecognizeStatHelper(line)
