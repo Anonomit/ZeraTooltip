@@ -16,8 +16,11 @@ do
     
     Addon:AddDefaultRewordByLocale("Critical Strike Rating", ITEM_MOD_CRIT_RATING_SHORT)
     
-    Addon:AddDefaultRewordByLocale("Physical Hit Rating",             format("%s (%s)", ITEM_MOD_HIT_RATING_SHORT,  SPELL_SCHOOL0_NAME))
-    Addon:AddDefaultRewordByLocale("Physical Critical Strike Rating", format("%s (%s)", ITEM_MOD_CRIT_RATING_SHORT, SPELL_SCHOOL0_NAME))
+    Addon:AddDefaultRewordByLocale("Physical Hit Rating",             format("%s (%s)", ITEM_MOD_HIT_RATING_SHORT,   SPELL_SCHOOL0_NAME))
+    Addon:AddDefaultRewordByLocale("Physical Critical Strike Rating", format("%s (%s)", ITEM_MOD_CRIT_RATING_SHORT,  SPELL_SCHOOL0_NAME))
+    Addon:AddDefaultRewordByLocale("Physical Haste Rating",           format("%s (%s)", ITEM_MOD_HASTE_RATING_SHORT, SPELL_SCHOOL0_NAME))
+    
+    Addon:AddDefaultRewordByLocale("Spell Haste Rating", "Hâte (sorts)")
   end
 end
 
@@ -82,6 +85,14 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Block Value",
     {INPUT = "^Augmente le score de blocage de votre bouclier de ([%d%-]+)%.$"})
   
+  Addon:SetDefaultStatPattern("Expertise Rating", "Réduit les chances que vos attaques soient esquivées ou parées de %s.")
+  Addon:AddExtraStatCapture("Expertise Rating",
+    {
+      INPUT  = "^Réduit les chances que vos attaques soient esquivées ou parées de ([%d%-]+).*%%%.",
+      OUTPUT = function(n) if n then return n .. "%" end end,
+    }
+  )
+  
   Addon:AddExtraStatCapture("Attack Power",
     {INPUT = "^%+([%d%-]+) à la puissance d'attaque%.?$"})
   
@@ -95,6 +106,7 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Spell Power",
     {INPUT = "^Augmente les dégâts et les soins produits par les sorts et effets magiques de ([%d%-]+) au maximum%.$"},
     {INPUT = "^Augmente les soins et dégâts produits par les sorts et effets magiques de ([%d%-]+) au maximum%.$"},
+    {INPUT = "^Augmente les dégâts et soins des sorts et effets magiques de ([%d%-]+) au maximum%.$"},
     {INPUT = "^%+([%d%-]+) aux dégâts et aux sorts de soins$"})
   
   Addon:AddExtraStatCapture("Healing",
@@ -158,11 +170,27 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Physical Critical Strike Rating",
     {INPUT = "^Augmente vos chances d'infliger un coup critique de ([%d%-]+%%)%.$"})
   
+  Addon:SetDefaultStatPattern("Physical Haste Rating", "Augmente votre vitesse d’attaque de %s.")
+  Addon:AddExtraStatCapture("Physical Haste Rating",
+    {
+      INPUT  = "^Augmente votre vitesse d’attaque de ([%d%-]+).*%%%.",
+      OUTPUT = function(n) if n then return n .. "%" end end,
+    }
+  )
+  
   Addon:AddExtraStatCapture("Spell Hit Rating",
     {INPUT = "^Augmente vos chances de toucher avec des sorts de ([%d%-]+%%)%.$"})
   
   Addon:AddExtraStatCapture("Spell Critical Strike Rating",
     {INPUT = "^Augmente vos chances d'infliger un coup critique avec vos sorts de ([%d%-]+%%)%.$"})
+  
+  Addon:SetDefaultStatPattern("Spell Haste Rating", "Augmente la vitesse d’incantation des sorts non canalisés de %s.")
+  Addon:AddExtraStatCapture("Spell Haste Rating",
+    {
+      INPUT  = "^Augmente la vitesse d’incantation des sorts non canalisés de ([%d%-]+).*%%%.",
+      OUTPUT = function(n) if n then return n .. "%" end end,
+    }
+  )
   
   Addon:AddExtraStatCapture("Mana Regeneration",
     {INPUT = "^%+([%d%-]+) points? de mana toutes les 5 sec%.$"})

@@ -118,6 +118,7 @@ do
   local defaultRewordLocaleOverrides    = {}
   local defaultModLocaleOverrides       = {}
   local defaultPrecisionLocaleOverrides = {}
+  local localeDefaultStatPattern        = {}
   local localeExtraStatCaptures         = {}
   local localeExtraReplacements         = {}
   
@@ -131,8 +132,14 @@ do
     defaultPrecisionLocaleOverrides[stat] = val
   end
   
+  function Addon:GetDefaultStatPattern(stat)
+    return localeDefaultStatPattern[stat]
+  end
   function Addon:GetExtraStatCapture(stat)
     return localeExtraStatCaptures[stat]
+  end
+  function Addon:SetDefaultStatPattern(stat, val)
+    localeDefaultStatPattern[stat] = val
   end
   function Addon:AddExtraStatCapture(stat, ...)
     localeExtraStatCaptures[stat] = localeExtraStatCaptures[stat] or {}
@@ -966,10 +973,18 @@ do
     self:Ternary(self.isSoD, {"chance hitrating", 204807}, nil),
     self:Ternary(self.isSoD, {"str stam int spi natureres critrating spellpwr", 215377}, nil), -- extra broken in frFR
     self:Ternary(self.isSoD, {"str agi feralatkpwr active", 210741}, nil), -- extra broken in frFR
-    self:Ternary(self.isSoD, {"stam int spirit spellpwr crit", 220590}, nil),
-    self:Ternary(self.isSoD, {"stam spellpwr spellhaste", 236267}, nil),
-    self:Ternary(self.isSoD, {"stam atkpwr hit physhaste", 236269}, nil),
+    self:Ternary(self.isSoD, {"stam int spirit spellpwr shadowdmg crit", 220590}, nil),
+    
+    
+    self:Ternary(self.isSoD, {"stam int spellpwr crit spellhaste", 236265}, nil),
+    self:Ternary(self.isSoD, {"shadowdmg crit", 236279}, nil),
+    self:Ternary(self.isSoD, {"stam int healing/damage", 236259}, nil),
+    self:Ternary(self.isSoD, {"stam defence expertise blockvvalue", 236300}, nil),
     self:Ternary(self.isSoD, {"str expertise crit", 236255}, nil),
+    self:Ternary(self.isSoD, {"str crit physhaste", 236280}, nil),
+    self:Ternary(self.isSoD, {"stam atkpwr hit physhaste", 236269}, nil),
+    self:Ternary(self.isSoD, {"stam spellpwr spellhaste", 236267}, nil),
+    self:Ternary(self.isSoD, {"stam int spellpwr crit feralatkpwr", 236297}, nil),
     
     
     {"recipe", 5640},

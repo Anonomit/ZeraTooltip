@@ -11,8 +11,11 @@ do
   -- Addon:AddDefaultRewordByLocale(stat, val)
   
   if Addon.isSoD then
-    Addon:AddDefaultRewordByLocale("Physical Hit Rating",             format("%s (%s)", ITEM_MOD_HIT_RATING_SHORT,  SPELL_SCHOOL0_CAP))
-    Addon:AddDefaultRewordByLocale("Physical Critical Strike Rating", format("%s (%s)", ITEM_MOD_CRIT_RATING_SHORT, SPELL_SCHOOL0_CAP))
+    Addon:AddDefaultRewordByLocale("Physical Hit Rating",             format("%s (%s)", ITEM_MOD_HIT_RATING_SHORT,   SPELL_SCHOOL0_CAP))
+    Addon:AddDefaultRewordByLocale("Physical Critical Strike Rating", format("%s (%s)", ITEM_MOD_CRIT_RATING_SHORT,  SPELL_SCHOOL0_CAP))
+    Addon:AddDefaultRewordByLocale("Physical Haste Rating",           format("%s (%s)", ITEM_MOD_HASTE_RATING_SHORT, SPELL_SCHOOL0_CAP))
+    
+    Addon:AddDefaultRewordByLocale("Spell Haste Rating", "Tempo (Zauber)")
   end
 end
 
@@ -50,12 +53,18 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Block Rating",
     {INPUT = "^Erhöht Eure Chance, Angriffe mit einem Schild zu blocken, um ([%d,]+%%)%.$"})
   
+  Addon:AddExtraStatCapture("Block Value",
+    {INPUT = "^Erhöht den Blockwert Eures Schilds um ([%d,]+)%.$"})
+  
+  Addon:SetDefaultStatPattern("Expertise Rating", "Verringert die Chance, dass Eure Angriffe pariert werden oder ihnen ausgewichen wird, um %s.")
+  
   Addon:AddExtraStatCapture("Attack Power In Forms",
     {INPUT = "^%+([%d,]+) Angriffskraft in Katzengestalt, Bärengestalt oder Terrorbärengestalt%.$"})
   
   Addon:AddExtraStatCapture("Spell Power",
     {INPUT = "^Erhöht durch Zauber und magische Effekte zugefügten Schaden und Heilung um bis zu ([%d,]+)%.$"},
     {INPUT = "^Erhöht durch Zauber und magische Effekte verursachten Schaden und Heilung um bis zu ([%d,]+)%.$"},
+    {INPUT = "^Erhöht durch Zauber und magische Effekte verursachten Schaden und hervorgerufene Heilung um bis zu ([%d,]+)%.$"},
     {INPUT = "^%+([%d,]+) Schadenszauber und Heilzauber$"})
   
   Addon:AddExtraStatCapture("Healing",
@@ -90,6 +99,7 @@ if Addon.isEra then
   
   Addon:AddExtraStatCapture("Critical Strike Rating",
     {INPUT = "^Erhöht die Chance auf einen kritischen Treffer mit Nahkampf%- und Distanzangriffen sowie Zaubern um ([%d,]+%%)%.$"},
+    {INPUT = "^Erhöht die kritische Trefferchance aller Eurer Angriffe und Zauber um ([%d,]+%%)%.$"},
     {INPUT = "^Erhöht Eure kritische Trefferchance aller Eurer Angriffe und Zauber um ([%d,]+%%)%.$"})
   
   Addon:AddExtraStatCapture("Physical Hit Rating",
@@ -98,6 +108,8 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Physical Critical Strike Rating",
     {INPUT = "^Erhöht Eure Chance, einen kritischen Treffer zu erzielen, um ([%d,]+%%)%.$"})
   
+  Addon:SetDefaultStatPattern("Physical Haste Rating", "Erhöht Eurer Angriffstempo um %s.")
+  
   Addon:AddExtraStatCapture("Spell Hit Rating",
     {INPUT = "^Erhöht Eure Chance mit Zaubern zu treffen um ([%d,]+%%)%.$"},
     {INPUT = "^Erhöht Eure Trefferchance mit allen Angriffen und Zaubern um ([%d,]+%%)%.$"})
@@ -105,6 +117,8 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Spell Critical Strike Rating",
     {INPUT = "^Erhöht Eure Chance, einen kritischen Treffer durch Zauber zu erzielen, um ([%d,]+%%)%.$"},
     {INPUT = "^Erhöht Eure kritische Trefferchance mit allen Angriffen und Zaubern um ([%d,]+%%)%.$"})
+  
+  Addon:SetDefaultStatPattern("Spell Haste Rating", "Erhöht das Zaubertempo Eurer nicht kanalisierten Zauber um %s.")
   
   Addon:AddExtraStatCapture("Health Regeneration",
     {INPUT = "^Stellt alle 5 Sek%. ([%d,]+) Punkt%(e%) Gesundheit wieder her%.$"},
@@ -138,7 +152,8 @@ end
 
 if Addon.isSoD or Addon.isTBC then
   Addon:AddExtraStatCapture("Healing",
-    {INPUT = "^Erhöht durch sämtliche Zauber und magische Effekte verursachte Heilung um bis zu ([%d,]+) und den verursachten Schaden um bis zu [%d,]+%.$"})
+    {INPUT = "^Erhöht durch sämtliche Zauber und magische Effekte verursachte Heilung um bis zu ([%d,]+) und den verursachten Schaden um bis zu [%d,]+%.$"},
+    {INPUT = "^Erhöht durch sämtliche Zauber und magische Effekte hervorgerufene Heilung um bis zu ([%d,]+) Gesundheit und den verursachten Schaden um bis zu [%d,]+%.$"})
 end
 
 

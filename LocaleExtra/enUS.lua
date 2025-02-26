@@ -115,6 +115,8 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Attack Power In Forms",
     {INPUT = "^%+([%d,]+) Attack Power in Cat, Bear, and Dire Bear forms only%.$"})
   
+  Addon:SetDefaultStatPattern("Expertise Rating", "Reduces the chance for your attacks to be dodged or parried by %s.")
+  
   Addon:AddExtraStatCapture("Spell Power",
     {INPUT = "^Increases damage and healing done by magical spells and effects by up to ([%d,]+)%.$"},
     {INPUT = "^%+([%d,]+) Damage and Healing Spells$"})
@@ -158,11 +160,15 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Physical Critical Strike Rating",
     {INPUT = "^Improves your chance to get a critical strike by ([%d,]+%%)%.$"})
   
+  Addon:SetDefaultStatPattern("Physical Haste Rating", "Increases your attack speed by %s.")
+  
   Addon:AddExtraStatCapture("Spell Hit Rating",
     {INPUT = "^Improves your chance to hit with spells by ([%d,]+%%)%.$"})
   
   Addon:AddExtraStatCapture("Spell Critical Strike Rating",
     {INPUT = "^Improves your chance to get a critical strike with spells by ([%d,]+%%)%.$"})
+  
+  Addon:SetDefaultStatPattern("Spell Haste Rating", "Increases your casting speed of non-channeled spells by %s.")
   
   Addon:AddExtraStatCapture("Health Regeneration",
     {INPUT = "^Restores ([%d,]+) health every 5 sec%.$"})

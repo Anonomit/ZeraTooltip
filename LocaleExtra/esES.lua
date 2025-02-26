@@ -11,8 +11,11 @@ do
   -- Addon:AddDefaultRewordByLocale(stat, val)
   
   if Addon.isSoD then
-    Addon:AddDefaultRewordByLocale("Physical Hit Rating",             format("%s (%s)", ITEM_MOD_HIT_RATING_SHORT,  SPELL_SCHOOL0_NAME))
-    Addon:AddDefaultRewordByLocale("Physical Critical Strike Rating", format("%s (%s)", ITEM_MOD_CRIT_RATING_SHORT, SPELL_SCHOOL0_NAME))
+    Addon:AddDefaultRewordByLocale("Physical Hit Rating",             format("%s (%s)", ITEM_MOD_HIT_RATING_SHORT,   SPELL_SCHOOL0_NAME))
+    Addon:AddDefaultRewordByLocale("Physical Critical Strike Rating", format("%s (%s)", ITEM_MOD_CRIT_RATING_SHORT,  SPELL_SCHOOL0_NAME))
+    Addon:AddDefaultRewordByLocale("Physical Haste Rating",           format("%s (%s)", ITEM_MOD_HASTE_RATING_SHORT, SPELL_SCHOOL0_NAME))
+    
+    Addon:AddDefaultRewordByLocale("Spell Haste Rating", "celeridad (hechizo)")
   end
 end
 
@@ -51,6 +54,8 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Block Value",
     {INPUT = "^Aumenta el valor de bloqueo de tu escudo en ([%d,]+) p%.$"})
   
+  Addon:SetDefaultStatPattern("Expertise Rating", "Reduce un %s la probabilidad de que tus ataques se esquiven o paren.")
+  
   Addon:AddExtraStatCapture("Attack Power",
     {INPUT = "^%+([%d,]+) p%. de poder de ataque%.$"},
     {INPUT = "^%+([%d,]+) de poder de ataque$"})
@@ -66,6 +71,7 @@ if Addon.isEra then
     {INPUT = "^Aumenta el daño y la curación de los hechizos mágicos y los efectos hasta en ([%d,]+) p%.$"},
     {INPUT = "^Aumenta el daño y la sanación de los hechizos mágicos y los efectos hasta en ([%d,]+) p%.$"},
     {INPUT = "^Aumenta hasta ([%d,]+) p%. el daño y la sanación de los hechizos y los efectos mágicos%.$"},
+    {INPUT = "^Aumenta hasta ([%d,]+) p%. el daño y la sanación de los hechizos y efectos mágicos%.$"},
     {INPUT = "^%+([%d,]+) de daño y Hechizos de curación$"})
   
   Addon:AddExtraStatCapture("Healing",
@@ -104,6 +110,7 @@ if Addon.isEra then
   
   Addon:AddExtraStatCapture("Critical Strike Rating",
     {INPUT = "^Mejora un ([%d,]+%%) tu probabilidad de conseguir un golpe crítico con todos los hechizos y ataques%.$"},
+    {INPUT = "^Mejora un ([%d,]+%%) tus probabilidades de conseguir un golpe crítico con todos los hechizos y ataques%.$"},
     {INPUT = "^Mejora tu probabilidad de conseguir un golpe crítico con todos los hechizos y ataques un ([%d,]+%%)%.$"},
     {INPUT = "^Aumenta las probabilidades de conseguir un golpe crítico con ataques cuerpo a cuerpo, ataques a distancia y hechizos un ([%d,]+%%)%.$"})
   
@@ -113,11 +120,17 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Physical Critical Strike Rating",
     {INPUT = "^Mejora tu probabilidad de conseguir un golpe crítico en ([%d,]+%%)%.$"})
   
+  Addon:SetDefaultStatPattern("Physical Haste Rating", "Aumenta un %s tu velocidad de ataque.")
+  Addon:AddExtraStatCapture("Physical Haste Rating",
+    {INPUT = "^Aumenta tu velocidad de ataque un ([%d,]+%%)%.$"})
+  
   Addon:AddExtraStatCapture("Spell Hit Rating",
     {INPUT = "^Mejora tu probabilidad de alcanzar el objetivo con hechizos en un ([%d,]+%%)%.$"})
   
   Addon:AddExtraStatCapture("Spell Critical Strike Rating",
     {INPUT = "^Mejora tu probabilidad de conseguir un golpe crítico en ([%d,]+%%) con los hechizos%.$"})
+  
+  Addon:SetDefaultStatPattern("Spell Haste Rating", "Aumenta un %s la velocidad de lanzamiento de los hechizos que no se canalizan.")
   
   Addon:AddExtraStatCapture("Health Regeneration",
     {INPUT = "^%+([%d,]+) de salud cada 5 seg%.$"})
@@ -188,7 +201,8 @@ end
 
 if Addon.isSoD or Addon.isTBC then
   Addon:AddExtraStatCapture("Healing",
-    {INPUT = "^Aumenta hasta ([%d,]+) p%. la sanación que aplicas y hasta [%d,]+ p%. el daño que infliges con todos los hechizos y efectos mágicos%.$"})
+    {INPUT = "^Aumenta hasta ([%d,]+) p%. la sanación que aplicas y hasta [%d,]+ p%. el daño que infliges con todos los hechizos y efectos mágicos%.$"},
+    {INPUT = "^Aumenta hasta ([%d,]+) p%. la sanación realizada, y hasta [%d,]+ p%. el daño que infliges con todos los hechizos y efectos mágicos%.$"})
 end
 
 

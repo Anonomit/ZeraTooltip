@@ -11,8 +11,11 @@ do
   -- Addon:AddDefaultRewordByLocale(stat, val)
   
   if Addon.isSoD then
-    Addon:AddDefaultRewordByLocale("Physical Hit Rating",             format("%s (%s)", ITEM_MOD_HIT_RATING_SHORT,  SPELL_SCHOOL0_CAP))
-    Addon:AddDefaultRewordByLocale("Physical Critical Strike Rating", format("%s (%s)", ITEM_MOD_CRIT_RATING_SHORT, SPELL_SCHOOL0_CAP))
+    Addon:AddDefaultRewordByLocale("Physical Hit Rating",             format("%s (%s)", ITEM_MOD_HIT_RATING_SHORT,  "近戰"))
+    Addon:AddDefaultRewordByLocale("Physical Critical Strike Rating", format("%s (%s)", ITEM_MOD_CRIT_RATING_SHORT, "近戰"))
+    Addon:AddDefaultRewordByLocale("Physical Haste Rating",           "加速等級(近戰)")
+    
+    Addon:AddDefaultRewordByLocale("Spell Haste Rating", "加速等級(法術)")
   end
 end
 
@@ -62,17 +65,21 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Block Value",
     {INPUT = "^使你的盾牌格擋值提高([%d,]+)點。$"})
   
+  Addon:SetDefaultStatPattern("Expertise Rating", "使你的攻擊被閃躲或招架的機率降低%s。")
+  
   Addon:AddExtraStatCapture("Ranged Attack Power",
     {INPUT = "^%+([%d,]+)遠程攻擊強度。$"})
   
   Addon:AddExtraStatCapture("Attack Power In Forms",
     {INPUT = "^在獵豹、熊或巨熊形態下的攻擊強度提高([%d,]+)點。$"},
-    {INPUT = "^在獵豹、熊和巨熊形態下的攻擊強度提高([%d,]+)點。$"})
+    {INPUT = "^在獵豹、熊和巨熊形態下的攻擊強度提高([%d,]+)點。$"},
+    {INPUT = "^在獵豹、熊和巨熊形態下的攻擊強度%+([%d,]+)點。$"})
   
   Addon:AddExtraStatCapture("Spell Power",
     {INPUT = "^提高法術和魔法效果所造成的傷害和治療效果，最多([%d,]+)點。$"},
     {INPUT = "^魔法法術和效果造成的傷害和治療效果最多提高([%d,]+)點。$"},
     {INPUT = "^提高魔法法術和效果所造成的傷害和治療效果，最多([%d,]+)點。$"},
+    {INPUT = "^使所有魔法法術和效果造成的傷害和治療效果最多提高([%d,]+)點。$"},
     {INPUT = "^%+([%d,]+) 傷害及治療法術$"})
   
   Addon:AddExtraStatCapture("Healing",
@@ -116,11 +123,15 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Physical Critical Strike Rating",
     {INPUT = "^使你造成致命一擊的機率提高([%d,]+%%)。$"})
   
+  Addon:SetDefaultStatPattern("Physical Haste Rating", "你的攻擊速度提高%s。")
+  
   Addon:AddExtraStatCapture("Spell Hit Rating",
     {INPUT = "^使你的法術擊中敵人的機率提高([%d,]+%%)。$"})
   
   Addon:AddExtraStatCapture("Spell Critical Strike Rating",
     {INPUT = "^使你的法術造成致命一擊的機率提高([%d,]+%%)。$"})
+  
+  Addon:SetDefaultStatPattern("Spell Haste Rating", "使你非引導法術的施法速度提高%s。")
 else
   Addon:AddExtraStatCapture("Defense Rating",
     {INPUT = "^提高([%d,]+)點防禦等級。$"})

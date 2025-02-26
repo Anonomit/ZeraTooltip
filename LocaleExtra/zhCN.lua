@@ -11,8 +11,11 @@ do
   -- Addon:AddDefaultRewordByLocale(stat, val)
   
   if Addon.isSoD then
-    Addon:AddDefaultRewordByLocale("Physical Hit Rating",             format("%s (%s)", ITEM_MOD_HIT_RATING_SHORT,  SPELL_SCHOOL0_CAP))
-    Addon:AddDefaultRewordByLocale("Physical Critical Strike Rating", format("%s (%s)", ITEM_MOD_CRIT_RATING_SHORT, SPELL_SCHOOL0_CAP))
+    Addon:AddDefaultRewordByLocale("Physical Hit Rating",             format("%s（%s）", ITEM_MOD_HIT_RATING_SHORT,  SPELL_SCHOOL0_CAP))
+    Addon:AddDefaultRewordByLocale("Physical Critical Strike Rating", format("%s（%s）", ITEM_MOD_CRIT_RATING_SHORT, SPELL_SCHOOL0_CAP))
+    Addon:AddDefaultRewordByLocale("Physical Haste Rating",           "急速等级（物理）")
+    
+    Addon:AddDefaultRewordByLocale("Spell Haste Rating", "急速等级（法术）")
   end
 end
 
@@ -54,12 +57,15 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Block Value",
     {INPUT = "^使你的盾牌的格挡值提高([%d,]+)点。$"})
   
+  Addon:SetDefaultStatPattern("Expertise Rating", "使你的攻击被躲闪或招架的几率降低%s。")
+  
   Addon:AddExtraStatCapture("Attack Power In Forms",
     {INPUT = "^在猎豹、熊和巨熊形态下的攻击强度提高([%d,]+)点。$"})
   
   Addon:AddExtraStatCapture("Spell Power",
     {INPUT = "^提高所有法术和魔法效果所造成的伤害和治疗效果，最多([%d,]+)点。$"},
     {INPUT = "^使法术和魔法效果的治疗和伤害提高最多([%d,]+)点。$"},
+    {INPUT = "^使法术和魔法效果的伤害和治疗提高最多([%d,]+)点。$"},
     {INPUT = "^%+([%d,]+) 伤害和治疗法术$"})
   
   Addon:AddExtraStatCapture("Healing",
@@ -100,11 +106,15 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Physical Critical Strike Rating",
     {INPUT = "^使你造成爆击的几率提高([%d,]+%%)。$"})
   
+  Addon:SetDefaultStatPattern("Physical Haste Rating", "使你的攻击速度提高%s。")
+  
   Addon:AddExtraStatCapture("Spell Hit Rating",
     {INPUT = "^使你的法术击中敌人的几率提高([%d,]+%%)。$"})
   
   Addon:AddExtraStatCapture("Spell Critical Strike Rating",
     {INPUT = "^使你的法术造成爆击的几率提高([%d,]+%%)。$"})
+  
+  Addon:SetDefaultStatPattern("Spell Haste Rating", "你的非引导法术的施法速度提高%s。")
   
   Addon:AddExtraStatCapture("Health Regeneration",
     {INPUT = "^每5秒恢复([%d,]+)点生命值$"})

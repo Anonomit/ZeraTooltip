@@ -230,11 +230,11 @@ do
   tinsert(statsData, {0, {nil , true, true, true}, "Resilience Rating", self.L["Resilience Rating"], self.L["Improves your resilience rating by %s."],          self.colors.GREEN, self.colors.YELLOW})
   
   
-  tinsert(statsData, {1, {nil , true, true, true}, "Expertise Rating",         self.L["Expertise Rating"],         self.L["Increases your expertise rating by %s."],  self.colors.GREEN, self.colors.TUMBLEWEED})
-  tinsert(statsData, {1, {true, true, true, true}, "Attack Power",             self.L["Attack Power"],             self.L["Increases attack power by %s."],           self.colors.GREEN, self.colors.TUMBLEWEED})
-  tinsert(statsData, {0, {true, true, true, nil},  "Ranged Attack Power",      self.L["Ranged Attack Power"],      self.L["Increases ranged attack power by %s."],    self.colors.GREEN, self.colors.TUMBLEWEED})
-  tinsert(statsData, {0, {true, true, true, nil},  "Attack Power In Forms",    self.L["Attack Power In Forms"],    self.L["Increases attack power by %s in Cat, Bear, Dire Bear, and Moonkin forms only."], self.colors.GREEN, self.colors.TUMBLEWEED})
-  tinsert(statsData, {0, {true, true, true, nil},  "Armor Penetration Rating", self.L["Armor Penetration Rating"], self.L["Increases your armor penetration by %s."], self.colors.GREEN, self.colors.TUMBLEWEED})
+  tinsert(statsData, {1, {self.isSoD, true, true, true}, "Expertise Rating",         self.L["Expertise Rating"],         self.L["Increases your expertise rating by %s."],  self.colors.GREEN, self.colors.TUMBLEWEED})
+  tinsert(statsData, {1, {true,       true, true, true}, "Attack Power",             self.L["Attack Power"],             self.L["Increases attack power by %s."],           self.colors.GREEN, self.colors.TUMBLEWEED})
+  tinsert(statsData, {0, {true,       true, true, nil},  "Ranged Attack Power",      self.L["Ranged Attack Power"],      self.L["Increases ranged attack power by %s."],    self.colors.GREEN, self.colors.TUMBLEWEED})
+  tinsert(statsData, {0, {true,       true, true, nil},  "Attack Power In Forms",    self.L["Attack Power In Forms"],    self.L["Increases attack power by %s in Cat, Bear, Dire Bear, and Moonkin forms only."], self.colors.GREEN, self.colors.TUMBLEWEED})
+  tinsert(statsData, {0, {true,       true, true, nil},  "Armor Penetration Rating", self.L["Armor Penetration Rating"], self.L["Increases your armor penetration by %s."], self.colors.GREEN, self.colors.TUMBLEWEED})
   
   
   tinsert(statsData, {1, {true, true, true, true}, "Spell Power", self.L["Spell Power"], self.L["Increases spell power by %s."], self.colors.GREEN, self.colors.LILAC_GEODE})
@@ -256,10 +256,10 @@ do
   tinsert(statsData, {0, {nil ,       nil , true, true}, "Haste Rating",                    self.L["Haste Rating"],                    self.L["Improves haste rating by %s."],                  self.colors.GREEN, self.colors.LEMON_LIME})
   tinsert(statsData, {1, {true,       true, nil,  nil},  "Physical Hit Rating",             self.L["Hit Rating"],                      self.L["Improves hit rating by %s."],                    self.colors.GREEN, self.colors.PINK_SHERBET})
   tinsert(statsData, {0, {true,       true, nil,  nil},  "Physical Critical Strike Rating", self.L["Critical Strike Rating"],          self.L["Improves critical strike rating by %s."],        self.colors.GREEN, self.colors.PARIS_GREEN})
-  tinsert(statsData, {0, {nil ,       true, nil,  nil},  "Physical Haste Rating",           self.L["Haste Rating"],                    self.L["Improves haste rating by %s."],                  self.colors.GREEN, self.colors.LEMON_LIME})
+  tinsert(statsData, {0, {self.isSoD, true, nil,  nil},  "Physical Haste Rating",           self.L["Haste Rating"],                    self.L["Improves haste rating by %s."],                  self.colors.GREEN, self.colors.LEMON_LIME})
   tinsert(statsData, {1, {true,       true, nil,  nil},  "Spell Hit Rating",                self.L["Hit Rating (Spell)"],              self.L["Improves spell hit rating by %s."],              self.colors.GREEN, self.colors.PINK_SHERBET})
   tinsert(statsData, {0, {true,       true, nil,  nil},  "Spell Critical Strike Rating",    self.L["Critical Strike Rating (Spell)"] , self.L["Improves spell critical strike rating by %s."] , self.colors.GREEN, self.colors.PARIS_GREEN})
-  tinsert(statsData, {0, {nil ,       true, nil,  nil},  "Spell Haste Rating",              self.L["Haste Rating (Spell)"],            self.L["Improves spell haste rating by %s."],            self.colors.GREEN, self.colors.LEMON_LIME})
+  tinsert(statsData, {0, {self.isSoD, true, nil,  nil},  "Spell Haste Rating",              self.L["Haste Rating (Spell)"],            self.L["Improves spell haste rating by %s."],            self.colors.GREEN, self.colors.LEMON_LIME})
   tinsert(statsData, {0, { nil,       nil,  nil,  true}, "Mastery Rating",                  self.L["Mastery"],                         self.L["%c%s Mastery"],                                  self.colors.GREEN, self.colors.GREEN_GAS})
     
     
@@ -296,7 +296,7 @@ do
       
       local normalName = data[4]
       
-      local tooltipPattern  = data[5]
+      local tooltipPattern  = self:GetDefaultStatPattern(stat) or data[5]
       local tooltipPattern2 = self:ChainGsub(tooltipPattern, {"%%%d%$", "%%"}, {"%%c", "%%d", "%%s"})
       
       local tooltipColor = data[6]

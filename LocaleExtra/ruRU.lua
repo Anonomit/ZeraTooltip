@@ -113,11 +113,14 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Block Value",
     {INPUT = "^Увеличение показателя блока щитом на ([%d,]+) ед%.$"})
   
+  Addon:SetDefaultStatPattern("Expertise Rating", "Снижает вероятность того, что цель парирует ваши атаки или уклонится от них, на %s.")
+  
   Addon:AddExtraStatCapture("Ranged Attack Power",
     {INPUT = "^Увеличение силы атаки в дальнем бою на ([%d,]+) ед%.$"})
   
   Addon:AddExtraStatCapture("Attack Power In Forms",
-    {INPUT = "^Увеличивает силу атаки на ([%d,]+) ед%. в облике кошки, медведя и лютого медведя%.$"})
+    {INPUT = "^Увеличивает силу атаки на ([%d,]+) ед%. в облике кошки, медведя и лютого медведя%.$"},
+    {INPUT = "^%+([%d,]+) к силе атаки в облике кошки, медведя и лютого медведя%.$"})
   
   Addon:AddExtraStatCapture("Spell Power",
     {INPUT = "^Увеличение урона и целительного действия магических заклинаний и эффектов не более чем на ([%d,]+) ед%.$"},
@@ -165,11 +168,15 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Physical Critical Strike Rating",
     {INPUT = "^Увеличение вероятности нанесения критического урона на ([%d,]+%%)%.$"})
   
+  Addon:SetDefaultStatPattern("Physical Haste Rating", "Повышает скорость атаки на %s.")
+  
   Addon:AddExtraStatCapture("Spell Hit Rating",
     {INPUT = "^Повышение на ([%d,]+%%) рейтинга меткости заклинаний%.$"})
   
   Addon:AddExtraStatCapture("Spell Critical Strike Rating",
     {INPUT = "^Увеличение рейтинга критического эффекта заклинаний на ([%d,]+%%)%.$"})
+  
+  Addon:SetDefaultStatPattern("Spell Haste Rating", "Повышает скорость применения заклинаний, не требующих поддержания, на %s.")
   
   Addon:AddExtraStatCapture("Health Regeneration",
     {INPUT = "^Восполняет ([%d,]+) ед%. здоровья каждые 5 сек%.$"})

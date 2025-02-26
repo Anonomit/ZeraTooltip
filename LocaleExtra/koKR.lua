@@ -13,6 +13,9 @@ do
   if Addon.isSoD then
     Addon:AddDefaultRewordByLocale("Physical Hit Rating",             format("%s (%s)", ITEM_MOD_HIT_RATING_SHORT,  SPELL_SCHOOL0_CAP))
     Addon:AddDefaultRewordByLocale("Physical Critical Strike Rating", format("%s (%s)", ITEM_MOD_CRIT_RATING_SHORT, SPELL_SCHOOL0_CAP))
+    Addon:AddDefaultRewordByLocale("Physical Haste Rating",           "근접 가속도")
+    
+    Addon:AddDefaultRewordByLocale("Spell Haste Rating", "주문 가속도")
   end
 end
 
@@ -53,6 +56,8 @@ if Addon.isEra then
   
   Addon:AddExtraStatCapture("Block Rating",
     {INPUT = "^방패로 적의 공격을 방어할 확률이 ([%d,]+%%)만큼 증가합니다%.$"})
+  
+  Addon:SetDefaultStatPattern("Expertise Rating", "공격이 회피당하거나 무기 막기에 막힐 확률이 %s만큼 감소합니다.")
   
   Addon:AddExtraStatCapture("Attack Power In Forms",
     {INPUT = "^표범, 광포한 곰, 곰 변신 상태일 때 전투력이 ([%d,]+)만큼 증가합니다%.$"},
@@ -101,11 +106,15 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Physical Critical Strike Rating",
     {INPUT = "^치명타를 적중시킬 확률이 ([%d,]+%%)만큼 증가합니다%.$"})
   
+  Addon:SetDefaultStatPattern("Physical Haste Rating", "공격 속도가 %s만큼 증가합니다.")
+  
   Addon:AddExtraStatCapture("Spell Hit Rating",
     {INPUT = "^주문의 적중률이 ([%d,]+%%)만큼 증가합니다%.$"})
   
   Addon:AddExtraStatCapture("Spell Critical Strike Rating",
     {INPUT = "^주문이 극대화 효과를 낼 확률이 ([%d,]+%%)만큼 증가합니다%.$"})
+  
+  Addon:SetDefaultStatPattern("Spell Haste Rating", "정신 집중이 아닌 주문의 시전 속도가 %s만큼 증가합니다.")
   
   Addon:AddExtraStatCapture("Mana Regeneration",
     {INPUT = "^5초당 마나 회복 %+([%d,]+)$"})

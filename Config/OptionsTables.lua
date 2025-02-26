@@ -392,7 +392,7 @@ end
 --  ███████║   ██║   ██║  ██║   ██║       ╚██████╔╝██║        ██║   ██║╚██████╔╝██║ ╚████║███████║
 --  ╚══════╝   ╚═╝   ╚═╝  ╚═╝   ╚═╝        ╚═════╝ ╚═╝        ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
 
-local percentStats = Addon:MakeLookupTable{"Dodge Rating", "Parry Rating", "Block Rating", "Hit Rating", "Critical Strike Rating", "Physical Hit Rating", "Physical Critical Strike Rating", "Spell Hit Rating", "Spell Critical Strike Rating"}
+local eraPercentStats = Addon:MakeLookupTable{"Dodge Rating", "Parry Rating", "Block Rating", "Expertise Rating", "Hit Rating", "Critical Strike Rating", "Physical Hit Rating", "Physical Critical Strike Rating", "Spell Hit Rating", "Spell Critical Strike Rating", "Physical Haste Rating", "Spell Haste Rating"}
 local sampleNumber = Addon:Switch(Addon.expansionLevel, {
   [Addon.expansions.cata] = 1000,
   [Addon.expansions.wrath] = 100,
@@ -2119,9 +2119,9 @@ local function MakeResetOptions(opts, categoryName)
     {L["Spacing"]     , function() self:ResetOptionQuiet"pad"   end},
   } do
     local cat, func = unpack(v, 1, 2)
-    GUI:CreateDescription(opts, cat)
+    GUI:CreateDescription(opts, cat).width = 0.5
     GUI:CreateReset(opts, {cat}, func)
-    GUI:CreateNewline(opts)
+    GUI:CreateDivider(opts)
   end
   
   return opts

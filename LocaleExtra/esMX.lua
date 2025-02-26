@@ -11,8 +11,11 @@ do
   -- Addon:AddDefaultRewordByLocale(stat, val)
   
   if Addon.isSoD then
-    Addon:AddDefaultRewordByLocale("Physical Hit Rating",             format("%s (%s)", ITEM_MOD_HIT_RATING_SHORT,  SPELL_SCHOOL0_NAME))
-    Addon:AddDefaultRewordByLocale("Physical Critical Strike Rating", format("%s (%s)", ITEM_MOD_CRIT_RATING_SHORT, SPELL_SCHOOL0_NAME))
+    Addon:AddDefaultRewordByLocale("Physical Hit Rating",             format("%s (%s)", ITEM_MOD_HIT_RATING_SHORT,   SPELL_SCHOOL0_NAME))
+    Addon:AddDefaultRewordByLocale("Physical Critical Strike Rating", format("%s (%s)", ITEM_MOD_CRIT_RATING_SHORT,  SPELL_SCHOOL0_NAME))
+    Addon:AddDefaultRewordByLocale("Physical Haste Rating",           format("%s (%s)", ITEM_MOD_HASTE_RATING_SHORT, SPELL_SCHOOL0_NAME))
+    
+    Addon:AddDefaultRewordByLocale("Spell Haste Rating", "Celeridad (hechizo)")
   end
 end
 
@@ -58,6 +61,8 @@ if Addon.isEra then
     {INPUT = "^Aumenta la probabilidad de bloquear ataques con un escudo un ([%d,]+%%)%.$"},
     {INPUT = "^Aumenta un ([%d,]+%%) tu probabilidad de bloquear ataques con un escudo%.$"},
     {INPUT = "^%+([%d,]+%%) de Bloqueo$"})
+  
+  Addon:SetDefaultStatPattern("Expertise Rating", "Reduce un %s la probabilidad de que esquiven o paren tus ataques.")
   
   Addon:AddExtraStatCapture("Attack Power In Forms",
     {INPUT = "^%+([%d,]+) p%. de poder de ataque solo en las formas felina, de oso y de oso temible%.$"})
@@ -106,11 +111,15 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Physical Critical Strike Rating",
     {INPUT = "^Mejora un ([%d,]+%%) tu probabilidad de conseguir un golpe crítico%.$"})
   
+  Addon:SetDefaultStatPattern("Physical Haste Rating", "Aumenta un %s tu velocidad de ataque.")
+  
   Addon:AddExtraStatCapture("Spell Hit Rating",
     {INPUT = "^Mejora un ([%d,]+%%) tu probabilidad de golpear con hechizos%.$"})
   
   Addon:AddExtraStatCapture("Spell Critical Strike Rating",
     {INPUT = "^Mejora tu probabilidad de asestar un golpe crítico con hechizos un ([%d,]+%%)%.$"})
+  
+  Addon:SetDefaultStatPattern("Spell Haste Rating", "Aumenta un %s la velocidad de lanzamiento de hechizos que no se canalizan.")
   
   Addon:AddExtraStatCapture("Mana Regeneration",
     {INPUT = "^%+([%d,]+) maná cada 5 s$"})

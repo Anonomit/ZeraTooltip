@@ -11,8 +11,11 @@ do
   -- Addon:AddDefaultRewordByLocale(stat, val)
   
   if Addon.isSoD then
-    Addon:AddDefaultRewordByLocale("Physical Hit Rating",             format("%s (%s)", ITEM_MOD_HIT_RATING_SHORT,  SPELL_SCHOOL0_CAP))
-    Addon:AddDefaultRewordByLocale("Physical Critical Strike Rating", format("%s (%s)", ITEM_MOD_CRIT_RATING_SHORT, SPELL_SCHOOL0_CAP))
+    Addon:AddDefaultRewordByLocale("Physical Hit Rating",             format("%s (%s)", ITEM_MOD_HIT_RATING_SHORT,   SPELL_SCHOOL0_CAP))
+    Addon:AddDefaultRewordByLocale("Physical Critical Strike Rating", format("%s (%s)", ITEM_MOD_CRIT_RATING_SHORT,  SPELL_SCHOOL0_CAP))
+    Addon:AddDefaultRewordByLocale("Physical Haste Rating",           format("%s (%s)", ITEM_MOD_HASTE_RATING_SHORT, SPELL_SCHOOL0_CAP))
+    
+    Addon:AddDefaultRewordByLocale("Spell Haste Rating", "Aceleração (Feitiço)")
   end
 end
 
@@ -54,6 +57,8 @@ if Addon.isEra then
   
   Addon:AddExtraStatCapture("Block Rating",
     {INPUT = "^Aumenta em ([%d%.]+%%) a chance de bloquear ataques com o escudo%.$"})
+  
+  Addon:SetDefaultStatPattern("Expertise Rating", "Reduz em %s a chance de os seus ataques serem esquivados ou aparados.")
   
   Addon:AddExtraStatCapture("Attack Power",
     {INPUT = "^%+([%d%.]+) de Poder de Ataque%.$"})
@@ -109,11 +114,15 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Physical Critical Strike Rating",
     {INPUT = "^Aumenta em ([%d%.]+%%) a chance de realizar acertos críticos%.$"})
   
+  Addon:SetDefaultStatPattern("Physical Haste Rating", "Aumenta em %s a sua velocidade de ataque.")
+  
   Addon:AddExtraStatCapture("Spell Hit Rating",
     {INPUT = "^Aumenta em ([%d%.]+%%) sua chance de acertar com feitiços%.$"})
   
   Addon:AddExtraStatCapture("Spell Critical Strike Rating",
     {INPUT = "^Aumenta em ([%d%.]+%%) a chance de realizar acertos críticos com feitiços%.$"})
+  
+  Addon:SetDefaultStatPattern("Spell Haste Rating", "Aumenta em %s sua velocidade de lançamento de feitiços não canalizados.")
   
   Addon:AddExtraStatCapture("Mana Regeneration",
     {INPUT = "^%+([%d%.]+) Mana a cada 5 s$"})
