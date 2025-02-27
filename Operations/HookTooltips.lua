@@ -62,6 +62,7 @@ local function ConvertArgs(...)
 end
 
 local function ScannerOnTooltipSetItem(scannerTooltip)
+  Addon:WipeConstructorCache()
   if scannerTooltip.lengths then
     tinsert(scannerTooltip.lengths, scannerTooltip:NumLines())
   end
