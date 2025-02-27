@@ -1645,13 +1645,15 @@ do
         end)
       end
     elseif oldVersion ~= currentVersion then
-      for version, Upgrade in GetOrderedUpgrades(init.upgrades) do
-        if Addon.SemVer(oldVersion) < Addon.SemVer(version) then
-          Addon:Debugf("Updating %s db from %s to %s", tostring(configType), tostring(oldVersion), version)
-          if Addon:pcall(Upgrade, function(err)
-            Addon:Errorf("Data upgrade from %s to %s failed for %s db\n%s", tostring(oldVersion), tostring(version), tostring(configType), tostring(err))
-          end) then
-            break -- the upgrade function returned true, so run any further upgrades
+      if init.upgrades then
+        for version, Upgrade in GetOrderedUpgrades(init.upgrades) do
+          if Addon.SemVer(oldVersion) < Addon.SemVer(version) then
+            Addon:Debugf("Updating %s db from %s to %s", tostring(configType), tostring(oldVersion), version)
+            if Addon:pcall(Upgrade, function(err)
+              Addon:Errorf("Data upgrade from %s to %s failed for %s db\n%s", tostring(oldVersion), tostring(version), tostring(configType), tostring(err))
+            end) then
+              break -- the upgrade function returned true, so run any further upgrades
+            end
           end
         end
       end
