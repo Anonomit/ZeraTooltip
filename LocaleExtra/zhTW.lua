@@ -131,7 +131,7 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Spell Critical Strike Rating",
     {INPUT = "^使你的法術造成致命一擊的機率提高([%d,]+%%)。$"})
   
-  Addon:SetDefaultStatPattern("Spell Haste Rating", "使你非引導法術的施法速度提高%s。")
+  Addon:SetDefaultStatPattern("Spell Haste Rating", "你的施法速度提高%s。")
 else
   Addon:AddExtraStatCapture("Defense Rating",
     {INPUT = "^提高([%d,]+)點防禦等級。$"})

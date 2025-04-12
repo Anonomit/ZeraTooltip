@@ -118,7 +118,7 @@ if Addon.isEra then
     {INPUT = "^Erhöht Eure Chance, einen kritischen Treffer durch Zauber zu erzielen, um ([%d,]+%%)%.$"},
     {INPUT = "^Erhöht Eure kritische Trefferchance mit allen Angriffen und Zaubern um ([%d,]+%%)%.$"})
   
-  Addon:SetDefaultStatPattern("Spell Haste Rating", "Erhöht das Zaubertempo Eurer nicht kanalisierten Zauber um %s.")
+  Addon:SetDefaultStatPattern("Spell Haste Rating", "Erhöht Euer Zaubertempo um %s.")
   
   Addon:AddExtraStatCapture("Health Regeneration",
     {INPUT = "^Stellt alle 5 Sek%. ([%d,]+) Punkt%(e%) Gesundheit wieder her%.$"},

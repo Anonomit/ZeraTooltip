@@ -122,7 +122,7 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Spell Critical Strike Rating",
     {INPUT = "^Aumenta em ([%d%.]+%%) a chance de realizar acertos críticos com feitiços%.$"})
   
-  Addon:SetDefaultStatPattern("Spell Haste Rating", "Aumenta em %s sua velocidade de lançamento de feitiços não canalizados.")
+  Addon:SetDefaultStatPattern("Spell Haste Rating", "Aumenta em %s sua velocidade de lançamento.")
   
   Addon:AddExtraStatCapture("Mana Regeneration",
     {INPUT = "^%+([%d%.]+) Mana a cada 5 s$"})

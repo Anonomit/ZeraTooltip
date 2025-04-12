@@ -168,7 +168,7 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Spell Critical Strike Rating",
     {INPUT = "^Improves your chance to get a critical strike with spells by ([%d,]+%%)%.$"})
   
-  Addon:SetDefaultStatPattern("Spell Haste Rating", "Increases your casting speed of non-channeled spells by %s.")
+  Addon:SetDefaultStatPattern("Spell Haste Rating", "Increases your casting speed by %s.")
   
   Addon:AddExtraStatCapture("Health Regeneration",
     {INPUT = "^Restores ([%d,]+) health every 5 sec%.$"})
@@ -385,8 +385,20 @@ Addon:AddExtraReplacement("Average Range",
 )
 
 
+-- Spellpower
+Addon:AddExtraReplacement("Spellpower text",
+  {
+    INPUT  = "damage and healing done by magical spells and effects",
+    OUTPUT = "Spellpower",
+  }
+)
+
 -- Temp Stat Buff
 Addon:AddExtraReplacement("Temp Stat Buff",
+  {
+    INPUT  = "Increases the ([^%d]-) by ([%d,]+%%?) (for %d+ sec%.?)", -- 236337
+    OUTPUT = "+%2 %1 %3",
+  },
   {
     INPUT  = "Increases ?y?o?u?r? ([^%d]-) by ([%d,]+%%?) (for %d+ sec%.?)", -- Shadowmoon Insignia, Steely Naaru Sliver
     OUTPUT = "+%2 %1 %3",

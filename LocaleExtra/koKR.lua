@@ -114,7 +114,7 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Spell Critical Strike Rating",
     {INPUT = "^주문이 극대화 효과를 낼 확률이 ([%d,]+%%)만큼 증가합니다%.$"})
   
-  Addon:SetDefaultStatPattern("Spell Haste Rating", "정신 집중이 아닌 주문의 시전 속도가 %s만큼 증가합니다.")
+  Addon:SetDefaultStatPattern("Spell Haste Rating", "시전 속도가 %s만큼 증가합니다.")
   
   Addon:AddExtraStatCapture("Mana Regeneration",
     {INPUT = "^5초당 마나 회복 %+([%d,]+)$"})

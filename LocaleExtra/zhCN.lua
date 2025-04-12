@@ -114,7 +114,7 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Spell Critical Strike Rating",
     {INPUT = "^使你的法术造成爆击的几率提高([%d,]+%%)。$"})
   
-  Addon:SetDefaultStatPattern("Spell Haste Rating", "你的非引导法术的施法速度提高%s。")
+  Addon:SetDefaultStatPattern("Spell Haste Rating", "你的施法速度提高%s。")
   
   Addon:AddExtraStatCapture("Health Regeneration",
     {INPUT = "^每5秒恢复([%d,]+)点生命值$"})

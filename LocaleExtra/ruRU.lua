@@ -176,7 +176,7 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Spell Critical Strike Rating",
     {INPUT = "^Увеличение рейтинга критического эффекта заклинаний на ([%d,]+%%)%.$"})
   
-  Addon:SetDefaultStatPattern("Spell Haste Rating", "Повышает скорость применения заклинаний, не требующих поддержания, на %s.")
+  Addon:SetDefaultStatPattern("Spell Haste Rating", "Скорость применения заклинаний повышается на %s.")
   
   Addon:AddExtraStatCapture("Health Regeneration",
     {INPUT = "^Восполняет ([%d,]+) ед%. здоровья каждые 5 сек%.$"})

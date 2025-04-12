@@ -184,10 +184,10 @@ if Addon.isEra then
   Addon:AddExtraStatCapture("Spell Critical Strike Rating",
     {INPUT = "^Augmente vos chances d'infliger un coup critique avec vos sorts de ([%d%-]+%%)%.$"})
   
-  Addon:SetDefaultStatPattern("Spell Haste Rating", "Augmente la vitesse d’incantation des sorts non canalisés de %s.")
+  Addon:SetDefaultStatPattern("Spell Haste Rating", "Augmente votre vitesse d’incantation de %s.")
   Addon:AddExtraStatCapture("Spell Haste Rating",
     {
-      INPUT  = "^Augmente la vitesse d’incantation des sorts non canalisés de ([%d%-]+).*%%%.",
+      INPUT  = "^Augmente votre vitesse d’incantation de ([%d%-]+).*%%%.",
       OUTPUT = function(n) if n then return n .. "%" end end,
     }
   )
