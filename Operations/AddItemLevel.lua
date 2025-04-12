@@ -140,8 +140,6 @@ for ids, ilvl in pairs{
   [{20927, 20931}] = 81, -- Ouro's Intact Hide, Skin of the Great Sandworm
   [{20929, 20933}] = 88, -- Carapace of the Old God, Husk of the Old God
   
-  
-  
   [{235046}] = 79, -- Imperial Qiraji Armaments (SoD)
   [{235045}] = 79, -- Imperial Qiraji Regalia (SoD)
   
@@ -175,6 +173,8 @@ for ids, ilvl in pairs{
   [{22372, 22365, 22358, 236239, 236234, 236248}] = 86, -- T3 Shoes
   
   [{22520, 236350}] = 90, -- The Phylactery of Kel'Thuzad
+  
+  [{239117, 239714, 239712, 239715, 239719, 239716, 239718, 239721, 239710, 239707, 239708, 239761, 239759, 239762, 239760, 239709, 239706, 239729, 239758, 239731, 239722, 239730, 239756, 239757, 239726}] = 98, -- T3.5 Tokens
   
   
   
