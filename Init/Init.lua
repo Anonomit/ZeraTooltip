@@ -1288,6 +1288,30 @@ end
 --  ╚══════╝  ╚═══╝  ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝
 
 do
+  local addonEventSalt = ADDON_NAME .. "_"
+  local function TransformEventName(event, isAddonEvent)
+    if isAddonEvent then
+      event = addonEventSalt .. event
+    end
+    return event
+  end
+  local isDBShutdown = false
+  local blacklistedEvents = Addon:MakeBoolTable{
+    "PLAYER_LOGOUT",
+    "ADDONS_UNLOADING",
+  }
+  local registrations    = Addon.IndexedQueue()
+  local suspended        = {}
+  local onEventCallbacks = setmetatable({}, {__index = function(self, k)
+    rawset(self, k, Addon.IndexedQueue())
+    return rawget(self, k)
+  end})
+  
+  function Addon:ShutdownDB()
+    isDBShutdown = true
+    registrations:Wipe()
+  end
+  
   local function Call(func, ...)
     local args = {...}
     local nArgs = select("#", ...)
@@ -1298,23 +1322,9 @@ do
     end
   end
   
-  local addonEventSalt = ADDON_NAME .. "_"
-  local function TransformEventName(event, isAddonEvent)
-    if isAddonEvent then
-      event = addonEventSalt .. event
-    end
-    return event
-  end
-  local registrations    = Addon.IndexedQueue()
-  local suspended        = {}
-  local onEventCallbacks = setmetatable({}, {__index = function(self, k)
-    rawset(self, k, Addon.IndexedQueue())
-    return rawget(self, k)
-  end})
-  
-  local function RunCallbacks(IsAddOnLoaded, event, ...)
+  local function RunCallbacks(isAddonEvent, event, ...)
     local t = onEventCallbacks[event]
-    if Addon:IsGlobalDBLoaded() and Addon:GetGlobalOption("debugOutput", IsAddOnLoaded and "onAddonEvent" or "onEvent") then
+    if Addon:IsGlobalDBLoaded() and Addon:GetGlobalOption("debugOutput", isAddonEvent and "onAddonEvent" or "onEvent") then
       local args = {...}
       local nArgs = select("#", ...)
       if t:GetCount() > 0 then
@@ -1332,16 +1342,18 @@ do
   end
   
   local function OnEvent(event, ...)
-    if suspended[event] then return end
+    if suspended[event] or isDBShutdown then return end
     RunCallbacks(false, event, ...)
   end
   local function OnAddonEvent(event, ...)
+    if isDBShutdown then return end
     event = TransformEventName(event, true)
     if suspended[event] then return end
     RunCallbacks(true, event, ...)
   end
   
   local function UnregisterEventCallback(isAddonEvent, id)
+    if isDBShutdown then return end
     local registration = registrations[id]
     for event, index in pairs(registration) do
       local callbacks = onEventCallbacks[event]
@@ -1357,6 +1369,7 @@ do
   end
   
   local function RegisterEventCallback(isAddonEvent, ...)
+    if isDBShutdown then return end
     local events = {...}
     local callback = tblRemove(events, #events)
     assert(#events > 0 and type(callback) == "function", "Expected events and function")
@@ -1367,6 +1380,7 @@ do
     func = function(...) if callback(...) then UnregisterEventCallback(isAddonEvent, id) end end
     
     for _, event in ipairs(events) do
+      Addon:Assertf(not blacklistedEvents[event], "Cannot register event: %s", event)
       event = TransformEventName(event, isAddonEvent)
       local callbacks = onEventCallbacks[event]
       local index = callbacks:Add(func)
@@ -1387,6 +1401,7 @@ do
   end
   
   local function SuspendEventWhile(isAddonEvent, ...)
+    if isDBShutdown then return end
     local events = {...}
     local callback = tblRemove(events, #events)
     assert(#events > 0 and type(callback) == "function", "Expected events and function")
@@ -1534,7 +1549,7 @@ do
         assert(Addon[IsDBLoaded](self), format("Attempted to access %s database before initialization: %s", typeKey, Addon:Concat(" > ", dbKey, typeKey, ...)))
         local val = self[dbKey][typeKey]
         for _, key in ipairs{...} do
-          assert(type(val) == "table", format("Bad database access: %s", Addon:Concat(" > ", dbKey, typeKey, ...)))
+          assert(type(val) == "table", format("Bad database access (%s is not a table): %s", tostring(val), Addon:Concat(" > ", dbKey, typeKey, ...)))
           val = val[key]
         end
         

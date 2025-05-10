@@ -144,9 +144,10 @@ end
 function Addon:OnEnable()
   self.version = self.SemVer(C_AddOns.GetAddOnMetadata(ADDON_NAME, "Version"))
   self:InitDB(dbInitFuncs)
-  self:GetDB().RegisterCallback(self, "OnProfileChanged", function() self:OnProfileChanged() end)
-  self:GetDB().RegisterCallback(self, "OnProfileCopied" , function() self:OnProfileChanged() end)
-  self:GetDB().RegisterCallback(self, "OnProfileReset"  , function() self:OnProfileChanged() end)
+  self:GetDB().RegisterCallback(self, "OnProfileChanged",   function() self:OnProfileChanged() end)
+  self:GetDB().RegisterCallback(self, "OnProfileCopied",    function() self:OnProfileChanged() end)
+  self:GetDB().RegisterCallback(self, "OnProfileReset",     function() self:OnProfileChanged() end)
+  self:GetDB().RegisterCallback(self, "OnDatabaseShutdown", function() self:ShutdownDB()       end)
   
   self:InitChatCommands("zt", "zera", ADDON_NAME:lower())
   
