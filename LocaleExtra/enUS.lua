@@ -215,6 +215,10 @@ Addon:AddExtraReplacement("Run Speed",
     OUTPUT = "+300%% Run Speed for 3 sec",
   },
   {
+    INPUT  = "Activate a set of jets to increase your movement speed by up to 160%%, for up to 8 sec%.", -- Tinkerbox: Nitro Boosts 238735
+    OUTPUT = "+140%% (120%%-160%%) Run Speed for 8 sec",
+  },
+  {
     INPUT  = "Minor Speed Increase", -- Enchant Boots - Minor Speed
     OUTPUT = "+8%% Run Speed",
   },
