@@ -38,7 +38,7 @@ do
         
         -- convert icons to newer format
         ["2.2.0"] = function()
-          for stat, icon in pairs(self:GetOption("icon")) do
+          for stat, icon in pairs(self:GetOption"icon") do
             self:SetOption(self:UnmakeIcon(icon), "icon", stat)
           end
         end,
@@ -136,7 +136,7 @@ end
 
 function Addon:OnInitialize()
   self.db        = self.AceDB:New(("%sDB"):format(ADDON_NAME), self:MakeDefaultOptions(), true)
-  self.dbDefault = self.AceDB:New({}                         , self:MakeDefaultOptions(), true)
+  self.dbDefault = self.AceDB:New({},                          self:MakeDefaultOptions(), true)
   
   self:FireAddonEvent"INITIALIZE"
 end

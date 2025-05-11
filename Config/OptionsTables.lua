@@ -2402,7 +2402,7 @@ end
 --  ╚═╝  ╚═╝╚═════╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═══╝     ╚═════╝ ╚═╝        ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
 
 function Addon:MakeAddonOptions(chatCmd)
-  local title = format("%s v%s  (/%s)", ADDON_NAME, tostring(self:GetOption"version"), chatCmd)
+  local title = format("%s %s v%s (/%s)", self:MakeIcon("Interface\\AddOns\\" .. ADDON_NAME .. "\\Assets\\Textures\\Addon Image.png"), ADDON_NAME, tostring(self:GetGlobalOption"version"), chatCmd)
   
   local sections = {}
   for _, data in ipairs{
@@ -2459,7 +2459,7 @@ end
 
 
 function Addon:MakeBlizzardOptions(chatCmd)
-  local title = format("%s v%s  (/%s)", ADDON_NAME, tostring(self:GetOption"version"), chatCmd)
+  local title = format("%s %s v%s (/%s)", self:MakeIcon("Interface\\AddOns\\" .. ADDON_NAME .. "\\Assets\\Textures\\Addon Image.png"), ADDON_NAME, tostring(self:GetGlobalOption"version"), chatCmd)
   local panel = self:CreateBlizzardOptionsCategory(function()
     local GUI = self.GUI:ResetOrder()
     local opts = GUI:CreateOpts(title, "tab")
