@@ -1,7 +1,7 @@
 ## Interface:         40402
 ## Interface-Cata:    40402
 ## Interface-Classic: 11507
-## Version: 2.22.2
+## Version: 2.23.0
 
 ## X-Curse-Project-ID: 533049
 ## X-Wago-ID: Qb6mJ1KP
