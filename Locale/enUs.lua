@@ -170,3 +170,7 @@ L["Order"] = true
 L["Mod"]   = true
 
 
+
+
+L["Celestial"] = "Celestial"
+

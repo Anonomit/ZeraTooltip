@@ -9,3 +9,6 @@ if not L then return end
 
 L["Refund"] = "환불"
 
+
+L["Celestial"] = "천신"
+

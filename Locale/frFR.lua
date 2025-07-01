@@ -9,3 +9,6 @@ if not L then return end
 
 L["Refund"] = "Remboursement"
 
+
+L["Celestial"] = "Astral"
+

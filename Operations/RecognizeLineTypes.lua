@@ -29,7 +29,8 @@ local L_DESTROY_GEM        = Addon.L["Gem to be destroyed"]
 
 local L_TRANSMOGRIFIED = Addon.L["Transmogrified to:"]
 
-local L_ITEM_HEROIC = Addon.L["Heroic"]
+local L_ITEM_HEROIC    = Addon.L["Heroic"]
+local L_ITEM_CELESTIAL = L["Celestial"]
 
 local L_ITEM_CREATED_BY = Addon.L["<Made by %s>"]
 local L_ITEM_WRAPPED_BY = Addon.L["<Gift from %s>"]
@@ -119,9 +120,10 @@ local L_ITEM_SPELL_CHARGES_NONE = Addon.L["No charges"]
 
 local L_ITEM_SET_NAME = Addon.L["%s (%d/%d)"]
 
-local L_ITEM_SET_BONUS_GRAY          = Addon.L["(%d) Set: %s"]
-local L_ITEM_SET_BONUS               = Addon.L["Set: %s"]
-local L_ITEM_SET_BONUS_NO_VALID_SPEC = Addon.L["Bonus effects vary based on the player's specialization."]
+local L_ITEM_SET_BONUS_GRAY            = Addon.L["(%d) Set: %s"]
+local L_ITEM_SET_BONUS                 = Addon.L["Set: %s"]
+local L_ITEM_SET_BONUS_NO_VALID_SPEC   = Addon.L["Bonus effects vary based on the player's specialization."]
+local L_ITEM_SET_LEGACY_INACTIVE_BONUS = Addon.L["Legacy Set: Bonus is inactive"]
 
 local L_ITEM_COOLDOWN_TIME = Addon.L["Cooldown remaining: %s"]
 
@@ -191,12 +193,14 @@ local function StartsWithAny(text, ...)
   return nil
 end
 
-local contexts = Addon:MakeLookupTable(Addon:Squish{
+
+contexts = Addon:MakeLookupTable(Addon:Squish{
   "Init",
   "PreTitle",
   "Title",
   "Quality",
   "Heroic", -- Don't need to match this, but leave the category in
+  "ItemLevelMoP",
   Addon:Ternary(Addon.expansionLevel >= Addon.expansions.cata, "TransmogHeader", nil),
   Addon:Ternary(Addon.expansionLevel >= Addon.expansions.cata, "Transmog",       nil),
   "Binding",
@@ -230,7 +234,7 @@ local contexts = Addon:MakeLookupTable(Addon:Squish{
   "RequiredRaces",
   "RequiredClasses",
   "RequiredLevel",
-  "ItemLevel",
+  "ItemLevelPreMoP",
   "RequiredSkill",
   "AlreadyKnown",
   "RequiredRep",
@@ -244,6 +248,7 @@ local contexts = Addon:MakeLookupTable(Addon:Squish{
   "SetName",
   "SetPiece",
   "LastSetPiece",
+  "LegacySetWarning",
   "SetBonus",
   "LastSetBonus",
   "Cooldown",
@@ -258,6 +263,11 @@ local contexts = Addon:MakeLookupTable(Addon:Squish{
   "RecipeMats",
   "Tail",
 }, function(v, k) return k end, true)
+
+contextNameMap = setmetatable({
+  [contexts.ItemLevelMoP]    = "ItemLevel",
+  [contexts.ItemLevelPreMoP] = "ItemLevel",
+}, {__index = contexts})
 
 local contextAscensions = Addon:Map({
   Title = function(context, tooltipData, line, currentContext)
@@ -297,7 +307,7 @@ local contextAscensions = Addon:Map({
     -- mark where the socket bonus would be if it existed on this item
     tooltipData.locs.socketBonus = tooltipData.locs.socketBonus or line.i - 1
   end,
-  ItemLevel = function(context, tooltipData, line, currentContext)
+  ItemLevelPreMoP = function(context, tooltipData, line, currentContext)
     -- mark where the item level would be if it existed on this item
     tooltipData.locs.itemLevel = tooltipData.locs.itemLevel or line.i - 1
   end,
@@ -367,7 +377,7 @@ local function SetContext(context, tooltipData, line)
     end
   end
   if line then
-    line.type = contexts[context]
+    line.type = contextNameMap[context]
     return 0
   end
   return -1
@@ -385,12 +395,19 @@ contextActions = Addon:Map({
     return SetContext(i, tooltipData, line)
   end,
   Quality = function(i, tooltipData, line)
-    if line.colorLeft == Addon.colors.WHITE and Addon.itemQualityDescriptions[line.textLeftText] or line.colorLeft == Addon.colors.GREEN and MatchesAny(line.textLeftTextStripped, L_ITEM_HEROIC) then
+    if line.colorLeft == Addon.colors.WHITE and Addon.itemQualityDescriptions[line.textLeftText] or line.colorLeft == Addon.colors.GREEN and MatchesAny(line.textLeftTextStripped, L_ITEM_HEROIC, L_ITEM_CELESTIAL) then
       tooltipData.locs.quality = line.i
       if GetCVarBool"colorblindMode" then
         return SetContext(i, tooltipData, line)
       else
         return SetContext(i+1, tooltipData, line)
+      end
+    end
+  end,
+  ItemLevelMoP = function(i, tooltipData, line)
+    if Addon.expansionLevel >= Addon.expansions.mop then
+      if MatchesAny(line.textLeftTextStripped, L_ITEM_LEVEL) then
+        return SetContext(i, tooltipData, line)
       end
     end
   end,
@@ -570,6 +587,16 @@ contextActions = Addon:Map({
           line.normalForm = Addon.statsInfo["Bonus Armor"]:ConvertToNormalForm(line.textLeftTextStripped)
           return SetContext(i-1, tooltipData, line)
         end
+        if Addon.expansionLevel >= Addon.expansions.mop then
+          for stat, statInfo in pairs(Addon.statsInfo) do
+            local normalForm = statInfo.ConvertToNormalForm and statInfo:ConvertToNormalForm(line.textLeftTextStripped)
+            if normalForm then
+              line.stat       = stat
+              line.normalForm = normalForm
+              return SetContext(i-1, tooltipData, line)
+            end
+          end
+        end
       end
     end
   end,
@@ -679,9 +706,11 @@ contextActions = Addon:Map({
       return SetContext(i, tooltipData, line)
     end
   end,
-  ItemLevel = function(i, tooltipData, line)
-    if MatchesAny(line.textLeftTextStripped, L_ITEM_LEVEL) then
-      return SetContext(i, tooltipData, line)
+  ItemLevelPreMoP = function(i, tooltipData, line)
+    if Addon.expansionLevel < Addon.expansions.mop then
+      if MatchesAny(line.textLeftTextStripped, L_ITEM_LEVEL) then
+        return SetContext(i, tooltipData, line)
+      end
     end
   end,
   RequiredSkill = function(i, tooltipData, line)
@@ -760,6 +789,11 @@ contextActions = Addon:Map({
   LastSetPiece = function(i, tooltipData, line)
     if not tooltipData.isGem and strStarts(line.textLeftText, "  ") then
       return SetContext(i-1, tooltipData, line)
+    end
+  end,
+  LegacySetWarning = function(i, tooltipData, line)
+    if MatchesAny(line.textLeftTextStripped, L_ITEM_SET_LEGACY_INACTIVE_BONUS) then
+      return SetContext(i, tooltipData, line)
     end
   end,
   LastSetBonus = function(i, tooltipData, line)

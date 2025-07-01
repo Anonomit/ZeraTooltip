@@ -198,6 +198,7 @@ L["|cff000000%s (low level)|r"] = TRIVIAL_QUEST_DISPLAY
 L["All"] = ALL
 
 L["Heroic"] = ITEM_HEROIC
+L["Celestial"] = "Celestial"
 
 L["Red Socket"]                       = EMPTY_SOCKET_RED
 L["Blue Socket"]                      = EMPTY_SOCKET_BLUE
@@ -319,6 +320,7 @@ L["%s (%d/%d)"] = ITEM_SET_NAME
 L["(%d) Set: %s"]                                             = ITEM_SET_BONUS_GRAY
 L["Set: %s"]                                                  = ITEM_SET_BONUS
 L["Bonus effects vary based on the player's specialization."] = ITEM_SET_BONUS_NO_VALID_SPEC
+L["Legacy Set: Bonus is inactive"] = ITEM_SET_LEGACY_INACTIVE_BONUS
 
 L["Cooldown remaining: %s"] = ITEM_COOLDOWN_TIME
 
@@ -467,6 +469,9 @@ L["Increases the block value of your shield by %s."] = ITEM_MOD_BLOCK_VALUE
 
 L["Resilience Rating"] = ITEM_MOD_RESILIENCE_RATING_SHORT
 L["Improves your resilience rating by %s."] = ITEM_MOD_RESILIENCE_RATING
+
+L["PvP Power"] = ITEM_MOD_PVP_POWER_SHORT
+L["Increases your PvP power by %s."] = ITEM_MOD_PVP_POWER
 
 L["Expertise Rating"] = ITEM_MOD_EXPERTISE_RATING_SHORT
 L["Increases your expertise rating by %s."] = ITEM_MOD_EXPERTISE_RATING

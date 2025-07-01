@@ -2426,9 +2426,10 @@ function Addon:MakeAddonOptions(chatCmd)
       local OpenOptions_Old = OpenOptions
       OpenOptions = function(...)
         if not self:GetGlobalOption"debug" then
-          self:SetGlobalOptionConfig(true, "debug")
-          self:Debug"Debug mode enabled"
-          self:NotifyChange()
+          self:SuspendConfigRefreshingWhile(function()
+            self:SetGlobalOption(true, "debug")
+            self:Debug"Debug mode enabled"
+          end)
         end
         return OpenOptions_Old(...)
       end
