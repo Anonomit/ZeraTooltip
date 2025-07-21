@@ -183,7 +183,12 @@ function Addon:ConstructTooltip(tooltip, constructor)
     local dest = data[1]
     local lastExtraLine = constructor.addLines[i-1]
     if not lastExtraLine or lastExtraLine[1] ~= dest then
-      MoveLine(fullDestructor, halfDestructor, tooltip, tooltipName, frame, source, dest, pad, lastFrame, extraLinesMap)
+      if not self:xpcallSilent(function() MoveLine(fullDestructor, halfDestructor, tooltip, tooltipName, frame, source, dest, pad, lastFrame, extraLinesMap) end) then
+        -- table.insert(halfDestructor, 1, function() tooltip:AddDoubleLine(ADDON_NAME, self.L["ERROR"], 1, 0, 0, 1, 0, 0) end)
+        self:DestructTooltip(tooltip, halfDestructor)
+        return fullDestructor
+      end
+      
     end
     extraLinesMap[dest] = source
     extraLines[source]  = true
