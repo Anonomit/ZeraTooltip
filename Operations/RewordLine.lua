@@ -78,19 +78,30 @@ function Addon:RewordLine(tooltip, line, tooltipData)
       if self:GetOption("allow", "reword") then
         for _, definition in ipairs(self:GetExtraReplacements()) do
           for _, rule in ipairs(definition) do
-            local input = rule.INPUT .. "%[.。]$"
-            local matches = {strMatch(text, input)}
-            if #matches == 0 then
-              input = rule.INPUT
-              matches = {strMatch(text, input)}
-            end
-            if #matches > 0 then
-              local output = rule.OUTPUT
-              if type(rule.OUTPUT) == "function" then
-                output = rule.OUTPUT(unpack(matches))
+            local foundMatch = false
+            for i = 1, 5 do -- attempt applying this rule if it keeps finding matches
+              local input = rule.INPUT .. "%[.。]$"
+              local matches = {strMatch(text, input)}
+              if #matches == 0 then
+                input = rule.INPUT
+                matches = {strMatch(text, input)}
               end
-              text = strGsub(text, input, output)
-              break
+              if #matches > 0 then
+                local output = rule.OUTPUT
+                if type(rule.OUTPUT) == "function" then
+                  output = rule.OUTPUT(unpack(matches))
+                end
+                text = strGsub(text, input, output, 1)
+                foundMatch = true
+              else
+                break -- found no matches, so stop checking this pattern
+              end
+              if i == 5 then
+                self:Throwf("Potential recursive pattern found: %s", definition.label)
+              end
+            end
+            if foundMatch then
+              break -- found a matching rule for this named definition, so move onto the next one
             end
           end
         end
