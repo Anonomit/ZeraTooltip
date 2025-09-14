@@ -213,8 +213,9 @@ L["Hydraulic Socket"]                 = EMPTY_SOCKET_HYDRAULIC
 
 
 
-L["Clear Cache"]                  = BROWSER_CLEAR_CACHE
--- L["Delete"]                       = DELETE
+L["View"]        = VIEW
+L["Clear Cache"] = BROWSER_CLEAR_CACHE
+-- L["Delete"]      = DELETE
 
 
 

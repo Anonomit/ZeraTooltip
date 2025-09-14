@@ -2315,17 +2315,26 @@ local function MakeDebugOptions(opts, categoryName)
     end
     
     for _, data in ipairs{
-      {"Text Rewords"     , {"cache", "text"}       , "WipeTextCache"       , "GetTextCacheSize"},
-      {"Stat Recognitions", {"cache", "stat"}       , "WipeStatCache"       , "GetStatCacheSize"},
-      {"Constructors"     , {"cache", "constructor"}, "WipeConstructorCache", "GetConstructorCacheSize"},
+      {"Text Rewords"     , {"cache", "text"}       , "WipeTextCache"       , "GetTextCacheSize",        "PrintTextCache"},
+      {"Stat Recognitions", {"cache", "stat"}       , "WipeStatCache"       , "GetStatCacheSize",        "PrintStatCache"},
+      {"Constructors"     , {"cache", "constructor"}, "WipeConstructorCache", "GetConstructorCacheSize", "PrintConstructorCache"},
     } do
-      local opts = GUI:CreateGroupBox(opts, data[1] .. ": " .. self[data[4]](self))
+      local name    = data[1]
+      local path    = data[2]
+      local Wipe    = data[3]
+      local GetSize = data[4]
+      local Print   = data[5]
+      
+      local opts = GUI:CreateGroupBox(opts, name .. ": " .. self[GetSize](self))
       group = opts
       
       local disabled = not self:GetGlobalOption("cache", "enabled")
-      GUI:CreateToggle(opts, data[2], self.L["Enable"], nil, disabled)
-      GUI:CreateReset(opts, data[2])
-      GUI:CreateExecute(opts, {"wipe", unpack(data[2])}, self.L["Clear Cache"], nil, function() self[data[3]](self) end, disabled).width = 0.6
+      GUI:CreateToggle(opts, path, self.L["Enable"], nil, disabled)
+      GUI:CreateReset(opts, path)
+      GUI:CreateExecute(opts, {"wipe", unpack(path)}, self.L["Clear Cache"], nil, function() self[Wipe](self) end, disabled).width = 0.6
+      if Print then
+        GUI:CreateExecute(opts, {"print", unpack(path)}, self.L["View"], nil, function() self[Print](self) end, disabled).width = 0.6
+      end
     end
     
     do

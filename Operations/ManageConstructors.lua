@@ -24,6 +24,12 @@ function Addon:WipeConstructorCache()
   
   self:RefreshDebugOptions()
 end
+function Addon:PrintConstructorCache()
+  for hash, cache in pairs(constructorCache) do
+    self:Debugf("Hash: %s", hash)
+    self:DebugDump(cache)
+  end
+end
 function Addon:GetConstructorCacheSize()
   return cacheSize
 end

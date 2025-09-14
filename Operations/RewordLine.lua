@@ -16,6 +16,16 @@ function Addon:WipeTextCache()
   wipe(textCache)
   cacheSize = 0
 end
+function Addon:PrintTextCache()
+  for lineType, leftTexts in pairs(textCache) do
+    self:Debugf("Line Type: %s", lineType)
+    for leftText, rightTexts in pairs(leftTexts) do
+      for rightText, rewords in pairs(rightTexts) do
+        self:Debugf("  %s -> %s", leftText, rewords[1])
+      end
+    end
+  end
+end
 function Addon:GetTextCacheSize()
   return cacheSize
 end

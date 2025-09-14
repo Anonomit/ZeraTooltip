@@ -29,6 +29,17 @@ function Addon:WipeStatCache()
   wipe(statCache)
   cacheSize = 0
 end
+function Addon:PrintStatCache()
+  for textLeft, cache in pairs(statCache) do
+    self:Debugf("Left Text: %s", textLeft)
+    self:DebugData{
+      {"  stat",       cache.stat},
+      {"  normalForm", cache.normalForm},
+      {"  prefix",     cache.prefix},
+      {"  newPrefix",  cache.newPrefix},
+    }
+  end
+end
 function Addon:GetStatCacheSize()
   return cacheSize
 end
