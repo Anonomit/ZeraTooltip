@@ -1,9 +1,14 @@
+
 local ADDON_NAME, Data = ...
 
 local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 local L = LibStub("AceLocale-3.0"):NewLocale(ADDON_NAME, "ruRU", false, not Addon:IsDebugEnabled())
 if not L then return end
--- Translator ZamestoTV
+
+
+-- Translator: ZamestoTV
+
+
 L["Whether to modify tooltips."]                   = "Изменять ли всплывающие подсказки."
 L["Reverse behavior when modifier keys are held."] = "Изменять поведение при зажатии модификаторов."
 
@@ -163,5 +168,8 @@ L["Reword some various small things, such as mana potions and speed enchantments
 L["Order"] = "Порядок"
 L["Mod"]   = "Модификатор"
 
+
+
+
 L["Celestial"] = "Небожители"
-end
+
