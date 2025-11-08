@@ -2647,8 +2647,8 @@ do
       {"|4[^:]-:[^:]-;", ".-"},       -- removes ruRU |4singular:plural1:plural2;
     }
     local reversedPatternsCache = {}
-    function Addon:ReversePattern(text)
-      reversedPatternsCache[text] = reversedPatternsCache[text] or ("^" .. self:ChainGsub(text, unpack(chainGsubPattern)) .. "$")
+    function Addon:ReversePattern(text, noStart, noEnd)
+      reversedPatternsCache[text] = reversedPatternsCache[text] or ((noStart and "" or "^") .. self:ChainGsub(text, unpack(chainGsubPattern)) .. (noEnd and "" or "$"))
       return reversedPatternsCache[text]
     end
   end

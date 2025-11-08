@@ -68,6 +68,8 @@ local L_ARMOR_TEMPLATE = Addon.L["%s Armor"]
 
 local L_SHIELD_BLOCK_TEMPLATE = Addon.L["%d Block"]
 
+local L_REFORGE_TOOLTIP_LINE = Addon.L["%c%s %s (Reforged from %s)"]
+
 local L_ENCHANT_ITEM_REQ_SKILL = Addon.L["Enchantment Requires %s"]
 local L_ENCHANT_ITEM_MIN_SKILL = Addon.L["Enchantment Requires %s (%d)"]
 local L_ENCHANT_ITEM_REQ_LEVEL = Addon.L["Enchantment Requires Level %d"]
@@ -556,6 +558,12 @@ contextActions = Addon:Map({
   end,
   LastBaseStat = function(i, tooltipData, line)
     if not line.texture then
+      if MatchesAny(line.textLeftTextStripped, L_REFORGE_TOOLTIP_LINE) then
+        local text = strGsub(line.textLeftText, Addon.L[" %(Reforged from (.*)%)$"], "")
+        line.textLeftTextStripped = Addon:StripText(text)
+        line.beforeReforgeText = text
+        line.reforgeText = strMatch(line.textLeftText, Addon.L[" %(Reforged from (.*)%)$"])
+      end
       if line.colorLeft == Addon.colors.WHITE and strFind(line.textLeftTextStripped, "[%+%-5]") then
         local stat = MatchesAny(line.textLeftTextStripped, L_ITEM_MOD_STAMINA, L_ITEM_MOD_STRENGTH, L_ITEM_MOD_AGILITY, L_ITEM_MOD_INTELLECT, L_ITEM_MOD_SPIRIT, L_ITEM_RESIST_SINGLE)
         if stat then

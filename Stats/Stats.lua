@@ -271,6 +271,9 @@ do
   
   local isReversedLocale = not strFind(self.L["%c%d Stamina"], "^%%")
   local GetLocaleStatFormat = isReversedLocale and function(pre, suf, capture) return format("%s %s%s", suf, capture and "?" or "", pre) end or function(pre, suf, capture) return format("%s %s%s", pre, capture and "?" or "", suf) end
+  function Addon:GetLocaleStatFormat(pre, suf)
+    return GetLocaleStatFormat(pre, suf)
+  end
   -- instead of flipping them, mess with the normal form pattern instead. format("%s %s", isBaseStat and sign or "+", normalName) vs format("%2$s %1$s", isBaseStat and sign or "+", normalName)
   
   for i, data in ipairs(statsData) do
@@ -325,6 +328,21 @@ do
       local normalFormLooseCaptureLower = strLower(normalFormLooseCapture)
       local normalFormPattern2          = GetLocaleStatFormat(isBaseStat and "%s%s" or "+%s", normalName)
       
+      
+      function StatInfo:GetAlias()
+        return Addon:pcall(function()
+          if Addon:GetOption("allow", "reword") and Addon:GetOption("doReword", stat) then
+            local alias = Addon:GetOption("reword", stat)
+            if alias and alias ~= "" and alias ~= normalNameReplacePattern then
+              return alias
+            end
+          end
+          return normalName
+        end,
+        function(err)
+          Addon:Errorf("Problem with stat %s: %s", stat, err)
+        end)
+      end
       
       local function ApplyMod(text, normalForm)
         local match1, match2 = strMatch(normalForm, normalFormCapture)

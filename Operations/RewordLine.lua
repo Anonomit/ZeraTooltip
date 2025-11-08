@@ -216,6 +216,11 @@ function Addon:RewordLine(tooltip, line, tooltipData)
       end
     end
     
+    -- add back in reforge info
+    if line.reforgeText then
+      text = text .. format(self:ChainGsub(self.L[" (Reforged from %s)"], {"%%%d%$", "%%"}), line.reforgeStat or line.reforgeText)
+    end
+    
     if line.prefix and not line.stat then
       text = self:ModifyPrefix(text, line.prefix)
       if line.type == "EnchantOnUse" then

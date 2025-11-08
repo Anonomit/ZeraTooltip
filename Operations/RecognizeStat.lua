@@ -61,7 +61,8 @@ local function RecognizeStatHelper(line)
     return
   end
   
-  local text = line.textLeftText
+  local text = line.beforeReforgeText or line.textLeftText
+  
   if line.prefix then
     line.newPrefix = line.prefix
     if line.prefix == ITEM_SET_BONUS_GRAY then
@@ -101,6 +102,21 @@ local function RecognizeStatHelper(line)
           line.normalForm = normalForm
           break
         end
+      end
+    end
+  end
+  
+  if line.reforgeText then
+    local reforgeText = strLower(line.reforgeText)
+    reforgeText = format(self.L["%c%s %s"], strByte"+", 1, reforgeText)
+    for stat, StatInfo in pairs(self.statsInfo) do
+      local normalForm = StatInfo.ConvertToNormalForm and StatInfo:ConvertToNormalForm(reforgeText)
+      if normalForm then
+        line.reforgeStat = StatInfo:GetAlias()
+        if self:GetOption("allow", "recolor") and self:GetOption("doRecolor", stat) then
+          line.reforgeStat = self:MakeColorCode(self:GetOption("color", stat), line.reforgeStat)
+        end
+        break
       end
     end
   end

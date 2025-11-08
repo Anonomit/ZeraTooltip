@@ -278,6 +278,9 @@ L["Unique-Equipped: %s (%d)"] = ITEM_LIMIT_CATEGORY_MULTIPLE
 L["Requires %s (%d)"] = ITEM_MIN_SKILL
 
 L["Reforged"] = REFORGED
+L["%c%s %s (Reforged from %s)"] = REFORGE_TOOLTIP_LINE
+L["%c%s %s"], L[" (Reforged from %s)"] = strMatch(L["%c%s %s (Reforged from %s)"], "^(.-)( *[%(%（].*)$")
+L[" %(Reforged from (.*)%)$"] = Addon:ReversePattern(L[" (Reforged from %s)"], true)
 
 L["%s - %s Damage"]    = DAMAGE_TEMPLATE
 L["%s - %s %s Damage"] = DAMAGE_TEMPLATE_WITH_SCHOOL
@@ -358,7 +361,7 @@ L["Written by %s"]  = ITEM_WRITTEN_BY
 L["%c%d %s Resistance"] = ITEM_RESIST_SINGLE
 
 if locale == "zhTW" and not Addon.isEra then
-  Addon.L["%c%d to All Resistances"] = strGsub(ITEM_RESIST_ALL, "%%d", "%1 ")
+  L["%c%d to All Resistances"] = strGsub(ITEM_RESIST_ALL, "%%d", "%1 ")
 else
   L["%c%d to All Resistances"] = ITEM_RESIST_ALL
 end
