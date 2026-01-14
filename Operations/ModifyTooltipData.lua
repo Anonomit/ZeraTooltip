@@ -43,7 +43,7 @@ end
 function Addon:ModifyTooltipData(tooltip, tooltipData)
   if #tooltipData == 0 then return tooltipData end
   self:RecognizeLineTypes(tooltipData)
-  local allResist = tooltipData.resists == 5 and not self:GetOption("hide", "All Resistance")
+  local allResist = tooltipData.resists == 5 and not self:GetOption("hide", "All Resistance") and self:GetOption("allow", "reword") and self:GetOption("doReword", "All Resistance")
   
   
   for i, line in ipairs(tooltipData) do
@@ -69,9 +69,16 @@ function Addon:ModifyTooltipData(tooltip, tooltipData)
     -- split healing/damage into two lines
     if self:GetOption("allow", "reword") and self:GetOption("doReword", "Healing") and not self:GetOption("hide", "Spell Damage") then
       for i, line in ipairs(tooltipData) do
-        if (line.type == "SecondaryStat" or line.oldType == "SecondaryStat") and line.stat == "Healing" then
+        if line.stat == "Healing" and (line.type == "SecondaryStat" or line.oldType == "SecondaryStat" or line.type == "BaseStat" or line.oldType == "BaseStat") then
           
-          local value = strMatch(line.textLeftText, self.L["[%d,%.]+"] .. "%D+(%d+)")
+          local value = strMatch(line.textLeftText, self.L["[%d,%.]+"] .. "%D+(%d+)") or strMatch(line.textLeftText, "(%d+)%D+" .. self.L["[%d,%.]+"])
+          local value1, value2 = strMatch(line.textLeftText, format("(%s)%%D+(%s)", self.L["[%d,%.]+"], self.L["[%d,%.]+"]))
+          value1 = tonumber(value1)
+          value2 = tonumber(value2)
+          local value
+          if value1 and value2 then
+            value = value1 <= value2 and value1 or value2
+          end
           if value then
             
             local stat = "Spell Damage"
@@ -86,7 +93,7 @@ function Addon:ModifyTooltipData(tooltip, tooltipData)
             extraLine.realTextLeftText     = text
             extraLine.validationText       = text
             
-            extraLine.type      = "SecondaryStat"
+            extraLine.type      = line.oldType or line.type
             extraLine.colorLeft = self.colors.GREEN
             extraLine.realColor = self.colors.GREEN
             

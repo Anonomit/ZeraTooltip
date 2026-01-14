@@ -1472,8 +1472,13 @@ do
   
   onAddonLoadCallbacks = {}
   function Addon:OnAddonLoad(addonName, func)
-    local loaded, finished = IsAddOnLoaded(addonName)
-    if finished then
+    local loadedOrLoading, loaded
+    if C_AddOns and C_AddOns.IsAddOnLoaded then
+      loadedOrLoading, loaded = C_AddOns.IsAddOnLoaded(addonName)
+    else
+      loadedOrLoading, loaded = IsAddOnLoaded(addonName)
+    end
+    if loaded then
       Call(func, self)
     else
       self:RegisterEventCallback("ADDON_LOADED", function(self, event, addon)

@@ -939,7 +939,7 @@ do
     {"blockrating", {9753,1647}},
     {"stam int spellpower", {20659,2143}},
     {"hp5", {11994,2109}},
-    {"stam healing mp5", {20659,2146}},
+    {"stam healing spelldmg mp5", {20659,2146}},
     {"atk pwr", {4561,1547}},
     
     
