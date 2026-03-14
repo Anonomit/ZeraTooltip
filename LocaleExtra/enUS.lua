@@ -223,7 +223,8 @@ if Addon.expansionLevel <= Addon.expansions.tbc then
     {INPUT = "^Restores ([%d,]+) health every 5 sec%.$"})
   
   Addon:AddExtraStatCapture("Mana Regeneration",
-    {INPUT = "^%+([%d,]+) mana every 5 sec%.$"})
+    {INPUT = "^%+([%d,]+) mana every 5 sec%.$"},
+    {INPUT = "^%+([%d,]+) Mana Per 5 sec%.$"})
 end
 
 if Addon.isSoD or Addon.isTBC then
