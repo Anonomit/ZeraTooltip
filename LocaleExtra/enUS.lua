@@ -177,12 +177,14 @@ if Addon.expansionLevel <= Addon.expansions.tbc then
     {INPUT = "^%+([%d,]+) Block Rating$"})
   
   Addon:AddExtraStatCapture("Healing",
+    {INPUT = "^%+([%d,]+) Healing$"},
     {INPUT = "^%+([%d,]+) Healing Spells and %+[%d,]+ Damage Spells$"},
     {INPUT = "^Increases your spell damage by up to [%d,]+ and your healing by up to ([%d,]+)%.$"})
   
   Addon:AddExtraStatCapture("Spell Power",
     {INPUT = "^Increases damage and healing done by magical spells and effects by up to ([%d,]+)%.$"},
-    {INPUT = "^%+([%d,]+) Damage and Healing Spells$"})
+    {INPUT = "^%+([%d,]+) Damage and Healing Spells$"},
+    {INPUT = "^%+([%d,]+) Spell Damage and Healing$"})
   
   Addon:AddExtraStatCapture("Arcane Damage",
     {INPUT = "^Increases damage done by Arcane spells and effects by up to ([%d,]+)%.$"})
