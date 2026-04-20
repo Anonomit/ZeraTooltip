@@ -27,7 +27,7 @@
 
 ## SavedVariables: ZeraTooltipDB
 
-## OptionalDeps: Ace3, SemVer, RatingBuster
+## OptionalDeps: Ace3, SemVer
 ## X-Embeds: Ace3, SemVer
 
 _addon.xml
