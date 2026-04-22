@@ -5,6 +5,7 @@ local ADDON_NAME, Data = ...
 local Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
 local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 
+local StatLogic
 
 local strMatch = string.match
 local strGsub  = string.gsub
@@ -228,26 +229,39 @@ function Addon:RewordLine(tooltip, line, tooltipData)
       end
     end
     
-    -- check compatibility
-    if line.realTextLeft ~= line.validationText or true then
-      -- some other addon is modifying tooltip text
-      
-      -- RatingBuster compatibility
-      if RatingBuster and RatingBuster.ProcessText and line.stat --[[and not strFind(line.realTextLeft, " |cff%x%x%x%x%x%x%(.*")]] then
+    -- check compatibility with RatingBuster
+    self:xpcall(function()
+      if RatingBuster and RatingBuster.ProcessLine then
+        if not StatLogic then
+          StatLogic = LibStub"StatLogic"
+        end
         
-        local expectedReword = RatingBuster:ProcessLine(line.validationText, tooltipData.link, CreateColor(self:ConvertHexToRGB(line.colorLeft)))
-        if expectedReword then
-          local hasReworded = strFind(line.realTextLeft, "%)|r")
-          local willReword = strFind(RatingBuster:ProcessText(text, tooltipData.link, CreateColor(self:ConvertHexToRGB(line.colorLeft))), "%)|r")
-          if not willReword or hasReworded then
-            local addition = strMatch(expectedReword, " |cff%x%x%x%x%x%x%(.*|r")
+        local itemMinLevel, _, _, _, _, _, _, itemClass = select(5, C_Item.GetItemInfo(tooltipData.link))
+        local statModContext = StatLogic:NewStatModContext({
+          specGroup = RatingBuster:GetDisplayedSpecGroup(),
+          level = math.max(itemMinLevel, Addon.MY_LEVEL),
+          itemClass = itemClass,
+        })
+        
+        if line.stat then
+          local editedText = RatingBuster:ProcessLine(line.validationText, tooltipData.link, CreateColor(self:ConvertHexToRGB(line.colorLeft)), statModContext)
+          if text ~= editedText then
+            local addition = strMatch(editedText, " |cff%x%x%x%x%x%x%(.-%)|r")
             if addition then
               text = text .. addition
             end
           end
+        else
+          local editedText = RatingBuster:ProcessLine(text, tooltipData.link, CreateColor(self:ConvertHexToRGB(line.colorLeft)), statModContext)
+          if text ~= editedText then
+            local addition = strMatch(editedText, " |cff%x%x%x%x%x%x%(.-%)|r")
+            if addition then
+              text = editedText
+            end
+          end
         end
       end
-    end
+    end)
     
     if not RatingBuster and self:GetGlobalOption("cache", "enabled") and self:GetGlobalOption("cache", "text") and cacheLineTypes[line.type] and cacheLineStats[line.stat or ""] then
       Addon:StoreInTable(textCache, line.type, line.textLeftText, line.textRightText or "", {text, line.rewordRight})
