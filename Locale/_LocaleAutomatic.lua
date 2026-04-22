@@ -37,6 +37,7 @@ accessing a key with no value will throw an error and return the key
 local actual = {}
 local L = setmetatable({}, {
   __index = function(self, key)
+    if key == "ToDebugString" then return end
     if not actual[key] then
       actual[key] = key
       Addon:Throwf("%s: Missing automatic translation for '%s'", ADDON_NAME, tostring(key))
