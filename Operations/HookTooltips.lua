@@ -372,11 +372,14 @@ local function OnTooltipSetItem(tooltip)
 end
 
 Addon:RegisterAddonEventCallback("ENABLE", function(self)
-  -- hook tooltips with OnTooltipSetItem
-  self.TipHooker2:Hook(OnTooltipSetItem, "item")
-  
-  -- hook tooltips with a more powerful method
-  self.TipHooker:Hook(OnTooltipItemMethod, "item")
-  self.TipHooker:Hook(function(tooltip, methodName, slot) OnTooltipItemMethod(tooltip, methodName, slot) end, "action")
+  -- one frame delay to hook after other addons
+  C_Timer.After(0, function()
+    -- hook tooltips with OnTooltipSetItem
+    self.TipHooker2:Hook(OnTooltipSetItem, "item")
+    
+    -- hook tooltips with a more powerful method
+    self.TipHooker:Hook(OnTooltipItemMethod, "item")
+    self.TipHooker:Hook(function(tooltip, methodName, slot) OnTooltipItemMethod(tooltip, methodName, slot) end, "action")
+  end)
 end)
 
