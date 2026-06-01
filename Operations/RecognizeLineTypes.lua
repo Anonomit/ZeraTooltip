@@ -157,7 +157,7 @@ local bindTypes = {
 }
 
 
-local numberPattern = Addon.L["[%d,%.]+"]
+local numberPattern = Addon.L["%d[%d,%.]+"]
 local lockedPattern = "%s" .. Addon.L["Locked"]
 
 
