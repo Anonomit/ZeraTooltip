@@ -7,9 +7,13 @@ local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 
 local StatLogic
 
-local strMatch = string.match
-local strGsub  = string.gsub
-local strFind  = string.find
+local strMatch  = string.match
+local strSub    = string.sub
+local strGsub   = string.gsub
+local strFind   = string.find
+local strLower  = string.lower
+
+local tblSort   = table.sort
 
 local cacheSize = 0
 local textCache = {}
@@ -51,6 +55,16 @@ rewordBlacklist = setmetatable({
   Cooldown = true,
 }, {__index = function() return false end})
 
+-- lines that may contain stats embedded in arbitrary text
+local embeddedStatLines = Addon:MakeLookupTable{
+  "SecondaryStat",
+  "Enchant",
+  "EnchantOnUse",
+  "Socket",
+  "SetBonus",
+}
+
+-- lines on which to run miscellaneous replacement rules
 local miscRewordLines = Addon:MakeLookupTable{
   "SecondaryStat",
   "Enchant",
@@ -204,8 +218,8 @@ function Addon:RewordLine(tooltip, line, tooltipData)
     end
     
     -- swap in localized nickname, fix prefix
-    if self:GetOption("allow", "reword") then
-      if line.stat then
+    if line.stat then
+      if self:GetOption("allow", "reword") then
         text = self.statsInfo[line.stat]:Reword(text, line.normalForm)
         if line.newPrefix then
           if strFind(line.newPrefix, "%%") then
@@ -213,6 +227,61 @@ function Addon:RewordLine(tooltip, line, tooltipData)
           else
             text = line.newPrefix .. text
           end
+        end
+      end
+    elseif embeddedStatLines[line.type] and (self:GetOption("allow", "reword") or self:GetOption("allow", "recolor")) then
+      -- rename and recolor stats in the middle of non-stat lines
+      local lowerText = strLower(text)
+      local replacements = {}
+      for stat, statInfo in pairs(self.statsInfo) do
+        if statInfo.GetNormalName then
+          local normalName = strLower(statInfo:GetNormalName())
+          local capturePattern = "%+?" .. self.L["[%d,%.]+"] .. " *" .. self:CoverSpecialCharacters(normalName)
+          local startI, endI = strFind(lowerText, capturePattern)
+          while startI do
+            tinsert(replacements, {startI, endI, stat})
+            startI, endI = strFind(lowerText, self:CoverSpecialCharacters(normalName), endI+1)
+          end
+        end
+      end
+      tblSort(replacements, function(a, b) return b[1] < a[1] end)
+      local highest, failed
+      for _, replacement in ipairs(replacements) do
+        local startI, endI, stat = unpack(replacement)
+        if highest and highest >= startI then
+          failed = true
+        end
+        highest = endI
+      end
+      if not failed then
+        for _, replacement in ipairs(replacements) do
+          local startI, endI, stat = unpack(replacement)
+          local statInfo = self.statsInfo[stat]
+          
+          local statText = strSub(text, startI, endI)
+          local replacementText = statText
+          if self:GetOption("allow", "reword") then
+            local plus, number = strMatch(statText, "(%+?)(" .. self.L["[%d,%.]+"] .. ")")
+            if number and strFind(number, "%d") then -- needed for dealing with false positives like title line of 103945
+              local defaultForm = statInfo:GetDefaultForm(number)
+              local normalForm = statInfo:ConvertToNormalForm(defaultForm)
+              local aliasForm = statInfo:Reword(normalForm, normalForm)
+              if plus == "" then
+                aliasForm = strGsub(aliasForm, "^%+", "") -- won't work in some locales
+              end
+              
+              replacementText = aliasForm
+              if self:GetOption("allow", "recolor") then
+                replacementText = self:MakeColorCode(statInfo.color, replacementText)
+              end
+            end
+          else
+            if self:GetOption("allow", "recolor") then
+              replacementText = self:MakeColorCode(statInfo.color, replacementText)
+            end
+          end
+          
+          text = strSub(text, 1, startI-1) .. replacementText .. strSub(text, endI+1)
         end
       end
     end
@@ -237,26 +306,28 @@ function Addon:RewordLine(tooltip, line, tooltipData)
         end
         
         local itemMinLevel, _, _, _, _, _, _, itemClass = select(5, C_Item.GetItemInfo(tooltipData.link))
-        local statModContext = StatLogic:NewStatModContext({
-          specGroup = RatingBuster:GetDisplayedSpecGroup(),
-          level = math.max(itemMinLevel, Addon.MY_LEVEL),
-          itemClass = itemClass,
-        })
-        
-        if line.stat then
-          local editedText = RatingBuster:ProcessLine(line.validationText, tooltipData.link, CreateColor(self:ConvertHexToRGB(line.colorLeft)), statModContext)
-          if text ~= editedText then
-            local addition = strMatch(editedText, " |cff%x%x%x%x%x%x%(.-%)|r")
-            if addition then
-              text = text .. addition
+        if itemMinLevel and itemClass then
+          local statModContext = StatLogic:NewStatModContext({
+            specGroup = RatingBuster:GetDisplayedSpecGroup(),
+            level = math.max(itemMinLevel, self.MY_LEVEL),
+            itemClass = itemClass,
+          })
+          
+          if line.stat then
+            local editedText = RatingBuster:ProcessLine(line.validationText, tooltipData.link, CreateColor(self:ConvertHexToRGB(line.colorLeft)), statModContext)
+            if text ~= editedText then
+              local addition = strMatch(editedText, " |cff%x%x%x%x%x%x%(.-%)|r")
+              if addition then
+                text = text .. addition
+              end
             end
-          end
-        else
-          local editedText = RatingBuster:ProcessLine(text, tooltipData.link, CreateColor(self:ConvertHexToRGB(line.colorLeft)), statModContext)
-          if text ~= editedText then
-            local addition = strMatch(editedText, " |cff%x%x%x%x%x%x%(.-%)|r")
-            if addition then
-              text = editedText
+          else
+            local editedText = RatingBuster:ProcessLine(text, tooltipData.link, CreateColor(self:ConvertHexToRGB(line.colorLeft)), statModContext)
+            if text ~= editedText then
+              local addition = strMatch(editedText, " |cff%x%x%x%x%x%x%(.-%)|r")
+              if addition then
+                text = editedText
+              end
             end
           end
         end
