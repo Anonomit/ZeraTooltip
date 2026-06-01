@@ -215,7 +215,7 @@ do
   tinsert(statsData, {0, {true, true, true, true, true}, "Spirit",    self.L["Spirit"],    self.L["%c%d Spirit"],    self.colors.WHITE, self.colors.LIGHT_AQUA})
   
   
-  tinsert(statsData, {1, {true, true, true, true, nil}, "All Resistance", self:ChainGsub(self.L["%c%d to All Resistances"], {"%%%d%$", "%%"}, {"%%.", "^ *", " *$", ""}), self:ChainGsub(self.L["%c%d to All Resistances"], {"%%%d+%$", "%%"}), self.colors.WHITE, self.colors.YELLOW})
+  tinsert(statsData, {1, {true, true, true, true, true}, "All Resistance", self:ChainGsub(self.L["%c%d to All Resistances"], {"%%%d%$", "%%"}, {"%%.", "^ *", " *$", ""}), self:ChainGsub(self.L["%c%d to All Resistances"], {"%%%d+%$", "%%"}), self.colors.WHITE, self.colors.YELLOW})
   
   for i, stat in ipairs{"Arcane Resistance", "Fire Resistance", "Nature Resistance", "Frost Resistance", "Shadow Resistance"} do
     tinsert(statsData, {(i == 1 and 1 or 0), {true, true, true, true, true}, stat, elementResistances[i], format(self:ChainGsub(Addon.L["%c%d %s Resistance"], {"%%%d+%$", "%%"}, {"%%[^s]", "%%%0"}, {"|3%-%d+%((.+)%)", "%1"}), elementNames[i]), self.colors.WHITE, elementColors[i]})
@@ -245,7 +245,7 @@ do
   tinsert(statsData, {1, {true, true, nil, nil, nil}, "Spell Damage" , self.L["Bonus Damage"], self.L["Increases damage done by magical spells and effects by up to %s."], self.colors.GREEN, self.colors.KISSES})
   for i, stat in ipairs{"Arcane Damage", "Fire Damage", "Nature Damage", "Frost Damage", "Shadow Damage", "Holy Damage"} do
     if spellDamageStats[stat] then
-      tinsert(statsData, {(i == 1 and 1 or 0), {true, true, true, true, true} , stat, format(self.L["%s Damage"], elementNames[i]), spellDamageStats[stat], self.colors.GREEN, elementColors[i]})
+      tinsert(statsData, {(i == 1 and 1 or 0), {true, true, true, true, true}, stat, format(self.L["%s Damage"], elementNames[i]), spellDamageStats[stat], self.colors.GREEN, elementColors[i]})
     end
   end
   
