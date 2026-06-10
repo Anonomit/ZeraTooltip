@@ -284,7 +284,6 @@ function Addon:RewordLine(tooltip, line, tooltipData)
     if not line.stat and embeddedStatLines[line.type] and (self:GetOption("allow", "reword") or self:GetOption("allow", "recolor")) then
       -- rename and recolor stats in the middle of non-stat lines
       local lowerText = strLower(text)
-      self:Debug(lowerText)
       
       -- gather RatingBuster additions
       local ratingBusterAdditions = {}
@@ -327,8 +326,6 @@ function Addon:RewordLine(tooltip, line, tooltipData)
         end
         highest = startI
       end
-      self:DebugDump(replacements)
-      self:Debug(failed)
       if not failed then
         for _, replacement in ipairs(replacements) do
           local startI, endI, stat = unpack(replacement)
