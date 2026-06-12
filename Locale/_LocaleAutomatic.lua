@@ -97,7 +97,7 @@ else
   L[","] = LARGE_NUMBER_SEPERATOR
 end
 
-L["%d[%d,%.]+"] = function() return "%d[%d" .. Addon:Ternary(L[","] == "", "", "%" .. L[","]) .. Addon:Ternary(L["."] == "", "", "%" .. L["."]) .. "]+" end
+L["%d[%d,%.]*"] = function() return "%d[%d" .. Addon:Ternary(L[","] == "", "", "%" .. L[","]) .. Addon:Ternary(L["."] == "", "", "%" .. L["."]) .. "]*" end
 
 
 

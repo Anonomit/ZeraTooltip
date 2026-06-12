@@ -25,7 +25,7 @@ function Addon:ModifyWeaponDamage(text, dps, speed, damageBonus)
   local noThousandsSeparator = self:GetOption("allow", "reword") and not self:GetOption("separateThousands", stat)
   local precision = self:GetOption("allow", "reword") and (1 / 10^self:GetOption("precision", stat)) or 1
   
-  local minMax, min, gap, max = strMatch(text, "((" .. self.L["%d[%d,%.]+"] .. ")( ?%- ?)(" .. self.L["%d[%d,%.]+"] .. "))")
+  local minMax, min, gap, max = strMatch(text, "((" .. self.L["%d[%d,%.]*"] .. ")( ?%- ?)(" .. self.L["%d[%d,%.]*"] .. "))")
   if min then
     min, max = self:ToNumber(min), self:ToNumber(max)
     local mid = dps * speed
@@ -65,7 +65,7 @@ function Addon:ModifyWeaponDamage(text, dps, speed, damageBonus)
       end
     end
     
-    return strGsub(text, self.L["%d[%d,%.]+"] .. " ?%- ?" .. self.L["%d[%d,%.]+"], pattern)
+    return strGsub(text, self.L["%d[%d,%.]*"] .. " ?%- ?" .. self.L["%d[%d,%.]*"], pattern)
   end
   return text
 end
@@ -83,7 +83,7 @@ function Addon:ModifyWeaponDamageBonus(text, damageBonus)
   local noThousandsSeparator = self:GetOption("allow", "reword") and not self:GetOption("separateThousands", stat)
   local precision = self:GetOption("allow", "reword") and (1 / 10^self:GetOption("precision", stat)) or 1
   
-  local minMax, min, gap, max = strMatch(text, "((" .. self.L["%d[%d,%.]+"] .. ")( ?%- ?)(" .. self.L["%d[%d,%.]+"] .. "))")
+  local minMax, min, gap, max = strMatch(text, "((" .. self.L["%d[%d,%.]*"] .. ")( ?%- ?)(" .. self.L["%d[%d,%.]*"] .. "))")
   if min then
     min, max = self:ToNumber(min), self:ToNumber(max)
     local mid = (damageBonus[1] + damageBonus[2]) / 2
@@ -117,7 +117,7 @@ function Addon:ModifyWeaponDamageBonus(text, damageBonus)
       end
     end
     
-    return strGsub(text, self.L["%d[%d,%.]+"] .. " ?%- ?" .. self.L["%d[%d,%.]+"], pattern)
+    return strGsub(text, self.L["%d[%d,%.]*"] .. " ?%- ?" .. self.L["%d[%d,%.]*"], pattern)
   end
   return text
 end

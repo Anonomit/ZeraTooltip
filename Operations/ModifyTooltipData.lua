@@ -71,8 +71,8 @@ function Addon:ModifyTooltipData(tooltip, tooltipData)
       for i, line in ipairs(tooltipData) do
         if line.stat == "Healing" and (line.type == "SecondaryStat" or line.oldType == "SecondaryStat" or line.type == "BaseStat" or line.oldType == "BaseStat") then
           
-          local value = strMatch(line.textLeftText, self.L["%d[%d,%.]+"] .. "%D+(%d+)") or strMatch(line.textLeftText, "(%d+)%D+" .. self.L["%d[%d,%.]+"])
-          local value1, value2 = strMatch(line.textLeftText, format("(%s)%%D+(%s)", self.L["%d[%d,%.]+"], self.L["%d[%d,%.]+"]))
+          local value = strMatch(line.textLeftText, self.L["%d[%d,%.]*"] .. "%D+(%d+)") or strMatch(line.textLeftText, "(%d+)%D+" .. self.L["%d[%d,%.]*"])
+          local value1, value2 = strMatch(line.textLeftText, format("(%s)%%D+(%s)", self.L["%d[%d,%.]*"], self.L["%d[%d,%.]*"]))
           value1 = tonumber(value1)
           value2 = tonumber(value2)
           local value

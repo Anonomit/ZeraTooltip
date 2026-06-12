@@ -347,7 +347,7 @@ do
       local function ApplyMod(text, normalForm)
         local match1, match2 = strMatch(normalForm, normalFormCapture)
         local origStrNumber = match1 .. (match2 or "")
-        local strNumber, percent = strMatch(origStrNumber, "(%-?" .. self.L["%d[%d,%.]+"] .. ")(%%?)")
+        local strNumber, percent = strMatch(origStrNumber, "(%-?" .. self.L["%d[%d,%.]*"] .. ")(%%?)")
         local number = self:Round(self:ToNumber(strNumber) * self:GetOption("mod", stat), 1 / 10^self:GetOption("precision", stat))
         strNumber = self:ToFormattedNumber(number, nil, nil, not self:GetOption("separateThousands", stat) and "" or nil)
         if isBaseStat and number > 0 then

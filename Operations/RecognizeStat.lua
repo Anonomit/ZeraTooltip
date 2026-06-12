@@ -137,7 +137,7 @@ do
     
     if allResist then
       if line.stat == "Arcane Resistance" then
-        local n         = strMatch(line.normalForm, self.L["%d[%d,%.]+"])
+        local n         = strMatch(line.normalForm, self.L["%d[%d,%.]*"])
         line.stat       = "All Resistance"
         line.normalForm = format(self.L["%c%d to All Resistances"], strByte"+", n)
       end
